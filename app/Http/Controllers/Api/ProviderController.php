@@ -230,8 +230,15 @@ class ProviderController extends Controller
                     $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($providers['reloadCard']);
                     $dashboard_data['Retrait'] = ProviderSingleCollection::collection($providers['retrait']);
                     $dashboard_data['Xbets'] = ProviderSingleCollection::collection($providers['xbet']);
-                    $dashboard_data['Transfert international'] = [
+                    // $dashboard_data['Transfert international'] = [
+                    //     "Transfert" => ProviderSingleCollection::collection($providers['inter']),
+                    // ];
+                     $dashboard_data['Transfert international'] = [
+                        "Factures" => ProviderSingleCollection::collection($providers['paymentInter']),
                         "Transfert" => ProviderSingleCollection::collection($providers['inter']),
+                        "Crédit téléphonique" => ProviderSingleCollection::collection($providers['phoneInter']),
+                        "Versement bancaire" => ProviderSingleCollection::collection($providers['virementBank']),
+                        "Rechargement de carte" => ProviderSingleCollection::collection($providers['reloadCardInter']),
                     ];
                 } else {
                     $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($providers['transaction']);

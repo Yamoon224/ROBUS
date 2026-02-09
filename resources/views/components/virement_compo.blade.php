@@ -98,15 +98,18 @@
                                                       @include('components.info')
                                                   </div>
                                                   @if ($item->updated_by == null)
-                                                      <p class="font-medium whitespace-nowrap mb-2">
-                                                          {{ substr($item->phone ?? null, 0, 6) }}
-                                                      </p>
-                                                      <p class="font-medium whitespace-nowrap mb-2">
-                                                          {{ substr($item->number_compte ?? null, 0, 6) }}
-                                                      </p>
-                                                        <p class="font-medium whitespace-nowrap mb-2">
-                                                          {{ substr($item->full_name ?? null, 0, 6) }}
-                                                      </p>
+                                                      <div class="user-name">
+                                                          <p class="font-medium whitespace-nowrap mb-2">
+                                                              {{ substr($item->phone ?? null, 0, 6) }}
+                                                          </p>
+                                                          <p class="font-medium whitespace-nowrap mb-2">
+                                                              {{ substr($item->number_compte ?? null, 0, 6) }}
+                                                          </p>
+                                                          <p class="font-medium whitespace-nowrap mb-2">
+                                                              {{ substr($item->full_name ?? null, 0, 6) }}
+                                                          </p>
+                                                      </div>
+
                                                       <div class="flex items-center justify-center text-success mt-3">
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                               <x-take-action-button action="ChooseUpdateVirement"
@@ -116,11 +119,13 @@
 
                                                       </div>
                                                   @else
-                                                      <p class="font-medium whitespace-nowrap">
-                                                          {{ $item->phone ?? null }}
-                                                          {{ $item->number_compte ?? null }}
-                                                          {{ $item->full_name ?? null }}
-                                                      </p>
+                                                      <div class="user-name">
+                                                          <p class="font-medium whitespace-nowrap">
+                                                              {{ $item->phone ?? null }}
+                                                              {{ $item->number_compte ?? null }}
+                                                              {{ $item->full_name ?? null }}
+                                                          </p>
+                                                      </div>
                                                   @endif
                                               </td>
                                               <td class="w-40">
@@ -131,7 +136,8 @@
                                               <td class="w-40">
                                                   <div class="flex justify-center items-center">
                                                       @if ($item->updated_by != null)
-                                                          @if (($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
+                                                          @if (
+                                                              ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
                                                                   ($item->status === 'PROCESSING' && $item->updated_by == Auth::guard('web')->user()->id))
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                   <a wire:click="editVirement({{ $item->id }}, 'update-virementBank-modal')"

@@ -42,7 +42,8 @@ class PaymentService
         $number_decoder,
         $id_invoice,
         $number_contract,
-        $amount_received
+        $amount_received,
+        $name
     ) {
 
         $amount_solde = robus()->wallet->amount - $amount_valeur;

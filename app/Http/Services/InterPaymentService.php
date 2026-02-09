@@ -568,6 +568,7 @@ class InterPaymentService
         $guichet_code,
         $bank_code,
         $account_number,
+        $name,
 
     ) {
 
@@ -583,11 +584,12 @@ class InterPaymentService
             'number_compte' => $account_number,
             'created_by' => robus()->id,
             'provider_id' => $provider_payment,
+            'name' => $name,
             'num_authers' => $name_custumers ?? null,
             'bank_code' => $bank_code ?? null,
             'guichet_code' => $guichet_code ?? null,
             'costs_amount' => (robus()?->is_under_distributer || robus()?->is_api) ?  ($percent_robus->percent_merchands * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
-            'provider_type' => 1,
+            'provider_type' => 9,
             'status' => 'PENDING',
             'country_id' => $country_robus->id,
             'choose_type_transaction' => $provider_type,

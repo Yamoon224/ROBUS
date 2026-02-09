@@ -252,7 +252,11 @@ class WithService
             $amount_commission = $amount;
         }
 
-        $amount_solde = $user->wallet->amount - $amount_commission;
+        if ($is_drawal) {
+            $amount_solde = $user->wallet->amount;
+        } else {
+            $amount_solde = $user->wallet->amount - $amount_commission;
+        }
 
         $walletWith->update([
             'amount_solde' => $amount_solde,
@@ -446,7 +450,11 @@ class WithService
             $amount_commission = $amount;
         }
 
-        $amount_solde = $user->wallet->amount - $amount_commission;
+        if ($is_drawal) {
+            $amount_solde = $user->wallet->amount;
+        } else {
+            $amount_solde = $user->wallet->amount - $amount_commission;
+        }
 
         $walletWith->update([
             'amount_solde' => $amount_solde,
@@ -547,7 +555,11 @@ class WithService
             $amount_commission = $amount;
         }
 
-        $amount_solde = $user->wallet->amount - $amount_commission;
+        if ($is_drawal) {
+            $amount_solde = $user->wallet->amount;
+        } else {
+            $amount_solde = $user->wallet->amount - $amount_commission;
+        }
 
         $walletWith->update([
             'amount_solde' => $amount_solde,

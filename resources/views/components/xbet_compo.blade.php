@@ -113,63 +113,68 @@
                                                     @include('components.info')
                                                 </div>
                                                 @if ($item->updated_by == null)
-                                                    <p class="font-medium whitespace-nowrap">
-                                                        @if ($item->choose_type_transaction == 1)
-                                                            <div class="p-4  rounded-lg shadow-sm">
-                                                                <dl class="space-y-2 text-sm text-gray-700 mr-2">
-                                                                    <div class="flex justify-between">
-                                                                        <dt class="font-medium text-gray-900"> Nom &
-                                                                            Prénom :
-                                                                        </dt>
-                                                                        <dd>{{ $item->full_name ?? '—' }}</dd>
-                                                                    </div>
-                                                                    <div class="flex justify-between mt-3">
-                                                                        <dt class="font-medium text-gray-900"> ID compte
-                                                                            :
-                                                                        </dt>
-                                                                        <dd>
-                                                                            {{ substr($item->num_acompte ?? null, 0, 5) }}
-                                                                        </dd>
-                                                                    </div>
-                                                                </dl>
-                                                            </div>
-                                                        @else
-                                                            <div class="p-4  rounded-lg shadow-sm">
-                                                                <dl class="space-y-2 text-sm text-gray-700 mr-2">
-                                                                    <div class="flex justify-between">
-                                                                        <dt class="font-medium text-gray-900"> Ville :
-                                                                        </dt>
-                                                                        <dd>{{ $item->citie_name ?? '—' }}</dd>
-                                                                    </div>
-                                                                    <div class="flex justify-between mt-3">
-                                                                        <dt class="font-medium text-gray-900">
-                                                                            Zone :
-                                                                        </dt>
-                                                                        <dd>
-                                                                            {{ substr($item->area_name ?? null, 0, 5) }}
-                                                                        </dd>
-                                                                    </div>
-                                                                    <div class="flex justify-between mt-3">
-                                                                        <dt class="font-medium text-gray-900">
-                                                                            Numero compte :
-                                                                        </dt>
-                                                                        <dd>
-                                                                            {{ substr($item->num_acompte ?? null, 0, 5) }}
-                                                                        </dd>
-                                                                    </div>
-                                                                    <div class="flex justify-between mt-3">
-                                                                        <dt class="font-medium text-gray-900">
-                                                                            Code retrait :
-                                                                        </dt>
-                                                                        <dd>
-                                                                            {{ substr($item->code_acompte ?? null, 0, 5) }}
-                                                                        </dd>
-                                                                    </div>
-                                                                </dl>
-                                                            </div>
-                                                        @endif
+                                                    <div class="user-name">
+                                                        <p class="font-medium whitespace-nowrap">
+                                                            @if ($item->choose_type_transaction == 1)
+                                                                <div class="p-4  rounded-lg shadow-sm">
+                                                                    <dl class="space-y-2 text-sm text-gray-700 mr-2">
+                                                                        <div class="flex justify-between">
+                                                                            <dt class="font-medium text-gray-900"> Nom &
+                                                                                Prénom :
+                                                                            </dt>
+                                                                            <dd>{{ $item->full_name ?? '—' }}</dd>
+                                                                        </div>
+                                                                        <div class="flex justify-between mt-3">
+                                                                            <dt class="font-medium text-gray-900"> ID
+                                                                                compte
+                                                                                :
+                                                                            </dt>
+                                                                            <dd>
+                                                                                {{ substr($item->num_acompte ?? null, 0, 5) }}
+                                                                            </dd>
+                                                                        </div>
+                                                                    </dl>
+                                                                </div>
+                                                            @else
+                                                                <div class="p-4  rounded-lg shadow-sm">
+                                                                    <dl class="space-y-2 text-sm text-gray-700 mr-2">
+                                                                        <div class="flex justify-between">
+                                                                            <dt class="font-medium text-gray-900"> Ville
+                                                                                :
+                                                                            </dt>
+                                                                            <dd>{{ $item->city_robus ?? '—' }}</dd>
+                                                                        </div>
+                                                                        <div class="flex justify-between mt-3">
+                                                                            <dt class="font-medium text-gray-900">
+                                                                                Zone :
+                                                                            </dt>
+                                                                            <dd>
+                                                                                {{ $item->street_robus  ?? null }}
+                                                                            </dd>
+                                                                        </div>
+                                                                        <div class="flex justify-between mt-3">
+                                                                            <dt class="font-medium text-gray-900">
+                                                                                Numero compte :
+                                                                            </dt>
+                                                                            <dd>
+                                                                                {{ substr($item->num_acompte ?? null, 0, 5) }}
+                                                                            </dd>
+                                                                        </div>
+                                                                        <div class="flex justify-between mt-3">
+                                                                            <dt class="font-medium text-gray-900">
+                                                                                Code du rétrait :
+                                                                            </dt>
+                                                                            <dd>
+                                                                                {{ substr($item->code_drawal ?? null, 0, 5) }}
+                                                                            </dd>
+                                                                        </div>
+                                                                    </dl>
+                                                                </div>
+                                                            @endif
 
-                                                    </p>
+                                                        </p>
+                                                    </div>
+
                                                     <div class="flex items-center justify-center text-success mt-3">
 
                                                         @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
@@ -180,52 +185,55 @@
 
                                                     </div>
                                                 @else
-                                                    <div class="p-4  rounded-lg shadow-sm">
+                                                    <div class="user-name">
+                                                        <div class="p-4  rounded-lg shadow-sm">
 
-                                                        <dl class="space-y-2 text-sm text-gray-700 mr-2">
-                                                            @if ($item->choose_type_transaction == 1)
-                                                                <div class="flex justify-between">
-                                                                    <dt class="font-medium text-gray-900"> ID compte :
-                                                                    </dt>
-                                                                    <dd>{{ $item->num_acompte ?? '—' }}</dd>
-                                                                </div>
-                                                                <div class="flex justify-between mt-3">
-                                                                    <dt class="font-medium text-gray-900"> Nom & Prénom
-                                                                        :
-                                                                    </dt>
-                                                                    <dd>{{ $item->full_name ?? '—' }}</dd>
-                                                                </div>
-                                                            @else
-                                                                <div class="flex justify-between">
-                                                                    <dt class="font-medium text-gray-900"> ID compte
-                                                                        :
-                                                                    </dt>
-                                                                    <dd>{{ $item->num_acompte ?? '—' }}</dd>
-                                                                </div>
-                                                                <div class="flex justify-between mt-3">
-                                                                    <dt class="font-medium text-gray-900"> Ville
-                                                                        :
-                                                                    </dt>
-                                                                    <dd>{{ $item->citie_name ?? '—' }}</dd>
-                                                                </div>
-                                                                <div class="flex justify-between mt-3">
-                                                                    <dt class="font-medium text-gray-900"> Rue
-                                                                        :
-                                                                    </dt>
-                                                                    <dd>{{ $item->area_name ?? '—' }}</dd>
-                                                                </div>
-                                                                <div class="flex justify-between mt-3">
-                                                                    <dt class="font-medium text-gray-900">
-                                                                        Code demande :
-                                                                    </dt>
-                                                                    <dd>{{ $item->code_acompte ?? '—' }}</dd>
-                                                                </div>
-                                                            @endif
+                                                            <dl class="space-y-2 text-sm text-gray-700 mr-2">
+                                                                @if ($item->choose_type_transaction == 1)
+                                                                    <div class="flex justify-between">
+                                                                        <dt class="font-medium text-gray-900"> ID compte
+                                                                            :
+                                                                        </dt>
+                                                                        <dd>{{ $item->num_acompte ?? '—' }}</dd>
+                                                                    </div>
+                                                                    <div class="flex justify-between mt-3">
+                                                                        <dt class="font-medium text-gray-900"> Nom &
+                                                                            Prénom
+                                                                            :
+                                                                        </dt>
+                                                                        <dd>{{ $item->full_name ?? '—' }}</dd>
+                                                                    </div>
+                                                                @else
+                                                                    <div class="flex justify-between">
+                                                                        <dt class="font-medium text-gray-900"> ID compte
+                                                                            :
+                                                                        </dt>
+                                                                        <dd>{{ $item->num_acompte ?? '—' }}</dd>
+                                                                    </div>
+                                                                    <div class="flex justify-between mt-3">
+                                                                        <dt class="font-medium text-gray-900"> Ville
+                                                                            :
+                                                                        </dt>
+                                                                        <dd>{{ $item->city_robus ?? '—' }}</dd>
+                                                                    </div>
+                                                                    <div class="flex justify-between mt-3">
+                                                                        <dt class="font-medium text-gray-900"> Rue
+                                                                            :
+                                                                        </dt>
+                                                                        <dd>{{ $item->street_robus ?? '—' }}</dd>
+                                                                    </div>
+                                                                    <div class="flex justify-between mt-3">
+                                                                        <dt class="font-medium text-gray-900">
+                                                                            Code rétrait :
+                                                                        </dt>
+                                                                        <dd>{{ $item->code_drawal ?? '—' }}</dd>
+                                                                    </div>
+                                                                @endif
 
 
-                                                        </dl>
+                                                            </dl>
 
-
+                                                        </div>
                                                     </div>
                                                 @endif
                                             </td>
@@ -237,8 +245,9 @@
                                             <td class="w-40">
                                                 <div class="flex justify-center items-center">
                                                     @if ($item->updated_by != null)
-                                                        @if (($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
-                                                                  ($item->status === 'PROCESSING' && $item->updated_by == Auth::guard('web')->user()->id))
+                                                        @if (
+                                                            ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
+                                                                ($item->status === 'PROCESSING' && $item->updated_by == Auth::guard('web')->user()->id))
                                                             @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                 <a wire:click="editXbet({{ $item->id }}, 'update-xbet-modal')"
                                                                     class="btn btn-primary mr-1 mb-2 btn-sm"

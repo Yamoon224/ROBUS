@@ -106,61 +106,6 @@
                                     {{ $item->email ?? 'Non renseigné' }}
                                 </div>
 
-                                @if ($item->company_id != null && $item->company_id != 1)
-                                    <div class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
-
-                                        @if ($item->is_accepted_companie)
-                                            @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
-                                                <div class="flex items-center justify-center text-success">
-                                                    <a wire:click="editConnectedCompanie({{ $item->id }}, 'show-connected-company-modal'); $emit('show-connected-company-modal')"
-                                                        class="flex items-center mr-3 @if ($item->is_accepted_companie == 1) @else @endif"
-                                                        href="javascript:;" wire:loading.attr="disabled"
-                                                        title="@if ($item->is_accepted_companie == 1) Désactiver @else Activer @endif">
-                                                        Déja attribuer a
-                                                        {{ $item->company_id != null ? $item->company->name : null }}
-                                                    </a>
-                                                </div>
-                                                <div class="flex items-center justify-center text-pending mt-3">
-                                                    <a wire:click="editConnectedCompanie({{ $item->id }}, 'show-desactive-company-modal'); $emit('show-desactive-company-modal')"
-                                                        class="flex items-center mr-3 @if ($item->is_accepted_companie == 1) @else @endif"
-                                                        href="javascript:;" wire:loading.attr="disabled"
-                                                        title="@if ($item->is_accepted_companie == 1) Désactiver @else Activer @endif">
-                                                        Rétirer a
-                                                        {{ $item->company_id != null ? $item->company->name : null }}
-                                                    </a>
-                                                </div>
-                                            @endif
-                                        @else
-                                            @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
-                                                <div class="flex items-center justify-center text-danger">
-                                                    <a wire:click="editConnectedCompanie({{ $item->id }}, 'show-connected-company-modal'); $emit('show-connected-company-modal')"
-                                                        class="flex items-center mr-3 @if ($item->is_accepted_companie == 1) @else @endif"
-                                                        href="javascript:;"
-                                                        title="@if ($item->is_accepted_companie == 1) Désactiver @else Activer @endif">
-                                                        Attribution en attente
-                                                    </a>
-
-                                                </div>
-                                            @endif
-                                        @endif
-
-
-                                    </div>
-                                @else
-                                    @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
-                                        <div class="flex items-center justify-center text-primary ">
-
-                                            <a wire:click="addConnectedCompanie({{ $item->id }}, 'show-connected-company-modal'); $emit('show-connected-company-modal')"
-                                                class="flex items-center mr-3 @if ($item->is_accepted_companie == 1) @else @endif"
-                                                href="javascript:;" wire:loading.attr="disabled"
-                                                title="@if ($item->is_accepted_companie == 1) Désactiver @else Activer @endif">
-                                                Lié a une compagnie
-                                            </a>
-
-                                        </div>
-                                    @endif
-                                @endif
-
                             </td>
 
 

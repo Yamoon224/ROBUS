@@ -23,7 +23,9 @@
 
                                 @if ($image_frontend_inter_edit)
                                     @php
-                                        $img = asset_url($image_frontend_inter_edit) ?? asset_url('image_inters/' . $image_frontend_inter_edit);
+                                        $img =
+                                            asset_url($image_frontend_inter_edit) ??
+                                            asset_url('image_inters/' . $image_frontend_inter_edit);
                                     @endphp
 
                                     <a href="{{ $img }}" download target="_blank" class="relative group">
@@ -55,7 +57,8 @@
                                 @if ($image_frontend_inter_edit)
                                     @php
                                         $imgFront =
-                                            asset_url($image_frontend_inter_edit) ?? asset_url('image_inters/' . $image_frontend_inter_edit);
+                                            asset_url($image_frontend_inter_edit) ??
+                                            asset_url('image_inters/' . $image_frontend_inter_edit);
                                     @endphp
 
                                     <a href="{{ $imgFront }}" download target="_blank" class="relative group">
@@ -161,7 +164,7 @@
                         </div>
                     </div>
                 </div>
-                 <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
                     <div class="col-span-6 mt-space-padding">
                         <label class="form-label">Montant <span class="text-danger">*</span></label>
                         <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
@@ -217,6 +220,13 @@
                             <div class="col-span-6 mt-space-padding">
                                 <label class="form-label">{{ $phoneNumberLabel }} <span
                                         class="text-danger">*</span></label>
+                                <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                    <i class="fas fa-mobile-alt text-gray-500 mr-3"></i>
+                                    <span class="text-gray-800 font-mono">{{ $phoneNumberValue }}</span>
+                                </div>
+                            </div>
+                            <div class="col-span-6 mt-space-padding">
+                                <label class="form-label">Nom & Prénom <span class="text-danger">*</span></label>
                                 <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
                                     <i class="fas fa-mobile-alt text-gray-500 mr-3"></i>
                                     <span class="text-gray-800 font-mono">{{ $phoneNumberValue }}</span>
@@ -494,6 +504,65 @@
                         </div>
                     </div>
                 </div>
+            @elseif($choose_type_paiement == 9)
+                <!-- Rechargement carte -->
+                <div class="mb-2 mr-6 ml-6 text-center text-primary dark:text-white text-xl mt-3">Versement Bancaires
+                </div>
+                <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-6">
+                    <div class="col-span-6">
+                        <label class="form-label">Canal rechargement de carte <span
+                                class="text-danger">*</span></label>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <i class="fas fa-credit-card text-gray-500 mr-3"></i>
+                            <span
+                                class="text-gray-800 font-medium">{{ $provider_phone_credit_inter_edit ?? 'Non spécifié' }}</span>
+                        </div>
+                    </div>
+                    <div class="col-span-6">
+                        <label class="form-label">Numero du compte <span class="text-danger">*</span></label>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <i class="fas fa-phone text-gray-500 mr-3"></i>
+                            <span
+                                class="text-gray-800 font-mono">{{ $numAccompte ?? 'Non renseigné' }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                    <div class="col-span-6 mt-space-padding">
+                        <label class="form-label">Montant <span class="text-danger">*</span></label>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <i class="fas fa-money-bill-wave text-gray-500 mr-3"></i>
+                            <span class="text-gray-800 font-medium">{{ $amount_virement_inter_edit ?? '0' }}</span>
+                            <span class="ml-2 text-gray-600 font-mono">{{ $devise_user ?? '' }}</span>
+                        </div>
+                    </div>
+                    <div class="col-span-6 mt-space-padding">
+                        <label class="form-label">Pays <span class="text-danger">*</span></label>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <i class="fas fa-globe text-gray-500 mr-3"></i>
+                            <span
+                                class="text-gray-800 font-medium">{{ $country_inter_robus_inter_edit ?? 'Non spécifié' }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                    <div class="col-span-6 mt-space-padding">
+                        <label class="form-label">Nom et prénom <span class="text-danger">*</span></label>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <i class="fas fa-user text-gray-500 mr-3"></i>
+                            <span
+                                class="text-gray-800 font-medium">{{ $name ?? 'Non spécifié' }}</span>
+                        </div>
+                    </div>
+                    <div class="col-span-6 mt-space-padding">
+                        <label class="form-label">Téléphone <span class="text-danger">*</span></label>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <i class="fas fa-credit-card text-gray-500 mr-3"></i>
+                            <span
+                                class="text-gray-800 font-mono">{{ $phone_user_edit ?? 'Non renseigné' }}</span>
+                        </div>
+                    </div>
+                </div>
             @endif
             <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-3">
                 <div class="col-span-12 mt-space">
@@ -504,17 +573,17 @@
 
                 </div>
             </div>
-              <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-6">
+            <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-6">
 
                 <div
                     class=" col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
-                    <input wire:click="tryOpenModalInter('validated-inter-modal')"
-                        wire:model="interStatus" id="bordered-radio-50" type="radio" value="SUCCESS"
+                    <input wire:click="tryOpenModalInter('validated-inter-modal')" wire:model="interStatus"
+                        id="bordered-radio-50" type="radio" value="SUCCESS"
                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                     <label for="bordered-radio-50"Modi
                         class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">
-                         <i class="fas fa-check-circle style_success"></i>
-                        
+                        <i class="fas fa-check-circle style_success"></i>
+
                         Accepté</label>
                     @error('interStatus')
                         <span class="text-danger">{{ $message }}</span>
@@ -522,12 +591,12 @@
                 </div>
                 <div
                     class="col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
-                    <input wire:click="tryOpenModalInter('validated-inter-modal')"
-                        wire:model="interStatus" id="bordered-radio-51" type="radio" value="ERROR"
+                    <input wire:click="tryOpenModalInter('validated-inter-modal')" wire:model="interStatus"
+                        id="bordered-radio-51" type="radio" value="ERROR"
                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                     <label for="bordered-radio-51"
                         class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">
-                         <i class="fas fa-times-circle style_error"></i>
+                        <i class="fas fa-times-circle style_error"></i>
                         Refusé</label>
                     @error('interStatus')
                         <span class="text-danger">{{ $message }}</span>

@@ -98,57 +98,61 @@
                                                       @include('components.info')
                                                   </div>
                                                   @if ($item->updated_by == null)
-                                                      <p class="font-medium whitespace-nowrap">
-                                                          @if ($item->factureChoix_type == 1)
-                                                              <div
-                                                                  class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                                  <div class="fc-event-title-container"
-                                                                      style="color: white;">
-                                                                      <div class="fc-event-title fc-sticky">
-                                                                          Facture
-                                                                          prépayée</div>
-                                                                  </div>
-                                                              </div>
-                                                              {{ substr($item->id_invoice ?? null, 0, 5) }}
-                                                          @elseif($item->factureChoix_type == 2)
-                                                              <div
-                                                                  class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                                  <div class="fc-event-title-container"
-                                                                      style="color: white;">
-                                                                      <div class="fc-event-title fc-sticky">
-                                                                          Facture
-                                                                          normale</div>
-                                                                  </div>
-                                                              </div>
-                                                              {{ substr($item->id_invoice ?? null, 0, 5) }}
-                                                          @elseif($item->paiementChoix_phone == 1)
-                                                              <div
-                                                                  class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                                  <div class="fc-event-title-container"
-                                                                      style="color: white;">
-                                                                      <div class="fc-event-title fc-sticky">
-
-                                                                          Numero de telephone</div>
-                                                                  </div>
-                                                              </div>
-
-                                                              {{ substr($item->number_phone ?? null, 0, 6) }}
-                                                          @elseif($item->paiementChoix_phone == 2)
-                                                              <div
-                                                                  class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                                  <div class="fc-event-title-container"
-                                                                      style="color: white;">
-                                                                      <div class="fc-event-title fc-sticky">
-                                                                          Numero du decodeur
+                                                      <div class="user-name">
+                                                          <p class="font-medium whitespace-nowrap">
+                                                              @if ($item->factureChoix_type == 1)
+                                                                  <div
+                                                                      class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                      <div class="fc-event-title-container"
+                                                                          style="color: white;">
+                                                                          <div class="fc-event-title fc-sticky">
+                                                                              Facture
+                                                                              prépayée</div>
                                                                       </div>
                                                                   </div>
-                                                              </div>
-                                                              {{ substr($item->number_decoder, 0, 5) }}
-                                                          @elseif ($item->paiementChoix_phone == null && $item->factureChoix_type == null)
-                                                              {{ substr($item->number_contract ?? null, 0, 5) }}
-                                                          @endif
+                                                                  {{ substr($item->id_invoice ?? null, 0, 5) }}
+                                                              @elseif($item->factureChoix_type == 2)
+                                                                  <div
+                                                                      class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                      <div class="fc-event-title-container"
+                                                                          style="color: white;">
+                                                                          <div class="fc-event-title fc-sticky">
+                                                                              Facture
+                                                                              normale</div>
+                                                                      </div>
+                                                                  </div>
+                                                                  {{ substr($item->id_invoice ?? null, 0, 5) }}
+                                                              @elseif($item->paiementChoix_phone == 1)
+                                                                  <div
+                                                                      class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                      <div class="fc-event-title-container"
+                                                                          style="color: white;">
+                                                                          <div class="fc-event-title fc-sticky">
 
-                                                      </p>
+                                                                              Numero de telephone</div>
+                                                                      </div>
+                                                                  </div>
+
+                                                                  {{ substr($item->number_phone ?? null, 0, 6) }}
+                                                              @elseif($item->paiementChoix_phone == 2)
+                                                                  <div
+                                                                      class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                      <div class="fc-event-title-container"
+                                                                          style="color: white;">
+                                                                          <div class="fc-event-title fc-sticky">
+                                                                              Numero du decodeur
+                                                                          </div>
+                                                                      </div>
+                                                                  </div>
+                                                                  {{ substr($item->number_decoder, 0, 5) }}
+                                                              @elseif ($item->paiementChoix_phone == null && $item->factureChoix_type == null)
+                                                                  {{ substr($item->number_contract ?? null, 0, 5) }}
+                                                              @endif
+
+                                                          </p>
+                                                      </div>
+
+
                                                       <div class="flex items-center justify-center text-success mt-3">
 
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
@@ -159,56 +163,59 @@
 
                                                       </div>
                                                   @else
-                                                      <p class="font-medium whitespace-nowrap">
-                                                          @if ($item->factureChoix_type == 1)
-                                                              <div
-                                                                  class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                                  <div class="fc-event-title-container"
-                                                                      style="color: white;">
-                                                                      <div class="fc-event-title fc-sticky">
-                                                                          Facture
-                                                                          prépayée</div>
-                                                                  </div>
-                                                              </div>
-                                                              {{ $item->id_invoice ?? null }}
-                                                          @elseif($item->factureChoix_type == 2)
-                                                              <div
-                                                                  class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                                  <div class="fc-event-title-container"
-                                                                      style="color: white;">
-                                                                      <div class="fc-event-title fc-sticky">
-                                                                          Facture
-                                                                          normale</div>
-                                                                  </div>
-                                                              </div>
-                                                              {{ $item->id_invoice ?? null }}
-                                                          @elseif($item->paiementChoix_phone == 1)
-                                                              <div
-                                                                  class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                                  <div class="fc-event-title-container"
-                                                                      style="color: white;">
-                                                                      <div class="fc-event-title fc-sticky">
-
-                                                                          Numero de telephone</div>
-                                                                  </div>
-                                                              </div>
-
-                                                              {{ $item->number_phone ?? null }}
-                                                              
-                                                          @elseif($item->paiementChoix_phone == 2)
-                                                              <div
-                                                                  class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                                  <div class="fc-event-title-container"
-                                                                      style="color: white;">
-                                                                      <div class="fc-event-title fc-sticky">
-                                                                          Numero du decodeur
+                                                      <div class="user-name">
+                                                          <p class="font-medium whitespace-nowrap">
+                                                              @if ($item->factureChoix_type == 1)
+                                                                  <div
+                                                                      class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                      <div class="fc-event-title-container"
+                                                                          style="color: white;">
+                                                                          <div class="fc-event-title fc-sticky">
+                                                                              Facture
+                                                                              prépayée</div>
                                                                       </div>
                                                                   </div>
-                                                              </div>
-                                                          @else
-                                                              {{ $item->number_contract ?? null }}
-                                                          @endif
-                                                      </p>
+                                                                  {{ $item->id_invoice ?? null }}
+                                                              @elseif($item->factureChoix_type == 2)
+                                                                  <div
+                                                                      class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                      <div class="fc-event-title-container"
+                                                                          style="color: white;">
+                                                                          <div class="fc-event-title fc-sticky">
+                                                                              Facture
+                                                                              normale</div>
+                                                                      </div>
+                                                                  </div>
+                                                                  {{ $item->id_invoice ?? null }}
+                                                              @elseif($item->paiementChoix_phone == 1)
+                                                                  <div
+                                                                      class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                      <div class="fc-event-title-container"
+                                                                          style="color: white;">
+                                                                          <div class="fc-event-title fc-sticky">
+
+                                                                              Numero de telephone</div>
+                                                                      </div>
+                                                                  </div>
+
+                                                                  {{ $item->number_phone ?? null }}
+                                                              @elseif($item->paiementChoix_phone == 2)
+                                                                  <div
+                                                                      class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                      <div class="fc-event-title-container"
+                                                                          style="color: white;">
+                                                                          <div class="fc-event-title fc-sticky">
+                                                                              Numero du decodeur
+                                                                          </div>
+                                                                      </div>
+                                                                  </div>
+                                                                  {{ $item->number_decoder }}
+
+                                                              @else
+                                                                  {{ $item->number_contract ?? null }}
+                                                              @endif
+                                                          </p>
+                                                      </div>
                                                   @endif
                                               </td>
 
@@ -219,7 +226,8 @@
                                               <td class="w-40">
                                                   <div class="flex justify-center items-center">
                                                       @if ($item->updated_by != null)
-                                                          @if (($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
+                                                          @if (
+                                                              ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
                                                                   ($item->status === 'PROCESSING' && $item->updated_by == Auth::guard('web')->user()->id))
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                   <a wire:click="editPaiement({{ $item->id }}, 'update-paiementInvoice-modal')"

@@ -20,7 +20,7 @@ class OneXbetSingleCollection extends JsonResource
             'amount' =>  number_format((float)$this->amount, 2, '.', ''),
             'amount_wallet' =>  optional($this->wallet)->amount . ' ' . optional($this->wallet->currencie)->code,
             'date_created' =>  $this->created_at,
-            'type' => $this->choose_type_transaction == 1 ? 'Depot 1Xbet ' : ' Retrait 1Xbet',
+            'type' => $this->choose_type_transaction == 1 ? 'Depot 1Xbet' : 'Retrait 1Xbet',
             'date_treatment' =>  optional($this->transaction)->created_at,
             'Reference'  => optional($this->transaction)->transaction_id,
             'name' =>  $this->name,

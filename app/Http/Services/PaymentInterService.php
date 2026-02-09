@@ -51,8 +51,10 @@ class PaymentInterService
         $amount_conversion,
         $number_contract,
         $paiementChoix_phone,
+        $facture_choix_type,
         $offers,
-        $amount_receveid
+        $amount_receveid,
+        $name
     ) {
         $amount_solde = robus()->wallet->amount - $val_amount;
 
@@ -61,7 +63,7 @@ class PaymentInterService
             'wallet_id' =>   robus()->wallet->id,
             'balance_before' =>  robus()->wallet->amount,
             'amount' => $val_amount,
-            'description'  => "Credit telephonique",
+            'description'  => "Paiement facture",
             'inter_cost_id' => null,
             'provider_type' =>  5,
             'payment_cost_id' => $percent_robus->id,
@@ -77,6 +79,7 @@ class PaymentInterService
             'costs_amount' =>  $amount_conversion,
             'country_id'  =>   $country_robus->id,
             'paiementChoix_phone'  => $paiementChoix_phone ?? null,
+            'factureChoix_type' =>  $facture_choix_type ?? null,
             'amount_received' =>  $amount_receveid ?? null,
         ]);
     }
@@ -163,7 +166,6 @@ class PaymentInterService
         if (robus()->is_under_distributer || robus()->is_api) {
 
             $valuer_deposit_amount =  $percent_robus->percent_merchands;
-            $admin_nocomission =  $percent_robus->amount_auther;
             $valuer_companie = $percent_robus->percent_companie;
             $banque_valeur =  (float)  $percent_robus->bank_comission;
 

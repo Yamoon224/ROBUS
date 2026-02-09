@@ -37,7 +37,7 @@ class InterTransactionSingleCollection extends JsonResource
             // 'name_user_send' => isset(optional($this->wallet)->sidUser->lastname) ? (optional($this->wallet)->sidUser->lastname) : null,
             'phone_user_send' => optional($this->wallet)->sidUser->phone ?? null,
             'date_created' =>  $this->created_at,
-            'type' =>  'Transfert internationnal',
+            'type' =>  'Transfert international',
             'date_treatment' =>  optional($this->transactionInter)->created_at,
             'Reference'  => optional($this->transactionInter)->transaction_id,
             'description'  =>  $this->description,
@@ -50,6 +50,18 @@ class InterTransactionSingleCollection extends JsonResource
             'number_contract'  =>  $this->number_contract ?? null,
             'id_invoice_pre'  =>  $this->id_invoice_pre ?? null,
             'name'  =>  $this->name ?? $this->name_complet ?? null,
+
+            // New information Projet
+            'num_piece'  =>  $this->num_piece ?? null,
+            'validated_date'  =>  $this->validated_date ??  null,
+            'type_received'  =>  $this->type_received ?? null,
+            'phone_benef'  =>  $this->phone_benef  ?? null,
+            'name_benef'  =>  $this->name_benef  ?? null,
+            'bank_code'  =>  $this->bank_code  ?? null,
+            'guichet_code'  =>  $this->guichet_code  ?? null,
+            'num_authers'  =>  $this->num_authers  ?? null,
+            'type_piece'  =>  $this->type_piece  ?? null,
+
             'number_phone'  =>  $this->number_phone ?? null,
             'master_cost_percent' =>  number_format((float)$this->commission_masters, 2, '.', '') . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA") ?? null,
             'amount_received' => number_format((float)$this->amount_received, 2, '.', ' ') . ' ' . optional($this->country->currencie)->code ?? null,

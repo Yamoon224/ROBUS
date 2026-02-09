@@ -111,22 +111,16 @@ class PhoneCreditInterService
         $amount_percent =  $amount * $percent_robus->percent;
 
         $valuer_deposit = (float) $percent_robus->percent_merchands * $amount;
+        $valuer_companie = $percent_robus->percent_companie * $amount;
 
         $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($amount_percent);
 
         $commission_convertion =  $this->convertionService->convertAdminCommission($valuer_deposit);
+        $commission_bank_convertion =  $this->convertionService->convertAdminCommission($valuer_companie);
 
         if (robus()->is_under_distributer || robus()->is_api) {
 
             if (!empty($activeButtons['showRemonterInterButton'])) {
-
-                $valuer_companie = $percent_robus->percent_companie * $amount;
-
-                $cumul_valeurs = (float) $valuer_companie + (float) $valuer_deposit;
-
-                $admin_valeur = (float) $amount_percent - (float) $cumul_valeurs;
-
-                $admin_convertion =  $this->convertionService->convertAdminCommission($admin_valeur);
 
                 $walletPhone->increment('commissions', $valuer_deposit);
 
@@ -134,22 +128,16 @@ class PhoneCreditInterService
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterInterCButton'])) {
                     $walletPhone->increment('commission_companie', $valuer_companie);
-                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ,  'wallet_inter_id',  $walletPhone->id, $admin_convertion, $valuer_deposit);
+                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ,  'wallet_inter_id',  $walletPhone->id, $commission_bank_convertion, $commission_convertion);
                 } else {
-                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ,  'wallet_inter_id',  $walletPhone->id, $commission_convertion, $valuer_deposit);
-
+                    $this->commissionServices->distributeAdminNoCommissionInterCompagnies($admin_civ,  'wallet_inter_id',  $walletPhone->id, $commission_bank_convertion , $commission_convertion);
                 }
-            } else {
-
-                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_inter_id',  $walletPhone->id, $admin_valeur_convertion);
             }
         } else {
 
             $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_inter_id',  $walletPhone->id, $admin_valeur_convertion);
-
         }
 
         return true;
     }
-
 }

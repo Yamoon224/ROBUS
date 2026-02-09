@@ -759,7 +759,7 @@ class IntersPaymentController extends Controller
                 $percent_robus =  $this->percentRobus->getRobusPercentagePaymentInter();
 
                 // Providers SODECI; CIE and SODECI
-                if (robus()->country->code != 'CI') {
+                // if (robus()->country->code != 'CI') {
 
                     $validationRules = [];
                     $validationMessages = [];
@@ -833,13 +833,13 @@ class IntersPaymentController extends Controller
 
                             if ($request->provider != 52) {
 
-                                $amount_receved = $request->amount;
-
                                 $valeur_convertion_amount =   $this->convertionservice->convertAdminCommissionPayment($percent_robus->amount_auther);
+
+                                $amount_receved = (float) $request->amount - (float) $valeur_convertion_amount;
 
                                 $valeur_convertion =   $request->amount;
 
-                                $amount_valeur = $request->amount + $valeur_convertion_amount;
+                                $amount_valeur = $request->amount ;
 
                                 $amount_commission = $percent_robus->amount_auther;
 
@@ -878,8 +878,10 @@ class IntersPaymentController extends Controller
                                     $valeur_convertion_comi,
                                     $request->number_contract,
                                     $request->paiementChoix_phone,
+                                    $request->facture_choix_type,
                                     $offers,
-                                    $valeur_convertion_amount_receved
+                                    $valeur_convertion_amount_receved,
+                                    $request->name,
                                 );
 
                                 if ($request->provider != 52) {
@@ -917,12 +919,12 @@ class IntersPaymentController extends Controller
 
                         return  json_message_response(false, "Pas de poucentage defini dans cette zone !", 333);
                     }
-                } else {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Les fournisseurs ne sont pas des pays ',
-                    ], 333);
-                }
+                // } else {
+                //     return response()->json([
+                //         'success' => false,
+                //         'message' => 'Les fournisseurs ne sont pas des pays ',
+                //     ], 333);
+                // }
             } elseif ($request->provider_type == 6) {
 
                 // Phone credit
@@ -1190,7 +1192,7 @@ class IntersPaymentController extends Controller
                     } else {
                         return   json_message_response(false, "Votre montant journalier est atteint !", 333);
                     }
-                } else {
+                }  else {
 
                     return response()->json([
                         'success' => false,
@@ -1437,7 +1439,7 @@ class IntersPaymentController extends Controller
 
                         if ($this->validatedamountDays->validateAmount($reel_amount)) {
 
-                            $walletVersement =  $this->interServices->createWithVersementWalletInter($reel_amount, $percent_robus, $country_robus, $request->provider, $request->provider_type, $request->num_authers, $request->guichet_code, $request->bank_code, $request->num_accompte);
+                            $walletVersement =  $this->interServices->createWithVersementWalletInter($reel_amount, $percent_robus, $country_robus, $request->provider, $request->provider_type, $request->num_authers, $request->guichet_code, $request->bank_code, $request->num_accompte , $request->name);
 
                             if ($walletVersement != null) {
 
@@ -2512,7 +2514,7 @@ class IntersPaymentController extends Controller
                 }
 
 
-                $valeur_receive =  (float) $amount_invoice_inter;
+                $valeur_receive =  (float) $amount_invoice_inter - (float) $commission_reload_inter_val_inter_percent_pay;
 
                 if ($valeur_receive < 0) {
 
@@ -2526,7 +2528,7 @@ class IntersPaymentController extends Controller
                     'success' => $commission_invoice != null ? true : false,
                     'data' =>  [
                         'amount_commission' => $commission_reload_inter_val_inter_percent_pay,
-                        'amount_pay' => $commission_paiement_invoice_val_inter_pay,
+                        'amount_pay' => (robus()->is_under_distributer || robus()->is_api) ? $commission_paiement_invoice_val_inter_pay : $commission_paiement_invoice_val_inter_pay ,
                         'amount_receive' => $commission_paiement_invoice_val_inter_receive,
                     ],
                 ], 200);

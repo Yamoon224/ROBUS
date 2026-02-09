@@ -68,8 +68,7 @@
                                                       $userCurrencyValue > 0
                                                           ? $amountReceived / $userCurrencyValue
                                                           : null;
-                                              }
-                                              /**
+                                              } /**
                                                * Cas 2 : le pays de la transaction n'est PAS CFA
                                                * → convertir vers CFA puis vers devise utilisateur
                                                */ else {
@@ -85,15 +84,15 @@
                                           <tr class="intro-x">
                                               <td class="text-center w-40">
 
-                                                 <div
-                                                    class="px-3 py-2 text-dark btn-pink dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                    <div class="fc-event-title-container" style="color: white;">
-                                                        <div class="fc-event-title fc-sticky">
-                                                            {{ $item->provider->name ?? null }}
+                                                  <div
+                                                      class="px-3 py-2 text-dark btn-pink dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                      <div class="fc-event-title-container" style="color: white;">
+                                                          <div class="fc-event-title fc-sticky">
+                                                              {{ $item->provider->name ?? null }}
 
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                          </div>
+                                                      </div>
+                                                  </div>
 
 
                                               </td>
@@ -122,30 +121,33 @@
                                                       @include('components.info')
 
                                                   </div>
-                                                 
-                                                  @if ($item->updated_by == null)
-                                                      {{ substr($item->phone ?? null, 0, 6) }}
-                                                      <p class="font-medium whitespace-nowrap">
-                                                          Nom& Prenom(S) :
-                                                          {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
 
-                                                      </p>
-                                                      <p class="font-medium whitespace-nowrap mt-1">
-                                                          N0 : {{ $item->num_piece ?? null }}
-                                                      </p>
-                                                      <p class="font-medium whitespace-nowrap">
-                                                          Date validité :
-                                                          {{ $item->validated_date ?? null }}
-                                                      </p>
-                                                      @if ($item->provider_id == 99)
+                                                  @if ($item->updated_by == null)
+                                                      <div class="user-name">
+                                                          {{ substr($item->phone ?? null, 0, 6) }}
                                                           <p class="font-medium whitespace-nowrap">
-                                                              Nom du beneficiaire : {{ $item->name_benef ?? null }}
-                                                              Numero Compte banque :
-                                                              {{ $item->number_compte ?? null }}
-                                                              Nom banque : {{ $item->name ?? null }}
+                                                              Nom& Prenom(S) :
+                                                              {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
 
                                                           </p>
-                                                      @endif
+                                                          <p class="font-medium whitespace-nowrap mt-1">
+                                                              N0 : {{ $item->num_piece ?? null }}
+                                                          </p>
+                                                          <p class="font-medium whitespace-nowrap">
+                                                              Date validité :
+                                                              {{ $item->validated_date ?? null }}
+                                                          </p>
+                                                          @if ($item->provider_id == 99)
+                                                              <p class="font-medium whitespace-nowrap">
+                                                                  Nom du beneficiaire : {{ $item->name_benef ?? null }}
+                                                                  Numero Compte banque :
+                                                                  {{ $item->number_compte ?? null }}
+                                                                  Nom banque : {{ $item->name ?? null }}
+
+                                                              </p>
+                                                          @endif
+                                                      </div>
+
 
                                                       <div class="flex items-center justify-center text-success mt-3">
 
@@ -157,7 +159,7 @@
 
                                                       </div>
                                                   @else
-                                                     
+                                                  <div class="user-name">
                                                       {{ $item->phone ?? null }}
                                                       <p class="font-medium whitespace-nowrap">
                                                           Nom& Prenom(S) :
@@ -186,6 +188,7 @@
 
                                                           </p>
                                                       @endif
+                                                        </div>
                                                   @endif
 
                                               </td>
@@ -265,15 +268,15 @@
                                               <td class="w-56">
                                                   <div class="flex justify-center items-center">
                                                       @if ($item->updated_by != null)
-                                                          @if (($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
+                                                          @if (
+                                                              ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
                                                                   ($item->status === 'PROCESSING' && $item->updated_by == Auth::guard('web')->user()->id))
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-
-                                                                   <a wire:click="editBankSend({{ $item->id }}, 'update-bankSend-modal')"
+                                                                  <a wire:click="editBankSend({{ $item->id }}, 'update-bankSend-modal')"
                                                                       class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                       href="javascript:;" title="Modifier">
-                                                                      
-                                                                       <svg class="w-4 h-4 mr-1" fill="none"
+
+                                                                      <svg class="w-4 h-4 mr-1" fill="none"
                                                                           stroke="currentColor" viewBox="0 0 24 24">
                                                                           <path stroke-linecap="round"
                                                                               stroke-linejoin="round" stroke-width="2"

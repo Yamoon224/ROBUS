@@ -44,6 +44,7 @@ class WithBankSendSingleCollection extends JsonResource
             'swit_code'  =>  $this->swit_code,
             'name'  =>  $this->name,
             'image'  =>  $this->image,
+            'type_piece'  =>  $this->type_piece  ?? null,
             'choose_transaction' => $this->choose_transaction == 1 ? 'Transfert' : 'Retrait',
             'amount_received'  => number_format((float)$this->amount_received, 2, '.', ' '),
             'number_phone' =>  $this->number_phone,

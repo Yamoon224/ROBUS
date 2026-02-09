@@ -37,8 +37,6 @@ class DjamoTransactionSingleCollection extends JsonResource
             'balance_before'  => $this->balance_before . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
             'solde_account'  => $this->amount_solde .  ' ' . optional($this->wallet->currencie)->code ?? null,
 
-
-
         ];
     }
 }

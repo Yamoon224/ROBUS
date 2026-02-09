@@ -1470,6 +1470,14 @@ class Transfers extends Component
         $this->phone_invoice_inter_edit = $check->phone_invoice ?? null;
         $this->id_invoice_inter_edit =  $check->id_invoice ?? null;
 
+        // Update versements
+        $this->numAccompte = $check->num_accompte;
+        $this->versementAmount = $check->amount_received;
+        $this->bank_code_edit = $check->bank_code;
+        $this->guichet_edit = $check->guichet_code;
+        $this->num_auther_edit = $check->num_authers;
+        $this->name = $check->full_name;
+
         $this->emit($state);
     }
 
@@ -2475,6 +2483,7 @@ class Transfers extends Component
                             if ($check->choose_transaction == "Retrait" || $check->choose_transaction == 2) {
                                 $this->updateUserDrawalWallet($check->amount_received);
                                 $this->updateReloadWallet($check, $check->amount_received);
+                                $this->updatedAmountSoldeWallet($check, $check->amount_received);
                             } else {
                                 $this->updateUserWallet($commission_transaction);
                             }
@@ -2675,6 +2684,7 @@ class Transfers extends Component
                             if ($check->choose_transaction == "Retrait" || $check->choose_transaction == 2) {
                                 $this->updateUserDrawalWallet($check->amount_received);
                                 $this->updateReloadWallet($check, $check->amount_received);
+                                $this->updatedAmountSoldeWallet($check, $check->amount_received);
                             } else {
                                 $this->updateUserWallet($commission_transaction);
                             }
@@ -2879,6 +2889,7 @@ class Transfers extends Component
                             if ($check->choose_transaction == "Retrait" || $check->choose_transaction == 2) {
                                 $this->updateUserDrawalWallet($check->amount_received);
                                 $this->updateReloadWallet($check, $check->amount_received);
+                                $this->updatedAmountSoldeWallet($check, $check->amount_received);
                             } else {
                                 $this->updateUserWallet($commission_transaction);
                             }
@@ -3265,6 +3276,7 @@ class Transfers extends Component
                             if ($check->type_transaction == "Retrait") {
                                 $this->updateUserDrawalWallet($check->amount_received);
                                 $this->updateReloadWallet($check, $check->amount_received);
+                                $this->updatedAmountSoldeWallet($check, $check->amount_received);
                             } else {
                                 $this->updateUserWallet($commission_transaction);
                             }
@@ -3720,9 +3732,83 @@ class Transfers extends Component
                                     if ($valeur_amount_com !== null && $check->commissions !== null) {
                                         app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Paiement international");
                                     } else {
-                                        $this->cancelReloadCardField();
-                                        $this->emit('modal-hide-reloadCard');
+                                        $this->cancelInterField();
+                                        $this->emit('modal-hide-inters');
                                         $this->emit('success', 'Rechargement Acceptée sans commission sous-distibuteur !');
+                                        return;
+                                    }
+                                } else {
+
+                                    app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                                }
+                            } else if ($check->provider_type == 5) {
+
+                                if ($check->wallet->sidUser->is_under_distributer == true) {
+
+                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorPaiementCommission($check, $admin_civ, "Paiment commission Paiement de facture a international");
+                                    } else {
+                                        $this->cancelInterField();
+                                        $this->emit('modal-hide-inters');
+                                        $this->emit('success', 'Paiement international Accepté !');
+                                        return;
+                                    }
+                                } else {
+
+                                    if ($check->provider_id == 52) {
+                                        app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                                    } else {
+                                        app(CommissionServiceBackend::class)->handleAdminPaimentCommission($check, $admin_civ);
+                                    }
+                                }
+                            } else if ($check->provider_type == 6) {
+
+                                if ($check->wallet->sidUser->is_under_distributer == true) {
+
+                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Credit telephonique a international");
+                                    } else {
+                                        $this->cancelInterField();
+                                        $this->emit('modal-hide-inters');
+                                        $this->emit('success', 'La demande de Transferts de credit téléphonique a été acceptée après analyse');
+                                        return;
+                                    }
+                                } else {
+
+                                    app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                                }
+                            } else if ($check->provider_type == 7) {
+
+                                if ($check->wallet->sidUser->is_under_distributer == true) {
+
+                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorAndCompanieCommission($check, $admin_civ, "Paiment commission Rechargement de carte");
+                                    } else {
+                                        $this->cancelInterField();
+                                        $this->emit('modal-hide-inters');
+                                        $this->emit('modal-hide-inters-validated');
+                                        $this->emit('success', 'Rechargement de carte Acceptée a l\'international !');
+                                        return;
+                                    }
+                                } else {
+
+                                    app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                                }
+                            } else if ($check->provider_type == 9) {
+
+                                if ($check->wallet->sidUser->is_under_distributer == true) {
+
+                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Virement");
+                                    } else {
+                                        $this->cancelInterField();
+                                        $this->emit('modal-hide-inters');
+                                        $this->emit('modal-hide-inters-validated');
+                                        $this->emit('success', 'Versement Acceptée a l\'international ');
                                         return;
                                     }
                                 } else {
@@ -3922,7 +4008,7 @@ class Transfers extends Component
 
                             $this->cancelPaiementField();
                             $this->emit('modal-hide-paiement');
-                            $this->emit('success', 'Paiement Accepté !');
+                            $this->emit('success', 'La demande de paiement de facture a été acceptée après analyse !');
 
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
@@ -5646,6 +5732,17 @@ class Transfers extends Component
         ]);
     }
 
+    protected function updatedAmountSoldeWallet($check, $commission)
+    {
+
+        $amount_update =  (float) $check->balance_before + (float) $commission;
+
+        return $check->update([
+            'amount_solde' => $amount_update,
+        ]);
+    }
+
+
     protected function updateReloadDrawalWallet($check)
     {
 
@@ -5927,9 +6024,10 @@ class Transfers extends Component
             100,
             101,
             102,
+            // New SODECI
             53,
             54,
-            52,
+            // End CIE
             56,
             57,
             58

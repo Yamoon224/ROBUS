@@ -94,8 +94,12 @@
                                                   <div class="mb-3">
                                                       @include('components.info')
                                                   </div>
+
                                                   @if ($item->updated_by == null)
-                                                      {{ substr($item->phone ?? null, 0, 5) }}
+                                                      <div class="user-name">
+                                                          {{ substr($item->phone ?? null, 0, 5) }}
+
+                                                      </div>
                                                       <div class="flex items-center justify-center text-success mt-3">
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                               <x-take-action-button action="ChooseUpdatePhoneCredit"
@@ -105,10 +109,13 @@
 
                                                       </div>
                                                   @else
-                                                      <p class="font-medium whitespace-nowrap">
-                                                          {{ $item->phone ?? null }}
+                                                      <div class="user-name">
+                                                          <p class="font-medium whitespace-nowrap">
+                                                              {{ $item->phone ?? null }}
 
-                                                      </p>
+                                                          </p>
+
+                                                      </div>
                                                   @endif
                                               </td>
 
@@ -144,7 +151,8 @@
                                                                   </a>
                                                               @endif
                                                           @elseif($item->status === 'PROCESSING')
-                                                              <div  class="flex flex-col items-center justify-center space-y-2">
+                                                              <div
+                                                                  class="flex flex-col items-center justify-center space-y-2">
                                                                   {{-- Message en haut --}}
                                                                   <div
                                                                       class="transaction-progress-alert w-full text-center text-blue-500">

@@ -102,23 +102,26 @@
                                                       @include('components.info')
                                                   </div>
                                                   @if ($item->updated_by == null)
-                                                      <div class="p-4  rounded-lg shadow-sm">
-                                                          <dl class="space-y-2 text-sm text-gray-700 mr-2">
-                                                              <div class="flex justify-between">
-                                                                  <dt class="font-medium text-gray-900">
-                                                                      Nom & Prénom :
-                                                                  </dt>
-                                                                  <dd>{{ $item->full_name ?? '—' }}</dd>
-                                                              </div>
-                                                              <div class="flex justify-between mt-3">
-                                                                  <dt class="font-medium text-gray-900"> Numero :
-                                                                  </dt>
-                                                                  <dd>
-                                                                      {{ substr($item->phone ?? null, 0, 5) }}
-                                                                  </dd>
-                                                              </div>
-                                                          </dl>
+                                                      <div class="user-name">
+                                                          <div class="p-4  rounded-lg shadow-sm">
+                                                              <dl class="space-y-2 text-sm text-gray-700 mr-2">
+                                                                  <div class="flex justify-between">
+                                                                      <dt class="font-medium text-gray-900">
+                                                                          Nom & Prénom :
+                                                                      </dt>
+                                                                      <dd>{{ $item->full_name ?? '—' }}</dd>
+                                                                  </div>
+                                                                  <div class="flex justify-between mt-3">
+                                                                      <dt class="font-medium text-gray-900"> Numero :
+                                                                      </dt>
+                                                                      <dd>
+                                                                          {{ substr($item->phone ?? null, 0, 5) }}
+                                                                      </dd>
+                                                                  </div>
+                                                              </dl>
+                                                          </div>
                                                       </div>
+
 
                                                       <div class="flex items-center justify-center mt-4">
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
@@ -134,29 +137,31 @@
                                                           @endif
                                                       </div>
                                                   @else
-                                                      <div class="p-4  rounded-lg shadow-sm">
-                                                          <dl class="space-y-2 text-sm text-gray-700 mr-2">
-                                                              <div class="flex justify-between">
-                                                                  <dt class="font-medium text-gray-900">
-                                                                      Nom & Prénom :
-                                                                  </dt>
-                                                                  <dd>{{ $item->full_name ?? '—' }}</dd>
-                                                              </div>
-                                                              <div class="flex justify-between mt-3">
-                                                                  <dt class="font-medium text-gray-900"> Numero :
-                                                                  </dt>
-                                                                  <dd>
-                                                                      {{ $item->phone ?? null }}
-                                                                  </dd>
-                                                              </div>
-                                                          </dl>
+                                                      <div class="user-name">
+                                                          <div class="p-4  rounded-lg shadow-sm">
+                                                              <dl class="space-y-2 text-sm text-gray-700 mr-2">
+                                                                  <div class="flex justify-between">
+                                                                      <dt class="font-medium text-gray-900">
+                                                                          Nom & Prénom :
+                                                                      </dt>
+                                                                      <dd>{{ $item->full_name ?? '—' }}</dd>
+                                                                  </div>
+                                                                  <div class="flex justify-between mt-3">
+                                                                      <dt class="font-medium text-gray-900"> Numero :
+                                                                      </dt>
+                                                                      <dd>
+                                                                          {{ $item->phone ?? null }}
+                                                                      </dd>
+                                                                  </div>
+                                                              </dl>
+                                                          </div>
                                                       </div>
+
                                                       @if ($item->choose_transaction == 2)
                                                           <div
                                                               class="flex items-center justify-center text-success mt-3">
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                  <x-take-action-button
-                                                                      action="ChooseDrawalUpdatePush"
+                                                                  <x-take-action-button action="ChooseDrawalUpdatePush"
                                                                       :itemId="$item->id"
                                                                       label="Je confirme pour le retrait"
                                                                       speed="ultra-fast" color="purple" />

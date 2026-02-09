@@ -92,12 +92,12 @@
                                                         style="color: white;">
                                                         Rechargement carte
                                                     </span>
-                                                @elseif($item->provider_type == 10)
+                                                @elseif($item->provider_type == 9)
                                                     <span
                                                         class="alert alert-success  inline-flex items-center justify-center px-2 py-1 mb-3 
                                               text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
                                                         style="color: white;">
-                                                        Rechargement Bank send
+                                                        Versement bancaire
 
 
                                                     </span>
@@ -251,109 +251,183 @@
 
                                                 </div>
                                                 @if ($item->updated_by == null)
-                                                    @if ($item->provider_type == 8)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container" style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Rechargement carte</div>
+                                                    <div class="user-name">
+                                                        @if ($item->provider_type == 8)
+                                                            <div
+                                                                class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Rechargement carte</div>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        {{ substr($item->number_card ?? null, 0, 5) }}
-                                                    @elseif($item->provider_type == 5)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container" style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Paiement Facture</div>
+                                                            {{ substr($item->number_card ?? null, 0, 5) }}
+                                                        @elseif($item->provider_type == 5)
+                                                            <div
+                                                                class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Paiement Facture</div>
 
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        @if ($item->factureChoix_type == 1)
-                                                            <div class="alert alert-dark show mb-2" role="alert">
-                                                                Facture
-                                                                prépayée</div>
-                                                            {{ substr($item->id_invoice ?? null, 0, 5) }}
-                                                        @elseif($item->factureChoix_type == 2)
-                                                            <div class="alert alert-dark show mb-2" role="alert">
-                                                                Facture
-                                                                Normale</div>
-                                                            {{ substr($item->id_invoice ?? null, 0, 5) }}
-                                                        @elseif($item->paiementChoix_phone == 1)
-                                                            <div class="alert alert-dark show mb-2" role="alert">
-                                                                Numero de telephone</div>
-                                                            {{ substr($item->number_phone ?? null, 0, 6) }}
-                                                        @elseif ($item->paiementChoix_phone == 2)
-                                                            <div class="alert alert-dark show mb-2" role="alert">
-                                                                Numero du decodeur</div>
-                                                            {{ substr($item->number_decoder ?? null, 0, 5) }}
-                                                        @elseif($item->paiementChoix_phone == null && $item->factureChoix_type == null)
-                                                            <div class="alert alert-dark show mb-2" role="alert">
-                                                                Numero du contrat</div>
-                                                            {{ substr($item->number_contract ?? null, 0, 5) }}
-                                                            {{ substr($item->id_invoice ?? null, 0, 5) }}
-                                                        @endif
-                                                    @elseif ($item->provider_type == 1)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container" style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Paiement Mooney</div>
+                                                            @if ($item->factureChoix_type == 1)
+                                                                <div class="alert alert-dark show mb-2" role="alert">
+                                                                    Facture
+                                                                    prépayée</div>
+                                                                {{ substr($item->id_invoice ?? null, 0, 5) }}
+                                                            @elseif($item->factureChoix_type == 2)
+                                                                <div class="alert alert-dark show mb-2" role="alert">
+                                                                    Facture
+                                                                    Normale</div>
+                                                                {{ substr($item->id_invoice ?? null, 0, 5) }}
+                                                            @elseif($item->paiementChoix_phone == 1)
+                                                                <div class="alert alert-dark show mb-2" role="alert">
+                                                                    Numero de telephone</div>
+                                                                {{ substr($item->number_phone ?? null, 0, 6) }}
+                                                            @elseif ($item->paiementChoix_phone == 2)
+                                                                <div class="alert alert-dark show mb-2" role="alert">
+                                                                    Numero du decodeur</div>
+                                                                {{ substr($item->number_decoder ?? null, 0, 5) }}
+                                                            @elseif($item->paiementChoix_phone == null && $item->factureChoix_type == null)
+                                                                <div class="alert alert-dark show mb-2" role="alert">
+                                                                    Numero du contrat</div>
+                                                                {{ substr($item->number_contract ?? null, 0, 5) }}
+                                                                {{ substr($item->id_invoice ?? null, 0, 5) }}
+                                                            @endif
+                                                        @elseif ($item->provider_type == 1)
+                                                            @if ($item->provider_id == 105 || $item->provider_id == 106)
+                                                                <div
+                                                                    class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                    <div class="fc-event-title-container"
+                                                                        style="color: white;">
+                                                                        <div class="fc-event-title fc-sticky">
+                                                                            Transfert </div>
+                                                                    </div>
+                                                                </div>
+                                                                {{ substr($item->phone ?? null, 0, 6) }}
+                                                                <p class="font-medium whitespace-nowrap">
+                                                                    Nom& Prenom(S) :
+                                                                    {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
+
+                                                                </p>
+                                                            @elseif($item->provider_id == 104)
+                                                                <div
+                                                                    class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                    <div class="fc-event-title-container"
+                                                                        style="color: white;">
+                                                                        <div class="fc-event-title fc-sticky">
+                                                                            Transfert Djamo</div>
+                                                                    </div>
+                                                                </div>
+                                                                {{ substr($item->phone ?? null, 0, 6) }}
+                                                                <p class="font-medium whitespace-nowrap">
+                                                                    Nom& Prenom(S) :
+                                                                    {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
+
+                                                                </p>
+                                                                <div
+                                                                    class="flex flex-col items-center justify-center gap-2 p-2 bg-gray-50 mt-3">
+                                                                    <i class="fas fa-qrcode text-gray-400 text-xl"></i>
+
+                                                                    @if ($item->image)
+                                                                        <img src="{{ asset_url($item->image) ?? asset_url('image_inters/' . $item->image) }}"
+                                                                            alt="QR Code Djamo"
+                                                                            class="qr-blur w-20 h-20 object-contain rounded-lg border border-gray-300 shadow-sm">
+                                                                    @else
+                                                                        <span class="text-gray-400 italic">Aucune image
+                                                                            disponible</span>
+                                                                    @endif
+                                                                </div>
+                                                            @else
+                                                                <div
+                                                                    class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                    <div class="fc-event-title-container"
+                                                                        style="color: white;">
+                                                                        <div class="fc-event-title fc-sticky">
+                                                                            Paiement Mooney</div>
+                                                                    </div>
+                                                                </div>
+                                                                {{ substr($item->phone ?? null, 0, 6) }}
+                                                                <p class="font-medium whitespace-nowrap">
+                                                                    Nom& Prenom(S) :
+                                                                    {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
+
+                                                                </p>
+                                                                <p class="font-medium whitespace-nowrap mt-1">
+                                                                    N0 : {{ $item->num_piece ?? null }}
+                                                                </p>
+                                                                <p class="font-medium whitespace-nowrap">
+                                                                    Date validité :
+                                                                    {{ $item->validated_date ?? null }}
+                                                                </p>
+                                                                @if ($item->provider_id == 99)
+                                                                    <p class="font-medium whitespace-nowrap">
+                                                                        Nom du beneficiaire :
+                                                                        {{ $item->name_benef ?? null }}
+                                                                        Numero Compte banque :
+                                                                        {{ $item->number_compte ?? null }}
+                                                                        Nom banque : {{ $item->name ?? null }}
+
+                                                                    </p>
+                                                                @endif
+                                                            @endif
+                                                        @elseif ($item->provider_type == 6)
+                                                            <div
+                                                                class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Credit telephonique</div>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        {{ substr($item->phone ?? null, 0, 6) }}
-                                                        <p class="font-medium whitespace-nowrap">
-                                                            Nom& Prenom(S) :
-                                                            {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
-
-                                                        </p>
-                                                        <p class="font-medium whitespace-nowrap mt-1">
-                                                            N0 : {{ $item->num_piece ?? null }}
-                                                        </p>
-                                                        <p class="font-medium whitespace-nowrap">
-                                                            Date validité :
-                                                            {{ $item->validated_date ?? null }}
-                                                        </p>
-                                                        @if ($item->provider_id == 99)
-                                                            <p class="font-medium whitespace-nowrap">
-                                                                Nom du beneficiaire : {{ $item->name_benef ?? null }}
-                                                                Numero Compte banque :
-                                                                {{ $item->number_compte ?? null }}
-                                                                Nom banque : {{ $item->name ?? null }}
-
+                                                            {{ substr($item->phone ?? null, 0, 6) }}
+                                                        @elseif ($item->provider_type == 7)
+                                                            <div
+                                                                class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Versement bancaire</div>
+                                                                </div>
+                                                            </div>
+                                                            {{ substr($item->number_compte ?? null, 0, 5) }}
+                                                        @elseif ($item->provider_type == 9)
+                                                            <div
+                                                                class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Versement bancaire</div>
+                                                                </div>
+                                                            </div>
+                                                            <dt class="font-medium whitespace-nowrap">
+                                                                Num : {{ substr($item->number_compte, 0, 5) }}
+                                                            </dt>
+                                                            <p class="font-medium whitespace-nowrap mt-3">
+                                                                Guichet : {{ substr($item->bank_code, 0, 5) }}
                                                             </p>
-                                                        @endif
-                                                    @elseif ($item->provider_type == 6)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container" style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Credit telephonique</div>
-                                                            </div>
-                                                        </div>
-                                                        {{ substr($item->phone ?? null, 0, 6) }}
-                                                    @elseif ($item->provider_type == 7)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container" style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Versement bancaire</div>
-                                                            </div>
-                                                        </div>
-                                                        {{ substr($item->number_compte ?? null, 0, 5) }}
-                                                    @elseif ($item->provider_type == 10)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container" style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Rechargement Bank send</div>
-                                                            </div>
-                                                        </div>
-                                                        <p>Numéro Swift :
-                                                            {{ substr($item->num_authers ?? null, 0, 5) }}</p>
 
-                                                        <p>Banque : {{ substr($item->name ?? null, 0, 5) }}</p>
-                                                    @endif
+                                                            <p class="font-medium whitespace-nowrap mt-3">
+                                                                Nom & Prenom : {{ substr($item->name, 0, 5) }}
+                                                            </p>
+                                                        @elseif ($item->provider_type == 10)
+                                                            <div
+                                                                class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Rechargement Bank send</div>
+                                                                </div>
+                                                            </div>
+                                                            <p>Numéro Swift :
+                                                                {{ substr($item->num_authers ?? null, 0, 5) }}</p>
+
+                                                            <p>Banque : {{ substr($item->name ?? null, 0, 5) }}</p>
+                                                        @endif
+                                                    </div>
+
 
                                                     <div class="flex items-center justify-center text-success mt-3">
 
@@ -365,120 +439,263 @@
 
                                                     </div>
                                                 @else
-                                                    @if ($item->provider_type == 8)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container"
-                                                                style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Rechargement carte</div>
+                                                    <div class="user-name">
+                                                        @if ($item->provider_type == 8)
+                                                            <div
+                                                                class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Rechargement carte</div>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        {{ $item->number_card ?? null }}
-                                                    @elseif($item->provider_type == 5)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container"
-                                                                style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Paiement Facture</div>
+                                                            {{ $item->number_card ?? null }}
+                                                        @elseif($item->provider_type == 5)
+                                                            <div
+                                                                class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Paiement Facture</div>
+
+                                                                </div>
+                                                            </div>
+                                                            @if ($item->factureChoix_type == 1)
+                                                                <div class="alert alert-dark show mb-2"
+                                                                    role="alert">
+                                                                    Facture
+                                                                    prépayée</div>
+                                                                {{ $item->id_invoice ?? null }}
+                                                            @elseif($item->factureChoix_type == 2)
+                                                                <div class="alert alert-dark show mb-2"
+                                                                    role="alert">
+                                                                    Facture
+                                                                    Normale</div>
+                                                                {{ $item->id_invoice ?? null }}
+                                                            @elseif($item->paiementChoix_phone == 1)
+                                                                <div class="alert alert-dark show mb-2"
+                                                                    role="alert">
+                                                                    Numero de telephone</div>
+                                                                {{ $item->number_phone ?? null }}
+                                                            @elseif ($item->paiementChoix_phone == 2)
+                                                                <div class="alert alert-dark show mb-2"
+                                                                    role="alert">
+                                                                    Numero du decodeur</div>
+                                                                {{ $item->number_decoder ?? null }}
+                                                            @elseif($item->paiementChoix_phone == null && $item->factureChoix_type == null)
+                                                                <div class="alert alert-dark show mb-2"
+                                                                    role="alert">
+                                                                    Numero du contrat</div>
+                                                                {{ $item->number_contract ?? $item->id_invoice }}
+                                                            @endif
+                                                        @elseif ($item->provider_type == 1)
+                                                            @if ($item->provider_id == 99)
+                                                                <div
+                                                                    class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                    <div class="fc-event-title-container"
+                                                                        style="color: white;">
+                                                                        <div class="fc-event-title fc-sticky">
+                                                                            Paiement </div>
+                                                                    </div>
+                                                                </div>
+                                                                {{ $item->phone ?? null }}
+                                                                <p class="font-medium whitespace-nowrap">
+                                                                    Nom& Prenom(S) :
+                                                                    {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
+
+                                                                </p>
+                                                                <p class="font-medium whitespace-nowrap mt-1">
+                                                                    N0 : {{ $item->num_piece ?? null }}
+                                                                </p>
+                                                                <p class="font-medium whitespace-nowrap">
+                                                                    Date validité :
+                                                                    {{ $item->validated_date ? date('d-M-y', strtotime($item->validated_date)) : null }}
+                                                                </p>
+                                                                <p class="font-medium whitespace-nowrap">
+                                                                    Nom du bénéficiaire :
+                                                                    {{ $item->name_benef ?? null }}
+
+                                                                </p>
+                                                                <p class="font-medium whitespace-nowrap">
+                                                                    Numero Compte banque :
+                                                                    {{ $item->number_compte ?? null }}
+
+                                                                </p>
+                                                                <p class="font-medium whitespace-nowrap">
+                                                                    Nom banque : {{ $item->name ?? null }}
+
+                                                                </p>
+                                                            @elseif ($item->provider_id == 104)
+                                                                <div
+                                                                    class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                    <div class="fc-event-title-container"
+                                                                        style="color: white;">
+                                                                        <div class="fc-event-title fc-sticky">
+                                                                            Transfert Djamo </div>
+                                                                    </div>
+                                                                </div>
+                                                                {{ $item->phone ?? null }}
+                                                                <p class="font-medium whitespace-nowrap">
+                                                                    Nom& Prenom(S) :
+                                                                    {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
+
+                                                                </p>
+                                                                <p class="font-medium whitespace-nowrap mt-1">
+                                                                    Numero : {{ $item->phone ?? null }}
+                                                                </p>
+                                                                <div
+                                                              class="flex flex-col items-center justify-center gap-2 p-2 bg-gray-50 mt-3">
+                                                              <i class="fas fa-qrcode text-gray-400 text-xl"></i>
+
+                                                              @if ($item->image)
+                                                                  <img src="{{ asset_url($item->image) ?? asset_url('image_inters/' . $item->image) }}"
+                                                                      alt="QR Code Djamo"
+                                                                      class="w-24 h-24 object-contain rounded-lg border border-gray-300 shadow-sm">
+                                                              @else
+                                                                  <span class="text-gray-400 italic">Aucune image
+                                                                      disponible</span>
+                                                              @endif
+                                                          </div>
+                                                            @elseif ($item->provider_id == 105)
+                                                                <div
+                                                                    class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                    <div class="fc-event-title-container"
+                                                                        style="color: white;">
+                                                                        <div class="fc-event-title fc-sticky">
+                                                                            Transfert Push </div>
+                                                                    </div>
+                                                                </div>
+                                                                {{ $item->phone ?? null }}
+                                                                <p class="font-medium whitespace-nowrap">
+                                                                    Nom& Prenom(S) :
+                                                                    {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
+
+                                                                </p>
+                                                                <p class="font-medium whitespace-nowrap mt-1">
+                                                                    Numero : {{ $item->phone ?? null }}
+                                                                </p>
+                                                            @elseif ($item->provider_id == 106)
+                                                                <div
+                                                                    class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                    <div class="fc-event-title-container"
+                                                                        style="color: white;">
+                                                                        <div class="fc-event-title fc-sticky">
+                                                                            Transfert Tresort Money </div>
+                                                                    </div>
+                                                                </div>
+                                                                {{ $item->phone ?? null }}
+                                                                <p class="font-medium whitespace-nowrap">
+                                                                    Nom& Prenom(S) :
+                                                                    {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
+
+                                                                </p>
+                                                                <p class="font-medium whitespace-nowrap mt-1">
+                                                                    Numero : {{ $item->phone ?? null }}
+                                                                </p>
+                                                            @else
+                                                                <div
+                                                                    class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                    <div class="fc-event-title-container"
+                                                                        style="color: white;">
+                                                                        <div class="fc-event-title fc-sticky">
+                                                                            Paiement </div>
+                                                                    </div>
+                                                                </div>
+                                                                {{ $item->phone ?? null }}
+                                                                <p class="font-medium whitespace-nowrap">
+                                                                    Nom& Prenom(S) :
+                                                                    {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
+
+                                                                </p>
+                                                                <p class="font-medium whitespace-nowrap mt-1">
+                                                                    N0 : {{ $item->num_piece ?? null }}
+                                                                </p>
+                                                                <p class="font-medium whitespace-nowrap">
+                                                                    Date validité :
+                                                                    {{ $item->validated_date ? date('d-M-y', strtotime($item->validated_date)) : null }}
+                                                                </p>
+                                                            @endif
+                                                        @elseif ($item->provider_type == 6)
+                                                            <div
+                                                                class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Credit telephonique</div>
+                                                                </div>
+                                                            </div>
+                                                            {{ $item->phone ?? null }}
+                                                        @elseif ($item->provider_type == 7)
+                                                            <div
+                                                                class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Versement bancaire</div>
+                                                                </div>
+                                                            </div>
+                                                            {{ $item->number_compte ?? null }}
+                                                        @elseif ($item->provider_type == 9)
+                                                            <div
+                                                                class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Versement bancaire</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="p-4  rounded-lg shadow-sm">
+
+                                                                <dl class="space-y-2 text-sm text-gray-700 mr-2">
+                                                                    <div class="flex justify-between">
+                                                                        <dt class="font-medium text-gray-900">
+                                                                            Num :
+                                                                        </dt>
+                                                                        <dd>{{ $item->number_compte ?? '—' }}
+                                                                        </dd>
+                                                                    </div>
+
+                                                                    <div class="flex justify-between mt-3">
+                                                                        <dt class="font-medium text-gray-900">
+                                                                            Code
+                                                                            Guichet
+                                                                            :
+                                                                        </dt>
+                                                                        <dd>{{ $item->guichet_code ?? '—' }}
+                                                                        </dd>
+                                                                    </div>
+
+                                                                    <div class="flex justify-between mt-3">
+                                                                        <dt class="font-medium text-gray-900">
+                                                                            Code
+                                                                            Banque
+                                                                            :
+                                                                        </dt>
+                                                                        <dd>{{ $item->bank_code ?? '—' }}
+                                                                        </dd>
+                                                                    </div>
+
+                                                                    <div class="flex justify-between mt-3">
+                                                                        <dt class="font-medium text-gray-900">
+                                                                            Clé RIB :
+                                                                        </dt>
+                                                                        <dd>{{ $item->num_authers ?? '—' }}
+                                                                        </dd>
+                                                                    </div>
+                                                                    <div class="flex justify-between mt-3">
+                                                                        <dt class="font-medium text-gray-900">
+                                                                            Nom &
+                                                                            Prénom
+                                                                            :
+                                                                        </dt>
+                                                                        <dd>{{ $item->name ?? '—' }}</dd>
+                                                                    </div>
+                                                                </dl>
+
 
                                                             </div>
-                                                        </div>
-                                                        @if ($item->factureChoix_type == 1)
-                                                            <div class="alert alert-dark show mb-2" role="alert">
-                                                                Facture
-                                                                prépayée</div>
-                                                            {{ $item->id_invoice ?? null }}
-                                                        @elseif($item->factureChoix_type == 2)
-                                                            <div class="alert alert-dark show mb-2" role="alert">
-                                                                Facture
-                                                                Normale</div>
-                                                            {{ $item->id_invoice ?? null }}
-                                                        @elseif($item->paiementChoix_phone == 1)
-                                                            <div class="alert alert-dark show mb-2" role="alert">
-                                                                Numero de telephone</div>
-                                                            {{ $item->number_phone ?? null }}
-                                                        @elseif ($item->paiementChoix_phone == 2)
-                                                            <div class="alert alert-dark show mb-2" role="alert">
-                                                                Numero du decodeur</div>
-                                                            {{ $item->number_decoder ?? null }}
-                                                        @elseif($item->paiementChoix_phone == null && $item->factureChoix_type == null)
-                                                            <div class="alert alert-dark show mb-2" role="alert">
-                                                                Numero du contrat</div>
-                                                            {{ $item->number_contract ?? $item->id_invoice }}
                                                         @endif
-                                                    @elseif ($item->provider_type == 1)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container"
-                                                                style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Paiement Mooney</div>
-                                                            </div>
-                                                        </div>
-                                                        {{ $item->phone ?? null }}
-                                                        <p class="font-medium whitespace-nowrap">
-                                                            Nom& Prenom(S) :
-                                                            {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
-
-                                                        </p>
-                                                        <p class="font-medium whitespace-nowrap mt-1">
-                                                            N0 : {{ $item->num_piece ?? null }}
-                                                        </p>
-                                                        <p class="font-medium whitespace-nowrap">
-                                                            Date validité :
-                                                            {{ $item->validated_date ? date('d-M-y', strtotime($item->validated_date)) : null }}
-                                                        </p>
-                                                        @if ($item->provider_id == 99)
-                                                            <p class="font-medium whitespace-nowrap">
-                                                                Nom du bénéficiaire : {{ $item->name_benef ?? null }}
-
-                                                            </p>
-                                                            <p class="font-medium whitespace-nowrap">
-                                                                Numero Compte banque :
-                                                                {{ $item->number_compte ?? null }}
-
-                                                            </p>
-                                                            <p class="font-medium whitespace-nowrap">
-                                                                Nom banque : {{ $item->name ?? null }}
-
-                                                            </p>
-                                                        @endif
-                                                    @elseif ($item->provider_type == 6)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container"
-                                                                style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Credit telephonique</div>
-                                                            </div>
-                                                        </div>
-                                                        {{ $item->phone ?? null }}
-                                                    @elseif ($item->provider_type == 7)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container"
-                                                                style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Versement bancaire</div>
-                                                            </div>
-                                                        </div>
-                                                        {{ $item->number_compte ?? null }}
-                                                    @elseif ($item->provider_type == 10)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container"
-                                                                style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Rechargement Bank send</div>
-                                                            </div>
-                                                        </div>
-                                                        <p>Numéro Swift :
-                                                            {{ substr($item->num_authers ?? null, 0, 5) }}</p>
-
-                                                        <p>Banque : {{ substr($item->name ?? null, 0, 5) }}</p>
-                                                    @endif
+                                                    </div>
                                                 @endif
                                             </td>
                                             <td class="w-40">
@@ -555,13 +772,14 @@
                                             <td class="w-56">
                                                 <div class="flex justify-center items-center">
                                                     @if ($item->updated_by != null)
-                                                        @if (($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
-                                                                  ($item->status === 'PROCESSING' && $item->updated_by == Auth::guard('web')->user()->id))
+                                                        @if (
+                                                            ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
+                                                                ($item->status === 'PROCESSING' && $item->updated_by == Auth::guard('web')->user()->id))
                                                             @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                 <a wire:click="editInter({{ $item->id }}, 'update-interTransfers-modal')"
                                                                     class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                     href="javascript:;" title="Modifier">
-                                                                     Traité mainteant
+                                                                    Traité mainteant
                                                                 </a>
                                                             @endif
                                                         @elseif ($item->status == 'SUCCESS' && $item->updated_by == Auth::guard('web')->user()->id)

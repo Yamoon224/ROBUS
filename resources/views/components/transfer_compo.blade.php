@@ -128,14 +128,20 @@
                                                 <div class="mb-3">
                                                     @include('components.info')
                                                 </div>
-                                                <span style="background-color: red;"
-                                                    class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                    {{ $item->wallet->sidUser->country->name ?? null }}
-                                                </span>
+                                                <div class="user-name">
+                                                    <span style="background-color: red;"
+                                                        class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                        {{ $item->wallet->sidUser->country->name ?? null }}
+                                                    </span>
+                                                </div>
+
                                                 @if ($item->updated_by == null)
-                                                    <p class="font-medium whitespace-nowrap">
-                                                        {{ substr($item->phone ?? ($item->num_wallet ?? null), 0, 6) }}
-                                                    </p>
+                                                    <div class="user-name">
+                                                        <p class="font-medium whitespace-nowrap">
+                                                            {{ substr($item->phone ?? ($item->num_wallet ?? null), 0, 6) }}
+                                                        </p>
+                                                    </div>
+
 
                                                     <div class="flex items-center justify-center text-success mt-3">
                                                         @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
@@ -158,25 +164,27 @@
                                                             Verifier la transaction
                                                         </div>
                                                     @endif
-                                                    <p class="font-medium whitespace-nowrap">
-                                                        {{ $item->phone ?? null }}
-                                                        {{ $item->num_wallet ?? null }}
-                                                    </p>
-
-                                                    @if ($item->type_transaction === "Retrait")
-                                                        <div class="flex items-center justify-center text-success mt-3">
-                                                        @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                            <x-take-action-button action="ChooseUpdateDrawalTransaction"
-                                                                    :itemId="$item->id" label="Je confirme pour le retrait"
-                                                                    speed="ultra-fast" color="purple" />
-                                                        @endif
-
+                                                    <div class="user-name">
+                                                        <p class="font-medium whitespace-nowrap">
+                                                            {{ $item->phone ?? null }}
+                                                            {{ $item->num_wallet ?? null }}
+                                                        </p>
                                                     </div>
+
+                                                    @if ($item->type_transaction === 'Retrait')
+                                                        <div class="flex items-center justify-center text-success mt-3">
+                                                            @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                                <x-take-action-button
+                                                                    action="ChooseUpdateDrawalTransaction"
+                                                                    :itemId="$item->id"
+                                                                    label="Je confirme pour le retrait"
+                                                                    speed="ultra-fast" color="purple" />
+                                                            @endif
+
+                                                        </div>
                                                     @endif
-                                                      
-                                                
                                                 @endif
-                                               
+
                                             </td>
 
                                             <td class="w-40">

@@ -35,7 +35,7 @@ class MobileWalletTransactionService
 
         $val_amount = $transaction_amount_money;
 
-        $amount_solde = (float)robus()->wallet->amount - (float)$val_amount;
+        $amount_solde = (float)robus()->wallet->amount ;
 
         return $this->transctionRepository->create(
             [
@@ -305,21 +305,15 @@ class MobileWalletTransactionService
 
                 //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) robus()->country->currencie->value;
-                $percent_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
                 $percent_valeur_compagnie =   (float)  $valuer_companie *   (float) robus()->country->currencie->value;
-                $percents =   (float)  $valeur_percent_valeur *   (float) robus()->country->currencie->value;
             } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
                 //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit;
-                $percent_valeur_convertion =   (float)  $valuer_admin;
                 $percent_valeur_compagnie =   (float)  $valuer_companie;
-                $percents =   (float)  $valeur_percent_valeur;
             } else {
                 //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) robus()->country->currencie->value;
-                $percent_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
                 $percent_valeur_compagnie =   (float)  $valuer_companie *   (float) robus()->country->currencie->value;
-                $percents =   (float)  $valeur_percent_valeur *   (float) robus()->country->currencie->value;
             }
 
             if (!empty($activeButtons['showRemonterRetraitButton'])) {

@@ -285,7 +285,7 @@ class PaymentController extends Controller
 
                             if ($request->provider != 7) {
 
-                                $walletPayment =  $this->paymentService->createRobusWalletTransactionPayment($amount_send, $request->provider, $percent_robus, $request->number_phone, $offers,  $request->paiementChoix_phone, $request->facture_choix_type, $request->number_decoder, $request->id_invoice, $request->number_contract, $amountReceved);
+                                $walletPayment =  $this->paymentService->createRobusWalletTransactionPayment($amount_send, $request->provider, $percent_robus, $request->number_phone, $offers,  $request->paiementChoix_phone, $request->facture_choix_type, $request->number_decoder, $request->id_invoice, $request->number_contract, $amountReceved ,  $request->name);
 
                                 if ($walletPayment != null) {
 

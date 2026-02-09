@@ -103,10 +103,12 @@
                                                   @if ($item->updated_by == null)
                                                       <div
                                                           class="flex flex-col md:flex-row items-center justify-center gap-4 mt-4 p-4 ">
-                                                          <p class="font-medium whitespace-nowrap mt-1">
-                                                              Numero : {{ $item->phone ?? null }}
-                                                          </p>
 
+                                                          <div class="user-name">
+                                                              <p class="font-medium whitespace-nowrap mt-1">
+                                                                  Numero : {{ $item->phone ?? null }}
+                                                              </p>
+                                                          </div>
                                                           <!-- Bouton action -->
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                               @if ($item->choose_transaction == 1)
@@ -138,28 +140,30 @@
                                                           @endif
                                                       </div>
                                                   @else
-                                                      <p class="font-medium whitespace-nowrap mt-1">
-                                                          Numero : {{ $item->phone ?? null }}
-                                                      </p>
-                                                      <div
-                                                          class="flex flex-col items-center justify-center gap-2 p-2 bg-gray-50 mt-3">
-                                                          <i class="fas fa-qrcode text-gray-400 text-xl"></i>
+                                                      <div class="user-name">
+                                                          <p class="font-medium whitespace-nowrap mt-1">
+                                                              Numero : {{ $item->phone ?? null }}
+                                                          </p>
+                                                          <div
+                                                              class="flex flex-col items-center justify-center gap-2 p-2 bg-gray-50 mt-3">
+                                                              <i class="fas fa-qrcode text-gray-400 text-xl"></i>
 
-                                                          @if ($item->image)
-                                                              <img src="{{ asset_url($item->image) ?? asset_url('image_inters/' . $item->image) }}"
-                                                                  alt="QR Code Djamo"
-                                                                  class="w-24 h-24 object-contain rounded-lg border border-gray-300 shadow-sm">
-                                                          @else
-                                                              <span class="text-gray-400 italic">Aucune image
-                                                                  disponible</span>
-                                                          @endif
+                                                              @if ($item->image)
+                                                                  <img src="{{ asset_url($item->image) ?? asset_url('image_inters/' . $item->image) }}"
+                                                                      alt="QR Code Djamo"
+                                                                      class="w-24 h-24 object-contain rounded-lg border border-gray-300 shadow-sm">
+                                                              @else
+                                                                  <span class="text-gray-400 italic">Aucune image
+                                                                      disponible</span>
+                                                              @endif
+                                                          </div>
                                                       </div>
-                                                        @if ($item->choose_transaction == 2)
+
+                                                      @if ($item->choose_transaction == 2)
                                                           <div
                                                               class="flex items-center justify-center text-success mt-3">
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                  <x-take-action-button
-                                                                      action="ChooseDrawalUpdateDjamo"
+                                                                  <x-take-action-button action="ChooseDrawalUpdateDjamo"
                                                                       :itemId="$item->id"
                                                                       label="Je confirme pour le retrait"
                                                                       speed="ultra-fast" color="purple" />
