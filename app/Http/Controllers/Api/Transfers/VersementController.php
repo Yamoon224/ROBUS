@@ -203,7 +203,11 @@ class VersementController extends Controller
 
                         $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-                        $percent_amount = $percent_robus->percent * $reel_amount;
+                        if (robus()->is_under_distributer == 1 || robus()->is_api) {
+                            $percent_amount = $percent_robus->percent * $reel_amount;
+                        } else {
+                            $percent_amount = $percent_robus->percent_custumer * $reel_amount;
+                        }
 
                         $valeur_received = $request->amount -  $percent_amount;
 
@@ -366,10 +370,10 @@ class VersementController extends Controller
             }
 
             if ($wallet_user->is_under_distributer == 1 || $wallet_user->is_api) {
-                $commission_pay = $commission_invoice->percent * $amount_paiement;
-                $amount_pay = $commission_invoice->percent_merchands * $amount_paiement;
+                $commission_pay = $commission_invoice->percent * $reel_amount;
+                $amount_pay = $commission_invoice->percent_merchands * $reel_amount;
             } else {
-                $commission_pay = $commission_invoice->percent_custumer * $amount_paiement;
+                $commission_pay = $commission_invoice->percent_custumer * $reel_amount;
                 $amount_pay = $commission_pay;
             }
 

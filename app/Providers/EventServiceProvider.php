@@ -95,6 +95,11 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\CreateWalletTransfersEvent::class => [
             \App\Listeners\CreateTransfert::class,
         ],
+
+        \App\Events\CreateWalletDrawalEvent::class => [
+            \App\Listeners\CreateDrawal::class,
+        ],
+
         \App\Events\CreateReloadEvent::class => [
             \App\Listeners\ReloadAccompte::class,
         ],

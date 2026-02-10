@@ -244,7 +244,7 @@ class TransactionController extends Controller
                                     $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
 
 
-                                    $walletTransaction =  $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal, $walletAmountSend->amount);
+                                    $walletTransaction =  $this->robusTransactionService->createRobusWalletTransaction($request->amount , $percent_amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal, $walletAmountSend->amount);
 
                                     if ($walletTransaction != null) {
 
@@ -339,12 +339,11 @@ class TransactionController extends Controller
 
                     // Code validated
                     $isWalletSearchNull = $wallet_search === null;
-                    $isCustomer =   !optional($wallet_search->sidUser)->is_custumers;
                     $isCustomerStatusFalse =   optional($wallet_search->sidUser)->status === false;
                     $isSameWalletAsUser = $request->num_wallet === $wallet_user->wallet->wallet_id;
                     $isAdmin_all =   optional($wallet_search->sidUser)->is_admin === true;
                     // Is custumers
-                    if ($isWalletSearchNull || $isCustomer || $isCustomerStatusFalse || $isSameWalletAsUser || $isAdmin_all) {
+                    if ($isWalletSearchNull  || $isCustomerStatusFalse || $isSameWalletAsUser || $isAdmin_all) {
 
                         return response()->json(
                             [
@@ -376,7 +375,7 @@ class TransactionController extends Controller
 
                                     $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
 
-                                    $walletTransaction = $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal, $walletAmountSend->amount);
+                                    $walletTransaction = $this->robusTransactionService->createRobusWalletTransaction($request->amount , $percent_amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal, $walletAmountSend->amount);
 
                                     if ($walletTransaction != null) {
 
@@ -1493,8 +1492,10 @@ class TransactionController extends Controller
                 $commission_transaction_val_percent_pay = 0;
                 $commission_transaction_val_nat_receive = (float)$amount_transaction;
 
+                 $isUnders = (bool) (robus()?->is_under_distributer || robus()?->is_api);
+
                 // Si l'utilisateur est sous distributeur, admin ou distributeur
-                if ($data->sidUser->is_under_distributer || $data->sidUser->is_admin || $data->sidUser->is_distributer || $data->sidUser->is_api) {
+                if (($data->sidUser->is_under_distributer && $isUnders) || $data->sidUser->is_admin || $data->sidUser->is_distributer || ($data->sidUser->is_api && $isUnders)) {
 
                     $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);
 
@@ -1622,4 +1623,6 @@ class TransactionController extends Controller
             ], 200);
         }
     }
+
+
 }

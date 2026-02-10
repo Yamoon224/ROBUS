@@ -8,6 +8,8 @@ use App\Events\CreateCardBankEvent;
 use App\Events\CreateWalletBankEvent;
 use App\Events\CreateWalletOneXbet;
 use App\Events\CreateWalletPaiementEvent;
+use App\Events\CreateWalletVersementEvent;
+use App\Events\CreateWalletDrawalEvent;
 use App\Events\CreateWalletPhoneCreditEvent;
 use App\Events\CreateWalletReloadCardEvent;
 use App\Events\CreateWalletBankSend;
@@ -21,8 +23,6 @@ use App\Models\Sid\SidUser;
 use App\Notifications\AdminNotification;
 use App\Notifications\UserNotification;
 use App\constants\NotificationMessages;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Log;
 
 
@@ -127,7 +127,7 @@ class NotificationSendService
             ])
         );
         $notifs = robus()->unreadNotifications;
-        event(new CreateWalletPaiementEvent($walletPayment));
+        event(new CreateWalletVersementEvent($walletPayment));
 
         safeNotifyMany(
             $admins,
@@ -307,7 +307,7 @@ class NotificationSendService
 
         $msg = 'Votre demande est en cours de validation';
         $msg_title = 'Commande carte';
-       safeNotify(
+        safeNotify(
             robus(),
             new UserNotification([
                 'title' => $msg_title,
@@ -741,7 +741,24 @@ class NotificationSendService
             ])
         );
         $notifs = robus()->unreadNotifications;
-        event(new CreateWalletOneXbet($walletWith));
+
+
+
+        if ($walletWith->choose_transaction == 2) {
+            event(new CreateWalletDrawalEvent($walletWith));
+        } else {
+            if ($walletWith->provider_id == 91 || $walletWith->provider_id == 143) {
+                event(new CreateWalletPushEvent($walletWith));
+            } else if ($walletWith->provider_id == 122 || $walletWith->provider_id == 144) {
+                event(new CreateWalletTresortEvent($walletWith));
+            } else if ($walletWith->provider_id == 121  || $walletWith->provider_id == 142) {
+                event(new CreateWalletDjamoEvent($walletWith));
+            } else {
+                event(new CreateWalletTresortEvent($walletWith));
+            }
+        }
+
+
 
         safeNotifyMany(
             $admins,
@@ -1096,7 +1113,7 @@ class NotificationSendService
 
         $msg_title = 'Transfert Mobile money';
         $msg = 'Vous avez effectué un transfert vers Mobile Money ';
-      safeNotify(
+        safeNotify(
             robus(),
             new UserNotification([
                 'title' => $msg_title,
@@ -1104,15 +1121,20 @@ class NotificationSendService
             ])
         );
         $notifs = robus()->unreadNotifications;
-        event(new CreateWalletTransfersEvent($walletTransaction));
-        // $this->emit('transaction_inter_sends', $walletTransaction->id);
+
+        if ($walletTransaction->type_transaction == 'Retrait') {
+            event(new CreateWalletDrawalEvent($walletTransaction));
+        } else {
+            event(new CreateWalletTransfersEvent($walletTransaction));
+        }
+
         $admins = $this->getAdminCIVProperty();
-       
+
         safeNotifyMany(
             $admins,
             new AdminNotification(NotificationMessages::WALLET_RELOAD_ROBUS)
         );
- 
+
 
         if ($admins->count() > 0) {
 

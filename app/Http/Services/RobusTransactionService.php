@@ -37,7 +37,7 @@ class RobusTransactionService
         $this->commissionServices = $commissionServices;
     }
 
-    public function createRobusWalletTransaction($transaction_amount_robus, $percent_robus, $provider, $compte_number_robus, $amount_drawal, $amount_before_drawal)
+    public function createRobusWalletTransaction($transaction_amount_robus , $percent_amount, $percent_robus, $provider, $compte_number_robus, $amount_drawal, $amount_before_drawal)
     {
         $val_amount = $transaction_amount_robus;
 
@@ -50,8 +50,8 @@ class RobusTransactionService
                 'description' => "Transfert d'argent vers Robus",
                 'transaction_cost_id' =>  $percent_robus->id,
                 'phone' =>  null,
-                'costs_amount' => $percent_robus->percent * $transaction_amount_robus,
-                'amount_received' => $transaction_amount_robus - ($percent_robus->percent * $transaction_amount_robus),
+                'costs_amount' => $percent_amount,
+                'amount_received' => $transaction_amount_robus - ($percent_amount),
                 'num_wallet' => strtoupper($compte_number_robus),
                 'name_complet' => null,
                 'balance_before' => robus()->wallet->amount,

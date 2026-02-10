@@ -417,7 +417,7 @@ class PaystackWebhookController extends Controller
             }
 
             // Valider le montant
-            $expectedAmount = $transaction->amount * 100; // Convertir en kobo/centimes
+            $expectedAmount = $transaction->amount * 100;
             if ($data['amount'] != $expectedAmount) {
                 Log::error('Montant incorrect', [
                     'expected' => $expectedAmount,
@@ -431,9 +431,9 @@ class PaystackWebhookController extends Controller
             $wallet_details = Wallet::whereId($transaction->wallet_id)->first();
             $countryNameGroup = $wallet_details->country->name_groupe;
             if ($countryNameGroup == 'CIV' || $countryNameGroup == 'AFL' || $countryNameGroup == 'AFC' || $countryNameGroup == 'AFE') {
-                $commission_robus = ReloadCost::whereId(2)->first();
+                $commission_robus = ReloadCost::whereId(8)->first();
             } elseif ($countryNameGroup == 'URP' || $countryNameGroup == 'USA' || $countryNameGroup == 'MAG' || $countryNameGroup == 'ASIE') {
-                $commission_robus = ReloadCost::whereId(3)->first();
+                $commission_robus = ReloadCost::whereId(9)->first();
             }
 
             $total_percent = (float) $commission_robus->percent + (float) $commission_robus->percent_admin;

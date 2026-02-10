@@ -327,17 +327,19 @@ class withTransactionController extends Controller
                         /** ===============================
                          *  4️⃣ Niveaux de commission
                          * =============================== */
+
+
                         $levels = $percentRobus->levelBankAuthers()
-                                ->orderBy('amount_begin')
+                                ->orderByRaw('CAST(amount_begin AS UNSIGNED) ASC')
                                 ->get();
 
                         if ($levels->isEmpty()) {
                                 return json_message_response(false, "Configuration commission invalide", 422);
                         }
 
-                        $min = $levels->first()->amount_begin;
-                        $max = $levels->last()->amount_end;
 
+                        $min = $levels->min(fn($l) => (int) $l->amount_begin);
+                        $max = $levels->min(fn($l) => (int) $l->amount_end);
                         if ($amountCfa < $min || $amountCfa > $max) {
                                 return json_message_response(
                                         false,
@@ -1105,8 +1107,10 @@ class withTransactionController extends Controller
                 $amountCfa = $amount_send * ($userCurrencyValue / $bankCurrencyValue);
 
                 $levels = $commissionBank->levelBankAuthers()
-                        ->orderBy('amount_begin', 'asc')
+                        ->orderByRaw('CAST(amount_begin AS UNSIGNED) ASC')
                         ->get();
+
+
 
                 if ($levels->isEmpty()) {
                         return response()->json([
@@ -1115,8 +1119,8 @@ class withTransactionController extends Controller
                         ], 200);
                 }
 
-                $minAmount = $levels->first()->amount_begin;
-                $maxAmount = $levels->last()->amount_end;
+                $minAmount = $levels->min(fn($l) => (int) $l->amount_begin);
+                $maxAmount = $levels->min(fn($l) => (int) $l->amount_end);
 
                 if ($minAmount !== null && $amountCfa < $minAmount) {
                         return response()->json([
@@ -1149,8 +1153,8 @@ class withTransactionController extends Controller
                                 /**
                                  * 🔁 Conversion CFA → devise utilisateur
                                  */
-                                $commissionUser = ($commissionCfa * ($bankCurrencyValue / $userCurrencyValue)) ;
-                                $commissionUnder = ($commissionCfaUnder * ($bankCurrencyValue / $userCurrencyValue)) ;
+                                $commissionUser = ($commissionCfa * ($bankCurrencyValue / $userCurrencyValue));
+                                $commissionUnder = ($commissionCfaUnder * ($bankCurrencyValue / $userCurrencyValue));
                                 $amountUser     =  $isDistributor ? (float) $commissionUnder : $amountCfa * ($bankCurrencyValue / $userCurrencyValue);
                                 $amountUnderReceived     =  $amountCfa * ($bankCurrencyValue / $userCurrencyValue);
                                 $amountRecevedUser     =  $isDistributor ? ((float)  $amountUnderReceived  - (float) $commissionUnder) : ((float)  $amountUser  - (float)  $commissionUser);

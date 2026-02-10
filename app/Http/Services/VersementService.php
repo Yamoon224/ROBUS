@@ -36,10 +36,10 @@ class VersementService
         $amount_valeur,
         $provider,
         $percent_robus,
-        $number_phone,
-        $number_decoder,
-        $id_invoice,
-        $number_contract,
+        $num_accompte,
+        $bank_code,
+        $guichet_code,
+        $num_authers,
         $name
     ) {
 
@@ -53,13 +53,13 @@ class VersementService
             'description'  => "Paiement versements",
             'balance_before' =>  robus()->wallet->amount,
             'virement_percent_id' => $percent_robus->id,
-            'num_accompte'   => $number_decoder ?? null,
-            'bank_code' => $id_invoice ?? null,
-            'guichet_code' => $number_contract ?? null,
+            'num_accompte'   => $num_accompte ?? null,
+            'bank_code' => $bank_code ?? null,
+            'guichet_code' => $guichet_code ?? null,
             'full_name' => $name ?? null,
             'created_by' => robus()->id,
             'provider_id'  =>    $provider,
-            'num_authers' => $number_phone ?? null,
+            'num_authers' => $num_authers ?? null,
             'costs_amount' => ($percent_robus->percent * $amount_valeur),
             'status'  => "PENDING",
         ]);
@@ -135,8 +135,8 @@ class VersementService
             }
         } else {
 
-            $admin_valeur =  (float) $percent_robus->percent_custumer * $walletPayment->amount;;
-            $this->commissionServices->distributeAdminAndBankCommissions($admin_civ, 'wallet_versement_id', $walletPayment->id, $admin_valeur,  $amount_bank);
+            $admin_percent_valeur =  $percent_robus->percent_admin_custumer * $walletPayment->amount;;
+            $this->commissionServices->distributeAdminAndBankCommissions($admin_civ, 'wallet_versement_id', $walletPayment->id, $admin_percent_valeur,  $amount_bank);
         }
 
         return true;

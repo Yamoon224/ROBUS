@@ -246,7 +246,7 @@ class XbetService
             }
         } else {
 
-            $admin_valeur =  $amount * $percent_robus->percent;
+            $admin_valeur =  $amount * $percent_robus->percent_with_drawal;
 
             $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_valeur);
         }

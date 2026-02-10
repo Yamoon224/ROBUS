@@ -504,6 +504,7 @@
                                                                     {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
 
                                                                 </p>
+                                                                
                                                                 <p class="font-medium whitespace-nowrap mt-1">
                                                                     N0 : {{ $item->num_piece ?? null }}
                                                                 </p>
@@ -603,9 +604,12 @@
                                                                 </div>
                                                                 {{ $item->phone ?? null }}
                                                                 <p class="font-medium whitespace-nowrap">
-                                                                    Nom& Prenom(S) :
+                                                                    Nom& Prenom(S) expediteur :
                                                                     {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
 
+                                                                </p>
+                                                                <p class="font-medium whitespace-nowrap mt-1">
+                                                                    Nom du béneficiaire : {{ $item->name_benef ?? null }}
                                                                 </p>
                                                                 <p class="font-medium whitespace-nowrap mt-1">
                                                                     N0 : {{ $item->num_piece ?? null }}

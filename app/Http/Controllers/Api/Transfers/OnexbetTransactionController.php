@@ -133,7 +133,6 @@ class OnexbetTransactionController extends Controller
                 $amount_days = $this->validatedamountDays->getCeilingProperty();
                 $valeur_ceiling  =  robus()->silver_ceiling;
                 // valueur User send days
-                $percent_robus =  $this->percentRobus->getRobusPercentageOnexbet();
 
                 try {
 
@@ -213,6 +212,8 @@ class OnexbetTransactionController extends Controller
                                         }
                                 }
                         }
+
+                        $percent_robus =  $this->percentRobus->getRobusPercentageOnexbet();
 
 
                         if ($request->provider == 87) {

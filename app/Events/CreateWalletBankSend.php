@@ -31,7 +31,7 @@ class CreateWalletBankSend implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new Channel('wallet-xbet-created');
+        return new Channel('updated_bank');
     }
 
     public function broadcastWith()
@@ -56,6 +56,6 @@ class CreateWalletBankSend implements ShouldBroadcastNow
 
     public function broadcastAs()
     {
-        return 'Created_wallet_xbet';
+        return 'update_wallet_bank';
     }
 }
