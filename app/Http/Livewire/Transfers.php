@@ -548,6 +548,8 @@ class Transfers extends Component
                 }
             }
         }
+
+        $this->dispatchBrowserEvent('preload-phone-credits');
     }
 
     public function checkPassword()
@@ -604,6 +606,170 @@ class Transfers extends Component
         $this->provider_payment_inter = null;
     }
 
+    protected array $transactionConfigs = [
+        'phone-credit' => [
+            'model' => WalletPhoneCredit::class,
+            'event' => ChoosePhoneCreditEvent::class,
+            'menu' => 'menu-phoneCredit-active',
+            'modal' => 'modal-hide-phoneCredit',
+            'successMessage' => 'Transaction téléphonique prise en charge',
+            'permission' => 'traitement-phone'
+        ],
+        'transaction' => [
+            'model' => WalletTransaction::class,
+            'event' => ChooseTransactionEvent::class,
+            'menu' => 'menu-transaction-active',
+            'modal' => 'modal-hide-transfers',
+            'successMessage' => 'Transaction prise en charge',
+            'permission' => 'traitement-transaction'
+        ],
+        'xbet' => [
+            'model' => WalletXBet::class,
+            'event' => ChooseXbetEvent::class,
+            'menu' => 'menu-xbet-active',
+            'modal' => 'modal-hide-xbet',
+            'successMessage' => 'Transaction XBet prise en charge',
+            'permission' => 'traitement-xbet'
+        ],
+        'versement' => [
+            'model' => WalletVersement::class,
+            'event' => ChooseVersementEvent::class,
+            'menu' => 'menu-versement-active',
+            'modal' => 'modal-hide-versement',
+            'successMessage' => 'Versement pris en charge',
+            'permission' => 'traitement-versement'
+        ],
+        'djamo' => [
+            'model' => WalletDjamo::class,
+            'event' => ChooseDjamoEvent::class,
+            'menu' => 'menu-djamo-active',
+            'modal' => 'modal-hide-djamo',
+            'successMessage' => 'Transaction Djamo prise en charge',
+            'permission' => 'traitement-djamo'
+        ],
+        'tresort' => [
+            'model' => WalletTresortMoney::class,
+            'event' => ChooseTresortEvent::class,
+            'menu' => 'menu-tresort-active',
+            'modal' => 'modal-hide-tresort',
+            'successMessage' => 'Transaction tresort prise en charge',
+            'permission' => 'traitement-tresort'
+        ],
+        'push' => [
+            'model' => WalletPush::class,
+            'event' => ChoosePushEvent::class,
+            'menu' => 'menu-push-active',
+            'modal' => 'modal-hide-push',
+            'successMessage' => 'Transaction push prise en charge',
+            'permission' => 'traitement-push'
+        ],
+        'payment' => [
+            'model' => WalletPayment::class,
+            'event' => ChoosePaymentEvent::class,
+            'menu' => 'menu-paiement-active',
+            'modal' => 'modal-hide-paiement',
+            'successMessage' => 'Transaction paiement prise en charge',
+            'permission' => 'traitement-paiement'
+        ],
+        'bankSend' => [
+            'model' => WalletBankSend::class,
+            'event' => ChooseBankSendEvent::class,
+            'menu' => 'menu-bankSend-active',
+            'modal' => 'modal-hide-bankSend',
+            'successMessage' => 'Transaction Bank send prise en charge',
+            'permission' => 'traitement-bankSend'
+        ],
+        'inter' => [
+            'model' => WalletInter::class,
+            'event' => ChooseInterEvent::class,
+            'menu' => 'menu-inters-active',
+            'modal' => 'modal-hide-inters',
+            'successMessage' => 'Transaction International prise en charge',
+            'permission' => 'traitement-inters'
+        ],
+        'virement' => [
+            'model' => WalletBank::class,
+            'event' => ChooseVirementEvent::class,
+            'menu' => 'menu-virement-active',
+            'modal' => 'modal-hide-virement',
+            'successMessage' => 'Transaction virement prise en charge',
+            'permission' => 'traitement-virement'
+        ],
+        'reloadCard' => [
+            'model' => WalletDeposit::class,
+            'event' => ChooseReloadCardEvent::class,
+            'menu' => 'menu-reloadCarte-active',
+            'modal' => 'modal-hide-reloadCarte',
+            'successMessage' => 'Transaction rechargement de carte prise en charge',
+            'permission' => 'traitement-reloadCarte'
+        ],
+    ];
+
+    /**
+     * Méthode générique pour prendre en charge une transaction ⚡
+     */
+    public function takeTransaction(string $type, int $id)
+    {
+        // 1. VALIDATION DU TYPE
+        if (!isset($this->transactionConfigs[$type])) {
+            $this->emit('error', 'Type de transaction invalide');
+            return;
+        }
+
+        $config = $this->transactionConfigs[$type];
+
+        // 2. VÉRIFICATION PERMISSION (HORS TRANSACTION - IMMÉDIAT)
+        if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+            $this->emit($config['menu']);
+            $this->emit('info', 'Vous n\'êtes pas autorisé à choisir cette transaction.');
+            return;
+        }
+
+        try {
+            // 3. UNE SEULE REQUÊTE ATOMIQUE ⚡
+            $updated = $config['model']::where('id', $id)
+                ->where('status', 'PENDING')
+                ->whereNull('updated_by')
+                ->lockForUpdate()
+                ->update([
+                    'updated_by' => sabdy()->id,
+                    'status' => 'PROCESSING',
+                    'updated_at' => now()
+                ]);
+
+            // 4. SI DÉJÀ TRAITÉ
+            if ($updated === 0) {
+                $this->emit($config['menu']);
+                $this->emit('info', 'Cette transaction a déjà été traitée.');
+                return;
+            }
+
+            // 5. SUCCÈS - UN SEUL EMIT ! 
+            $this->emit('transaction-taken', [
+                'type' => $type,
+                'id' => $id,
+                'message' => $config['successMessage']
+            ]);
+
+            // 6. FERMER LA MODALE
+            $this->emit($config['modal']);
+            $this->emit($config['menu']);
+
+            // 7. NOTIFICATION SUCCÈS
+            $this->emit('success', $config['successMessage']);
+
+            // 8. ÉVÉNEMENT ASYNCHRONE (NE BLOQUE PAS)
+            dispatch(function () use ($config, $id) {
+                $wallet = $config['model']::find($id);
+                event(new $config['event']($wallet));
+            })->afterResponse();
+        } catch (\Throwable $e) {
+            // 9. GESTION ERREUR
+            report($e);
+            $this->emit($config['menu']);
+            $this->emit('error', 'Erreur système. Veuillez contacter le support.');
+        }
+    }
     //  Notify and real times and active menus
     public function notifyNewBank()
     {
@@ -1354,16 +1520,30 @@ class Transfers extends Component
     // Edit Phone credit
     public function editPhoneCredit($id, $state)
     {
-        $check = WalletPhoneCredit::whereId($id)->first();
-        $provider = Provider::whereId($check->provider_id)->first();
+        $data = WalletPhoneCredit::query()
+            ->select('id', 'provider_id', 'wallet_id', 'phone', 'amount_received')
+            ->with([
+                'provider:id,name',
+                'wallet:id,currencie_id',
+                'wallet.currencie:id,code'
+            ])
+            ->find($id);
+
+        if (!$data) {
+            return;
+        }
+
         $this->phoneCreditId = $id;
         $this->phoneCreditStatus = null;
-        $this->provider_phone_credit_edit = $provider->name;
-        $this->number_phone_credit_edit = $check->phone;
-        $this->amount_phone_credit_edit = $check->amount_received;
-        $this->currency_custumers = $check->wallet->currencie->code ?? null;
+        $this->provider_phone_credit_edit = $data->provider->name ?? null;
+        $this->number_phone_credit_edit = $data->phone;
+        $this->amount_phone_credit_edit = $data->amount_received;
+        $this->currency_custumers = $data->wallet->currencie->code ?? null;
+
         $this->emit($state);
     }
+
+
 
     // Edit Transaction
     public function editTransaction($id, $state)
@@ -1503,7 +1683,7 @@ class Transfers extends Component
         $this->paiementChoix_phone_edit = $check->paiementChoix_phone ?? null;
         $this->offer_paiement_edit = $offer->name ?? null;
         $this->offer_paiement_name = $check->name ?? null;
-        $this->offer_paiement_edit_amount = $offer->amount_received ?? null;
+        $this->offer_paiement_edit_amount = $check->amount_received ?? null;
         $this->phone_invoice_pre_edit = $check->phone ?? null;
         $this->pre_id_invoice_edit = $check->id_invoice_pre ?? null;
         $this->devise_user =   $check->wallet->currencie->code;
@@ -2126,9 +2306,7 @@ class Transfers extends Component
             return;
         }
 
-        $this->resetErrorBag('versementStatus');
         $this->emit('modal-versement-validted-show', $modalName);
-        $this->emit('modal-hide-versement');
     }
 
     public function tryOpenModalPush($modalName)
@@ -2139,9 +2317,7 @@ class Transfers extends Component
             return;
         }
 
-        $this->resetErrorBag('pushStatus');
         $this->emit('modal-push-validted-show', $modalName);
-        $this->emit('modal-hide-push');
     }
 
     public function tryOpenModalVirement($modalName)
@@ -2152,9 +2328,7 @@ class Transfers extends Component
             return;
         }
 
-        $this->resetErrorBag('virementStatus');
         $this->emit('modal-virement-validted-show', $modalName);
-        $this->emit('modal-hide-virement');
     }
 
     public function tryOpenModalPaiementInvoice($modalName)
@@ -2165,9 +2339,7 @@ class Transfers extends Component
             return;
         }
 
-        $this->resetErrorBag('paiementStatus');
         $this->emit('modal-paiement-validted-show', $modalName);
-        $this->emit('modal-hide-paiement');
     }
 
     public function tryOpenModalReloadCard($modalName)
@@ -2178,9 +2350,7 @@ class Transfers extends Component
             return;
         }
 
-        $this->resetErrorBag('reloadcardStatus');
         $this->emit('modal-reloadCards-validted-show', $modalName);
-        $this->emit('modal-hide-reloadCard');
     }
 
     public function tryOpenModalDjamo($modalName)
@@ -2191,9 +2361,7 @@ class Transfers extends Component
             return;
         }
 
-        $this->resetErrorBag('djamoStatus');
         $this->emit('modal-djamo-validted-show', $modalName);
-        $this->emit('modal-hide-djamo');
     }
 
     public function tryOpenModalInter($modalName)
@@ -2204,9 +2372,7 @@ class Transfers extends Component
             return;
         }
 
-        $this->resetErrorBag('interStatus');
         $this->emit('modal-inter-validted-show', $modalName);
-        // $this->emit('modal-hide-inter');
     }
 
 
@@ -2218,9 +2384,7 @@ class Transfers extends Component
             return;
         }
 
-        $this->resetErrorBag('bankStatus');
         $this->emit('modal-bankSend-validted-show', $modalName);
-        // $this->emit('modal-hide-inter');
     }
 
     public function tryOpenModalTresort($modalName)
@@ -2231,9 +2395,7 @@ class Transfers extends Component
             return;
         }
 
-        $this->resetErrorBag('tresortStatus');
         $this->emit('modal-tresort-validted-show', $modalName);
-        $this->emit('modal-hide-tresort');
     }
 
     public function updateVersement()
@@ -4185,224 +4347,26 @@ class Transfers extends Component
 
     public function ChooseUpdateTransaction($id)
     {
-
-
-        $walletUpdate = WalletTransaction::findOrFail($id);
-
-        if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
-            $this->emit('menu-transaction-active');
-            $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.');
-            return;
-        }
-
-        try {
-
-            $lockedUpdate = WalletTransaction::lockForUpdate()->findOrFail($id);
-
-            if (!$lockedUpdate ||  $lockedUpdate->status !== 'PENDING' || $lockedUpdate->updated_by !== null) {
-
-                DB::commit();
-                $this->emit('menu-transaction-active');
-                $this->emit(
-                    'info',
-                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
-                );
-                return;
-            }
-
-
-            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
-                DB::commit();
-                $this->emit('menu-transaction-active');
-                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
-                return;
-            }
-
-            $lockedUpdate->updated_by = sabdy()->id;
-            $lockedUpdate->status = 'PROCESSING';
-            $lockedUpdate->save();
-            DB::commit();
-
-            DB::afterCommit(function () use ($walletUpdate) {
-                event(new ChooseTransactionEvent($walletUpdate));
-            });
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            report($e);
-            $this->emit('menu-transaction-active');
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-            return;
-        }
-
-        $this->emit('modal-hide-transfers');
-        $this->emit('menu-transaction-active');
-        $this->emit('info', 'Transaction choisie avec succès.');
+        return $this->takeTransaction('transaction', $id);
     }
+
 
     public function ChooseUpdateXbet($id)
     {
-
-        $walletUpdate = WalletXBet::findOrFail($id);
-
-        if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
-            $this->emit('menu-xbet-active');
-            $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.');
-            return;
-        }
-
-
-        try {
-
-            $lockedUpdate = WalletXBet::lockForUpdate()->findOrFail($id);
-
-            if (!$lockedUpdate ||   $lockedUpdate->status !== 'PENDING' || $lockedUpdate->updated_by !== null) {
-
-                DB::commit();
-                $this->emit('menu-xbet-active');
-                $this->emit(
-                    'info',
-                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
-                );
-                return;
-            }
-
-            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
-                DB::commit();
-                $this->emit('menu-xbet-active');
-                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
-                return;
-            }
-
-            $lockedUpdate->updated_by = sabdy()->id;
-            $lockedUpdate->status = 'PROCESSING';
-            $lockedUpdate->save();
-            DB::commit();
-            DB::afterCommit(function () use ($walletUpdate) {
-                event(new ChooseXbetEvent($walletUpdate));
-            });
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            report($e);
-            $this->emit('menu-xbet-active');
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
-
-
-        $this->emit('modal-hide-xbet');
-        $this->emit('menu-xbet-active');
-        $this->emit('info', 'Transaction choisie avec succès.');
+        return $this->takeTransaction('xbet', $id);
     }
 
 
     public function ChooseUpdateVersement($id)
     {
-
-        $walletUpdate = WalletVersement::findOrFail($id);
-
-        if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
-            $this->emit('menu-versement-active');
-            $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.');
-            return;
-        }
-
-
-        try {
-
-            $lockedUpdate = WalletVersement::lockForUpdate()->findOrFail($id);
-
-            if (!$lockedUpdate ||   $lockedUpdate->status !== 'PENDING' || $lockedUpdate->updated_by !== null) {
-
-                DB::commit();
-                $this->emit('menu-versement-active');
-                $this->emit(
-                    'info',
-                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
-                );
-                return;
-            }
-
-
-            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
-                DB::commit();
-                $this->emit('menu-versement-active');
-                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
-                return;
-            }
-
-            $lockedUpdate->updated_by = sabdy()->id;
-            $lockedUpdate->status = 'PROCESSING';
-            $lockedUpdate->save();
-            DB::commit();
-            DB::afterCommit(function () use ($walletUpdate) {
-                event(new ChooseVersementEvent($walletUpdate));
-            });
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            report($e);
-            $this->emit('menu-versement-active');
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
-
-
-        $this->emit('modal-hide-versement');
-        $this->emit('menu-versement-active');
-        $this->emit('info', 'Transaction choisie avec succès.');
+        return $this->takeTransaction('versement', $id);
     }
+
 
 
     public function ChooseUpdateDjamo($id)
     {
-
-        $walletUpdate = WalletDjamo::findOrFail($id);
-
-        if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
-            $this->emit('menu-djamo-active');
-            $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.');
-            return;
-        }
-
-
-        try {
-
-            $lockedUpdate = WalletDjamo::lockForUpdate()->findOrFail($id);
-
-            if (!$lockedUpdate ||   $lockedUpdate->status !== 'PENDING' || $lockedUpdate->updated_by !== null) {
-
-                DB::commit();
-                $this->emit('menu-djamo-active');
-                $this->emit(
-                    'info',
-                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
-                );
-                return;
-            }
-
-            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
-                DB::commit();
-                $this->emit('menu-djamo-active');
-                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
-                return;
-            }
-
-            $lockedUpdate->updated_by = sabdy()->id;
-            $lockedUpdate->status = 'PROCESSING';
-            $lockedUpdate->save();
-            DB::commit();
-            DB::afterCommit(function () use ($lockedUpdate) {
-                event(new ChooseDjamoEvent($lockedUpdate));
-            });
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            report($e);
-            $this->emit('menu-djamo-active');
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
-
-
-
-        $this->emit('modal-hide-djamo');
-        $this->emit('menu-djamo-active');
-        $this->emit('info', 'Transaction choisie avec succès.');
+        return $this->takeTransaction('djamo', $id);
     }
 
     public function ChooseDrawalUpdateDjamo($id)
@@ -4445,57 +4409,9 @@ class Transfers extends Component
         }
     }
 
-
     public function ChooseUpdateTresort($id)
     {
-
-        $walletUpdate = WalletTresortMoney::findOrFail($id);
-
-        if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
-            $this->emit('menu-tresort-active');
-            $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.');
-            return;
-        }
-
-
-        try {
-
-            $lockedUpdate = WalletTresortMoney::lockForUpdate()->findOrFail($id);
-
-            if (!$lockedUpdate || $lockedUpdate->status !== 'PENDING' && $lockedUpdate->updated_by !== null) {
-                DB::rollBack();
-                $this->emit('menu-tresort-active');
-                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
-                event(new ChooseTresortEvent($lockedUpdate));
-                return;
-            }
-
-            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
-                DB::commit();
-                $this->emit('menu-tresort-active');
-                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
-                return;
-            }
-
-            $lockedUpdate->updated_by = sabdy()->id;
-            $lockedUpdate->status = 'PROCESSING';
-            $lockedUpdate->save();
-            DB::commit();
-
-            DB::afterCommit(function () use ($lockedUpdate) {
-                event(new ChooseTresortEvent($lockedUpdate));
-            });
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            report($e);
-            $this->emit('menu-tresort-active');
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
-
-
-        $this->emit('modal-hide-tresort');
-        $this->emit('menu-tresort-active');
-        $this->emit('info', 'Transaction choisie avec succès.');
+        return $this->takeTransaction('tresort', $id);
     }
 
     public function ChooseDrawalUpdateTresort($id)
@@ -4541,54 +4457,7 @@ class Transfers extends Component
     public function ChooseUpdatePush($id)
     {
 
-        $walletUpdate = WalletPush::findOrFail($id);
-
-        if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
-            $this->emit('menu-push-active');
-            $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.');
-            return;
-        }
-
-        try {
-
-            $lockedUpdate = WalletPush::lockForUpdate()->findOrFail($id);
-
-            if (!$lockedUpdate ||  $lockedUpdate->status !== 'PENDING' || $lockedUpdate->updated_by !== null) {
-
-                DB::commit();
-                $this->emit('menu-push-active');
-                $this->emit(
-                    'info',
-                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
-                );
-                return;
-            }
-
-
-            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
-                DB::commit();
-                $this->emit('menu-push-active');
-                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
-                return;
-            }
-
-            $lockedUpdate->updated_by = sabdy()->id;
-            $lockedUpdate->status = 'PROCESSING';
-            $lockedUpdate->save();
-            DB::commit();
-            DB::afterCommit(function () use ($lockedUpdate) {
-                event(new ChoosePushEvent($lockedUpdate));
-            });
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            report($e);
-            $this->emit('menu-push-active');
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
-
-        $this->emit('modal-hide-push');
-        $this->emit('menu-push-active');
-        $this->emit('info', 'Transaction choisie avec succès.');
+        return $this->takeTransaction('push', $id);
     }
 
     public function ChooseDrawalUpdatePush($id)
@@ -4630,324 +4499,39 @@ class Transfers extends Component
     public function ChooseUpdatePayment($id)
     {
 
-        $walletUpdate = WalletPayment::findOrFail($id);
-
-        if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
-            $this->emit('menu-paiement-active');
-            $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.');
-            return;
-        }
-
-
-        try {
-
-            $lockedUpdate = WalletPayment::lockForUpdate()->find($id);
-
-            // Double vérification après le lock
-            if (!$lockedUpdate || $lockedUpdate->status !== 'PENDING' || $lockedUpdate->updated_by !== null) {
-                DB::commit();
-                $this->emit('menu-paiement-active');
-                $this->emit('info', 'Désolé, cette transaction a été modifiée entre-temps.');
-                return;
-            }
-
-            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
-                DB::commit();
-                $this->emit('menu-paiement-active');
-                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
-                return;
-            }
-
-            $lockedUpdate->updated_by = sabdy()->id;
-            $lockedUpdate->status = 'PROCESSING';
-            $lockedUpdate->save();
-
-            DB::commit();
-
-            DB::afterCommit(function () use ($walletUpdate) {
-                event(new ChoosePaymentEvent($walletUpdate));
-            });
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            report($e);
-            $this->emit('menu-paiement-active');
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
-
-
-        $this->emit('modal-hide-paiement');
-        $this->emit('menu-paiement-active');
-        $this->emit('info', 'Transaction choisie avec succès.');
+        return $this->takeTransaction('payment', $id);
     }
 
     public function ChooseUpdateBankSend($id)
     {
 
-        $walletUpdate = WalletBankSend::findOrFail($id);
-
-        if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
-            $this->emit('menu-bankSend-active');
-            $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.');
-            return;
-        }
-
-
-        try {
-
-            $lockedUpdate = WalletBankSend::lockForUpdate()->findOrFail($id);
-
-            if (!$lockedUpdate ||  $lockedUpdate->status !== 'PENDING' || $lockedUpdate->updated_by !== null) {
-
-                DB::commit();
-                $this->emit('menu-bankSend-active');
-                $this->emit(
-                    'info',
-                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
-                );
-                return;
-            }
-
-
-            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
-                DB::commit();
-                $this->emit('menu-bankSend-active');
-                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
-                return;
-            }
-
-            $lockedUpdate->updated_by = sabdy()->id;
-            $lockedUpdate->status = 'PROCESSING';
-            $lockedUpdate->save();
-            DB::commit();
-            DB::afterCommit(function () use ($lockedUpdate) {
-                event(new ChooseBankSendEvent($lockedUpdate));
-            });
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            report($e);
-            $this->emit('menu-bankSend-active');
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
-
-
-        $this->emit('modal-hide-bankSend');
-        $this->emit('menu-bankSend-active');
-        $this->emit('info', 'Transaction choisie avec succès.');
+        return $this->takeTransaction('bankSend', $id);
     }
 
     public function ChooseUpdateInter($id)
     {
 
-        $walletUpdate = WalletInter::findOrFail($id);
-
-        if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
-            $this->emit('menu-inters-active');
-            $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.');
-            return;
-        }
-
-        try {
-
-            $lockedUpdate = WalletInter::lockForUpdate()->findOrFail($id);
-
-            if (!$lockedUpdate || $lockedUpdate->status !== 'PENDING' || $lockedUpdate->updated_by !== null) {
-
-                DB::commit();
-                $this->emit('menu-inters-active');
-                $this->emit(
-                    'info',
-                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
-                );
-                return;
-            }
-
-
-            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
-                DB::commit();
-                $this->emit('menu-inters-active');
-                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
-                return;
-            }
-            $lockedUpdate->updated_by = sabdy()->id;
-            $lockedUpdate->status = 'PROCESSING';
-            $lockedUpdate->save();
-            DB::commit();
-            DB::afterCommit(function () use ($lockedUpdate) {
-                event(new ChooseInterEvent($lockedUpdate));
-            });
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            report($e);
-            $this->emit('menu-inters-active');
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
-
-
-
-        $this->emit('modal-hide-inters');
-        $this->emit('menu-inters-active');
-        $this->emit('info', 'Transaction choisie avec succès.');
+        return $this->takeTransaction('inter', $id);
     }
+
     public function ChooseUpdateVirement($id)
     {
-        $walletUpdate = WalletBank::findOrFail($id);
-
-        if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
-            $this->emit('menu-virement-active');
-            $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.');
-            return;
-        }
-        try {
-
-            $lockedUpdate = WalletBank::lockForUpdate()->findOrFail($id);
-
-            if (!$lockedUpdate ||   $lockedUpdate->status !== 'PENDING' || $lockedUpdate->updated_by !== null) {
-
-                DB::commit();
-                $this->emit('menu-virement-active');
-                $this->emit(
-                    'info',
-                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
-                );
-                return;
-            }
-
-
-            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
-                DB::commit();
-                $this->emit('menu-virement-active');
-                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
-                return;
-            }
-
-            $lockedUpdate->updated_by = sabdy()->id;
-            $lockedUpdate->status = 'PROCESSING';
-            $lockedUpdate->save();
-            DB::commit();
-            DB::afterCommit(function () use ($lockedUpdate) {
-                event(new ChooseVirementEvent($lockedUpdate));
-            });
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            report($e);
-            $this->emit('menu-virement-active');
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
-
-
-        $this->emit('modal-hide-virement');
-        $this->emit('menu-virement-active');
-        $this->emit('info', 'Transaction choisie avec succès.');
+        return $this->takeTransaction('virement', $id);
     }
+
 
     public function ChooseUpdateReloadCard($id)
     {
-        $walletUpdate = WalletDeposit::findOrFail($id);
-
-        if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
-            $this->emit('menu-reloadCarte-active');
-            $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.');
-            return;
-        }
-
-
-        try {
-
-            $lockedUpdate = WalletDeposit::lockForUpdate()->findOrFail($id);
-
-            if (!$lockedUpdate || $lockedUpdate->status !== 'PENDING' || $lockedUpdate->updated_by !== null) {
-
-                DB::commit();
-                $this->emit('menu-reloadCarte-active');
-                $this->emit(
-                    'info',
-                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
-                );
-                return;
-            }
-
-
-            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
-                DB::commit();
-                $this->emit('menu-reloadCarte-active');
-                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
-                return;
-            }
-
-            $lockedUpdate->updated_by = sabdy()->id;
-            $lockedUpdate->status = 'PROCESSING';
-            $lockedUpdate->save();
-            DB::commit();
-            DB::afterCommit(function () use ($walletUpdate) {
-                event(new ChooseReloadCardEvent($walletUpdate));
-            });
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            report($e);
-            $this->emit('menu-reloadCarte-active');
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
-
-
-
-        $this->emit('modal-hide-reloadCarte');
-        $this->emit('menu-reloadCarte-active');
-        $this->emit('info', 'Transaction choisie avec succès.');
+        return $this->takeTransaction('reloadCard', $id);
     }
+
+
 
     public function ChooseUpdatePhoneCredit($id)
     {
-
-        $walletUpdate = WalletPhoneCredit::findOrFail($id);
-
-        if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
-            $this->emit('menu-phoneCredit-active');
-            $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.');
-            return;
-        }
-
-
-        try {
-
-            $lockedUpdate = WalletPhoneCredit::lockForUpdate()->findOrFail($id);
-
-            if (!$lockedUpdate ||  $lockedUpdate->status !== 'PENDING' || $lockedUpdate->updated_by !== null) {
-
-                DB::commit();
-                $this->emit('menu-phoneCredit-active');
-                $this->emit(
-                    'info',
-                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
-                );
-                return;
-            }
-
-
-            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
-                DB::commit();
-                $this->emit('menu-phoneCredit-active');
-                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
-                return;
-            }
-
-            $lockedUpdate->updated_by = sabdy()->id;
-            $lockedUpdate->status = 'PROCESSING';
-            $lockedUpdate->save();
-            DB::commit();
-            DB::afterCommit(function () use ($walletUpdate) {
-                event(new ChoosePhoneCreditEvent($walletUpdate));
-            });
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            report($e);
-            $this->emit('menu-phoneCredit-active');
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
-
-        $this->emit('modal-hide-phoneCredit');
-        $this->emit('menu-phoneCredit-active');
-        $this->emit('info', 'Transaction choisie avec succès.');
+        return $this->takeTransaction('phone-credit', $id);
     }
+
 
     // End Choose   
 
@@ -6057,62 +5641,8 @@ class Transfers extends Component
         }
     }
 
-    protected function handleUnderDistributorCommission($check, $admin_civ)
-    {
-        $valeur_amount_com = $check->adminCom->amount;
 
 
-        if ($admin_civ->count() > 0) {
-
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-                $check->adminCom->update([
-                    'amount' =>   $valeur_amount_com,
-                    'sid_user_id' =>   $admin_single->id,
-                    'description' => 'Paiement commission sous-distributer',
-                    'status'  => "SUCCESS",
-                    'amount_under' =>  $valeur_amount_com,
-                    'description_underdistributer' =>  'Paiement commission sous-distributer'
-                ]);
-
-                $admin_single->wallet->update([
-                    'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
-                    'sid_user_relod' => sabdy()->id,
-                    'amount' => DB::raw('amount-' . $valeur_amount_com),
-                ]);
-            }
-        }
-    }
-
-
-    protected function handleUnderDistributorPaiementCommission($check, $admin_civ)
-    {
-        $valeur_amount_com = $check->adminCom->amount;
-
-        $under_amount_com = $check->adminCom->amount_under;
-
-        if ($admin_civ->count() > 0) {
-
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-                $check->adminCom->update([
-                    'amount' =>   $valeur_amount_com,
-                    'sid_user_id' =>   $admin_single->id,
-                    'description' => 'Commission administrateur',
-                    'status'  => "SUCCESS",
-                    'amount_under' =>  $under_amount_com,
-                    'description_underdistributer' =>  'Paiement commission sous-distributer'
-                ]);
-
-                // Update amount admin
-                $admin_single->wallet->update([
-                    'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
-                    'sid_user_relod' => sabdy()->id,
-                    'amount' => DB::raw('amount+' . $valeur_amount_com),
-                ]);
-            }
-        }
-    }
 
     protected function getTransactionData(
         $admin_single,
@@ -6164,129 +5694,6 @@ class Transfers extends Component
         return $transaction_data;
     }
 
-    protected function TransactionDistributorCommission(
-        $admin_percent,
-        $admin_civ,
-        $walletBank,
-        $walletReloadCard,
-        $walletInter,
-        $walletPayment,
-        $walletPhoneCredit,
-        $walletReload,
-        $walletTransaction,
-        $walletBankCard
-    ) {
-
-        // Commission distributer
-        $valuer_deposit =  $admin_percent;
-
-        //  Send valeur in Admin
-        if ($admin_civ->count() > 0) {
-
-            $count_admin = $admin_civ->count();
-
-            $valeur_single = $valuer_deposit / $count_admin;
-
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-
-                // Get transaction data based on available IDs
-                $transaction_data = $this->getTransactionData(
-                    $admin_single,
-                    $valeur_single,
-                    $walletBank,
-                    $walletReloadCard,
-                    $walletInter,
-                    $walletPayment,
-                    $walletPhoneCredit,
-                    $walletReload,
-                    $walletTransaction,
-                    $walletBankCard
-                );
-
-                AdminsCom::create($transaction_data);
-
-                $admin_single->wallet->update([
-                    'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
-                    'sid_user_relod' => sabdy()->id,
-                    'amount' => DB::raw('amount+' . $valeur_single),
-                ]);
-            }
-        }
-    }
-
-    protected function TransactionDistributorDrawal(
-        $valuer_with_drawal,
-        $admin_civ,
-        $walletTransaction
-    ) {
-
-        // Commission distributer
-        $valuer_deposit =  $valuer_with_drawal;
-
-        //  Send valeur in Admin
-        if ($admin_civ->count() > 0) {
-
-            $count_admin = $admin_civ->count();
-
-            $valeur_single = $valuer_deposit / $count_admin;
-
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'wallet_transaction_id' => $walletTransaction->id,
-                    'wallet_bank_id' => null,
-                    'wallet_deposit_id' => null,
-                    'wallet_inter_id' =>  null,
-                    'wallet_payment_id' => null,
-                    'wallet_phone_credit_id' => null,
-                    'wallet_reload_id' => null,
-                    'bank_card_id' => null,
-                    'description' => 'Retrait d\'argent',
-                ]);
-
-                $admin_single->wallet->update([
-                    'reload_by' =>  sabdy()->firstname .
-                        ' ' .
-                        sabdy()->lastname,
-                    'sid_user_relod' =>  sabdy()->id,
-                    'amount' => DB::raw('amount-' . $valeur_single),
-                ]);
-            }
-        }
-    }
-
-
-    protected function handleUnderDistributorInterCommission($check, $admin_civ)
-    {
-        $valeur_amount_com = $check->adminCom->amount;
-
-        $under_amount_com = $check->adminCom->amount_under;
-
-        if ($admin_civ->count() > 0) {
-
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-                $check->adminCom->update([
-                    'amount' =>   $valeur_amount_com,
-                    'sid_user_id' =>   $admin_single->id,
-                    'description' => 'Paiement commission sous-distributer',
-                    'status'  => "SUCCESS",
-                    'amount_under' =>  $valeur_amount_com,
-                    'description_underdistributer' =>  'Paiement commission sous-distributer'
-                ]);
-
-                $admin_single->wallet->update([
-                    'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
-                    'sid_user_relod' => sabdy()->id,
-                    'amount' => DB::raw('amount+' . $valeur_amount_com),
-                ]);
-            }
-        }
-    }
 
     // Generatye data methode
 

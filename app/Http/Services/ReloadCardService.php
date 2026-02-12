@@ -98,8 +98,6 @@ class ReloadCardService
 
             $admin_valeur =  $valuer_deposit  + $commissionCompanie;
 
-            $admin_valeur_no =  $amount_commission;
-
             if (!empty($activeButtons['showRemonterRechargementButton'])) {
 
                 $walletOrderCard->update([
@@ -113,7 +111,7 @@ class ReloadCardService
                     $walletOrderCard->increment('commission_companie', $valuer_companie);
                     $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $valuer_companie, $valuer_deposit);
                 } else {
-                    $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $valuer_deposit);
+                    $this->commissionServices->distributeAdminUnderCommissions($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $valuer_deposit);
                 }
             }
         } else {

@@ -1293,6 +1293,7 @@
         </div>
 
     </div>
+    
     @include('livewire.commissions.modals.transactions.updatePhoneCredit')
     @include('livewire.commissions.modals.transactions.updateVirementBank')
     @include('livewire.commissions.modals.transactions.updateInterTransfer')

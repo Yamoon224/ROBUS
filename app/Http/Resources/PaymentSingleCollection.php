@@ -28,6 +28,7 @@ class PaymentSingleCollection extends JsonResource
             'payment_cost_percent' =>  number_format((float)$this->commissions, 2, '.', ''). ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA")  ?? null,
             'master_cost_percent' =>  number_format((float)$this->commission_masters, 2, '.', '') . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA") ?? null,
             'number_decoder' =>  $this->number_decoder,
+            'amount_received'  => number_format((double)$this->amount_received, 2, '.', ' ') ,
             'id_invoice' =>  $this->id_invoice,
             'offer' => optional($this->offer)->name,
             'number_contract' =>  $this->number_contract,

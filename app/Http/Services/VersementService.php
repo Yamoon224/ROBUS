@@ -113,21 +113,21 @@ class VersementService
                 ]);
 
                 $admin_valeur =  $percent_robus->percent_admin  * $walletPayment->amount;
+                $admin_no_compagie =  $percent_robus->percent_companie  * $walletPayment->amount;
+
+                $cumul_amount =  (float) $admin_valeur + (float) $admin_no_compagie;
 
                 $account_accepted = robus()->is_accepted_companie ?? false;
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterVersementCButton'])) {
 
-
                     $valuer_companie = $percent_robus->percent_companie * $walletPayment->amount;
-
-                    $compagnie_amount =  $valuer_companie +  $valuer_deposit;
 
                     $walletPayment->increment('commission_companie', $valuer_companie);
 
-                    $this->commissionServices->distributeAdminAndBankCommissionAcceptedCompanies($admin_civ, 'wallet_versement_id', $walletPayment->id, $compagnie_amount, $valuer_deposit, $amount_bank);
+                    $this->commissionServices->distributeAdminAndVersementCommissionAcceptedCompanies($admin_civ, 'wallet_versement_id', $walletPayment->id, $admin_valeur, $valuer_companie, $valuer_deposit, $amount_bank);
                 } else {
-                    $this->commissionServices->distributeAdminAndBankCommissionAccepteds($admin_civ, 'wallet_versement_id', $walletPayment->id, $admin_valeur, $valuer_deposit, $amount_bank);
+                    $this->commissionServices->distributeAdminAndBankCommissionAccepteds($admin_civ, 'wallet_versement_id', $walletPayment->id, $cumul_amount, $valuer_deposit, $amount_bank);
                 }
             } else {
 

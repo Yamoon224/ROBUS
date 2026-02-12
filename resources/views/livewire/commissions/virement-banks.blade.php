@@ -51,7 +51,7 @@
                                 </td>
                                  <td class="w-40">
                                     <p class="font-medium whitespace-nowrap">
-                                       SD :  {{ $item->percent_bank_under * 100 ?? null }} %</p>
+                                       SD :  {{ $item->percent_bank_custumer * 100 ?? null }} %</p>
 
                                        <p class="font-medium whitespace-nowrap mt-3">
                                         Client : {{ $item->percent_bank_custumer * 100 ?? null }} %

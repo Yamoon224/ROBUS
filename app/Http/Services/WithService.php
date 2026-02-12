@@ -594,7 +594,6 @@ class WithService
         // Commissions Inters 
         if ($user && $user->is_under_distributer || $user->is_api == 1) {
 
-            $valeur_amount_admin  = $percent_robus->percent_admin * $amount;
 
             if (!empty($activeButtons['showRemonterTresortButton'])) {
 

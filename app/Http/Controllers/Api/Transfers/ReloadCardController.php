@@ -185,9 +185,6 @@ class ReloadCardController extends Controller
 
                 $percent_robus =  $this->percentRobus->getRobusPercentageReloadOrder();
 
-                $isIvoires = ($request->provider == 14 || $request->provider == 15);
-                $propertyToCheck = $isIvoires ? 'is_ivoires' : 'is_inter_bank';
-
                 if (robus()->is_under_distributer || robus()->is_api) {
                     $valeur_first = $percent_robus->levelDepositIvories->where('is_ivoires', true)->first();
                     $valeur_end = $percent_robus->levelDepositIvories->where('is_ivoires', true)->last();

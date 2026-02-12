@@ -104,7 +104,8 @@
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                               <x-take-action-button action="ChooseUpdatePhoneCredit"
                                                                   :itemId="$item->id" label="Je prends en charge"
-                                                                  speed="ultra-fast" color="warning" />
+                                                                  speed="ultra-fast" color="warning" :icon="true"
+                                                                  :loadingDots="true" />
                                                           @endif
 
                                                       </div>
@@ -165,6 +166,7 @@
 
                                                                   {{-- Bouton en dessous --}}
                                                                   @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                                   
                                                                       <a wire:click="editPhoneCredit({{ $item->id }}, 'update-phoneCredit-modal')"
                                                                           class="btn btn-primary btn-sm"
                                                                           href="javascript:;" title="Modifier">

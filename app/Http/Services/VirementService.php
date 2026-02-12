@@ -96,7 +96,6 @@ class VirementService
 
                 $amountDeposit =  $amount_user->comission_distributer;
                 $amountCompanie =  $amount_user->percent_companie;
-                $totalAmount = (float)$amountDeposit + $amountCompanie;
                 $amountDepositUnder = (float) $amountDeposit;
               
                 $walletBank->update([
@@ -109,9 +108,8 @@ class VirementService
                     $walletBank->increment('commission_companie', $amountCompanie);
                     $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_bank_id' ,$walletBank->id, $amountCompanie, $amountDepositUnder);
                 }else {
-                 $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ , 'wallet_bank_id', $walletBank->id, $amountDeposit , $amountDeposit);
+                 $this->commissionServices->distributeAdminVirementCommissionAccepteds($admin_civ , 'wallet_bank_id', $walletBank->id , $amountDeposit);
                 }
-
             }
         } else {
 

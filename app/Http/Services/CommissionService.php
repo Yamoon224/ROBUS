@@ -42,15 +42,11 @@ class CommissionService
 
         if ($adminCiv->count() > 0) {
 
-            $total_commission = (float) $amountDeposit  + (float) $totalCommission;
-
-            $commissionPerAdmin = $total_commission / $adminCiv->count();
-
             foreach ($adminCiv as $user) {
                 $adminUser = SidUser::find($user->id);
 
                 AdminsCom::create(array_merge([
-                    'amount' => $commissionPerAdmin,
+                    'amount' => 0,
                     'sid_user_id' => $adminUser->id,
                     'description' => 'Commission administrateur',
                     'amount_compagnie' => $userUnder->is_under_distributer ? $totalCommission : 0,
@@ -150,6 +146,35 @@ class CommissionService
         }
     }
 
+     public function distributeAdminAndVersementCommissionAcceptedCompanies($adminCiv, string $walletColumn, $walletId , $admin_amount, $totalCompanie, $amountDeposit, $amountBank)
+    {
+
+        if ($adminCiv->isEmpty()) {
+            return;
+        }
+
+        $userUnder = auth_user();
+
+        if ($adminCiv->count() > 0) {
+
+            $commissionPerAdmin = $admin_amount / $adminCiv->count();
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create(array_merge([
+                    'amount' => $commissionPerAdmin,
+                    'amount_compagnie' => $totalCompanie,
+                    'amount_bank' => $amountBank,
+                    'sid_user_id' => $adminUser->id,
+                    'description' => 'Commission administrateur',
+                    'amount_under' => $userUnder->is_under_distributer ? $amountDeposit : 0,
+                    'description_underdistributer' => $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null,
+                ], [$walletColumn => $walletId]));
+            }
+        }
+    }
+
       public function distributeAdminInterCommissions($adminCiv, $walletColumn, $walletId, $totalCommission)
     {
 
@@ -194,6 +219,31 @@ class CommissionService
 
                 AdminsCom::create(array_merge([
                     'amount' => $commissionPerAdmin,
+                    'sid_user_id' => $adminUser->id,
+                    'description' => 'Commission administrateur',
+                    'amount_under' => $userUnder->is_under_distributer ? $totalCommission : 0,
+                    'description_underdistributer' => null,
+                ], [$walletColumn => $walletId]));
+            }
+        }
+    }
+
+       public function distributeAdminUnderCommissions($adminCiv, $walletColumn, $walletId, $totalCommission)
+    {
+
+        if ($adminCiv->isEmpty()) {
+            return;
+        }
+
+        $userUnder = auth_user();
+
+        if ($adminCiv->count() > 0) {
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create(array_merge([
+                    'amount' => 0,
                     'sid_user_id' => $adminUser->id,
                     'description' => 'Commission administrateur',
                     'amount_under' => $userUnder->is_under_distributer ? $totalCommission : 0,
@@ -524,6 +574,33 @@ class CommissionService
     }
 
     
+    public function distributeAdminVirementCommissionAccepteds($adminCiv, string $walletColumn, $walletId, $amountDeposit)
+    {
+
+
+        if ($adminCiv->isEmpty()) {
+            return;
+        }
+
+        $userUnder = auth_user();
+
+
+        if ($adminCiv->count() > 0) {
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create(array_merge([
+                    'amount' => 0,
+                    'sid_user_id' => $adminUser->id,
+                    'description' => $userUnder->is_under_distributer ? 'Sans Commission administrateur' :  'Sans Commission administrateur' ,
+                    'amount_under' =>  $userUnder->is_under_distributer ? $amountDeposit : 0,
+                    'description_underdistributer' =>  $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                ], [$walletColumn => $walletId]));
+            }
+        }
+    }
+
 
     public function distributeAdminCommissionNoAccepteds($adminCiv, string $walletColumn, $walletId, $amountDeposit)
     {
@@ -535,18 +612,15 @@ class CommissionService
 
         $userUnder = auth_user();
 
-        $all_commission =  (float) $amountDeposit;
-
         if ($adminCiv->count() > 0) {
-            $commissionPerAdmin = $all_commission / $adminCiv->count();
 
             foreach ($adminCiv as $user) {
                 $adminUser = SidUser::find($user->id);
 
                 AdminsCom::create(array_merge([
-                    'amount' => $commissionPerAdmin,
+                    'amount' => 0,
                     'sid_user_id' => $adminUser->id,
-                    'description' => 'Commission administrateur',
+                    'description' => 'sans Commission administrateur',
                     'amount_under' =>  $userUnder->is_under_distributer ? $amountDeposit : 0,
                     'description_underdistributer' =>  $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null
                 ], [$walletColumn => $walletId]));
@@ -681,13 +755,12 @@ class CommissionService
         $userUnder = auth_user();
 
         if ($adminCiv->count() > 0) {
-            $commissionPerAdmin = $amountDeposit / $adminCiv->count();
 
             foreach ($adminCiv as $user) {
                 $adminUser = SidUser::find($user->id);
 
                 AdminsCom::create(array_merge([
-                    'amount' => $commissionPerAdmin,
+                    'amount' => 0 ,
                     'sid_user_id' => $adminUser->id,
                     'description' => 'Commission administrateur',
                     'amount_under' =>  $userUnder->is_under_distributer ? $amountDeposit : 0,

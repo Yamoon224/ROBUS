@@ -513,8 +513,6 @@ class TransactionController extends Controller
 
                             $percent_amount = $percent_robus->percent * $request->amount;
 
-                            $percent_real = adjustFeesWithRest($percent_amount, $request->amount);
-
                             if (robus()->is_under_distributer || robus()->is_api) {
 
 

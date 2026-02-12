@@ -28,46 +28,122 @@
     $selectedSize = $sizeClasses[$size] ?? $sizeClasses['default'];
 @endphp
 
-<button class="btn-take-action {{ $selectedColor }} {{ $selectedSize }} {{ $icon ? 'with-icon' : '' }}"
-    wire:click="{{ $action }}({{ $itemId }})" wire:loading.attr="disabled" wire:loading.class="loading"
+<div x-data="{ 
+    processing: false,
+    success: false,
+    error: false,
+    errorMessage: ''
+}"
+@transaction-success.window="if($event.detail[0] === {{ $itemId }}) { 
+    processing = false; 
+    success = true; 
+    setTimeout(() => success = false, 2000);
+}"
+@transaction-error.window="processing = false; error = true; errorMessage = $event.detail[0]; setTimeout(() => error = false, 3000);">
+
+<button 
+    x-on:click="processing = true; $wire.{{ $action }}({{ $itemId }})"
+    x-bind:disabled="processing || success"
+    class="btn-take-action {{ $selectedColor }} {{ $selectedSize }} {{ $icon ? 'with-icon' : '' }} relative overflow-hidden transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+    x-bind:class="{
+        'loading scale-95 opacity-75': processing,
+        'bg-gradient-to-r from-green-500 to-emerald-600 !opacity-100 border-0': success,
+        'bg-gradient-to-r from-red-500 to-rose-600': error
+    }"
     {{ $attributes }}>
-    <span class="flex items-center gap-2">
-        <span>{{ $label }}</span>
+    
+    <span class="flex items-center justify-center gap-2 min-w-[140px]">
+        <!-- État NORMAL (idle) -->
+        <span x-show="!processing && !success && !error" class="flex items-center gap-2">
+            <span>{{ $label }}</span>
+            
+            @if ($icon)
+                <svg class="btn-icon w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clip-rule="evenodd" />
+                </svg>
+            @endif
+        </span>
 
-        @if ($loadingDots)
-            <!-- Animation de chargement moderne -->
-            {{-- <div class="loading-dots" wire:loading.remove wire:target="{{ $action }}">
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-            </div> --}}
+        <!-- État LOADING (traitement) -->
+        <span x-show="processing" class="flex items-center gap-2">
+            @if ($loadingDots)
+                <div class="loading-dots flex gap-1">
+                    <div class="loading-dot w-1.5 h-1.5 bg-white rounded-full animate-bounce"></div>
+                    <div class="loading-dot w-1.5 h-1.5 bg-white rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                    <div class="loading-dot w-1.5 h-1.5 bg-white rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                </div>
+            @else
+                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+            @endif
+            <span>Traitement...</span>
+        </span>
 
-            <div class="loading-dots transition-opacity duration-150" wire:loading.class="opacity-100"
-                wire:loading.remove.class="opacity-0">
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-            </div>
-        @endif
-
-        @if ($icon)
-            <!-- Icône de validation -->
-            <svg wire:loading.remove wire:target="{{ $action }}" class="btn-icon" viewBox="0 0 20 20"
-                fill="currentColor">
+        <!-- État SUCCESS (succès) -->
+        <span x-show="success" class="flex items-center gap-2">
+            <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                     clip-rule="evenodd" />
             </svg>
-        @endif
+            <span>Succès !</span>
+        </span>
 
-        <!-- Animation pendant le loading -->
-        <svg wire:loading wire:target="{{ $action }}" class="w-4 h-4 animate-spin" fill="none"
-            viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-            </circle>
-            <path class="opacity-75" fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-            </path>
-        </svg>
+        <!-- État ERROR (erreur) -->
+        <span x-show="error" class="flex items-center gap-2">
+            <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clip-rule="evenodd" />
+            </svg>
+            <span x-text="errorMessage || 'Erreur'"></span>
+        </span>
     </span>
 </button>
+</div>
+
+@push('styles')
+<style>
+.btn-take-action {
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.btn-take-action.loading {
+    cursor: wait;
+    pointer-events: none;
+}
+
+.btn-take-action .loading-dots {
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-take-action .loading-dot {
+    animation: loading-bounce 1.4s infinite ease-in-out both;
+}
+
+@keyframes loading-bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}
+
+.btn-take-action .btn-icon {
+    transition: transform 0.2s ease;
+}
+
+.btn-take-action:hover .btn-icon {
+    transform: translateX(3px);
+}
+
+.btn-take-action:active {
+    transform: scale(0.98);
+}
+</style>
+@endpush
