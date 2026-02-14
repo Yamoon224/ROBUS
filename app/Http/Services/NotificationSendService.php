@@ -10,6 +10,7 @@ use App\Events\CreateWalletOneXbet;
 use App\Events\CreateWalletPaiementEvent;
 use App\Events\CreateWalletVersementEvent;
 use App\Events\CreateWalletDrawalEvent;
+use App\Events\CreateCardOrderEvent;
 use App\Events\CreateWalletPhoneCreditEvent;
 use App\Events\CreateWalletReloadCardEvent;
 use App\Events\CreateWalletBankSend;
@@ -317,7 +318,7 @@ class NotificationSendService
 
         $admins = $this->getAdminCIVProperty();
         $notifs = robus()->unreadNotifications;
-        event(new CreateCardBankEvent($walletOrderCard));
+        event(new CreateCardOrderEvent($walletOrderCard));
         safeNotifyMany(
             $admins,
             new AdminNotification(NotificationMessages::ORDER_RELOAD_CARD)

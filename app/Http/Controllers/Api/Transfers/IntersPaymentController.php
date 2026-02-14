@@ -2503,9 +2503,9 @@ class IntersPaymentController extends Controller
 
                 if (robus()->is_under_distributer || robus()->is_api) {
 
-                    $commission_paiement_invoice_val_inter_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->comission_auther);
+                    $commission_paiement_invoice_val_inter_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->amount_auther);
 
-                    $commission_reload_inter_val_inter_percent_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->amount_auther);
+                    $commission_reload_inter_val_inter_percent_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->comission_auther);
                 } else {
 
                     $commission_paiement_invoice_val_inter_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->amount_auther);
@@ -2514,21 +2514,16 @@ class IntersPaymentController extends Controller
                 }
 
 
-                $valeur_receive =  (float) $amount_invoice_inter - (float) $commission_reload_inter_val_inter_percent_pay;
+                $valeur_receive = (robus()->is_under_distributer || robus()->is_api) ? ((float) $amount_invoice_inter - (float) $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->amount_auther)) : ((float) $amount_invoice_inter - (float) $commission_reload_inter_val_inter_percent_pay);
 
-                if ($valeur_receive < 0) {
+               $commission_paiement_invoice_val_inter_receive =  $valeur_receive;
 
-                    $commission_paiement_invoice_val_inter_receive = "Montant negatif";
-                } else {
-
-                    $commission_paiement_invoice_val_inter_receive =  $valeur_receive;
-                }
 
                 return response()->json([
                     'success' => $commission_invoice != null ? true : false,
                     'data' =>  [
                         'amount_commission' => $commission_reload_inter_val_inter_percent_pay,
-                        'amount_pay' => (robus()->is_under_distributer || robus()->is_api) ? $commission_paiement_invoice_val_inter_pay : $commission_paiement_invoice_val_inter_pay ,
+                        'amount_pay' => $commission_paiement_invoice_val_inter_pay ,
                         'amount_receive' => $commission_paiement_invoice_val_inter_receive,
                     ],
                 ], 200);
@@ -2559,7 +2554,7 @@ class IntersPaymentController extends Controller
                 if (robus()->is_under_distributer || robus()->is_api) {
                     $commission_paiement_invoice_val_inter_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->comission_auther);
 
-                    $commission_reload_inter_val_inter_percent_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->amount_auther);
+                    $commission_reload_inter_val_inter_percent_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->percent_masters);
                 } else {
 
                     $commission_paiement_invoice_val_inter_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->amount_auther);

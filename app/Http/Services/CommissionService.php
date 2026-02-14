@@ -554,10 +554,9 @@ class CommissionService
 
         $userUnder = auth_user();
 
-        $all_commission =  (float) $totalCommission +  (float) $amountDeposit;
 
         if ($adminCiv->count() > 0) {
-            $commissionPerAdmin = $all_commission / $adminCiv->count();
+            $commissionPerAdmin = $totalCommission / $adminCiv->count();
 
             foreach ($adminCiv as $user) {
                 $adminUser = SidUser::find($user->id);

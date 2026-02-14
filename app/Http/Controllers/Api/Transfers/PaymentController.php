@@ -558,9 +558,9 @@ class PaymentController extends Controller
 
                         if (robus()->is_under_distributer || robus()->is_api) {
 
-                            $commission_paiement_invoice_canal_val_inter = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->comission_canal);
+                            $commission_paiement_invoice_canal_val_inter = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->amount_canal);
 
-                            $commission_reload_inter_val_inter_percent_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->amount_canal);
+                            $commission_reload_inter_val_inter_percent_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->comission_canal);
                         } else {
 
                             $commission_paiement_invoice_canal_val_inter = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->amount_canal);

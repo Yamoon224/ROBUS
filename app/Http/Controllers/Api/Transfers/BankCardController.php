@@ -173,7 +173,7 @@ class BankCardController extends Controller
 
                         if ($walletOrderCard != null) {
 
-                            if ($this->orderCardService->updateamountOrderCardReceveid($admin_civ, $percent_robus, $walletOrderCard, $valeur_amount)) {
+                            if ($this->orderCardService->updateamountOrderCardReceveid($valeur_amount)) {
                                 $this->notificationOrderCard->sendNotificationOrderCard($walletOrderCard);
                                 return $this->messageAfterValidated($walletOrderCard);
                             }
@@ -290,7 +290,7 @@ class BankCardController extends Controller
         $admin_civ = $this->validatedamountDays->adminCiv();
 
 
-        try {
+        // try {
 
             // if (in_array($request->provider, [1, 3, 4, 5, 6])) {
 
@@ -304,17 +304,13 @@ class BankCardController extends Controller
                         'email' => 'required',
                         'address' => 'required',
                         'provider' => 'required',
-                        'recto' => 'required|mimes:jpeg,png,jpg|max:2048',
-                        'verso' => 'required|mimes:jpeg,png,jpg|max:2048',
                         'number_card' => 'required',
 
                     ],
                     [
                         'phone.required' => 'Votre telephone  est obligatoire',
                         'email.required' => 'Votre email  est obligatoire',
-                        'recto.required' => 'Votre image est obligatoire',
                         'provider.required' => 'Fournisseur est obligatoire',
-                        'verso.required' => 'Votre image est obligatoire',
                         'number_card.required' => 'Votre image est obligatoire',
                         'address.required' => 'Votre adresse est obligatoire',
                     ]
@@ -328,17 +324,12 @@ class BankCardController extends Controller
                         'phone' => 'required',
                         'email' => 'required',
                         'address' => 'required',
-                        'provider' => 'required',
-                        'recto' => 'required|mimes:jpeg,png,jpg|max:2048',
-                        'verso' => 'required|mimes:jpeg,png,jpg|max:2048',
-
+                        'provider' => 'required'
                     ],
                     [
                         'phone.required' => 'Votre telephone  est obligatoire',
                         'email.required' => 'Votre email  est obligatoire',
-                        'recto.required' => 'Votre image est obligatoire',
                         'provider.required' => 'Fournisseur est obligatoire',
-                        'verso.required' => 'Votre image est obligatoire',
                         'address.required' => 'Votre adresse est obligatoire',
                     ]
 
@@ -370,11 +361,11 @@ class BankCardController extends Controller
 
                     if ($this->validatedamountDays->validateAmount($valeur_amount)) {
 
-                        $walletOrderCard =  $this->orderCardService->createRobusWalletOrderCardOther($percent_robus->amount, $request->provider, $percent_robus, $request->address, $request->email, $request->phone, $request->number_card, $file_identity_doc, $file_identity_form);
+                        $walletOrderCard =  $this->orderCardService->createRobusWalletOrderCardOther($percent_robus->amount, $request->provider, $percent_robus, $request->address, $request->email, $request->phone, $request->number_card, $file_identity_doc, $file_identity_form , $request->type_piece, $request->num_piece_custumer, $request->date_piece);
 
                         if ($walletOrderCard != null) {
 
-                            if ($this->orderCardService->updateamountOrderCardReceveid($admin_civ, $percent_robus, $walletOrderCard, $valeur_amount)) {
+                            if ($this->orderCardService->updateamountOrderCardReceveid($valeur_amount)) {
                                 $this->notificationOrderCard->sendNotificationOrderCard($walletOrderCard);
                                 return $this->messageAfterValidated($walletOrderCard);
                             }
@@ -383,7 +374,7 @@ class BankCardController extends Controller
                             return  json_message_response(false, "Error de creation de transfert du montant !", 333);
                         }
                     } else {
-                        return json_message_response(false, "Veuillez verifier votre solde", 333);
+                        return json_message_response(false, "Veuillez verifier votre solde !!!", 333);
                     }
                 } else {
                     return json_message_response(false, "Votre montant journalier est atteint !!", 333);
@@ -396,12 +387,12 @@ class BankCardController extends Controller
 
             //     return  json_message_response(false, "Selectionnez une carte visible !", 333);
             // }
-        } catch (\Exception $exception) {
-            return response()->json([
-                'success' => false,
-                'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
-            ], 333);
-        }
+        // } catch (\Exception $exception) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+        //     ], 333);
+        // }
     }
 
 

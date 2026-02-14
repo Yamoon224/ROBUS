@@ -47,21 +47,22 @@ class OrderCardService
             'city_id'   => robus()->city->id,
             'bank_card_id'   => $provider,
             'amount'   => $amount_valeur,
+            'amount_received' => $amount_valeur ?? null,
             'order_card_cost_id'  =>  $percent_robus->id,
             'address'   => $address,
             //phone   => $phone,
             'email'   => $email,
             'wallet_id'  => robus()->wallet->id,
             'status'   => false,
-            'costs_amount'   => $amount_valeur,
+            'costs_amount'   => 0,
             'is_either'   => false,
             'is_other'   => true,
             'created_by'  => robus()->id,
-            'status'   => "PENDING",
         ]);
     }
 
-    public function createRobusWalletOrderCardOther($amount_valeur, $provider, $percent_robus, $address, $email, $phone, $number_card, $file_identity_doc, $file_identity_form)
+    public function createRobusWalletOrderCardOther($amount_valeur, $provider, $percent_robus, $address, $email, $phone, $number_card,
+     $file_identity_doc, $file_identity_form, $type_piece, $num_piece_custumer, $date_piece,)
     {
 
         $amount_solde = robus()->wallet->amount - $amount_valeur;
@@ -73,15 +74,20 @@ class OrderCardService
             'country_id'   => robus()->country->id,
             'city_id'   => robus()->city->id,
             'bank_card_id'   => $provider,
+            'balance_before' =>  robus()->wallet->amount,
             'amount'   => $amount_valeur,
+            'amount_received' => $amount_valeur ?? null,
             'order_card_cost_id'  =>  $percent_robus->id,
             'address'   => $address,
-            'phone'   => $phone,
+            'phone'   => robus()->country->indecative . $phone,
             'email'   => $email,
             'number_card'   => $number_card,
             'wallet_id'  => robus()->wallet->id,
             'status'   => false,
-            'costs_amount'   => $amount_valeur,
+            'costs_amount'   => 0,
+            'type_piece'   => $type_piece,
+            'num_piece_custumer'   => $num_piece_custumer,
+            'date_piece'   => $date_piece,
             'is_either'   => false,
             'is_other'   => true,
             'created_by'  => robus()->id,
@@ -109,79 +115,17 @@ class OrderCardService
         return $cardBank;
     }
 
-    public function updateamountOrderCardReceveid($admin_civ, $percent_robus, $walletOrderCard, $amount_commission)
+    public function updateamountOrderCardReceveid($amount_commission)
     {
 
-        // $master_id = $this->robusMasterTransaction->mastersId();
-        $userId = robus()->id;
-        $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
-        $account_accepted = robus()->is_accepted_companie ?? false;
-        $company_id = robus()->company_id ?? null;
-        if ($company_id) {
-            $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
-            $sidUserId = $account_accepted && $compagnie ? $compagnie->id : null;
-        } else {
-            $compagnie = null;
-            $sidUserId = null;
-        }
-        
-        if ($sidUserId) {
-            $activeCButtons = $this->operatorRestrictionService->getActiveCButtons($sidUserId);
-        } else {
-            $activeCButtons = []; 
-        }
-
+ 
         robus()->wallet->update([
             'reload_by' => robus()->firstname . ' ' . robus()->lastname,
             'sid_user_relod' => robus()->id,
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
-        if (robus()->is_under_distributer || robus()->is_api) {
-
-
-            $valuer_deposit = (float) $percent_robus->percent_merchands;
-            $convertion_commission = $this->commissionServices->convertAdminCommission($valuer_deposit);
-            $admin_valeur =  $amount_commission -  $percent_robus->percent_merchands;
-
-            if (!empty($activeButtons['showRemonterOrderButton'])) {
-
-
-                $walletOrderCard->update([
-                    'commissions' => DB::raw('commissions+'  .  $convertion_commission),
-                ]);
-
-                $account_accepted = robus()->is_accepted_companie ?? false;
-
-                if ($account_accepted && !empty($activeCButtons['showRemonterOrderCButton'])) {
-
-                    $valuer_companie = $percent_robus->percent_companie;
-
-                    $convertion_commission_compagnie = $this->commissionServices->convertAdminCommission($valuer_companie);
-
-                    $walletOrderCard->increment('commission_companie', $convertion_commission_compagnie);
-                    
-                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'bank_card_id' ,$walletOrderCard->id, $convertion_commission_compagnie, $valuer_deposit);
-
-                }else {
-                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'bank_card_id' ,$walletOrderCard->id, $admin_valeur, $valuer_deposit); 
-                }
-
-            } else {
-
-                $this->commissionServices->distributeAdminCommissions($admin_civ, 'bank_card_id' ,$walletOrderCard->id, $amount_commission);
-
-            }
-        } else {
-
-
-            $admin_valeur = (float) $amount_commission;
-
-            $admin_valeur_convertion = $this->commissionServices->convertAdminCommission($admin_valeur);
-
-            $this->commissionServices->distributeAdminCommissions($admin_civ, 'bank_card_id' ,$walletOrderCard->id, $admin_valeur_convertion);
-        }
-
+    
 
         return true;
     }

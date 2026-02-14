@@ -13,106 +13,107 @@
 
             @if ($choose_type_paiement == 1)
                 <!-- Transfers d'argent -->
-                @if ($type_inter_image == 'Passeport')
-                    <div class="col-span-12">
-                        <div class="field field-full">
-                            <label class="form-label required">Image de la carte</label>
 
-                            <div class="field-value flex items-center gap-2">
-                                <i class="fas fa-qrcode"></i>
+                <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3">
+                    @if ($type_inter_image == 'Passeport')
+                        <div class="col-span-12">
+                            <div class="field field-full">
+                                <label class="form-label required">Image de la carte</label>
 
-                                @if ($image_frontend_inter_edit)
-                                    @php
-                                        $img =
-                                            asset_url($image_frontend_inter_edit) ??
-                                            asset_url('image_inters/' . $image_frontend_inter_edit);
-                                    @endphp
+                                <div class="field-value flex items-center gap-2">
+                                    <i class="fas fa-qrcode"></i>
 
-                                    <a href="{{ $img }}" download target="_blank" class="relative group">
-                                        <img src="{{ $img }}"
-                                            class="w-24 h-24 object-contain rounded border cursor-pointer" />
+                                    @if ($image_frontend_inter_edit)
+                                        @php
+                                            $img =
+                                                asset_url($image_frontend_inter_edit) ??
+                                                asset_url('image_inters/' . $image_frontend_inter_edit);
+                                        @endphp
 
-                                        <!-- Icône téléchargement -->
-                                        <span
-                                            class="absolute inset-0 flex items-center justify-center
+                                        <a href="{{ $img }}" download target="_blank" class="relative group">
+                                            <img src="{{ $img }}"
+                                                class="w-24 h-24 object-contain rounded border cursor-pointer" />
+
+                                            <!-- Icône téléchargement -->
+                                            <span
+                                                class="absolute inset-0 flex items-center justify-center
                                    bg-black/40 text-white opacity-0 group-hover:opacity-100
                                    rounded transition">
-                                            <i class="fas fa-download text-lg"></i>
-                                        </span>
-                                    </a>
-                                @else
-                                    <span class="text-gray-500">Aucune image</span>
-                                @endif
+                                                <i class="fas fa-download text-lg"></i>
+                                            </span>
+                                        </a>
+                                    @else
+                                        <span class="text-gray-500">Aucune image</span>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @else
-                    <div class="col-span-6">
-                        <div class="field field-full">
-                            <label class="form-label required">Image Front de la carte</label>
+                    @else
+                        <div class="col-span-6">
+                            <div class="field field-full">
+                                <label class="form-label required">Image Front de la carte</label>
 
-                            <div class="field-value flex items-center gap-2">
-                                <i class="fas fa-qrcode"></i>
+                                <div class="field-value flex items-center gap-2">
+                                    <i class="fas fa-qrcode"></i>
 
-                                @if ($image_frontend_inter_edit)
-                                    @php
-                                        $imgFront =
-                                            asset_url($image_frontend_inter_edit) ??
-                                            asset_url('image_inters/' . $image_frontend_inter_edit);
-                                    @endphp
+                                    @if ($image_frontend_inter_edit)
+                                        @php
+                                            $imgFront =
+                                                asset_url($image_frontend_inter_edit) ??
+                                                asset_url('image_inters/' . $image_frontend_inter_edit);
+                                        @endphp
 
-                                    <a href="{{ $imgFront }}" download target="_blank" class="relative group">
-                                        <img src="{{ $imgFront }}"
-                                            class="w-24 h-24 object-contain rounded border cursor-pointer">
+                                        <a href="{{ $imgFront }}" download target="_blank" class="relative group">
+                                            <img src="{{ $imgFront }}"
+                                                class="w-24 h-24 object-contain rounded border cursor-pointer">
 
-                                        <span
-                                            class="absolute inset-0 flex items-center justify-center
+                                            <span
+                                                class="absolute inset-0 flex items-center justify-center
                                  bg-black/40 text-white opacity-0 group-hover:opacity-100
                                  rounded transition">
-                                            <i class="fas fa-download"></i>
-                                        </span>
-                                    </a>
-                                @else
-                                    <span class="text-gray-500">Aucune image</span>
-                                @endif
+                                                <i class="fas fa-download"></i>
+                                            </span>
+                                        </a>
+                                    @else
+                                        <span class="text-gray-500">Aucune image</span>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="col-span-6">
-                        <div class="field field-full">
-                            <label class="form-label required">Image arrière de la carte</label>
+                        <div class="col-span-6">
+                            <div class="field field-full">
+                                <label class="form-label required">Image arrière de la carte</label>
 
-                            <div class="field-value flex items-center gap-2">
-                                <i class="fas fa-qrcode"></i>
+                                <div class="field-value flex items-center gap-2">
+                                    <i class="fas fa-qrcode"></i>
 
-                                @if ($image_backend_inter_edit)
-                                    @php
-                                        $imgBack =
-                                            asset_url($image_backend_inter_edit) ??
-                                            asset_url('image_inters/' . $image_backend_inter_edit);
-                                    @endphp
+                                    @if ($image_backend_inter_edit)
+                                        @php
+                                            $imgBack =
+                                                asset_url($image_backend_inter_edit) ??
+                                                asset_url('image_inters/' . $image_backend_inter_edit);
+                                        @endphp
 
-                                    <a href="{{ $imgBack }}" download target="_blank" class="relative group">
-                                        <img src="{{ $imgBack }}"
-                                            class="w-24 h-24 object-contain rounded border cursor-pointer">
+                                        <a href="{{ $imgBack }}" download target="_blank" class="relative group">
+                                            <img src="{{ $imgBack }}"
+                                                class="w-24 h-24 object-contain rounded border cursor-pointer">
 
-                                        <span
-                                            class="absolute inset-0 flex items-center justify-center
+                                            <span
+                                                class="absolute inset-0 flex items-center justify-center
                                  bg-black/40 text-white opacity-0 group-hover:opacity-100
                                  rounded transition">
-                                            <i class="fas fa-download"></i>
-                                        </span>
-                                    </a>
-                                @else
-                                    <span class="text-gray-500">Aucune image</span>
-                                @endif
+                                                <i class="fas fa-download"></i>
+                                            </span>
+                                        </a>
+                                    @else
+                                        <span class="text-gray-500">Aucune image</span>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                @endif
-                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                    @endif
                     <div class="col-span-6 mt-space-padding">
                         <label class="form-label">Numero piece <span class="text-danger">*</span></label>
                         <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
@@ -522,8 +523,7 @@
                         <label class="form-label">Numero du compte <span class="text-danger">*</span></label>
                         <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
                             <i class="fas fa-phone text-gray-500 mr-3"></i>
-                            <span
-                                class="text-gray-800 font-mono">{{ $numAccompte ?? 'Non renseigné' }}</span>
+                            <span class="text-gray-800 font-mono">{{ $numAccompte ?? 'Non renseigné' }}</span>
                         </div>
                     </div>
                 </div>
@@ -550,16 +550,14 @@
                         <label class="form-label">Nom et prénom <span class="text-danger">*</span></label>
                         <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
                             <i class="fas fa-user text-gray-500 mr-3"></i>
-                            <span
-                                class="text-gray-800 font-medium">{{ $name ?? 'Non spécifié' }}</span>
+                            <span class="text-gray-800 font-medium">{{ $name ?? 'Non spécifié' }}</span>
                         </div>
                     </div>
                     <div class="col-span-6 mt-space-padding">
                         <label class="form-label">Téléphone <span class="text-danger">*</span></label>
                         <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
                             <i class="fas fa-credit-card text-gray-500 mr-3"></i>
-                            <span
-                                class="text-gray-800 font-mono">{{ $phone_user_edit ?? 'Non renseigné' }}</span>
+                            <span class="text-gray-800 font-mono">{{ $phone_user_edit ?? 'Non renseigné' }}</span>
                         </div>
                     </div>
                 </div>

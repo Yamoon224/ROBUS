@@ -4,6 +4,7 @@ use App\Models\AppCloseCom;
 use App\Models\AppCloseMaster;
 use App\Models\AppMasterStatus;
 use App\Models\CloseApp;
+use App\Models\Banks\BankCard;
 use App\Models\CloseAppWeb;
 use App\Models\Costs\DepositCost;
 use App\Models\Custumers\Country;
@@ -211,6 +212,21 @@ function adjustFeesWithRest($fees, $amount)
         'rest' => $rest,
         'amountSend' => $amountReal,
     ];
+}
+
+function cumulOrderCard()
+{
+    $interHomeService = app(InterHomeService::class);
+
+    // Récupérer tous les counts
+    $counts = [
+        'bankCard' =>  $interHomeService->getCountByStatus(BankCard::class , 'wallet_payments' ,0),
+    ];
+
+    // Calculer le cumul total
+    $total = array_sum($counts);
+
+    return $total; 
 }
 
 function cumulTransaction()

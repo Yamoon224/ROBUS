@@ -55,6 +55,8 @@ class EventServiceProvider extends ServiceProvider
             \App\Listeners\TresortMoneyChoose::class,
         ],
 
+        
+
         \App\Events\ChooseDrawalEvent::class => [
             \App\Listeners\DrawalChoose::class,
         ],
@@ -80,6 +82,11 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\CreateWalletBankEvent::class => [
             \App\Listeners\CreateBank::class,
         ],
+
+         \App\Events\CreateCardOrderEvent::class => [
+            \App\Listeners\CreateOderBank::class,
+        ],
+
         \App\Events\CreateWalletInterEvent::class => [
             \App\Listeners\CreateInter::class,
         ],

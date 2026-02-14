@@ -411,13 +411,6 @@ class ReloadCardController extends Controller
         try {
 
 
-            if (!in_array($provider, [14, 15, 13, 16, 17, 66])) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Pas de service disponible',
-                ], 200);
-            }
-
             $is_distributor = $wallet_user->is_under_distributer;
             $commission_type = $is_distributor ? 'is_ivoires' : 'is_inter_bank';
             $commission_reload = DepositCost::whereId(2)->first();

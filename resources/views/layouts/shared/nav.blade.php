@@ -492,7 +492,23 @@
                                 class="side-menu {{ $route == 'commissions.browse_orders' ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
                                 </div>
-                                <div class="side-menu__title"> Commande carte</div>
+                                <div class="side-menu__title"> 
+                            <span>Commande carte</span>
+                                    
+                                     <div class="flex items-center gap-2 mr-3 ml-3">
+                                @if ($cumulPendding > 0)
+                                    <span
+                                        class="inline-flex items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                                        {{ $cumulPendding }}
+                                    </span>
+                                @endif
+                                <div
+                                    class="side-menu__sub-icon transform transition-transform duration-200 group-hover:rotate-180">
+                                    <i data-feather="chevron-down" class="w-4 h-4"></i>
+                                </div>
+                            </div>
+
+                                </div>
                             </a>
                         </li>
                         {{-- <li>

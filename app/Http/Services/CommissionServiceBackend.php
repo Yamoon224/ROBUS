@@ -214,11 +214,12 @@ class CommissionServiceBackend
             foreach ($admin_civ as $user) {
                 $admin_single = SidUser::find($user->id);
                 $check->adminCom->update([
-                    'amount' =>   $valeur_amount_com,
+                    'amount' =>   0,
                     'sid_user_id' =>   $admin_single->id,
                     'description' => $description,
                     'status'  => "SUCCESS",
-                    'amount_under' =>  $valeur_amount_com,
+                    'amount_under' => $check->adminCom->amount_under,
+                    'amount_compagnie' => $check->adminCom->amount_compagnie,
                     'description_underdistributer' =>  $description
                 ]);
 

@@ -37,6 +37,7 @@ class InterTransactionSingleCollection extends JsonResource
             // 'name_user_send' => isset(optional($this->wallet)->sidUser->lastname) ? (optional($this->wallet)->sidUser->lastname) : null,
             'phone_user_send' => optional($this->wallet)->sidUser->phone ?? null,
             'date_created' =>  $this->created_at,
+            'provider_type' =>  $this->provider_type,
             'type' =>  'Transfert international',
             'date_treatment' =>  optional($this->transactionInter)->created_at,
             'Reference'  => optional($this->transactionInter)->transaction_id,
