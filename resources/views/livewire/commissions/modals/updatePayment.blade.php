@@ -50,12 +50,20 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
-                <div class="col-span-12">
+                <div class="col-span-6">
                     <label for="modal-form-1" class="form-label">Commission Compagnie<span class="text-danger">
                             *</span></label>
                     <input wire:model.defer="comissionCompanie" id="modal-form-1" type="number" class="form-control"
                         placeholder="Comission autres">
                     @error('comissionCompanie')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+                 <div class="col-span-6">
+                    <label for="modal-form-1" class="form-label">Commission banque</label>
+                    <input wire:model.defer="comissionBank" id="modal-form-1" type="number" class="form-control"
+                        placeholder="Comission de la banqu">
+                    @error('comissionBank')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>

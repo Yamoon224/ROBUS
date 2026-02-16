@@ -140,6 +140,13 @@
                                                         <p class="font-medium whitespace-nowrap">
                                                             {{ substr($item->phone ?? ($item->num_wallet ?? null), 0, 6) }}
                                                         </p>
+
+                                                        @if ($item->provider->name == 'Moov' && $item->type_transaction == 'Retrait')
+                                                            <p class="font-medium whitespace-nowrap">
+                                                               Référence : {{ substr($item->reference ?? ($item->reference ?? null), 0, 6) }}
+                                                            </p>
+                                                        @endif
+
                                                     </div>
 
 
@@ -169,6 +176,11 @@
                                                             {{ $item->phone ?? null }}
                                                             {{ $item->num_wallet ?? null }}
                                                         </p>
+                                                        @if ($item->provider->name == 'Moov' && $item->type_transaction == 'Retrait')
+                                                            <p class="font-medium whitespace-nowrap">
+                                                               Référence : {{ $item->reference ?? null }}
+                                                            </p>
+                                                        @endif
                                                     </div>
 
                                                     @if ($item->type_transaction === 'Retrait')

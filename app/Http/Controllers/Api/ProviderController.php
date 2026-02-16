@@ -119,7 +119,7 @@ class ProviderController extends Controller
                 'TRANSFERT TRESORT' => 'showTresortButton',
                 'TRANSFERT BANK SEND' => 'showFacBankSendButton',
                 'RETRAIT XBETS' => 'showXbetsRetraitButton',
-                'XBETS' => 'showXbetsButton',
+                '1XBET' => 'showXbetsButton',
                 'VERSEMENT' => 'showVersementButton',
             ];
 
@@ -304,7 +304,7 @@ class ProviderController extends Controller
             'TRANSFERT TRESORT' => 'showTresortButton',
             'TRANSFERT BANK SEND' => 'showBankSendButton',
             'RETRAIT XBETS' => 'showXbetsRetraitButton',
-            'XBETS' => 'showXbetsButton',
+            '1XBET' => 'showXbetsButton',
             'VERSEMENT' => 'showVersementButton',
         ];
 

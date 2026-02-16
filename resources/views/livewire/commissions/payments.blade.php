@@ -33,7 +33,7 @@
                         <th class="whitespace-nowrap text-center">Montant CIE/SODECI</th>
                         <th class="whitespace-nowrap text-center">Comission S-D Canal</th>
                         <th class="whitespace-nowrap text-center">Comission S-D CIE/SODECI</th>
-                        <th class="whitespace-nowrap text-center">Comission Compagnie</th>
+                        <th class="whitespace-nowrap text-center">Comission Compagnie & Banque</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
                 </thead>
@@ -55,27 +55,28 @@
                                 </td>
                                 <td class="text-center">
 
-                                    {{ $item->amount_auther ?? null }} Frcfa
+                                    {{ $item->amount_auther ?? null }} CFA
 
 
                                 </td>
 
                                 <td class="text-center">
 
-                                    {{ $item->comission_canal ?? null }} Frcfa
+                                    {{ $item->comission_canal ?? null }} CFA
 
 
                                 </td>
                                 <td class="text-center">
 
-                                    {{ $item->comission_auther ?? null }} Frcfa
+                                    {{ $item->comission_auther ?? null }} CFA
 
 
                                 </td>
 
                                 <td class="text-center">
 
-                                    {{ $item->percent_companie ?? null }} Frcfa
+                                 <p>Compagnie {{ $item->percent_companie ?? null }} CFA</p>  
+                                 <p>Banque {{ $item->bank_comission ?? null }} CFA</p>  
 
                                 </td>
 

@@ -104,7 +104,7 @@ class PaymentService
             'provider_id'  =>    $provider,
             'amount_received' => $amountReceved ?? null,
             'number_phone' => $number_phone ?? null,
-            'costs_amount' => $percent_robus->amount_canal ?? null,
+            'costs_amount' => (robus()->is_under_distributer || robus()->is_api) ? $percent_robus->comission_canal : $percent_robus->amount_canal,
             'offer_id'  =>  $offers->id ?? null,
             'status'  => "PENDING",
             'paiementChoix_phone'  => $paiementChoix_phone ?? null,

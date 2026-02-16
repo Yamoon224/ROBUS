@@ -30,12 +30,25 @@ class MobileWalletTransactionService
         $this->commissionServices = $commissionServices;
     }
 
-    public function createRobusDrawalWalletTransactionDistributer($percent_robus, $provider, $transaction_amount_money, $date_piece, $num_piece_custumers, $name_custumers, $valuer_deposit_com, $transaction_phone, $choose_type_transaction, $type, $numberPiece , $reference)
-    {
+    public function createRobusDrawalWalletTransactionDistributer(
+        $percent_robus,
+        $provider,
+        $transaction_amount_money,
+        $date_piece,
+        $num_piece_custumers,
+        $name_custumers,
+        $valuer_deposit_com,
+        $transaction_phone,
+        $choose_type_transaction,
+        $type,
+        $numberPiece,
+        $reference,
+        $imagePath,
+        $imageBackendPath
+    ) {
 
-        $val_amount = $transaction_amount_money;
 
-        $amount_solde = (float)robus()->wallet->amount ;
+        $amount_solde = (float)robus()->wallet->amount;
 
         return $this->transctionRepository->create(
             [
@@ -59,7 +72,10 @@ class MobileWalletTransactionService
                 'status'  => "PENDING",
                 'amount_solde' => $amount_solde ?? null,
                 'type_piece' => $type ?? null,
-                'num_piece' => $numberPiece ?? null
+                'num_piece' => $numberPiece ?? null,
+                'image' => $imagePath ?? null,
+                'image_bakend' => $imageBackendPath ?? null,
+
             ]
         );
     }
@@ -329,7 +345,7 @@ class MobileWalletTransactionService
                 } else {
                     $this->commissionServices->distributeAdminCommissionNoAccepteds($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $admin_valeur_convertion);
                 }
-            } 
+            }
         }
 
         return true;

@@ -244,7 +244,7 @@ class TransactionController extends Controller
                                     $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
 
 
-                                    $walletTransaction =  $this->robusTransactionService->createRobusWalletTransaction($request->amount , $percent_amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal, $walletAmountSend->amount);
+                                    $walletTransaction =  $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal, $walletAmountSend->amount);
 
                                     if ($walletTransaction != null) {
 
@@ -375,7 +375,7 @@ class TransactionController extends Controller
 
                                     $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
 
-                                    $walletTransaction = $this->robusTransactionService->createRobusWalletTransaction($request->amount , $percent_amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal, $walletAmountSend->amount);
+                                    $walletTransaction = $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal, $walletAmountSend->amount);
 
                                     if ($walletTransaction != null) {
 
@@ -842,8 +842,42 @@ class TransactionController extends Controller
 
                             $cost_payment = $percent_amount;
                         }
+                        $file_front = $request->file('image');
+                        $file_backend = $request->file('image_bakend');
+                        $imageBackendPath = null;
 
-                        $walletTransaction =  $this->mobileWalletTransactionService->createRobusDrawalWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->num_piece_custumer, $request->name_custumer, $cost_payment, $request->phone, 2, $request->type, $request->numberPiece, $request->reference);
+                        $imagePath = null;
+
+                        if ($file_front) {
+                            // Chemin de destination
+                            $destination_path = public_path('transactions/' . robus()->id . '/');
+
+                            // Création du dossier si inexistant
+                            if (!file_exists($destination_path)) {
+                                mkdir($destination_path, 0777, true);
+                            }
+
+                            // Générer un nom unique
+                            if ($file_front) {
+
+                                $front_file = uniqid('front_') . '.' . $file_front->getClientOriginalExtension();
+                                $file_front->move($destination_path, $front_file);
+
+                                $imagePath = "/transactions/" . robus()->id .  "/$front_file";
+                            }
+
+                            // 👉 Image verso
+                            if ($file_backend) {
+                                $backend_file = uniqid('back_') . '.' . $file_backend->getClientOriginalExtension();
+                                $file_backend->move($destination_path, $backend_file);
+
+                                $imageBackendPath = "/transactions/" . robus()->id .  "/$backend_file";
+                            }
+                        }
+
+
+                        $walletTransaction =  $this->mobileWalletTransactionService->createRobusDrawalWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->num_piece_custumer, $request->name_custumer, $cost_payment, $request->phone, 2, $request->type, $request->numberPiece, $request->reference ,       $imagePath,
+                                $imageBackendPath );
 
                         if ($walletTransaction != null) {
 
@@ -1490,7 +1524,7 @@ class TransactionController extends Controller
                 $commission_transaction_val_percent_pay = 0;
                 $commission_transaction_val_nat_receive = (float)$amount_transaction;
 
-                 $isUnders = (bool) (robus()?->is_under_distributer || robus()?->is_api);
+                $isUnders = (bool) (robus()?->is_under_distributer || robus()?->is_api);
 
                 // Si l'utilisateur est sous distributeur, admin ou distributeur
                 if (($data->sidUser->is_under_distributer && $isUnders) || $data->sidUser->is_admin || $data->sidUser->is_distributer || ($data->sidUser->is_api && $isUnders)) {
@@ -1621,6 +1655,4 @@ class TransactionController extends Controller
             ], 200);
         }
     }
-
-
 }

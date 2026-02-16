@@ -19,6 +19,7 @@ class Payments extends Component
     public $comission_canal;
     public $comission_master;
     public $comissionCompanie;
+    public $comissionBank;
 
 
     protected $rules = [
@@ -52,6 +53,7 @@ class Payments extends Component
                     'comission_canal'  => $this->comission_canal,
                     'created_by' => Auth::guard('web')->user()->id,
                     'percent_companie'  => $this->comissionCompanie,
+                    'bank_comission'  => $this->comissionBank,
                     'status'  => 1
                 ]
             );
@@ -60,6 +62,7 @@ class Payments extends Component
             $this->payment_amount_auther = '';
             $this->comission_auther = '';
             $this->comission_canal = '';
+            $this->comissionBank = '';
             $this->emit('modal-hide', 'hide');
             $this->emit('success', 'Commission  ajouté !');
         } else $this->emit('error', 'Commission  existante !');
@@ -75,6 +78,7 @@ class Payments extends Component
         $this->comission_auther = $check->comission_auther;
         $this->comission_canal = $check->comission_canal;
         $this->comissionCompanie = $check->percent_companie;
+        $this->comissionBank = $check->bank_comission;
         $this->paymentStatus = $check->status;
         $this->emit($state);
     }
@@ -92,6 +96,7 @@ class Payments extends Component
             'comission_auther'  => $this->comission_auther,
             'comission_canal'  => $this->comission_canal,
             'percent_companie'  => $this->comissionCompanie,
+            'bank_comission'  => $this->comissionBank,
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
         ]);
@@ -109,6 +114,7 @@ class Payments extends Component
         $this->comission_auther = '';
         $this->comission_canal = '';
         $this->comissionCompanie = '';
+        $this->comissionBank = '';
         $this->emit('modal-hide', 'hide');
     }
 

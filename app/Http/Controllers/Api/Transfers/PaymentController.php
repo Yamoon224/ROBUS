@@ -439,8 +439,8 @@ class PaymentController extends Controller
 
                         $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->comission_auther;
 
-                        // $commission_paiement_invoice_val_nat_receive =  (float) $commission_invoice->amount_auther;
-                        $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount;
+                        $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount - (float) $commission_invoice->amount_auther;
+
 
                         $commission_transaction_val_percent_pay =  (float) $commission_invoice->amount_auther;
                     } else {
