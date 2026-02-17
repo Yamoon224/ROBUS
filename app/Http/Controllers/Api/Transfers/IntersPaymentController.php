@@ -1471,7 +1471,7 @@ class IntersPaymentController extends Controller
                 }
             } elseif ($request->provider_type == 10) {
 
-                // Transaction Bank Send
+                // Transaction Xbet
                 $percent_robus =  $this->percentRobus->getRobusPercentageOrderCard();
 
                 $validator = Validator::make(

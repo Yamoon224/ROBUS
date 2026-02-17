@@ -29,6 +29,7 @@ class OneXbetSingleCollection extends JsonResource
             'code_drawal'  =>  $this->code_drawal  ?? null,
             'num_acompte'  =>  $this->num_acompte  ?? null,
             'countrie'  =>  $this->countrie  ?? null,
+            'choose_transaction' => $this->choose_type_transaction == 1 ? 'Transfert' : 'Retrait',
             'citie'  =>  $this->citie  ?? null,
             'payment_cost_percent' =>  number_format((float)$this->commissions, 2, '.', '') . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA") ?? null,
             'master_cost_percent' =>  number_format((float)$this->commission_masters, 2, '.', '') . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA") ?? null,

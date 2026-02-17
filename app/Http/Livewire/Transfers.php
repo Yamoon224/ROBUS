@@ -226,6 +226,12 @@ class Transfers extends Component
     public $code_validated;
     public $code_validated_inter;
 
+    public $date_transaction;
+    public $image_transaction;
+    public $image_back_transaction;
+    public $type_image_transaction;
+
+
     // Choise
     public $paiementChoix_phone;
     public $paiementChoix_type;
@@ -389,6 +395,7 @@ class Transfers extends Component
     public $code_drawal;
     public $id_accompte;
     public $references;
+
 
 
     protected $listeners = [
@@ -1561,6 +1568,12 @@ class Transfers extends Component
         $this->transaction_amount_money_edit = $check->amount_received ?? null;
         $this->transaction_description_robus_edit = $check->description ?? null;
         $this->currency_custumers = $check->wallet->currencie->code ?? null;
+        $this->num_piece_bank_edit = $check->num_piece ?? null;
+        $this->date_transaction = $check->validated_date ?? null;
+        $this->image_transaction = $check->image ?? null;
+        $this->image_back_transaction = $check->image_bakend ?? null;
+        $this->type_image_transaction = $check->type_piece ?? null;
+
         $this->emit($state);
     }
 

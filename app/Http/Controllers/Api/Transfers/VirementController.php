@@ -349,10 +349,8 @@ class VirementController extends Controller
 
                                     $valeur_receive =  $reel_amount;
                                 } else {
-
                                     $valeur_receive =  $reel_amount -  $commission_virement_val_nat_send;
                                 }
-
 
                                 if ($valeur_receive < 0) {
 

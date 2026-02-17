@@ -147,6 +147,18 @@
                                                             </p>
                                                         @endif
 
+                                                         <p class="font-medium whitespace-nowrap">
+                                                              Nom& Prenom(S) :
+                                                              {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
+
+                                                          </p>
+                                                          <p class="font-medium whitespace-nowrap mt-1">
+                                                              Numéro piece : {{ $item->num_piece ?? null }}
+                                                          </p>
+                                                          <p class="font-medium whitespace-nowrap">
+                                                              Date validité :
+                                                              {{ $item->validated_date ?? null }}
+                                                          </p>
                                                     </div>
 
 
@@ -181,6 +193,18 @@
                                                                Référence : {{ $item->reference ?? null }}
                                                             </p>
                                                         @endif
+                                                        <p class="font-medium whitespace-nowrap">
+                                                              Nom& Prenom(S) :
+                                                              {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
+
+                                                          </p>
+                                                          <p class="font-medium whitespace-nowrap mt-1">
+                                                              Numéro piece : {{ $item->num_piece ?? null }}
+                                                          </p>
+                                                          <p class="font-medium whitespace-nowrap">
+                                                              Date validité :
+                                                              {{ $item->validated_date ?? null }}
+                                                          </p>
                                                     </div>
 
                                                     @if ($item->type_transaction === 'Retrait')

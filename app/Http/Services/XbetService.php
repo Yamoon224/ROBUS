@@ -31,12 +31,10 @@ class XbetService
     }
 
 
-    public function createRobusWalletTransactionOneBet($amount_valeur, $provider, $percent_robus, $numberAcompte, $fullName, $amountReceved)
+    public function createRobusWalletTransactionOneBet($amount_valeur, $provider, $percent_robus, $numberAcompte, $fullName, $amountReceved , $country_robus)
     {
 
-        $amount_commission = (float)$amount_valeur + (float)$percent_robus->percent * $amount_valeur;
-
-        $amount_solde = (float)robus()->wallet->amount - (float)$amount_commission;
+        $amount_solde = (float)robus()->wallet->amount - (float)$amount_valeur;
 
 
         return $this->xbetRepository->create([
@@ -53,12 +51,13 @@ class XbetService
             'num_acompte'  =>  $numberAcompte,
             'full_name' =>  $fullName,
             'status'  => "PENDING",
+            'countrie_id' => $country_robus->id,
             'amount_received'  =>  $amountReceved ?? 0.0,
         ]);
     }
 
 
-    public function createRobusWalletDrawalOneBet($amount_valeur, $provider, $percent_robus, $numberAcompte, $countrie, $citie, $code_drawal, $amountReceved)
+    public function createRobusWalletDrawalOneBet($amount_valeur, $provider, $percent_robus, $numberAcompte, $countrie, $citie, $code_drawal, $amountReceved , $country_robus)
     {
 
         $amount_solde = robus()->wallet->amount;
@@ -79,6 +78,7 @@ class XbetService
             'countrie' =>  $countrie,
             'citie' =>  $citie,
             'status'  => "PENDING",
+            'countrie_id' => $country_robus->id,
             'amount_received'  =>  $amountReceved ?? 0.0,
         ]);
     }
@@ -108,13 +108,13 @@ class XbetService
         $amount__commission = $amount + ($percent_robus->percent * $amount);
 
         $amount_solde = robus()->wallet->amount - $amount__commission;
-
+        $amount_solde_under = robus()->wallet->amount - $amount;
 
         if (robus()->is_under_distributer || robus()->is_api) {
 
 
             $walletXbet->update([
-                'amount_solde' => $amount,
+                'amount_solde' => $amount_solde_under,
             ]);
 
             robus()->wallet->update([
@@ -139,15 +139,13 @@ class XbetService
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterXbetCButton'])) {
 
-                    // $compagnie_amount =  $percent_robus->percent_companie +  $percent_robus->comission_auther;
-
                     $valuer_companie = $percent_robus->percent_companie * $amount;
 
                     $walletXbet->increment('commission_companie', $valuer_companie);
 
-                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id, $valuer_companie, $valuer_deposit);
+                    $this->commissionServices->distributeAdminCommissionAcceptedXbetCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id ,$admin_valeur , $valuer_companie, $valuer_deposit);
                 } else {
-                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_valeur, $valuer_deposit);
+                    $this->commissionServices->distributeAdminCommissionXbetNoCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_valeur, $valuer_deposit);
                 }
             } else {
 
@@ -217,6 +215,7 @@ class XbetService
 
             $valuer_deposit =  $percent_robus->percent_merchands * $amount;
             $admin_nocomission =  $percent_robus->percent  * $amount;
+            $admin_percent =  $percent_robus->percent_admin * $amount;
 
             if (!empty($activeButtons['showRemonterXbetDrawalButton'])) {
 
@@ -230,15 +229,13 @@ class XbetService
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterXbetDrawalCButton'])) {
 
-                    // $compagnie_amount =  $percent_robus->percent_companie +  $percent_robus->comission_auther;
-
                     $valuer_companie = $percent_robus->percent_companie * $amount;
 
                     $walletXbet->increment('commission_companie', $valuer_companie);
 
-                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id, $valuer_companie, $valuer_deposit);
+                    $this->commissionServices->distributeAdminCommissionAcceptedXbetCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id , $admin_percent,  $valuer_deposit, $valuer_companie);
                 } else {
-                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_valeur, $valuer_deposit);
+                    $this->commissionServices->distributeAdminCommissionXbetNoCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_valeur, $valuer_deposit);
                 }
             } else {
 

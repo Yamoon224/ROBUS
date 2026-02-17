@@ -158,6 +158,7 @@ class CountrieController extends Controller
         $walletInter =  $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 8);
         $walletBankInter =  $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 28);
         $walletInterUnder =  $this->percentRobus->getProvidersByUnderDistributerType(new Provider, $country_inter_out_civ, 8);
+        $walletInterXbet =  $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 26);
 
 
         if ((robus()->is_under_distributer || robus()->is_api) && robus()->country->id != 107) {
@@ -170,6 +171,7 @@ class CountrieController extends Controller
                 "Versement bancaire" => $walletVirementBank ? ProviderSingleCollection::collection($walletVirementBank) : [],
                 "Rechargement de carte" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
                 "Bank send" => $walletBankInter ? ProviderSingleCollection::collection($walletBankInter) : [],
+                "Xbets" => $walletInterXbet ? ProviderSingleCollection::collection($walletInterXbet) : [],
 
             ];
         } elseif ((robus()->is_under_distributer || robus()->is_api) && robus()->country->id == 107) {
@@ -181,6 +183,8 @@ class CountrieController extends Controller
                 "Versement bancaire" => $walletVirementBank ? ProviderSingleCollection::collection($walletVirementBank) : [],
                 "Rechargement de carte" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
                 "Bank send" => $walletBankInter ? ProviderSingleCollection::collection($walletBankInter) : [],
+                "Xbets" => $walletInterXbet ? ProviderSingleCollection::collection($walletInterXbet) : [],
+
             ];
         } elseif (robus()->is_custumers && robus()->country->id == 107) {
 
@@ -191,6 +195,8 @@ class CountrieController extends Controller
                 "Versement bancaire" => $walletVirementBank ? ProviderSingleCollection::collection($walletVirementBank) : [],
                 "Rechargement de carte" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
                 "Bank send" => $walletBankInter ? ProviderSingleCollection::collection($walletBankInter) : [],
+                "Xbets" => $walletInterXbet ? ProviderSingleCollection::collection($walletInterXbet) : [],
+
             ];
         } else {
 
@@ -201,6 +207,7 @@ class CountrieController extends Controller
                 "Versement bancaire" => $walletVirementBank ? ProviderSingleCollection::collection($walletVirementBank) : [],
                 "Rechargement de carte" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
                 "Bank send" => $walletBankInter ? ProviderSingleCollection::collection($walletBankInter) : [],
+                "Xbets" => $walletInterXbet ? ProviderSingleCollection::collection($walletInterXbet) : [],
 
             ];
         }

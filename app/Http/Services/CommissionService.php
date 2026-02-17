@@ -58,6 +58,61 @@ class CommissionService
         }
     }
 
+     public function distributeAdminCommissionAcceptedXbetCompanies($adminCiv, string $walletColumn, $walletId , $admin_valeur, $totalCommission, $amountDeposit)
+    {
+
+        if ($adminCiv->isEmpty()) {
+            return;
+        }
+
+        $userUnder = auth_user();
+
+        if ($adminCiv->count() > 0) {
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create(array_merge([
+                    'amount' => $admin_valeur ?? 0,
+                    'sid_user_id' => $adminUser->id,
+                    'description' => 'Commission administrateur',
+                    'amount_compagnie' => $userUnder->is_under_distributer ? $totalCommission : 0,
+                    'amount_under' => $userUnder->is_under_distributer ? $amountDeposit : 0,
+                    'is_under' => true,
+                    'description_underdistributer' => $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null,
+                ], [$walletColumn => $walletId]));
+            }
+        }
+    }
+
+     public function distributeAdminCommissionXbetNoCompanies($adminCiv, string $walletColumn, $walletId , $admin_valeur, $amountDeposit)
+    {
+
+        if ($adminCiv->isEmpty()) {
+            return;
+        }
+
+        $userUnder = auth_user();
+
+        if ($adminCiv->count() > 0) {
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create(array_merge([
+                    'amount' => $admin_valeur ?? 0,
+                    'sid_user_id' => $adminUser->id,
+                    'description' => 'Commission administrateur',
+                    'amount_compagnie' =>  0,
+                    'amount_under' => $userUnder->is_under_distributer ? $amountDeposit : 0,
+                    'is_under' => true,
+                    'description_underdistributer' => $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null,
+                ], [$walletColumn => $walletId]));
+            }
+        }
+    }
+
+
     public function distributeAdminCommissionUnderBankAcceptedCompanies($adminCiv, string $walletColumn, $walletId, $valuer_admin_compagnie, $totalCommission, $amountDeposit, $amountBank = null)
     {
 

@@ -28,6 +28,102 @@
 
                 @if (!is_null($provider_transaction_edit))
 
+                    @if ($type_image_transaction == 'Passeport')
+                        <div class="col-span-12 mb-3">
+                            <div class="field field-full">
+                                <label class="form-label required">Image de la carte</label>
+
+                                <div class="field-value flex items-center gap-2">
+                                    <i class="fas fa-qrcode"></i>
+
+                                    @if ($image_transaction)
+                                        @php
+                                            $img =
+                                                asset_url($image_transaction);
+                                        @endphp
+
+                                        <a href="{{ $img }}" download target="_blank" class="relative group">
+                                            <img src="{{ $img }}"
+                                                class="w-24 h-24 object-contain rounded border cursor-pointer" />
+
+                                            <!-- Icône téléchargement -->
+                                            <span
+                                                class="absolute inset-0 flex items-center justify-center
+                                   bg-black/40 text-white opacity-0 group-hover:opacity-100
+                                   rounded transition">
+                                                <i class="fas fa-download text-lg"></i>
+                                            </span>
+                                        </a>
+                                    @else
+                                        <span class="text-gray-500">Aucune image</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="col-span-6 mb-3">
+                            <div class="field field-full">
+                                <label class="form-label required">Image Front de la carte</label>
+
+                                <div class="field-value flex items-center gap-2">
+                                    <i class="fas fa-qrcode"></i>
+
+                                    @if ($image_transaction)
+                                        @php
+                                            $imgFront =
+                                                asset_url($image_transaction)
+                                        @endphp
+
+                                        <a href="{{ $imgFront }}" download target="_blank" class="relative group">
+                                            <img src="{{ $imgFront }}"
+                                                class="w-24 h-24 object-contain rounded border cursor-pointer">
+
+                                            <span
+                                                class="absolute inset-0 flex items-center justify-center
+                                 bg-black/40 text-white opacity-0 group-hover:opacity-100
+                                 rounded transition">
+                                                <i class="fas fa-download"></i>
+                                            </span>
+                                        </a>
+                                    @else
+                                        <span class="text-gray-500">Aucune image</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-span-6 mb-3">
+                            <div class="field field-full">
+                                <label class="form-label required">Image arrière de la carte</label>
+
+                                <div class="field-value flex items-center gap-2">
+                                    <i class="fas fa-qrcode"></i>
+
+                                    @if ($image_back_transaction)
+                                        @php
+                                            $imgBack =
+                                                asset_url($image_back_transaction);
+                                        @endphp
+
+                                        <a href="{{ $imgBack }}" download target="_blank" class="relative group">
+                                            <img src="{{ $imgBack }}"
+                                                class="w-24 h-24 object-contain rounded border cursor-pointer">
+
+                                            <span
+                                                class="absolute inset-0 flex items-center justify-center
+                                 bg-black/40 text-white opacity-0 group-hover:opacity-100
+                                 rounded transition">
+                                                <i class="fas fa-download"></i>
+                                            </span>
+                                        </a>
+                                    @else
+                                        <span class="text-gray-500">Aucune image</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                    @endif
                     @if ($provider_transaction_edit == 9)
                         <div class="field-group">
                             <div class="field">

@@ -14,6 +14,7 @@ use App\Models\Wallets\WalletXbet;
 use App\Repositories\OnexbetRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Custumers\Country;
 
 class OnexbetTransactionController extends Controller
 {
@@ -160,8 +161,6 @@ class OnexbetTransactionController extends Controller
                                 $validationRules = [
                                         "code_compte" => 'required',
                                         "amount" => 'required',
-                                        "countrie" => 'required',
-                                        "citie" => 'required',
                                         "id_xbet" => 'required',
 
                                 ];
@@ -169,8 +168,6 @@ class OnexbetTransactionController extends Controller
                                 $validationMessages = [
                                         'code_compte.required' => 'Votre numero est obligatoire',
                                         'amount.required' => 'Votre montant est obligatoire',
-                                        'countrie.required' => 'Votre pays est obligatoire',
-                                        'citie.required' => 'Votre ville est obligatoire',
                                         'id_xbet.required' => 'Id Xbet est obligatoire',
                                 ];
                         }
@@ -185,7 +182,7 @@ class OnexbetTransactionController extends Controller
                                 ], 333);
                         }
 
-                        if (robus()->is_custumers == true) {
+                        if (robus()->is_custumers == true || (robus()->is_under_distributer || robus()->is_api)) {
 
                                 if ($request->choose_type_transaction == 2) {
 
@@ -200,7 +197,7 @@ class OnexbetTransactionController extends Controller
 
                                         // 🔍 Vérifier si un dépôt Xbet a déjà été effectué
                                         $hasDepositXbet = WalletXbet::where('num_acompte', $request->id_xbet)
-                                                ->where('wallet_id', robus()->wallet->id)
+                                                // ->where('wallet_id', robus()->wallet->id)
                                                 ->exists();
 
                                         if (! $hasDepositXbet) {
@@ -221,7 +218,6 @@ class OnexbetTransactionController extends Controller
                                 if ($percent_robus != null) {
 
                                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
-
 
                                                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
@@ -300,7 +296,9 @@ class OnexbetTransactionController extends Controller
         {
                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-                $walletXbet =  $this->oneXbetService->createRobusWalletTransactionOneBet($reel_amount, $request->provider, $percent_robus, $request->id_compte,  $request->full_name, $amountReceved);
+                $country_robus = Country::whereId($request->country)->first();
+
+                $walletXbet =  $this->oneXbetService->createRobusWalletTransactionOneBet($reel_amount, $request->provider, $percent_robus, $request->id_compte,  $request->full_name, $amountReceved , $country_robus);
                 if ($walletXbet == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
@@ -317,9 +315,11 @@ class OnexbetTransactionController extends Controller
         private function processWithdrawalTransaction($request, $percent_robus, $amountReceved, $val_amount_send)
         {
 
+                $country_robus = Country::whereId($request->country)->first();
+
                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-                $walletXbet =  $this->oneXbetService->createRobusWalletDrawalOneBet($reel_amount, $request->provider, $percent_robus, $request->code_compte, $request->countrie, $request->citie, $request->id_xbet, $amountReceved);
+                $walletXbet =  $this->oneXbetService->createRobusWalletDrawalOneBet($reel_amount, $request->provider, $percent_robus, $request->code_compte, $request->countrie, $request->citie, $request->id_xbet, $amountReceved , $country_robus);
                 if ($walletXbet == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
@@ -426,17 +426,21 @@ class OnexbetTransactionController extends Controller
                         }
 
                         $commission_wave_val_nat_pay = 0;
+                        $commission_wave_val_nat_commission = 0;
                         $commission_wave_val_nat_receive = 0;
 
 
                         if ($amount_wave != '') {
 
                                 $reel_amount = $this->validatedamountDays->search_amount($amount_wave);
+
                                 // Conversion valeur
                                 if ($is_drawal) {
                                         $commission_wave_val_nat_pay = $percent_robus->percent_with_drawal * $reel_amount;
+                                        $commission_wave_val_nat_commission =  $percent_robus->percent_under_drawal  * $reel_amount;
                                 } else {
                                         $commission_wave_val_nat_pay = $percent_robus->percent * $reel_amount;
+                                        $commission_wave_val_nat_commission =  $percent_robus->percent_merchands  * $reel_amount;
                                 }
                                 $commission_wave_val_nat_receive = $reel_amount - $commission_wave_val_nat_pay;
                         } else {
@@ -450,7 +454,7 @@ class OnexbetTransactionController extends Controller
                                 'success' => true,
                                 'data' =>  [
                                         'amount_pay' => $commission_wave_val_nat_pay,
-                                        'amount_send' => $commission_wave_val_nat_pay,
+                                        'amount_send' => (robus()->is_under_distributer || robus()->is_api) ? $commission_wave_val_nat_commission  : $commission_wave_val_nat_pay,
                                         'amount_receive' => $commission_wave_val_nat_receive,
                                 ],
                         ], 200);

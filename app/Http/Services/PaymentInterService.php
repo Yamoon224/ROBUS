@@ -250,12 +250,14 @@ class PaymentInterService
         if (robus()->is_under_distributer || robus()->is_api) {
 
             $valuer_companie = $percent_robus->percent_companie;
-            $valuer_deposit_amount =  $percent_robus->comission_auther;
+            $valuer_deposit_amount =  $percent_robus->comission_canal;
             $valuer_deposit =  $this->convertionService->convertAdminCommissionInvoice($valuer_deposit_amount);
             $amountCompConvert =  $this->convertionService->convertAdminCommissionInvoice($valuer_companie);
             $admin_nocomission =  $percent_robus->amount_canal;
 
-            $admin_valeur =  $percent_robus->amount_auther -  $percent_robus->comission_auther;
+            $admin_compagnie_valeur =  $percent_robus->amount_canal -  ($percent_robus->comission_canal + $valuer_companie);
+            $admin_no_compagnie =  $percent_robus->amount_canal -  ($percent_robus->comission_canal + $valuer_companie);
+            $banque_valeur =  0;
 
             if (!empty($activeButtons['showRemonterPaiementButton'])) {
 
@@ -271,9 +273,9 @@ class PaymentInterService
 
                     $walletPayment->increment('commission_companie', $amountCompConvert);
 
-                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_inter_id', $walletPayment->id, $compagnie_amount, $valuer_deposit);
+                    $this->commissionServices->distributeAdminCommissionUnderBankAcceptedCompanies($admin_civ, 'wallet_inter_id', $walletPayment->id , $admin_compagnie_valeur, $compagnie_amount, $valuer_deposit , $banque_valeur);
                 } else {
-                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_inter_id', $walletPayment->id, $admin_valeur, $valuer_deposit);
+                    $this->commissionServices->distributeAdminNoCompagniePaimentCommissions($admin_civ, 'wallet_inter_id', $walletPayment->id, $admin_no_compagnie, $valuer_deposit , $banque_valeur);
                 }
             } else {
 

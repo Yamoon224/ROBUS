@@ -876,7 +876,7 @@ class TransactionController extends Controller
                         }
 
 
-                        $walletTransaction =  $this->mobileWalletTransactionService->createRobusDrawalWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->num_piece_custumer, $request->name_custumer, $cost_payment, $request->phone, 2, $request->type, $request->numberPiece, $request->reference ,       $imagePath,
+                        $walletTransaction =  $this->mobileWalletTransactionService->createRobusDrawalWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->name_custumer, $cost_payment, $request->phone, 2, $request->type_piece, $request->num_piece, $request->reference ,   $imagePath,
                                 $imageBackendPath );
 
                         if ($walletTransaction != null) {
