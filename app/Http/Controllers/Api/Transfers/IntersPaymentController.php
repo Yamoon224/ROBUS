@@ -187,7 +187,7 @@ class IntersPaymentController extends Controller
         $valeur_ceiling  =  robus()->silver_ceiling;
         $admin_civ = $this->validatedamountDays->adminCiv();
 
-        try {
+        // try {
 
             // Is transaction Or Withdrawal
             if ($request->provider_type == 1) {
@@ -1649,12 +1649,12 @@ class IntersPaymentController extends Controller
                     return   json_message_response(false, "Votre montant journalier est atteint !", 333);
                 }
             }
-        } catch (\Exception $exception) {
-            return response()->json([
-                'success' => false,
-                'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
-            ], 333);
-        }
+        // } catch (\Exception $exception) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+        //     ], 333);
+        // }
     }
 
 

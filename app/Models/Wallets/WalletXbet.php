@@ -10,6 +10,7 @@ use App\Models\Providers\Provider;
 use App\Models\Wallets\Wallet;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Custumers\Country;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Sid\SidUser;
@@ -63,6 +64,10 @@ class WalletXbet extends Model
         return $this->hasOne(AdminsCom::class);
     }
 
+      public function country()
+    {
+        return $this->belongsTo(Country::class, 'countrie_id', 'id')->withTrashed();
+    }
     public function wallet()
     {
         return $this->belongsTo(Wallet::class, 'wallet_id', 'id')->withTrashed();

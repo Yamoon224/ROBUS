@@ -18,20 +18,24 @@ class XbetService
     public $xbetRepository;
     protected $commissionServices;
     protected $operatorRestrictionService;
+    public $convertionService;
+
 
     public function __construct(
         OnexbetRepository $xbetRepository,
         CommissionService $commissionServices,
+        ConvertionService $convertionService,
         OperatorRestrictionService $operatorRestrictionService,
 
     ) {
         $this->xbetRepository = $xbetRepository;
         $this->commissionServices = $commissionServices;
         $this->operatorRestrictionService = $operatorRestrictionService;
+        $this->convertionService = $convertionService;
     }
 
 
-    public function createRobusWalletTransactionOneBet($amount_valeur, $provider, $percent_robus, $numberAcompte, $fullName, $amountReceved , $country_robus)
+    public function createRobusWalletTransactionOneBet($amount_valeur, $provider, $percent_robus, $numberAcompte, $fullName, $amountReceved, $country_robus)
     {
 
         $amount_solde = (float)robus()->wallet->amount - (float)$amount_valeur;
@@ -57,7 +61,7 @@ class XbetService
     }
 
 
-    public function createRobusWalletDrawalOneBet($amount_valeur, $provider, $percent_robus, $numberAcompte, $countrie, $citie, $code_drawal, $amountReceved , $country_robus)
+    public function createRobusWalletDrawalOneBet($amount_valeur, $provider, $percent_robus, $numberAcompte, $countrie, $citie, $code_drawal, $amountReceved, $country_robus)
     {
 
         $amount_solde = robus()->wallet->amount;
@@ -123,9 +127,8 @@ class XbetService
                 'amount' => DB::raw('amount-'  .  $amount),
             ]);
 
-
-            $valuer_deposit =  $percent_robus->percent_merchands  * $amount;
-            $admin_nocomission =  $percent_robus->percent  * $amount;
+            $valuer_deposit =  $this->convertionService->convertAdminCommissionInvoice($percent_robus->percent_merchands  * $amount);
+            $admin_nocomission =  $this->convertionService->convertAdminCommissionInvoice($percent_robus->percent  * $amount);
 
             if (!empty($activeButtons['showRemonterXbetButton'])) {
 
@@ -133,17 +136,18 @@ class XbetService
                     'commissions' => $valuer_deposit,
                 ]);
 
-                $admin_valeur =  $percent_robus->percent_admin *  $amount;
+
+                $admin_valeur =  $this->convertionService->convertAdminCommissionInvoice($percent_robus->percent_admin *  $amount);
 
                 $account_accepted = robus()->is_accepted_companie ?? false;
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterXbetCButton'])) {
 
-                    $valuer_companie = $percent_robus->percent_companie * $amount;
+                    $valuer_companie =  $this->convertionService->convertAdminCommissionInvoice($percent_robus->percent_companie * $amount);
 
                     $walletXbet->increment('commission_companie', $valuer_companie);
 
-                    $this->commissionServices->distributeAdminCommissionAcceptedXbetCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id ,$admin_valeur , $valuer_companie, $valuer_deposit);
+                    $this->commissionServices->distributeAdminCommissionAcceptedXbetCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_valeur, $valuer_companie, $valuer_deposit);
                 } else {
                     $this->commissionServices->distributeAdminCommissionXbetNoCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_valeur, $valuer_deposit);
                 }
@@ -163,7 +167,7 @@ class XbetService
                 'amount' => DB::raw('amount-'  .  $amount_commission),
             ]);
 
-            $admin_valeur =  $amount * $percent_robus->percent;
+            $admin_valeur =  $this->convertionService->convertAdminCommissionInvoice($percent_robus->percent * $amount);
 
             $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_valeur);
         }
@@ -212,10 +216,9 @@ class XbetService
 
         if (robus()->is_under_distributer || robus()->is_api) {
 
-
-            $valuer_deposit =  $percent_robus->percent_merchands * $amount;
-            $admin_nocomission =  $percent_robus->percent  * $amount;
-            $admin_percent =  $percent_robus->percent_admin * $amount;
+            $valuer_deposit =  $this->convertionService->convertAdminCommissionInvoice($percent_robus->percent_merchands * $amount);
+            $admin_nocomission =  $this->convertionService->convertAdminCommissionInvoice($percent_robus->percent * $amount);
+            $admin_percent =  $this->convertionService->convertAdminCommissionInvoice($percent_robus->percent_admin * $amount);
 
             if (!empty($activeButtons['showRemonterXbetDrawalButton'])) {
 
@@ -223,17 +226,19 @@ class XbetService
                     'commissions' => $valuer_deposit,
                 ]);
 
-                $admin_valeur =  $percent_robus->percent_admin *  $amount;
+
+                $admin_valeur =  $this->convertionService->convertAdminCommissionInvoice($percent_robus->percent_admin * $amount);
 
                 $account_accepted = robus()->is_accepted_companie ?? false;
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterXbetDrawalCButton'])) {
 
-                    $valuer_companie = $percent_robus->percent_companie * $amount;
+
+                    $valuer_companie =  $this->convertionService->convertAdminCommissionInvoice($percent_robus->percent_companie * $amount);
 
                     $walletXbet->increment('commission_companie', $valuer_companie);
 
-                    $this->commissionServices->distributeAdminCommissionAcceptedXbetCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id , $admin_percent,  $valuer_deposit, $valuer_companie);
+                    $this->commissionServices->distributeAdminCommissionAcceptedXbetCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_percent,  $valuer_deposit, $valuer_companie);
                 } else {
                     $this->commissionServices->distributeAdminCommissionXbetNoCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_valeur, $valuer_deposit);
                 }
@@ -243,7 +248,8 @@ class XbetService
             }
         } else {
 
-            $admin_valeur =  $amount * $percent_robus->percent_with_drawal;
+
+            $admin_valeur =  $this->convertionService->convertAdminCommissionInvoice($percent_robus->percent_with_drawal * $amount);
 
             $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_valeur);
         }

@@ -130,6 +130,33 @@
                     </div>
                 @endif
 
+                 <div class="form-section mb-3">
+                    <h4 class="section-title mb-4">Information Pays</h4>
+                    <div class="field-group">
+                        <div class="field">
+                            <label class="form-label required">
+                                <i class="fas fa-coins mr-2 text-primary"></i>
+                                Pays envoyeur
+                            </label>
+                            <div class="field-value">
+                                <i class="fas fa-globe"></i>
+                                <span
+                                    class="font-medium">{{ $country_receved ?? 'Non spécifié' }}</span>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="form-label required">
+                                <i class="fas fa-globe-africa mr-2 text-primary"></i>
+                                Pays receveur
+                            </label>
+                            <div class="field-value">
+                                <i class="fas fa-globe"></i>
+                                <span
+                                    class="font-medium">{{ $country_sendeur ?? 'Non spécifié' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3">
                 <div class="col-span-12 mt-space">

@@ -141,16 +141,21 @@ class RobusTransactionService
             $valeur_admin = $percent_robus->percent_admin * $valeur_percent_admin;
             $valuer_deposit = $percent_robus->percent_deposit * $valeur_percent_admin;
             $valuer_with_drawal = $percent_robus->percent_with_drawal * $valeur_percent_admin;
+            $valuer_admin_companie = $percent_robus->percent_companie * $valeur_percent_admin;
 
             if ($country_civ->currencie->value > robus()->country->currencie->value) {
                 $admin_valeur_convertion_drawal = $valuer_with_drawal * (float)robus()->country->currencie->value;
                 $admin_valeur_convertion = (float)$valeur_admin * (float)robus()->country->currencie->value;
+                $admin_compagnie_convertion = (float)$valuer_admin_companie * (float)robus()->country->currencie->value;
             } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
                 $admin_valeur_convertion_drawal = $valuer_with_drawal;
                 $admin_valeur_convertion = (float)$valeur_admin;
+                $admin_compagnie_convertion = (float)$valuer_admin_companie ;
+
             } else {
                 $admin_valeur_convertion_drawal = $valuer_with_drawal * (float)robus()->country->currencie->value;
                 $admin_valeur_convertion = (float)$valeur_admin * (float)robus()->country->currencie->value;
+                $admin_compagnie_convertion = (float)$valuer_admin_companie * (float)robus()->country->currencie->value;
             }
 
             if (!empty($activeButtons['showRemonterDepotButton'])) {
@@ -175,7 +180,7 @@ class RobusTransactionService
 
                     if ($admin_civ->count() > 0) {
                         $nmbre_admin = $admin_civ->count();
-                        $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal) / $nmbre_admin;
+                        $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal + $admin_compagnie_convertion) / $nmbre_admin;
 
                         foreach ($admin_civ as $user) {
                             $this->commissionServices->processAdminDrawalCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);

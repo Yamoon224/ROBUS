@@ -69,9 +69,111 @@
                             <tbody>
                                 @if ($xbets->count() > 0)
                                     @foreach ($xbets as $key => $item)
+                                        @php
+
+                                            if ($item->countrie_id != null) {
+                                                if ($item->country->id == 107) {
+                                                    //  Convertion of amount valeur
+                                                    if (
+                                                        sabdy()->country->currencie->value >
+                                                        $item->country->currencie->value
+                                                    ) {
+                                                        //   Convertion  in CFA
+                                                        $valeur_amount_receveid =
+                                                            (float) $item->amount_received *
+                                                                (float) sabdy()->country->currencie->value ??
+                                                            null;
+
+                                                        //   $valeur_amount_receveid = (float) $commission_transaction_val_inter_convertion_cfa / (float) $item->country->currencie->value;
+                                                    } elseif (
+                                                        sabdy()->country->currencie->value ==
+                                                        $item->country->currencie->value
+                                                    ) {
+                                                        $valeur_amount_receveid = $item->amount_received ?? null;
+                                                    } elseif (
+                                                        sabdy()->country->currencie->value <
+                                                        $item->country->currencie->value
+                                                    ) {
+                                                        //   Convertion  in CFA
+                                                        $commission_transaction_val_inter_convertion_cfa =
+                                                            (float) $item->amount_received *
+                                                                (float) sabdy()->country->currencie->value ??
+                                                            null;
+
+                                                        //   Convertion in Country send
+                                                        $valeur_amount_receveid =
+                                                            (float) $item->amount_received *
+                                                                (float) $item->country->currencie->value ??
+                                                            null;
+                                                    }
+                                                } else {
+                                                    //  Convertion of amount valeur
+                                                    if (
+                                                        sabdy()->country->currencie->value >
+                                                        $item->country->currencie->value
+                                                    ) {
+                                                        //   Convertion  in CFA
+                                                        $valeur_amount_receveid =
+                                                            (float) $item->amount_received *
+                                                                (float) sabdy()->country->currencie->value ??
+                                                            null;
+                                                    } elseif ($item->country->id == 107) {
+                                                        //   dd('ici');
+                                                        if (
+                                                            sabdy()->country->currencie->value >
+                                                            $item->country->currencie->value
+                                                        ) {
+                                                            //   Convertion  in CFA
+                                                            $valeur_amount_receveid =
+                                                                (float) $item->amount_received *
+                                                                    (float) $item->wallet->country->currencie->value ??
+                                                                null;
+                                                        } else {
+                                                            $valeur_amount_receveid =
+                                                                (float) $item->amount_received *
+                                                                    (float) $item->wallet->country->currencie->value ??
+                                                                null;
+                                                        }
+                                                    } elseif (
+                                                        sabdy()->country->currencie->value <
+                                                        $item->country->currencie->value
+                                                    ) {
+                                                        //   Convertion  in CFA
+                                                        $commission_transaction_val_inter_convertion_cfa =
+                                                            (float) $item->amount_received *
+                                                                (float) sabdy()->country->currencie->value ??
+                                                            null;
+
+                                                        //   Convertion in Country send
+                                                        $valeur_amount_receveid =
+                                                            (float) $item->amount_received *
+                                                                (float) $item->country->currencie->value ??
+                                                            null;
+                                                    }
+                                                }
+                                            }else {
+                                                 $valeur_amount_receveid = (float) $item->amount_received ;
+                                            }
+                                        @endphp
                                         <tr class="intro-x">
                                             <td class="text-center w-40">
+
+
                                                 @if ($item->choose_type_transaction == 1)
+                                                    @if ($item->countrie_id != null)
+                                                        <div class="amount-section">
+                                                            <div class="amount-label">Transaction international</div>
+                                                            <div class="amount-received">
+                                                                <div class="flex items-baseline justify-between">
+                                                                    <span class="amount-received-value">
+                                                                        Depot a l'international
+                                                                    </span>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+
                                                     <span
                                                         class="alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                                                text-indigo-100 bg-indigo-700 rounded"
@@ -79,6 +181,20 @@
                                                         Demande de depot
                                                     </span>
                                                 @else
+                                                    @if ($item->countrie_id != null)
+                                                        <div class="amount-section">
+                                                            <div class="amount-label">Retrait a international</div>
+                                                            <div class="amount-received">
+                                                                <div class="flex items-baseline justify-between">
+                                                                    <span class="amount-received-value">
+                                                                        Demande de retrait a l'international
+                                                                    </span>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+
                                                     <span
                                                         class="alert alert-success  inline-flex items-center justify-center px-2 py-1 mb-3 
                                           text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
@@ -104,7 +220,18 @@
                                             </td>
                                             <td>
 
-                                                @include('components.walletBalance')
+                                                <div class="mb-3">
+                                                    <div
+                                                        class="px-3 py-2 text-dark bg-blue-900 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                        <div class="fc-event-title-container" style="color: white;">
+                                                            <div class="fc-event-title fc-sticky">
+                                                                {{ $item->country->name ?? $item->wallet->country->name }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                @include('components.walletBalanceXbet')
 
                                             </td>
 
@@ -149,7 +276,7 @@
                                                                                 Zone :
                                                                             </dt>
                                                                             <dd>
-                                                                                {{ $item->street_robus  ?? null }}
+                                                                                {{ $item->street_robus ?? null }}
                                                                             </dd>
                                                                         </div>
                                                                         <div class="flex justify-between mt-3">
@@ -205,7 +332,8 @@
                                                                     </div>
                                                                 @else
                                                                     <div class="flex justify-between">
-                                                                        <dt class="font-medium text-gray-900"> ID compte
+                                                                        <dt class="font-medium text-gray-900"> ID
+                                                                            compte
                                                                             :
                                                                         </dt>
                                                                         <dd>{{ $item->num_acompte ?? '—' }}</dd>

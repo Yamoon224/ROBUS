@@ -208,7 +208,6 @@ class CountrieController extends Controller
                 "Rechargement de carte" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
                 "Bank send" => $walletBankInter ? ProviderSingleCollection::collection($walletBankInter) : [],
                 "Xbets" => $walletInterXbet ? ProviderSingleCollection::collection($walletInterXbet) : [],
-
             ];
         }
 

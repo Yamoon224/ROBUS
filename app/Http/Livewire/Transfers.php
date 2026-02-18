@@ -160,6 +160,7 @@ class Transfers extends Component
     public $number_phone_credit_inter_edit;
     public $amount_phone_credit_inter_edit;
     public $country_inter_robus_inter_edit;
+    public $country_inter_robus_recevied;
 
     // Edit Virement bank
     public $provider_Inter_virement_edit;
@@ -275,6 +276,8 @@ class Transfers extends Component
     public $countrie;
     public $citie_xbet;
     public $area_xbet;
+    public $country_receved;
+    public $country_sendeur;
 
     // Updated Versement
     public $versementId;
@@ -1432,6 +1435,8 @@ class Transfers extends Component
         $this->code_drawal = $check->code_drawal ?? null;
         $this->id_accompte = $check->num_acompte ?? null;
         $this->area_xbet = $check->area_name;
+        $this->country_receved = $check->wallet->country->name;
+        $this->country_sendeur = $check->country->name ?? $check->wallet->country->name;
         $this->choose_type_xbet = $check->choose_type_transaction;
         $this->currency_custumers = $check->wallet->currencie->code ?? null;
         $this->emit($state);
@@ -1603,6 +1608,7 @@ class Transfers extends Component
         $provider = Provider::whereId($check->provider_id)->first();
         $country = Country::whereId($check->country_id)->first();
         $offer = Offer::whereId($check->offer_id)->first();
+
         // Mooney paiement
         $this->interId = $id;
         $this->inter_description_edit = $check->description ?? null;
@@ -1625,8 +1631,8 @@ class Transfers extends Component
 
         $this->country_inter_robus_edit = $country->id ?? null;
         $this->currency_custumers = $check->wallet->currencie->code ?? null;
+        
         //Edit Invoice
-
         $this->choose_type_paiement = $check->provider_type ?? null;
         $this->paiement_num_contrat_edit = $check->number_contract ?? null;
         $this->paiement_id_invoice_edit = $check->id_invoice;
@@ -1648,6 +1654,7 @@ class Transfers extends Component
         $this->number_phone_credit_inter_edit = $check->phone ?? null;
         $this->amount_phone_credit_inter_edit = $check->amount_received ?? null;
         $this->country_inter_robus_inter_edit =  $check->wallet->country->name;
+        $this->country_inter_robus_recevied =  $check->country->name;
         $this->devise_user =   $check->wallet->currencie->code;
 
         // Edit Virement bank

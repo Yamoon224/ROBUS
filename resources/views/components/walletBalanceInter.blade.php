@@ -55,9 +55,6 @@
                      Non défini
                  @endisset
              </span>
-             {{-- <span class="amount-received-currency">
-                 {{ $usersCountry ?? null }}
-             </span> --}}
          </div>
      </div>
  </div>

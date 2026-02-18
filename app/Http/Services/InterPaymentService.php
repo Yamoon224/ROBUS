@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\MailController;
 use App\Http\Services\ValidateDailyLimitService;
 use App\Http\Services\OperatorRestrictionService;
 use App\Http\Services\CommissionService;
+use App\Models\Wallets\WalletAdmin;
 
 class InterPaymentService
 {
@@ -133,7 +134,7 @@ class InterPaymentService
                 ]);
 
                 $account_accepted = robus()->is_accepted_companie ?? false;
-                
+
                 $deposit_valeur_convertion =  $this->convertionService->convertAdminCommission($valuer_deposit);
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterInterCButton'])) {
@@ -917,11 +918,11 @@ class InterPaymentService
             $valuer_admin = $percent_robus->percent_admin_under_distributer * $valeur_amount_admin;
 
             $valuer_with_drawal =  $percent_robus->percent_with_drawal_under_distributer * $valeur_amount_admin;
-
+            $valuer_with_compagnie =  $percent_robus->percent_companie * $valeur_amount_admin;
             $valeur_percent_admin  = $valuer_with_drawal + $valuer_admin;
-
+            $valeur_no_compgnie  = $valuer_with_drawal + $valuer_admin + $valuer_with_compagnie;
             $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
-
+            $admin_no_compagnie =  $this->convertionService->convertAdminCommission($valeur_no_compgnie);
 
             if (!empty($activeButtons['showRemonterInterButton'])) {
 
@@ -944,7 +945,7 @@ class InterPaymentService
                         $valeur_single = ($admin_valeur_convertion) / $nmbre_admin;
 
                         foreach ($admin_civ as $user) {
-                            $this->processAdminCommissionSDistributer($user->id, $walletInter->id, $valeur_single, $valuer_deposit);
+                            $this->commissionServices->processAdminCommissionSInterDistributerAndComp($user->id, $walletInter->id, $valeur_single, $valuer_deposit, $valuer_companie);
                         }
                     }
                 } else {
@@ -953,10 +954,10 @@ class InterPaymentService
 
                         $nmbre_admin = $admin_civ->count();
 
-                        $valeur_single = ($admin_valeur_convertion) / $nmbre_admin;
+                        $valeur_single = ($admin_no_compagnie) / $nmbre_admin;
 
                         foreach ($admin_civ as $user) {
-                            $this->processAdminCommissionSDistributer($user->id, $walletInter->id, $valeur_single, $valuer_deposit);
+                            $this->commissionServices->processAdminDrawalInterCommissionSDistributer($user->id, $walletInter->id, $valeur_single, $valuer_deposit);
                         }
                     }
                 }
@@ -1018,25 +1019,15 @@ class InterPaymentService
             'description' => 'Commission administrateur',
         ]);
 
-        $admin_single->wallet->increment('amount', $amount);
+        $walletAdmin = WalletAdmin::find(1);
+        if ($walletAdmin && $walletAdmin->amount >= $amount) {
+            $walletAdmin->increment('amount', $amount);
+        } else {
+            $admin_single->wallet->increment('amount', $amount);
+        }
     }
 
-    private function processAdminCommissionSDistributer($userId, $walletTransactionId, $amount, $valuer_deposit)
-    {
-        $admin_single = SidUser::find($userId);
 
-        AdminsCom::create([
-            'amount' => $amount,
-            'sid_user_id' => $admin_single->id,
-            'wallet_inter_id' => $walletTransactionId,
-            'description' => 'Commission administrateur',
-            'status'  => "SUCCESS",
-            'amount_under' => (robus()?->is_under_distributer || robus()?->is_api) ?  $valuer_deposit : 0,
-            'description_underdistributer' => (robus()?->is_under_distributer || robus()?->is_api) ?  'Paiement commission sous-distributer' : null
-        ]);
-
-        $admin_single->wallet->increment('amount', $amount);
-    }
 
     public function processCommissionsRobusOutCiv($amount_valeur, $percent_robus, $walletInter)
     {

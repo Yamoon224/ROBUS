@@ -513,6 +513,32 @@ class CommissionService
         }
     }
 
+      public function processAdminCommissionSInterDistributerAndComp($userId, $walletTransactionId, $amount, $valuer_deposit, $amountCompagie)
+    {
+
+
+        $user = auth_user();
+
+        $admin_single = SidUser::find($userId);
+
+        AdminsCom::create([
+            'amount' => $amount,
+            'sid_user_id' => $admin_single->id,
+            'wallet_inter_id' => $walletTransactionId,
+            'description' => 'Commission administrateur',
+            'status'  => "SUCCESS",
+            "amount_compagnie" => $amountCompagie ?? 0,
+            'amount_under' =>  $user->is_under_distributer ? $valuer_deposit : 0,
+            'description_underdistributer' =>  $user->is_under_distributer ? 'Paiement commission sous-distributer' : null
+        ]);
+
+        $walletAdmin = WalletAdmin::find(1);
+        if ($walletAdmin && $walletAdmin->amount >= $amount) {
+            $walletAdmin->increment('amount', $amount);
+        } else {
+            $admin_single->wallet->increment('amount', $amount);
+        }
+    }
     public function processAdminCommissionSDistributer($userId, $walletTransactionId, $amount, $valuer_deposit)
     {
 
@@ -553,6 +579,33 @@ class CommissionService
             'amount' => $amount,
             'sid_user_id' => $admin_single->id,
             'wallet_transaction_id' => $walletTransactionId,
+            'description' => 'Commission administrateur',
+            'status'  => "SUCCESS",
+            "amount_compagnie" => 0,
+            'amount_under' =>  $user->is_under_distributer ? $valuer_deposit : 0,
+            'description_underdistributer' =>  $user->is_under_distributer ? 'Paiement commission sous-distributer' : null
+        ]);
+
+        $walletCommission = WalletCommission::find(1);
+        $walletAdmin = WalletAdmin::find(1);
+        if ($walletCommission && $walletCommission->amount >= $amount) {
+            $walletAdmin->increment('amount', $amount);
+        } else {
+            $admin_single->wallet->increment('amount', $amount);
+        }
+    }
+
+      public function processAdminDrawalInterCommissionSDistributer($userId, $walletTransactionId, $amount, $valuer_deposit)
+    {
+
+        $user = auth_user();
+
+        $admin_single = SidUser::find($userId);
+
+        AdminsCom::create([
+            'amount' => $amount,
+            'sid_user_id' => $admin_single->id,
+            'wallet_inter_id' => $walletTransactionId,
             'description' => 'Commission administrateur',
             'status'  => "SUCCESS",
             "amount_compagnie" => 0,
