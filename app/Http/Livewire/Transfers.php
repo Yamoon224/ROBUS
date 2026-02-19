@@ -2189,7 +2189,7 @@ class Transfers extends Component
 
                                 if ($valeur_amount_com !== null && $check->commissions !== null) {
 
-                                    app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Transaction 1Xbet");
+                                    app(CommissionServiceBackend::class)->handleUnderDistributorXbetCommission($check, $admin_civ, "Paiment commission Transaction 1Xbet");
                                 } else {
                                     $this->cancelXbetField();
                                     $this->emit('modal-hide-xbet-validated');

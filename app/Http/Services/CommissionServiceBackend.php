@@ -208,6 +208,34 @@ class CommissionServiceBackend
         }
     }
 
+     public function handleUnderDistributorXbetCommission($check, $admin_civ, $description)
+    {
+        $admin_amount = (float)$check->adminCom->amount ;
+        $walletAdmin = WalletAdmin::find(1);
+
+        if ($admin_civ->count() > 0) {
+
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+                $check->adminCom->update([
+                    'amount' =>   0,
+                    'sid_user_id' =>   $admin_single->id,
+                    'description' => $description,
+                    'status'  => "SUCCESS",
+                    'amount_under' =>  $check->adminCom->amount_under,
+                    'description_underdistributer' =>  $description
+                ]);
+
+                if ($walletAdmin && $walletAdmin->amount >= $admin_amount) {
+                    $walletAdmin->increment('amount', $admin_amount);
+                } else {
+                    $admin_single->wallet->increment('amount', $admin_amount);
+                }
+            }
+        }
+    }
+
+
     public function handleUnderDistributorAndCompanieCommission($check, $admin_civ, $description)
     {
         $valeur_amount_com = (float) $check->adminCom->amount_under + (float)$check->adminCom->amount_compagnie;
@@ -266,7 +294,7 @@ class CommissionServiceBackend
                 } else {
 
                     if ($walletCommission && $walletCommission->amount >= $amount_invoice) {
-                        $walletCommission->decrement('amount', $amount_invoice);
+                        // $walletCommission->decrement('amount', $amount_invoice);
                         $walletCommission->increment('amount', $amount_cie_invoice);
                         $walletAdmin->increment('amount', $amount_admin);
                     } else {
@@ -301,12 +329,10 @@ class CommissionServiceBackend
                     'description_underdistributer' =>  $description
                 ]);
 
-                if ($walletCommission && $walletCommission->amount >= $amount_drawal) {
-                    $walletCommission->decrement('amount', $amount_drawal);
+                if ($walletAdmin && $walletAdmin->amount >= $amount_admin) {
                     $walletCommission->increment('amount', $amount_banque);
                     $walletAdmin->increment('amount', $amount_admin);
                 } else {
-                    $admin_single->wallet->decrement('amount', $amount_drawal);
                     $walletAdmin->increment('amount', $amount_admin);
                 }
             }

@@ -181,7 +181,7 @@
                                                           <div
                                                               class="flex items-center justify-center text-success mt-3">
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                  <x-take-action-button
+                                                                  <x-taked-action-button
                                                                       action="ChooseDrawalUpdateTresort"
                                                                       :itemId="$item->id"
                                                                       label="Je confirme pour le retrait"

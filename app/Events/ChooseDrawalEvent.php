@@ -41,7 +41,7 @@ class ChooseDrawalEvent implements ShouldBroadcast
         return [
 
             'id' => $this->drawal->id,
-            'type' => 'Drawal',
+            // 'type' => 'Drawal',
             'updated_by'  => $this->drawal->updated_by,
             'userId'  =>   $this->drawal->wallet->sidUser->id ?? 12,
 

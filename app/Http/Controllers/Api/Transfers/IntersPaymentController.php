@@ -187,7 +187,7 @@ class IntersPaymentController extends Controller
         $valeur_ceiling  =  robus()->silver_ceiling;
         $admin_civ = $this->validatedamountDays->adminCiv();
 
-        // try {
+        try {
 
             // Is transaction Or Withdrawal
             if ($request->provider_type == 1) {
@@ -221,9 +221,6 @@ class IntersPaymentController extends Controller
                                 "phone" => 'required',
                                 "amount" => 'required',
                                 "name_custumer" => 'required',
-                                "num_piece_custumer" => 'required',
-                                "image_piece" => 'required',
-                                "date_piece" => 'required',
                                 'country' => 'required',
                             ],
                             [
@@ -231,9 +228,6 @@ class IntersPaymentController extends Controller
                                 'phone.required' => 'Votre numero est obligatoire',
                                 'amount.required' => 'Votre montant est obligatoire',
                                 'name_custumer.required' => 'Nom est obligatoire',
-                                'num_piece_custumer.required' => 'Numero piece est obligatoire',
-                                'date_piece.required' => 'date de validité est obligatoire',
-                                'image_piece.required' => 'Image de la piece est obligatoire',
                                 'country.required' => 'Votre pays est obligatoire',
 
                             ]
@@ -1649,12 +1643,12 @@ class IntersPaymentController extends Controller
                     return   json_message_response(false, "Votre montant journalier est atteint !", 333);
                 }
             }
-        // } catch (\Exception $exception) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
-        //     ], 333);
-        // }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' => false,
+                'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+            ], 333);
+        }
     }
 
 
