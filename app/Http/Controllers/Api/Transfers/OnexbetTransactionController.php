@@ -213,73 +213,65 @@ class OnexbetTransactionController extends Controller
                         $percent_robus =  $this->percentRobus->getRobusPercentageOnexbet();
 
 
-                        if ($request->provider == 87) {
+                        if ($percent_robus != null) {
 
-                                if ($percent_robus != null) {
+                                if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                                        if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
+                                        $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-                                                $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+                                        if ($request->choose_type_transaction == 1) {
+                                                $val_amount_send = $reel_amount;
+                                        } else {
+                                                $val_amount_send = $reel_amount;
+                                        }
 
-                                                if ($request->choose_type_transaction == 1) {
-                                                        $val_amount_send = $reel_amount;
+                                        if ($request->choose_type_transaction == 2) {
+
+                                                if ($this->validatedamountDays->validateAmount($val_amount_send)) {
+
+                                                        $amountReceved =  $reel_amount - (float) ($percent_robus->percent_with_drawal *  $reel_amount);
+                                                        $transactionResult = $this->processWithdrawalTransaction($request, $percent_robus, $amountReceved, $val_amount_send);
+                                                        if ($transactionResult['success']) {
+
+                                                                $this->notificationPhone->sendNotification1xbets($transactionResult['walletXbet']);
+                                                                return $this->messageAfterValidated($transactionResult['walletXbet']);
+                                                        } else {
+                                                                return json_message_response(false, $transactionResult['message'], 333);
+                                                        }
                                                 } else {
-                                                        $val_amount_send = $reel_amount;
+                                                        return json_message_response(false, "Vérifiez votre solde !!", 341);
                                                 }
+                                        } else {
+                                                if ($this->validatedamountDays->validateAmount($val_amount_send)) {
 
-                                                if ($request->choose_type_transaction == 2) {
+                                                        if ($request->choose_type_transaction == 1) {
 
-                                                        if ($this->validatedamountDays->validateAmount($val_amount_send)) {
+                                                                $amountReceved = (float) $reel_amount - (float) ($percent_robus->percent * $reel_amount);
+
+                                                                $transactionResult = $this->processDepositTransaction($request, $percent_robus, $amountReceved, $val_amount_send);
+                                                        } else {
 
                                                                 $amountReceved =  $reel_amount - (float) ($percent_robus->percent_with_drawal *  $reel_amount);
                                                                 $transactionResult = $this->processWithdrawalTransaction($request, $percent_robus, $amountReceved, $val_amount_send);
-                                                                if ($transactionResult['success']) {
+                                                        }
 
-                                                                        $this->notificationPhone->sendNotification1xbets($transactionResult['walletXbet']);
-                                                                        return $this->messageAfterValidated($transactionResult['walletXbet']);
-                                                                } else {
-                                                                        return json_message_response(false, $transactionResult['message'], 333);
-                                                                }
+                                                        if ($transactionResult['success']) {
+
+                                                                $this->notificationPhone->sendNotification1xbets($transactionResult['walletXbet']);
+                                                                return $this->messageAfterValidated($transactionResult['walletXbet']);
                                                         } else {
-                                                                return json_message_response(false, "Vérifiez votre solde !!", 341);
+                                                                return json_message_response(false, $transactionResult['message'], 333);
                                                         }
                                                 } else {
-                                                        if ($this->validatedamountDays->validateAmount($val_amount_send)) {
-
-                                                                if ($request->choose_type_transaction == 1) {
-
-                                                                        $amountReceved = (float) $reel_amount - (float) ($percent_robus->percent * $reel_amount);
-
-                                                                        $transactionResult = $this->processDepositTransaction($request, $percent_robus, $amountReceved, $val_amount_send);
-                                                                } else {
-
-                                                                        $amountReceved =  $reel_amount - (float) ($percent_robus->percent_with_drawal *  $reel_amount);
-                                                                        $transactionResult = $this->processWithdrawalTransaction($request, $percent_robus, $amountReceved, $val_amount_send);
-                                                                }
-
-                                                                if ($transactionResult['success']) {
-
-                                                                        $this->notificationPhone->sendNotification1xbets($transactionResult['walletXbet']);
-                                                                        return $this->messageAfterValidated($transactionResult['walletXbet']);
-                                                                } else {
-                                                                        return json_message_response(false, $transactionResult['message'], 333);
-                                                                }
-                                                        } else {
-                                                                return json_message_response(false, "Vérifiez votre solde !!", 341);
-                                                        }
+                                                        return json_message_response(false, "Vérifiez votre solde !!", 341);
                                                 }
-                                        } else {
-                                                return json_message_response(false, "Votre montant journalier est atteint !!", 333);
                                         }
                                 } else {
-
-                                        return  json_message_response(false, "Pas de poucentage defini dans cette zone !", 333);
+                                        return json_message_response(false, "Votre montant journalier est atteint !!", 333);
                                 }
                         } else {
-                                return response()->json([
-                                        'success' => false,
-                                        'message' => 'Selectionnez un fournisseur existant SVP ',
-                                ], 333);
+
+                                return  json_message_response(false, "Pas de poucentage defini dans cette zone !", 333);
                         }
                 } catch (\Exception $exception) {
 
@@ -298,7 +290,7 @@ class OnexbetTransactionController extends Controller
 
                 $country_robus = Country::whereId($request->country)->first();
 
-                $walletXbet =  $this->oneXbetService->createRobusWalletTransactionOneBet($reel_amount, $request->provider, $percent_robus, $request->id_compte,  $request->full_name, $amountReceved , $country_robus);
+                $walletXbet =  $this->oneXbetService->createRobusWalletTransactionOneBet($reel_amount, $request->provider, $percent_robus, $request->id_compte,  $request->full_name, $amountReceved, $country_robus);
                 if ($walletXbet == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
@@ -319,7 +311,7 @@ class OnexbetTransactionController extends Controller
 
                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-                $walletXbet =  $this->oneXbetService->createRobusWalletDrawalOneBet($reel_amount, $request->provider, $percent_robus, $request->code_compte, $request->countrie, $request->citie, $request->id_xbet, $amountReceved , $country_robus);
+                $walletXbet =  $this->oneXbetService->createRobusWalletDrawalOneBet($reel_amount, $request->provider, $percent_robus, $request->code_compte, $request->countrie, $request->citie, $request->id_xbet, $amountReceved, $country_robus);
                 if ($walletXbet == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }

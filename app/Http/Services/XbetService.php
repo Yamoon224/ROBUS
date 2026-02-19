@@ -55,13 +55,13 @@ class XbetService
             'num_acompte'  =>  $numberAcompte,
             'full_name' =>  $fullName,
             'status'  => "PENDING",
-            'countrie_id' => $country_robus->id,
+            'countrie_id' => $country_robus->id ?? null,
             'amount_received'  =>  $amountReceved ?? 0.0,
         ]);
     }
 
 
-    public function createRobusWalletDrawalOneBet($amount_valeur, $provider, $percent_robus, $numberAcompte, $countrie, $citie, $code_drawal, $amountReceved, $country_robus)
+    public function createRobusWalletDrawalOneBet($amount_valeur, $provider, $percent_robus , $code_drawal, $countrie, $citie, $numberAcompte, $amountReceved, $country_robus)
     {
 
         $amount_solde = robus()->wallet->amount;
@@ -82,7 +82,7 @@ class XbetService
             'countrie' =>  $countrie,
             'citie' =>  $citie,
             'status'  => "PENDING",
-            'countrie_id' => $country_robus->id,
+            'countrie_id' => $country_robus->id ?? null,
             'amount_received'  =>  $amountReceved ?? 0.0,
         ]);
     }

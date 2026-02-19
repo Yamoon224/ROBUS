@@ -128,37 +128,39 @@
                                                 <div class="mb-3">
                                                     @include('components.info')
                                                 </div>
-                                                <div class="user-name">
-                                                    <span style="background-color: red;"
-                                                        class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                        {{ $item->wallet->sidUser->country->name ?? null }}
-                                                    </span>
-                                                </div>
+                                               
 
                                                 @if ($item->updated_by == null)
                                                     <div class="user-name">
+                                                        <span 
+                                                        class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                        Indicatif :
+                                                        {{ $item->wallet->sidUser->country->indecative ?? null }}
+
+                                                    </span>
                                                         <p class="font-medium whitespace-nowrap">
                                                             {{ substr($item->phone ?? ($item->num_wallet ?? null), 0, 6) }}
                                                         </p>
 
                                                         @if ($item->provider->name == 'Moov' && $item->type_transaction == 'Retrait')
                                                             <p class="font-medium whitespace-nowrap">
-                                                               Référence : {{ substr($item->reference ?? ($item->reference ?? null), 0, 6) }}
+                                                                Référence :
+                                                                {{ substr($item->reference ?? ($item->reference ?? null), 0, 6) }}
                                                             </p>
                                                         @endif
 
-                                                         <p class="font-medium whitespace-nowrap">
-                                                              Nom& Prenom(S) :
-                                                              {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
+                                                        <p class="font-medium whitespace-nowrap">
+                                                            Nom& Prenom(S) :
+                                                            {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
 
-                                                          </p>
-                                                          <p class="font-medium whitespace-nowrap mt-1">
-                                                              Numéro piece : {{ $item->num_piece ?? null }}
-                                                          </p>
-                                                          <p class="font-medium whitespace-nowrap">
-                                                              Date validité :
-                                                              {{ $item->validated_date ?? null }}
-                                                          </p>
+                                                        </p>
+                                                        <p class="font-medium whitespace-nowrap mt-1">
+                                                            Numéro piece : {{ $item->num_piece ?? null }}
+                                                        </p>
+                                                        <p class="font-medium whitespace-nowrap">
+                                                            Date validité :
+                                                            {{ $item->validated_date ?? null }}
+                                                        </p>
                                                     </div>
 
 
@@ -184,27 +186,33 @@
                                                         </div>
                                                     @endif
                                                     <div class="user-name">
+                                                         <span 
+                                                        class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                        Indicatif :
+                                                        {{ $item->wallet->sidUser->country->indecative ?? null }}
+
+                                                    </span>
                                                         <p class="font-medium whitespace-nowrap">
                                                             {{ $item->phone ?? null }}
                                                             {{ $item->num_wallet ?? null }}
                                                         </p>
                                                         @if ($item->provider->name == 'Moov' && $item->type_transaction == 'Retrait')
                                                             <p class="font-medium whitespace-nowrap">
-                                                               Référence : {{ $item->reference ?? null }}
+                                                                Référence : {{ $item->reference ?? null }}
                                                             </p>
                                                         @endif
                                                         <p class="font-medium whitespace-nowrap">
-                                                              Nom& Prenom(S) :
-                                                              {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
+                                                            Nom& Prenom(S) :
+                                                            {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
 
-                                                          </p>
-                                                          <p class="font-medium whitespace-nowrap mt-1">
-                                                              Numéro piece : {{ $item->num_piece ?? null }}
-                                                          </p>
-                                                          <p class="font-medium whitespace-nowrap">
-                                                              Date validité :
-                                                              {{ $item->validated_date ?? null }}
-                                                          </p>
+                                                        </p>
+                                                        <p class="font-medium whitespace-nowrap mt-1">
+                                                            Numéro piece : {{ $item->num_piece ?? null }}
+                                                        </p>
+                                                        <p class="font-medium whitespace-nowrap">
+                                                            Date validité :
+                                                            {{ $item->validated_date ?? null }}
+                                                        </p>
                                                     </div>
 
                                                     @if ($item->type_transaction === 'Retrait')

@@ -97,6 +97,12 @@
 
                                                   @if ($item->updated_by == null)
                                                       <div class="user-name">
+                                                          <span 
+                                                        class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                        Indicatif :
+                                                        {{ $item->wallet->sidUser->country->indecative ?? null }}
+
+                                                    </span>
                                                           {{ substr($item->phone ?? null, 0, 5) }}
 
                                                       </div>
@@ -111,6 +117,12 @@
                                                       </div>
                                                   @else
                                                       <div class="user-name">
+                                                          <span 
+                                                        class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                        Indicatif :
+                                                        {{ $item->wallet->sidUser->country->indecative ?? null }}
+
+                                                    </span>
                                                           <p class="font-medium whitespace-nowrap">
                                                               {{ $item->phone ?? null }}
 

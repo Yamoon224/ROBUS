@@ -103,27 +103,36 @@
                                                       @include('components.info')
                                                   </div>
                                                   @if ($item->updated_by == null)
-                                                      <p class="font-medium whitespace-nowrap">
-                                                      <div class="p-4  rounded-lg shadow-sm">
-                                                          <dl class="space-y-2 text-sm text-gray-700 mr-2">
-                                                              <div class="flex justify-between">
-                                                                  <dt class="font-medium text-gray-900 mr-2">
-                                                                      Nom & Prénom :
-                                                                  </dt>
-                                                                  <dd>{{ $item->full_name ?? '—' }}</dd>
-                                                              </div>
-                                                              <div class="flex justify-between mt-3">
-                                                                  <dt class="font-medium text-gray-900 mr-2"> Num
-                                                                      :
-                                                                  </dt>
-                                                                  <dd>
-                                                                      {{ substr($item->phone ?? null, 0, 8) }}
-                                                                  </dd>
-                                                              </div>
-                                                          </dl>
+                                                      <div class="user-name">
+                                                          <p class="font-medium whitespace-nowrap">
+                                                          <div class="p-4  rounded-lg shadow-sm">
+                                                              <span
+                                                                  class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                                  Indicatif :
+                                                                  {{ $item->wallet->sidUser->country->indecative ?? null }}
+
+                                                              </span>
+                                                              <dl class="space-y-2 text-sm text-gray-700 mr-2">
+                                                                  <div class="flex justify-between">
+                                                                      <dt class="font-medium text-gray-900 mr-2">
+                                                                          Nom & Prénom :
+                                                                      </dt>
+                                                                      <dd>{{ $item->full_name ?? '—' }}</dd>
+                                                                  </div>
+                                                                  <div class="flex justify-between mt-3">
+                                                                      <dt class="font-medium text-gray-900 mr-2"> Num
+                                                                          :
+                                                                      </dt>
+                                                                      <dd>
+                                                                          {{ substr($item->phone ?? null, 0, 8) }}
+                                                                      </dd>
+                                                                  </div>
+                                                              </dl>
+                                                          </div>
+
+                                                          </p>
                                                       </div>
 
-                                                      </p>
                                                       <div class="flex items-center justify-center text-success mt-3">
 
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
@@ -140,26 +149,35 @@
 
                                                       </div>
                                                   @else
-                                                      <div class="p-4  rounded-lg shadow-sm">
-                                                          <dl class="space-y-2 text-sm text-gray-700 mr-2">
-                                                              <div class="flex justify-between">
-                                                                  <dt class="font-medium text-gray-900 mr-2">
-                                                                      Nom & Prénom :
-                                                                  </dt>
-                                                                  <dd>{{ $item->full_name ?? '—' }}</dd>
-                                                              </div>
-                                                              <div class="flex justify-between mt-3">
-                                                                  <dt class="font-medium text-gray-900 mr-2"> Numero
-                                                                      téléphone
-                                                                      :
-                                                                  </dt>
-                                                                  <dd>
-                                                                      {{ $item->phone ?? null }}
-                                                                  </dd>
-                                                              </div>
-                                                          </dl>
+                                                      <div class="user-name">
+                                                          <div class="p-4  rounded-lg shadow-sm">
+                                                              <span
+                                                                  class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                                  Indicatif :
+                                                                  {{ $item->wallet->sidUser->country->indecative ?? null }}
+
+                                                              </span>
+                                                              <dl class="space-y-2 text-sm text-gray-700 mr-2">
+                                                                  <div class="flex justify-between">
+                                                                      <dt class="font-medium text-gray-900 mr-2">
+                                                                          Nom & Prénom :
+                                                                      </dt>
+                                                                      <dd>{{ $item->full_name ?? '—' }}</dd>
+                                                                  </div>
+                                                                  <div class="flex justify-between mt-3">
+                                                                      <dt class="font-medium text-gray-900 mr-2"> Numero
+                                                                          téléphone
+                                                                          :
+                                                                      </dt>
+                                                                      <dd>
+                                                                          {{ $item->phone ?? null }}
+                                                                      </dd>
+                                                                  </div>
+                                                              </dl>
+                                                          </div>
                                                       </div>
-                                                        @if ($item->choose_transaction == 2)
+
+                                                      @if ($item->choose_transaction == 2)
                                                           <div
                                                               class="flex items-center justify-center text-success mt-3">
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
@@ -182,7 +200,8 @@
                                               <td class="w-40">
                                                   <div class="flex justify-center items-center">
                                                       @if ($item->updated_by != null)
-                                                          @if (($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
+                                                          @if (
+                                                              ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
                                                                   ($item->status === 'PROCESSING' && $item->updated_by == Auth::guard('web')->user()->id))
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                   <a wire:click="editTresort({{ $item->id }}, 'update-tresort-modal')"

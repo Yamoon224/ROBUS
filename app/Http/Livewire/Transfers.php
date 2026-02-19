@@ -2172,6 +2172,7 @@ class Transfers extends Component
                             if ($check->choose_type_transaction == 2) {
                                 $this->updateUserDrawalWallet($check->amount_received);
                                 $this->updateReloadWallet($check, $check->amount_received);
+                                $this->updatedAmountSoldeWallet($check, $check->amount_received);
                             } else {
                                 $this->updateUserWallet($commission_transaction);
                             }
@@ -4462,7 +4463,6 @@ class Transfers extends Component
                 event(new ChooseDrawalEvent($walletLocked));
             });
 
-
             $this->emit('modal-hide-tresort');
             $this->emit('menu-tresort-active');
             $this->emit('info', 'Transaction choisie avec succès.');
@@ -5429,13 +5429,14 @@ class Transfers extends Component
 
         $wallet_received =  $check->amount_solde;
 
-        $amount_solde = (float)$wallet_received  +   (float)$commission;
+        $amount_solde = (float)$wallet_received  +  (float)$commission;
 
         return  $check->update([
             'commissions' => 0,
             'commissions_admin' => 0,
             'costs_amount' => 0,
             'amount_solde' => $amount_solde,
+            'amount_received' => $check->amount,
         ]);
     }
 

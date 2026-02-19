@@ -104,6 +104,12 @@
                                                       <div
                                                           class="flex flex-col md:flex-row items-center justify-center gap-4 mt-4 p-4 ">
 
+                                                            <span 
+                                                        class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                        Indicatif :
+                                                        {{ $item->wallet->sidUser->country->indecative ?? null }}
+
+                                                    </span>
                                                           <div class="user-name">
                                                               <p class="font-medium whitespace-nowrap mt-1">
                                                                   Numero : {{ $item->phone ?? null }}
@@ -141,6 +147,12 @@
                                                       </div>
                                                   @else
                                                       <div class="user-name">
+                                                          <span 
+                                                        class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                        Indicatif :
+                                                        {{ $item->wallet->sidUser->country->indecative ?? null }}
+
+                                                    </span>
                                                           <p class="font-medium whitespace-nowrap mt-1">
                                                               Numero : {{ $item->phone ?? null }}
                                                           </p>

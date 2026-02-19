@@ -208,7 +208,7 @@ class CommissionServiceBackend
         }
     }
 
-      public function handleUnderDistributorAndCompanieCommission($check, $admin_civ, $description)
+    public function handleUnderDistributorAndCompanieCommission($check, $admin_civ, $description)
     {
         $valeur_amount_com = (float) $check->adminCom->amount_under + (float)$check->adminCom->amount_compagnie;
         $walletCommission = WalletCommission::find(1);

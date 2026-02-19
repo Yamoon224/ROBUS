@@ -13,7 +13,7 @@
 <div class="amount-section">
 
     @if ($item->type_transaction == 'Retrait')
-        <div class="amount-label">Montant à retiré</div>
+        <div class="amount-label">Montant à retirer</div>
     @else
         <div class="amount-label">Montant reçu</div>
     @endif

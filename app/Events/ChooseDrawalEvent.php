@@ -5,11 +5,11 @@ namespace App\Events;
 use App\Models\EventLog;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ChooseDrawalEvent implements ShouldBroadcastNow
+class ChooseDrawalEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -41,6 +41,7 @@ class ChooseDrawalEvent implements ShouldBroadcastNow
         return [
 
             'id' => $this->drawal->id,
+            'type' => 'Drawal',
             'updated_by'  => $this->drawal->updated_by,
             'userId'  =>   $this->drawal->wallet->sidUser->id ?? 12,
 
