@@ -52,7 +52,7 @@ class TransactionSingleCollection extends JsonResource
             'id_invoice' =>  $this->id_invoice,
             'offer' => optional($this->offer)->name,
             'number_contract' =>  $this->number_contract,
-            'amount_received' => Wallet::where('wallet_id',  $this->num_wallet)->first() != null ? number_format((double)$this->amount_received, 2, '.', ' ')  . ' ' . optional($wallet_send->currencie)->code : number_format((double)$this->amount_received, 2, '.', ' ') ,
+            'amount_received' => Wallet::where('wallet_id',  $this->num_wallet)->first() != null ? number_format((double)$this->amount_received, 2, '.', ' ')  : number_format((double)$this->amount_received, 2, '.', ' ') ,
             'number_phone' =>  $this->number_phone,
             'paiementChoix_phone' =>  $this->paiementChoix_phone,
             'factureChoix_type' =>  $this->factureChoix_type,

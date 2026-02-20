@@ -216,8 +216,8 @@ class XbetService
 
         if (robus()->is_under_distributer || robus()->is_api) {
 
-            $valuer_deposit =  $this->convertionService->convertAdminCommissionInvoice($percent_robus->percent_merchands * $amount);
-            $admin_nocomission =  $this->convertionService->convertAdminCommissionInvoice($percent_robus->percent * $amount);
+            $valuer_deposit =  $this->convertionService->convertAdminCommissionInvoice($percent_robus->percent_under_drawal * $amount);
+            $admin_nocomission =  $this->convertionService->convertAdminCommissionInvoice($percent_robus->percent_with_drawal * $amount);
             $admin_percent =  $this->convertionService->convertAdminCommissionInvoice($percent_robus->percent_admin * $amount);
 
             if (!empty($activeButtons['showRemonterXbetDrawalButton'])) {

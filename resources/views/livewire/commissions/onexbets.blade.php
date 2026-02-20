@@ -20,8 +20,8 @@
                         <th class="whitespace-nowrap">Nom</th>
                         <th class="whitespace-nowrap text-center">Pourcentage</th>
                         <th class="whitespace-nowrap text-center">Pourcentage Admin</th>
-                        <th class="whitespace-nowrap text-center">Pourcentage  depot</th>
-                        <th class="whitespace-nowrap text-center">Pourcentage  retrait</th>
+                        <th class="whitespace-nowrap text-center">Pourcentage depot</th>
+                        <th class="whitespace-nowrap text-center">Pourcentage retrait</th>
                         <th class="whitespace-nowrap text-center">Pourcentage Compagnie</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
@@ -50,13 +50,13 @@
                                 </td>
                                 <td class="text-center">
                                     <p class="font-medium whitespace-nowrap">
-                                        {{ $item->percent_merchands * 100 ?? null }} %
+                                       Commission SD : {{ $item->percent_merchands * 100 ?? null }} %
                                     </p>
 
                                 </td>
                                 <td class="w-40">
-                                    <p class="font-medium whitespace-nowrap">
-                                        {{ $item->percent_with_drawal * 100 ?? null }} %</p>
+                                    <p class="font-medium whitespace-nowrap"> % Retrait : {{ $item->percent_with_drawal * 100 ?? null }} %</p>
+                                    <p class="font-medium whitespace-nowrap mt-3"> Commission SD :  {{ $item->percent_under_drawal * 100 ?? null }} %</p>
                                 </td>
 
                                 <td class="w-40">

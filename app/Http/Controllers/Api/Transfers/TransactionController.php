@@ -375,7 +375,7 @@ class TransactionController extends Controller
 
                                     $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
 
-                                    $walletTransaction = $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal, $walletAmountSend->amount);
+                                    $walletTransaction = $this->robusTransactionService->createRobusWalletPaiementTransaction($request->amount, $percent_amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal, $walletAmountSend->amount , $is_unders);
 
                                     if ($walletTransaction != null) {
 

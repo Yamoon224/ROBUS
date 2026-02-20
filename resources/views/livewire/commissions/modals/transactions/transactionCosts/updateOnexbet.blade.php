@@ -32,17 +32,9 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
-                <div class="col-span-6">
-                    <label for="modal-form-1" class="form-label">Pourcentage Compagnie<span class="text-danger">
-                            *</span></label>
-                    <input wire:model.defer="comissionCompanie" id="modal-form-1" type="number" class="form-control"
-                        placeholder="Pourcentage marchant">
-                    @error('comissionCompanie')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
+               
 
-                <div class="col-span-6">
+                <div class="col-span-12">
                     <label for="modal-form-1" class="form-label">Pourcentage S-agens depot</label>
                     <input wire:model.defer="percent_deposit" id="modal-form-1" type="number" class="form-control"
                         placeholder="Pourcentage depot">
@@ -67,15 +59,15 @@
                 <div class="col-span-6">
                     <label for="modal-form-1" class="form-label">Pourcentage S-agent retrait<span class="text-danger">
                             *</span></label>
-                    <input wire:model.defer="percent_deposit" id="modal-form-1" type="number" class="form-control"
-                        placeholder="Pourcentage marchant">
-                    @error('percent_deposit')
+                    <input wire:model.defer="distributer_drawal" id="modal-form-1" type="number" class="form-control"
+                        placeholder="Pourcentage retrait marchant">
+                    @error('distributer_drawal')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="col-span-12">
-                    <label for="modal-form-1" class="form-label">Pourcentage compagnie retrait<span class="text-danger">
+                    <label for="modal-form-1" class="form-label">Pourcentage compagnie<span class="text-danger">
                             *</span></label>
                     <input wire:model.defer="comissionCompanie" id="modal-form-1" type="number" class="form-control"
                         placeholder="Pourcentage Compagnies">

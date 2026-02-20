@@ -776,13 +776,12 @@ class CommissionService
 
 
         if ($adminCiv->count() > 0) {
-            $commissionPerAdmin = $amountDeposit / $adminCiv->count();
 
             foreach ($adminCiv as $user) {
                 $adminUser = SidUser::find($user->id);
 
                 AdminsCom::create(array_merge([
-                    'amount' => $commissionPerAdmin,
+                    'amount' => 0 ,
                     'sid_user_id' => $adminUser->id,
                     'description' => 'Commission administrateur',
                     'amount_under' =>  $userUnder->is_under_distributer ? $amountDeposit : 0,

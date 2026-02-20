@@ -1818,7 +1818,7 @@ class Transfers extends Component
 
                                 if ($valeur_amount_com !== null && $check->commissions !== null) {
 
-                                    app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Credit telephonique");
+                                    app(CommissionServiceBackend::class)->handleUnderDistributorPhoneCreditCommission($check, $admin_civ, "Paiment commission Credit telephonique");
                                 } else {
                                     $this->cancelPhoneCreditField();
                                     $this->emit('modal-hide-phoneCredit-validated');
@@ -3951,7 +3951,7 @@ class Transfers extends Component
 
                                     if ($valeur_amount_com !== null && $check->commissions !== null) {
 
-                                        app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Credit telephonique a international");
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorPhoneCreditCommission($check, $admin_civ, "Paiment commission Credit telephonique a international");
                                     } else {
                                         $this->cancelInterField();
                                         $this->emit('modal-hide-inters');

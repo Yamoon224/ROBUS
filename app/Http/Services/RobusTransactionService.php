@@ -70,6 +70,41 @@ class RobusTransactionService
         );
     }
 
+
+     public function createRobusWalletPaiementTransaction($transaction_amount_robus , $percent_amount, $percent_robus, $provider, $compte_number_robus, $amount_drawal, $amount_before_drawal , $is_unders)
+    {
+        $val_amount = $transaction_amount_robus;
+
+        $amount_solde = (float)robus()->wallet->amount - (float)$val_amount;
+
+        return  $this->transctionRepository->create(
+            [
+                'wallet_id' => robus()->wallet->id,
+                'amount' => $transaction_amount_robus,
+                'description' => "Transfert d'argent vers Robus",
+                'transaction_cost_id' =>  $percent_robus->id,
+                'phone' =>  null,
+                'costs_amount' => $percent_amount,
+                'amount_received' => $transaction_amount_robus - ($percent_amount),
+                'num_wallet' => strtoupper($compte_number_robus),
+                'name_complet' => null,
+                'balance_before' => robus()->wallet->amount,
+                'num_piece' => null,
+                'validated_date' => null,
+                'created_by' => robus()->id,
+                'provider_id' => $provider,
+                'choose_type_transaction' => 1,
+                'type_transaction' => $is_unders ? 'Paiement': 'Depot',
+                'type_received' => $is_unders ? 'Paiement' : 'Transfert',
+                'status' => 'SUCCESS',
+                'amount_solde' => $amount_solde ?? null,
+                'amount_solde_drawal' => $amount_drawal ?? null,
+                'amount_solde_before_drawal' => $amount_before_drawal ?? null,
+            ]
+        );
+    }
+
+
     public function createRobusWalletTransactionDistributer($transaction_amount_robus, $percent_robus, $provider, $compte_number_robus, $amount_drawal, $amount_before_drawal)
     {
         $val_amount = $transaction_amount_robus;

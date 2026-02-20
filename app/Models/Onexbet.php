@@ -52,7 +52,6 @@ class Onexbet extends Model
     public function setPercentAttribute($value)
     {
         $this->attributes['percent'] = json_encode($this->formatPercentage($value));
-
     }
 
     // public function setPercentAdminAttribute($value)
@@ -63,7 +62,6 @@ class Onexbet extends Model
     public function setPercentMerchandsAttribute($value)
     {
         $this->attributes['percent_merchands'] = json_encode($this->formatPercentage($value));
-
     }
 
     public function setPercentMastersAttribute($value)
@@ -86,6 +84,12 @@ class Onexbet extends Model
     public function setPercentWithDrawalAttribute($value)
     {
         $this->attributes['percent_with_drawal'] = json_encode($this->formatPercentage($value));
+    }
+
+
+    public function setPercentUnderDrawalAttribute($value)
+    {
+        $this->attributes['percent_under_drawal'] = json_encode($this->formatPercentage($value));
     }
 
 
