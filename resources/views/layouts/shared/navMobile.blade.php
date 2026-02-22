@@ -705,6 +705,17 @@
                             </li>
                         @endif
 
+                          @if (Auth::guard('web')->user()->hasPermissionTo('roles'))
+                                <li>
+                                    <a href="{{ route('activites.browse_activites_movements') }}"
+                                        class="menu {{ $route == 'activites.browse_activites_movements' ? 'menu--active' : '' }}">
+                                        <div class="menu__icon"> <i data-feather="activity"
+                                                class="block mx-auto"></i></div>
+                                        <div class="menu__title"> Mouvements </div>
+                                    </a>
+                                </li>
+                            @endif
+
                         @if (Auth::guard('web')->user()->hasPermissionTo('active-pays'))
                             <li>
                                 <a href="{{ route('countries.browse') }}"

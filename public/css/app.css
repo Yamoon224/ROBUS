@@ -20,6 +20,11 @@
 
 /* Styles améliorés avec bordures plus visibles */
 
+.amount-balance:hover, .amount-commission-balance:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
 
 .dropdown-menu.dropdown-xlarge {
     width: 60% !important;
@@ -4807,6 +4812,10 @@ select {
 .dark .btn-secondary-soft:hover:not(:disabled) {
   border-color: rgb(var(--color-darkmode-100) / 0.2);
   background-color: rgb(var(--color-darkmode-100) / 0.1);
+}
+
+.btn-success:hover {
+    background-color: #059669;
 }
 
 .btn-success-soft {
