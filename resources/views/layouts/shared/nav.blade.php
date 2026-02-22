@@ -627,7 +627,7 @@
 
                 <li>
                     <a href="javascript:;"
-                        class="side-menu {{ request()->is('application*') || request()->is('operators*') || request()->is('faqs.browse*') || request()->is('list_countries*') || request()->is('admin*') || request()->is('features*') || request()->is('admin*') || request()->is('roles*') || request()->is('permissions*') || request()->is('close_app*') ? 'side-menu--active' : '' }}">
+                        class="side-menu {{ request()->is('application*') ||  request()->is('activites*') || request()->is('operators*') || request()->is('faqs.browse*') || request()->is('list_countries*') || request()->is('admin*') || request()->is('features*') || request()->is('admin*') || request()->is('roles*') || request()->is('permissions*') || request()->is('close_app*') ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon"> <i data-feather="users" class="block mx-auto"></i> </div>
                         <div class="side-menu__title">
                             Administrateur
@@ -740,6 +740,18 @@
                                 </li>
                             @endif
 
+                             @if (Auth::guard('web')->user()->hasPermissionTo('roles'))
+                                <li>
+                                    <a href="{{ route('activites.browse_activites_movements') }}"
+                                        class="side-menu {{ $route == 'activites.browse_activites_movements' ? 'side-menu--active' : '' }}">
+                                        <div class="side-menu__icon"> <i data-feather="activity"
+                                                class="block mx-auto"></i></div>
+                                        <div class="side-menu__title"> Mouvements </div>
+                                    </a>
+                                </li>
+                            @endif
+
+                            
                             @if (Auth::guard('web')->user()->hasPermissionTo('active-pays'))
                                 <li>
                                     <a href="{{ route('countries.browse') }}"

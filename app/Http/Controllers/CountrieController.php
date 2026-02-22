@@ -624,6 +624,7 @@ class CountrieController extends Controller
         $sum_bank_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletBank::class, 'wallet_banks.wallet_id', $countrie->id, 'wallet_banks.created_at', 'wallet_banks.updated_by',  'wallet_banks.status',  'wallet_banks.amount');
         $sum_deposit_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', $countrie->id, 'wallet_deposits.created_at', 'wallet_deposits.updated_by',  'wallet_deposits.status',  'wallet_deposits.amount');
         $xbet_amount =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletXbet::class, 'wallet_xbets.wallet_id', $countrie->id, 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount');
+        $bank_send_amount =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletBankSend::class, 'wallet_bank_sends.wallet_id', $countrie->id, 'wallet_bank_sends.created_at', 'wallet_bank_sends.updated_by',  'wallet_bank_sends.status',  'wallet_bank_sends.amount');
 
         // new wallets
         $sum_push_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletPush::class, 'wallet_pushes.wallet_id', $countrie->id, 'wallet_pushes.created_at', 'wallet_pushes.updated_by',  'wallet_pushes.status',  'wallet_pushes.amount');
@@ -640,7 +641,7 @@ class CountrieController extends Controller
         $sum_bank_month =  $this->historiqueService->getDaysTransactionCountrie(WalletBank::class, 'wallet_banks.wallet_id', $countrie->id, 'wallet_banks.created_at', 'wallet_banks.updated_by',  'wallet_banks.status',  'wallet_banks.amount');
         $sum_deposit_month =  $this->historiqueService->getDaysTransactionCountrie(WalletDeposit::class, 'wallet_deposits.wallet_id', $countrie->id, 'wallet_deposits.created_at', 'wallet_deposits.updated_by',  'wallet_deposits.status',  'wallet_deposits.amount');
         $xbet_amount_month =  $this->historiqueService->getDaysTransactionCountrie(WalletXbet::class, 'wallet_xbets.wallet_id', $countrie->id, 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount');
-
+        $bank_send_amount_month =  $this->historiqueService->getDaysTransactionCountrie(WalletBankSend::class, 'wallet_bank_sends.wallet_id', $countrie->id, 'wallet_bank_sends.created_at', 'wallet_bank_sends.updated_by',  'wallet_bank_sends.status',  'wallet_bank_sends.amount');
         // new wallets
         $push_amount_month =  $this->historiqueService->getDaysTransactionCountrie(WalletPush::class, 'wallet_pushes.wallet_id', $countrie->id, 'wallet_pushes.created_at', 'wallet_pushes.updated_by',  'wallet_pushes.status',  'wallet_pushes.amount');
         $djamo_amount_month =  $this->historiqueService->getDaysTransactionCountrie(WalletDjamo::class, 'wallet_djamos.wallet_id', $countrie->id, 'wallet_djamos.created_at', 'wallet_djamos.updated_by',  'wallet_djamos.status',  'wallet_djamos.amount');
@@ -659,7 +660,7 @@ class CountrieController extends Controller
         $djamo_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletDjamo::class, 'wallet_djamos.wallet_id', $countrie->id,  'wallet_djamos.status',  'wallet_djamos.commissions');
         $tresort_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletTresortMoney::class, 'wallet_tresort_money.wallet_id', $countrie->id,  'wallet_tresort_money.status',  'wallet_tresort_money.commissions');
         $versment_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletVersement::class, 'wallet_versements.wallet_id', $countrie->id,  'wallet_versements.status',  'wallet_versements.commissions');
-
+        $bank_send_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletBankSend::class, 'wallet_bank_sends.wallet_id', $countrie->id,  'wallet_bank_sends.status',  'wallet_bank_sends.commissions');
 
         $push_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletPush::class, 'wallet_pushes.wallet_id', $countrie->id,  'wallet_pushes.status',  'wallet_pushes.commission_companie');
         $payment_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletPayment::class, 'wallet_payments.wallet_id', $countrie->id,  'wallet_payments.status',  'wallet_payments.commission_companie');
@@ -672,18 +673,17 @@ class CountrieController extends Controller
         $djamo_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletDjamo::class, 'wallet_djamos.wallet_id', $countrie->id,  'wallet_djamos.status',  'wallet_djamos.commission_companie');
         $tresort_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletTresortMoney::class, 'wallet_tresort_money.wallet_id', $countrie->id,  'wallet_tresort_money.status',  'wallet_tresort_money.commission_companie');
         $versment_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletVersement::class, 'wallet_versements.wallet_id', $countrie->id,  'wallet_versements.status',  'wallet_versements.commission_companie');
-
+        $bank_send_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletBankSend::class, 'wallet_bank_sends.wallet_id', $countrie->id,  'wallet_bank_sends.status',  'wallet_bank_sends.commission_companie');
 
 
         $sumTotalCommission = $push_commission +  $payment_commission + $transaction_commission + $phoneCredit_commission + $inter_commission + $bank_commission + $deposit_commission +
-            $xbet_commission + $djamo_commission + $tresort_commission +  $versment_commission;
-
+            $xbet_commission + $djamo_commission + $tresort_commission +  $versment_commission +  $bank_send_commission;
         $sumCTotalCommission = $push_c_commission +  $payment_c_commission + $transaction_c_commission + $phoneCredit_c_commission + $inter_c_commission + $bank_c_commission + $deposit_c_commission +
-            $xbet_c_commission + $djamo_c_commission + $tresort_c_commission +  $versment_c_commission;
+            $xbet_c_commission + $djamo_c_commission + $tresort_c_commission +  $versment_c_commission + $bank_send_c_commission;
 
 
         $sumApiTotalCommission = $push_c_commission +  $payment_c_commission + $transaction_c_commission + $phoneCredit_c_commission + $inter_c_commission + $bank_c_commission + $deposit_c_commission +
-            $xbet_c_commission + $djamo_c_commission + $tresort_c_commission +  $versment_c_commission;
+            $xbet_c_commission + $djamo_c_commission + $tresort_c_commission +  $versment_c_commission + $bank_send_c_commission;
         // Infos uses
 
         $custumers_countries = SidUser::whereIsCustumers(true)->where('country_id', $countrie->id)->get();
@@ -764,6 +764,9 @@ class CountrieController extends Controller
             'sum_transaction_todays',
             'sum_inter_todays',
             'sum_phoneCredit_todays',
+            'xbet_amount_month',
+            'bank_send_amount',
+
             // New wallet
             'sum_push_todays',
             'sum_djamo_todays',

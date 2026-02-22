@@ -13,11 +13,20 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('ledger_entries', function (Blueprint $table) {
+    
+
+        Schema::create('ledger_entries', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->uuid('transaction_id')->nullable();
-             $table->unsignedBigInteger('wallet_admin_id');
-            $table->foreign('wallet_admin_id')->references('id')->on('wallet_admins')->onDelete('cascade');
+            $table->unsignedBigInteger('admin_com_id')->nullable();
+
+            $table->foreign('admin_com_id')->nullable()
+                ->references('id')
+                ->on('admins_coms')
+                ->onDelete('cascade');
+
+
+
             $table->decimal('debit', 18, 2)->default(0);
             $table->decimal('credit', 18, 2)->default(0);
             $table->string('description')->nullable();

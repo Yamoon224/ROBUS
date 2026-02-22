@@ -16,6 +16,8 @@ use App\Repositories\TransactionRepository;
 use App\Http\Services\MasterService;
 use App\Http\Services\OperatorRestrictionService;
 use App\Http\Services\CommissionService;
+use Illuminate\Support\Str;
+use App\Models\LedgerEntry;
 
 class RobusTransactionService
 {
@@ -37,7 +39,7 @@ class RobusTransactionService
         $this->commissionServices = $commissionServices;
     }
 
-    public function createRobusWalletTransaction($transaction_amount_robus , $percent_amount, $percent_robus, $provider, $compte_number_robus, $amount_drawal, $amount_before_drawal)
+    public function createRobusWalletTransaction($transaction_amount_robus, $percent_amount, $percent_robus, $provider, $compte_number_robus, $amount_drawal, $amount_before_drawal)
     {
         $val_amount = $transaction_amount_robus;
 
@@ -71,7 +73,7 @@ class RobusTransactionService
     }
 
 
-     public function createRobusWalletPaiementTransaction($transaction_amount_robus , $percent_amount, $percent_robus, $provider, $compte_number_robus, $amount_drawal, $amount_before_drawal , $is_unders)
+    public function createRobusWalletPaiementTransaction($transaction_amount_robus, $percent_amount, $percent_robus, $provider, $compte_number_robus, $amount_drawal, $amount_before_drawal, $is_unders)
     {
         $val_amount = $transaction_amount_robus;
 
@@ -94,7 +96,7 @@ class RobusTransactionService
                 'created_by' => robus()->id,
                 'provider_id' => $provider,
                 'choose_type_transaction' => 1,
-                'type_transaction' => $is_unders ? 'Paiement': 'Depot',
+                'type_transaction' => $is_unders ? 'Paiement' : 'Depot',
                 'type_received' => $is_unders ? 'Paiement' : 'Transfert',
                 'status' => 'SUCCESS',
                 'amount_solde' => $amount_solde ?? null,
@@ -185,8 +187,7 @@ class RobusTransactionService
             } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
                 $admin_valeur_convertion_drawal = $valuer_with_drawal;
                 $admin_valeur_convertion = (float)$valeur_admin;
-                $admin_compagnie_convertion = (float)$valuer_admin_companie ;
-
+                $admin_compagnie_convertion = (float)$valuer_admin_companie;
             } else {
                 $admin_valeur_convertion_drawal = $valuer_with_drawal * (float)robus()->country->currencie->value;
                 $admin_valeur_convertion = (float)$valeur_admin * (float)robus()->country->currencie->value;
@@ -478,7 +479,7 @@ class RobusTransactionService
             foreach ($admin_civ as $user) {
                 $admin_single = SidUser::find($user->id);
 
-                AdminsCom::create([
+                $admin_commission = AdminsCom::create([
                     'amount' =>   $valeur_single,
                     'sid_user_id' =>   $admin_single->id,
                     'wallet_transaction_id' => $walletTransaction->id,
@@ -489,6 +490,14 @@ class RobusTransactionService
                 $walletAdmin = WalletAdmin::find(1);
                 if ($walletAdmin && $walletAdmin->amount >= $valeur_single) {
                     $walletAdmin->increment('amount', $valeur_single);
+                    LedgerEntry::create([
+                        'transaction_id' => (string) Str::uuid(),
+                        'admin_com_id' => $admin_commission->id,
+                        'debit' => 0,
+                        'credit' => $valeur_single,
+                        'description' => "Commission adminstrateur",
+                        'is_admin' => true,
+                    ]);
                 } else {
                     $admin_single->wallet->increment('amount', $valeur_single);
                 }

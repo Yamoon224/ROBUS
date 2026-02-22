@@ -1349,17 +1349,15 @@ class TransactionController extends Controller
 
                 $commission_transaction = $this->percentRobus->getRobusPercentageSDistributers();
                 $commission_transaction_val_percent_pay = 0;
-                $commission_transaction_val_nat_pay = 0;
 
                 if ($commission_transaction) {
 
                     $commission_transaction_val_percent_pay_custumer = (float)$commission_transaction->percent_custum_drawal * $amount_transaction;
 
-                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay_custumer, $amount_transaction);
 
                     $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay_custumer;
 
-                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_with_drawal * $commission_transaction_val_nat_receive;
+                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_with_drawal * $amount_transaction;
                 }
 
 

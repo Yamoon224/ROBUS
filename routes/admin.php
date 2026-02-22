@@ -102,7 +102,10 @@ Route::group(['middleware' => ['auth:web']], function () {
 
     Route::group(['prefix' => 'activites'], function () {
         Route::get('/browse',  [AdminController::class, 'browse_activites'])->name('activites.browse_activites');
+        Route::get('/movements',  [AdminController::class, 'browse_activites_movements'])->name('activites.browse_activites_movements');
     });
+
+
 
 
     Route::group(['prefix' => 'roles'], function () {

@@ -108,6 +108,14 @@ class AdminController extends Controller
         return view('pages.admin.activities');
     }
 
+    public function browse_activites_movements()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-administrateur')) {
+            abort(403);
+        }
+        return view('pages.admin.activities_movements');
+    }
+
     /**
      * Display the specified resource.
      *
@@ -1707,6 +1715,7 @@ class AdminController extends Controller
         $gain_push = $this->getTodayTransactionCommissionAmountTotal(WalletPush::class, $user->wallet->id);
         $gain_djamo = $this->getTodayTransactionCommissionAmountTotal(WalletDjamo::class, $user->wallet->id);
         $gain_tresorts = $this->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class, $user->wallet->id);
+        $gain_bank_sends = $this->getTodayTransactionCommissionAmountTotal(WalletBankSend::class, $user->wallet->id);
 
 
         $count_days_inters = $this->getCountsTransactionsAmountTotal(WalletInter::class, $user->wallet->id, 'daily');
@@ -1717,7 +1726,7 @@ class AdminController extends Controller
         $gain_banks = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id);
 
         $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits
-            + $gain_xbets + $gain_versment + $gain_push + $gain_djamo + $gain_tresorts;
+            + $gain_xbets + $gain_versment + $gain_push + $gain_djamo + $gain_tresorts + $gain_bank_sends;
 
         // Execeptions
         $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
@@ -1726,6 +1735,7 @@ class AdminController extends Controller
             'user',
             'gain_xbets',
             'gain_versment',
+            'gain_bank_sends',
             'gain_push',
             'gain_djamo',
             'gain_tresorts',
@@ -1805,9 +1815,9 @@ class AdminController extends Controller
         $amount_mounth_inters = $this->getTransactionsAmountTotal(WalletInter::class, $user->wallet->id, 'monthly');
 
         $gain_banks = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id);
-
+        $gain_bank_sends = $this->getTodayTransactionCommissionAmountTotal(WalletBankSend::class, $user->wallet->id);
         $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits
-            + $gain_xbets + $gain_versment + $gain_push + $gain_djamo + $gain_tresorts;
+            + $gain_xbets + $gain_versment + $gain_push + $gain_djamo + $gain_tresorts + $gain_bank_sends;
 
         // Execeptions
         $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
@@ -1835,6 +1845,7 @@ class AdminController extends Controller
             'rejectedCount',
             'totalCount',
             'gain_xbets',
+            'gain_bank_sends',
             'gain_versment',
             'gain_push',
             'gain_djamo',
@@ -1883,40 +1894,41 @@ class AdminController extends Controller
         }
 
         $gainMappings = [
-            "Paiements" => $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class, $user->wallet->id),
+            "Commission sur Paiements" => $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class, $user->wallet->id),
             // "Transactions" => $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
-            "Crédits" => $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class, $user->wallet->id),
-            "International" => $this->getTodayTransactionCommissionAmountTotal(WalletInter::class, $user->wallet->id),
-            "Virements" => $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id),
-            "Rechargements" => $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class, $user->wallet->id),
-            "Depots" => $this->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
-            "Retraits" => $this->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
-            "Moneys" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
+            "Commission sur Crédits" => $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class, $user->wallet->id),
+            "Commission sur International" => $this->getTodayTransactionCommissionAmountTotal(WalletInter::class, $user->wallet->id),
+            "Commission sur Virements" => $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id),
+            "Commission sur Rechargements" => $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class, $user->wallet->id),
+            "Commission sur Depots" => $this->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
+            "Commission sur Retraits" => $this->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
+            "Commission sur Moneys" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
             // New transactions
-            "Xbets" => $this->getTodayTransactionCommissionAmountTotal(WalletXbet::class, $user->wallet->id),
-            "Push" => $this->getTodayTransactionCommissionAmountTotal(WalletPush::class, $user->wallet->id),
-            "Versement" => $this->getTodayTransactionCommissionAmountTotal(WalletVersement::class, $user->wallet->id),
-            "Tresort" => $this->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class, $user->wallet->id),
-            "Djamo" => $this->getTodayTransactionCommissionAmountTotal(WalletDjamo::class, $user->wallet->id),
+            "Commission sur Xbets" => $this->getTodayTransactionCommissionAmountTotal(WalletXbet::class, $user->wallet->id),
+            "Commission sur Push" => $this->getTodayTransactionCommissionAmountTotal(WalletPush::class, $user->wallet->id),
+            "Commission sur Versement" => $this->getTodayTransactionCommissionAmountTotal(WalletVersement::class, $user->wallet->id),
+            "Commission sur Tresort" => $this->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class, $user->wallet->id),
+            "Commission sur Djamo" => $this->getTodayTransactionCommissionAmountTotal(WalletDjamo::class, $user->wallet->id),
+            "Commission sur BankSend" => $this->getTodayTransactionCommissionAmountTotal(WalletBankSend::class, $user->wallet->id)
         ];
 
 
         $resetMappings = [
-            "Paiements" => WalletPayment::class,
+            "Commission sur Paiements" => WalletPayment::class,
             // "Transactions" => WalletTransaction::class,
-            "Crédits" => WalletPhoneCredit::class,
-            "International" => WalletInter::class,
-            "Virements" => WalletBank::class,
-            "Rechargements" => WalletDeposit::class,
-            "Depots" => WalletTransaction::class,
-            "Retraits" => WalletTransaction::class,
-            "Moneys" => WalletTransaction::class,
-
-            "Xbets" => WalletXbet::class,
-            "Push" => WalletPush::class,
-            "Versement" => WalletVersement::class,
-            "Tresort" => WalletTresortMoney::class,
-            "Djamo" => WalletDjamo::class,
+            "Commission sur Crédits" => WalletPhoneCredit::class,
+            "Commission sur International" => WalletInter::class,
+            "Commission sur Virements" => WalletBank::class,
+            "Commission sur Rechargements" => WalletDeposit::class,
+            "Commission sur Depots" => WalletTransaction::class,
+            "Commission sur Retraits" => WalletTransaction::class,
+            "Commission sur Moneys" => WalletTransaction::class,
+            "Commission sur Xbets" => WalletXbet::class,
+            "Commission sur Push" => WalletPush::class,
+            "Commission sur Versement" => WalletVersement::class,
+            "Commission sur Tresort" => WalletTresortMoney::class,
+            "Commission sur Djamo" => WalletDjamo::class,
+            "Commission sur BankSend" => WalletBankSend::class
         ];
 
 
@@ -1953,8 +1965,9 @@ class AdminController extends Controller
         $amount_solde = (float)$user->wallet->amount + (float)$amount;
 
         $amount_old_solde = (float)$user->wallet->amount;
+        $amount_before_solde = (float)$user->wallet->amount;
 
-        $withRemonte = $this->createWithCommission($amount_solde, $amount, $user->id,  $typeRemonte, $amount_old_solde);
+        $withRemonte = $this->createWithCommission($amount_solde, $amount, $user->id,  $typeRemonte, $amount_old_solde, $amount_before_solde);
 
         if ($withRemonte !== null) {
 
@@ -1968,11 +1981,11 @@ class AdminController extends Controller
 
                 $resetClass = $resetMappings[$typeRemonte];
 
-                if ($typeRemonte === "Depots") {
+                if ($typeRemonte === "Commission sur Depots") {
                     $this->getUpdateTransactionDepotRobusCommissionAmountNullTotal($resetClass, $user->wallet->id);
-                } elseif ($typeRemonte === "Retraits") {
+                } elseif ($typeRemonte === "Commission sur Retraits") {
                     $this->getUpdateTransactionRetraitRobusCommissionAmountNullTotal($resetClass, $user->wallet->id);
-                } elseif ($typeRemonte === "Moneys") {
+                } elseif ($typeRemonte === "Commission sur Moneys") {
                     $this->getUpdateTransactionMoneyCommissionAmountNullTotal($resetClass, $user->wallet->id);
                 } else {
                     $this->getUpdateTransactionCommissionAmountNullTotal($resetClass, $user->wallet->id);
@@ -2023,6 +2036,7 @@ class AdminController extends Controller
             "Retrait Depots" => $this->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
             "Retrait Retraits" => $this->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
             "Retrait Moneys" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
+            "Retrait Bank Sends" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletBankSend::class, $user->wallet->id),
             // New amount
             "Retrait Xbet" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletXbet::class, $user->wallet->id),
             "Retrait Push" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletPush::class, $user->wallet->id),
@@ -2048,7 +2062,7 @@ class AdminController extends Controller
             "Retrait Versement" => WalletVersement::class,
             "Retrait Tresort" => WalletTresortMoney::class,
             "Retrait Djamo" => WalletDjamo::class,
-
+                "Retrait Bank Sends" => WalletBankSend::class,
 
         ];
 
@@ -2107,12 +2121,13 @@ class AdminController extends Controller
         $resetClass = $resetMappings[$typeRemonte];
 
         $amount_solde = (float)$user->wallet->amount + (float)$amount;
+        $amount_before_solde = (float)$user->wallet->amount ;
 
         $amountDrawa = $this->withdrawCommission($resetClass, $user, $request->amountDrawal);
 
         if ($amountDrawa === true) {
 
-            $withRemonte = $this->createWithCommission($amount_solde, $request->amountDrawal, $user->id, $typeRemonte, $amount_old_solde);
+            $withRemonte = $this->createWithCommission($amount_solde, $request->amountDrawal, $user->id, $typeRemonte, $amount_old_solde , $amount_before_solde);
 
             if (isset($resetMappings[$typeRemonte])) {
                 if ($admin_civ->count() > 0) {
@@ -2170,6 +2185,7 @@ class AdminController extends Controller
             "Retrait Depots" => $this->getTodayTransactionRobusDepotCompagnieCommissionAmountTotal(WalletTransaction::class, $user->company_id, $user->id),
             "Retrait Retraits" => $this->getTodayTransactionRobusRetraitCompagnieCommissionAmountTotal(WalletTransaction::class, $user->company_id, $user->id),
             "Retrait Moneys" => $this->getTodayTransactionMobileCompagnieCommissionAmountTotal(WalletTransaction::class, $user->company_id, $user->id),
+            "Retrait Bank Sends" => $this->getTodayTransactionMobileCompagnieCommissionAmountTotal(WalletBankSend::class, $user->company_id, $user->id),
             // New amount
             "Retrait Xbet" => $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletXbet::class, $user->company_id, $user->id),
             "Retrait Push" => $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletPush::class, $user->company_id, $user->id),
@@ -2193,6 +2209,7 @@ class AdminController extends Controller
             "Retrait Versement" => WalletVersement::class,
             "Retrait Tresort" => WalletTresortMoney::class,
             "Retrait Djamo" => WalletDjamo::class,
+            "Retrait Bank Sends" => WalletBankSend::class,
         ];
 
 
@@ -2246,6 +2263,7 @@ class AdminController extends Controller
         }
 
         $amount_solde = (float)$user->wallet->amount + (float)$request->amountDrawal;
+        $amount_before_solde = (float)$user->wallet->amount;
 
         $resetClass = $resetMappings[$typeRemonte];
 
@@ -2255,7 +2273,7 @@ class AdminController extends Controller
 
             $walletFreshAmount = (float) $user->wallet()->value('amount');
 
-            $withRemonte = $this->createWithCommission($amount_solde, $request->amountDrawal, $user->id, $typeRemonte, $walletFreshAmount);
+            $withRemonte = $this->createWithCommission($amount_solde, $request->amountDrawal, $user->id, $typeRemonte, $walletFreshAmount , $amount_before_solde);
 
             if (isset($resetMappings[$typeRemonte])) {
                 if ($admin_civ->count() > 0) {
@@ -2327,6 +2345,7 @@ class AdminController extends Controller
             $gain_pushs = $this->getTodayTransactionCommissionAmountTotal(WalletPush::class, $user->wallet->id);
             $gain_djamos = $this->getTodayTransactionCommissionAmountTotal(WalletDjamo::class, $user->wallet->id);
             $gain_tresorts = $this->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class, $user->wallet->id);
+                $gain_bank_sends = $this->getTodayTransactionCommissionAmountTotal(WalletBankSend::class, $user->wallet->id);
         } elseif ($user->is_company == true) {
             $gain_deposits = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletDeposit::class, $user->company_id, $user->id);
             $gain_payments = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletPayment::class, $user->company_id, $user->id);
@@ -2339,6 +2358,8 @@ class AdminController extends Controller
             $gain_pushs = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletPush::class, $user->company_id, $user->id);
             $gain_djamos = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletDjamo::class, $user->company_id, $user->id);
             $gain_tresorts = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletTresortMoney::class, $user->company_id, $user->id);
+            $gain_bank_sends = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletBankSend::class, $user->company_id, $user->id);
+
         } else {
             return back()
                 ->with('color', 'danger')
@@ -2347,7 +2368,7 @@ class AdminController extends Controller
         }
 
         $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits
-            + $gain_xbets + $gain_versments + $gain_pushs + $gain_djamos + $gain_tresorts;
+            + $gain_xbets + $gain_versments + $gain_pushs + $gain_djamos + $gain_tresorts + $gain_bank_sends;
 
 
         if ($amount <= 0) {
@@ -2368,8 +2389,9 @@ class AdminController extends Controller
         $walletFreshAmount = (float) $user->wallet()->value('amount');
 
         $amount_solde = (float)$user->wallet->amount + (float)$amount;
+        $amount_before_solde = (float)$user->wallet->amount;
 
-        $withRemonte = $this->createWithCommission($amount_solde, $amount, $user->id,  $typeRemonte, $walletFreshAmount);
+        $withRemonte = $this->createWithCommission($amount_solde, $amount, $user->id,  $typeRemonte, $walletFreshAmount, $amount_before_solde);
 
         if ($withRemonte !== null) {
 
@@ -2391,6 +2413,7 @@ class AdminController extends Controller
             $this->getUpdateTransactionCommissionAmountNullTotal(WalletPush::class, $user->wallet->id);
             $this->getUpdateTransactionCommissionAmountNullTotal(WalletDjamo::class, $user->wallet->id);
             $this->getUpdateTransactionCommissionAmountNullTotal(WalletTresortMoney::class, $user->wallet->id);
+            $this->getUpdateTransactionCommissionAmountNullTotal(WalletBankSend::class, $user->wallet->id);
 
 
 
@@ -2434,17 +2457,18 @@ class AdminController extends Controller
             }
 
             $commissionModels = [
-                "Rechargements"         => WalletDeposit::class,
-                "Paiements"             => WalletPayment::class,
-                "Transactions"          => WalletTransaction::class,
-                "Crédit téléphonique"   => WalletPhoneCredit::class,
-                "Transfert international" => WalletInter::class,
-                "Virements"              => WalletBank::class,
-                "Xbet"                  => WalletXbet::class,
-                "Versement"             => WalletVersement::class,
-                "Push"                  => WalletPush::class,
-                "Djamo"                 => WalletDjamo::class,
-                "Tresort Money"         => WalletTresortMoney::class,
+                "Commission sur Rechargements"         => WalletDeposit::class,
+                "Commission sur Paiements"             => WalletPayment::class,
+                "Commission sur Transactions"          => WalletTransaction::class,
+                "Commission sur Crédits"   => WalletPhoneCredit::class,
+                "Commission sur International" => WalletInter::class,
+                "Commission sur Virements"              => WalletBank::class,
+                "Commission sur Xbets"                  => WalletXbet::class,
+                "Commission sur Versement"             => WalletVersement::class,
+                "Commission sur Push"                  => WalletPush::class,
+                "Commission sur Djamo"                 => WalletDjamo::class,
+                "Commission sur Tresort"         => WalletTresortMoney::class,
+                "Commission sur BankSend"            => WalletBankSend::class,
             ];
 
             foreach ($commissionModels as $type => $model) {
@@ -2465,13 +2489,15 @@ class AdminController extends Controller
                 $walletFreshAmount = (float) $user->wallet()->value('amount');
 
                 $amount_solde = $walletFreshAmount + (float) $commission;
+                $amount_before_solde = $walletFreshAmount ;
 
                 $withRemonte = $this->createWithCommission(
                     $amount_solde,
                     $commission,
                     $user->id,
                     $type,
-                    $walletFreshAmount
+                    $walletFreshAmount,
+                    $amount_before_solde
                 );
 
                 if ($withRemonte) {
@@ -2542,17 +2568,18 @@ class AdminController extends Controller
 
 
             $commissionModels = [
-                "Rechargements"         => WalletDeposit::class,
-                "Paiements"             => WalletPayment::class,
-                "Transactions"          => WalletTransaction::class,
-                "Crédit téléphonique"   => WalletPhoneCredit::class,
-                "Transfert international" => WalletInter::class,
-                "Virements"              => WalletBank::class,
-                "Xbet"                  => WalletXbet::class,
-                "Versement"             => WalletVersement::class,
-                "Push"                  => WalletPush::class,
-                "Djamo"                 => WalletDjamo::class,
-                "Tresort Money"         => WalletTresortMoney::class,
+                "Commission sur Rechargements"         => WalletDeposit::class,
+                "Commission sur Paiements"             => WalletPayment::class,
+                "Commission sur Transactions"          => WalletTransaction::class,
+                "Commission sur Crédits"   => WalletPhoneCredit::class,
+                "Commission sur International" => WalletInter::class,
+                "Commission sur Virements"              => WalletBank::class,
+                "Commission sur Xbets"                  => WalletXbet::class,
+                "Commission sur Versement"             => WalletVersement::class,
+                "Commission sur Push"                  => WalletPush::class,
+                "Commission sur Djamo"                 => WalletDjamo::class,
+                "Commission sur Tresort"         => WalletTresortMoney::class,
+                "Commission sur BankSend"            => WalletBankSend::class,
             ];
 
             foreach ($usersCompanieToRemonte as $user) {
@@ -2578,12 +2605,16 @@ class AdminController extends Controller
 
                     $amount_solde = $walletFreshAmount + (float) $commission;
 
+                    $amount_before_solde = $walletFreshAmount;
+
                     $withRemonte = $this->createWithCommission(
                         $amount_solde,
                         $commission,
                         $company->id,
                         $type,
-                        $walletFreshAmount
+                        $walletFreshAmount,
+                        $amount_before_solde
+                        
                     );
 
                     if ($withRemonte) {
@@ -2767,15 +2798,20 @@ class AdminController extends Controller
 
 
 
-    private function createWithCommission($amount_solde, $gain_amount, $userId, $typeRemonte, $oldSolde)
+    private function createWithCommission($amount_solde, $gain_amount, $userId, $typeRemonte, $oldSolde , $amount_before_solde = null)
     {
+        $rt = rand(40, 5000) * time();
+        $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
         return WithMerchant::create([
             'amount_with_draw' =>  $gain_amount,
             'sid_user_id' =>   $userId,
+            'ref' => 'RB_' . 'ROBUS' . '_' . $transactionCode,
             'amount_solde' =>   $amount_solde,
             'type_transaction' => $typeRemonte,
             'status' =>  "SUCCESS",
             'old_balance' => $oldSolde,
+            'balance_before' =>  $amount_before_solde,
             'date_removed' => Carbon::now(),
         ]);
     }

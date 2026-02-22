@@ -1774,7 +1774,7 @@ class Transfers extends Component
         $admin_civ = $transactionData['admin_civ'];
         DB::beginTransaction();
 
-        try {
+        // try {
 
             if ($check->status == 'PROCESSING' && $check->updated_by == sabdy()->id) {
 
@@ -1936,12 +1936,12 @@ class Transfers extends Component
                 return;
             }
             DB::commit();
-        } catch (\Exception $exception) {
-            $this->cancelPhoneCreditField();
-            $this->emit('modal-hide-phoneCredit-validated');
-            $this->emit('modal-hide-phoneCredit');
-            $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
+        // } catch (\Exception $exception) {
+        //     $this->cancelPhoneCreditField();
+        //     $this->emit('modal-hide-phoneCredit-validated');
+        //     $this->emit('modal-hide-phoneCredit');
+        //     $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        // }
     }
 
     public function updateBankSend()
