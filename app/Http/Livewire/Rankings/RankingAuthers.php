@@ -4,6 +4,8 @@ namespace App\Http\Livewire\Rankings;
 
 use Livewire\Component;
 use App\Http\Services\HomeService;
+use App\Models\Wallets\WalletPush;
+use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletTransaction;
 use App\Models\Wallets\WalletBankSend;
 use App\Models\Wallets\WalletDeposit;
@@ -11,7 +13,9 @@ use App\Models\Wallets\WalletInter;
 use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletBank;
-
+use App\Models\Wallets\WalletDjamo;
+use App\Models\Wallets\WalletTresortMoney;
+use App\Models\Wallets\WalletXbet;
 
 class RankingAuthers extends Component
 {
@@ -40,6 +44,17 @@ class RankingAuthers extends Component
         $classment_virements = app(HomeService::class)
             ->getSubDistributorsWalletTransactionFiveRanking(WalletBank::class, 'wallet_banks');
 
+        $classment_pushs = app(HomeService::class)
+            ->getSubDistributorsWalletTransactionFiveRanking(WalletPush::class, 'wallet_pushes');
+        $classment_tresortMoneys = app(HomeService::class)
+            ->getSubDistributorsWalletTransactionFiveRanking(WalletTresortMoney::class, 'wallet_tresort_money');
+        $classment_djamos = app(HomeService::class)
+            ->getSubDistributorsWalletTransactionFiveRanking(WalletDjamo::class, 'wallet_djamos');
+
+        $classment_xbets = app(HomeService::class)
+            ->getSubDistributorsWalletTransactionFiveRanking(WalletXbet::class, 'wallet_xbets');
+
+
         return view('livewire.rankings.ranking-authers', [
             'classment_transactions' => $classment_transactions,
             'classment_reloadCards' => $classment_reloadCards,
@@ -47,7 +62,12 @@ class RankingAuthers extends Component
             'classment_virements' => $classment_virements,
             'classment_creditPhone' => $classment_creditPhone,
             'classment_Inters' => $classment_Inters,
-            'classment_bank_sends' => $classment_bank_sends
+            'classment_bank_sends' => $classment_bank_sends,
+
+            'classment_pushs' => $classment_pushs,
+            'classment_tresortMoneys' => $classment_tresortMoneys,
+            'classment_djamos' => $classment_djamos,
+            'classment_xbets' => $classment_xbets,
         ]);
     }
 }

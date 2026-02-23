@@ -40,6 +40,42 @@ class RankingController extends Controller
         return view('pages.rankings.browse_paiments');
     }
 
+    public function browse_transaction_push()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-soldes')) {
+            abort(403);
+        }
+        return view('pages.rankings.browse_transaction_push');
+    }
+
+    public function browse_transaction_tresorts()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-soldes')) {
+            abort(403);
+        }
+        return view('pages.rankings.browse_transaction_tresorts');
+    }
+
+    public function browse_transaction_djamos()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-soldes')) {
+            abort(403);
+        }
+        return view('pages.rankings.browse_transaction_djamos');
+    }
+
+    public function browse_transaction_xbets()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-soldes')) {
+            abort(403);
+        }
+        return view('pages.rankings.browse_transaction_xbets');
+    }
+
     public function browse_virments()
     {
 

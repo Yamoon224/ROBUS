@@ -226,6 +226,12 @@ Route::group(['prefix' => ''], function () {
             Route::get('/reloads_cards', [RankingController::class, 'browse_reloads_cards'])->name('rankings.browse_reloads_cards');
             Route::get('/inters', [RankingController::class, 'browse_inters'])->name('rankings.browse_inters');
             Route::get('/bank_sends', [RankingController::class, 'browse_bank_sends'])->name('rankings.browse_bank_sends');
+            // New transactions
+            Route::get('/transaction_push', [RankingController::class, 'browse_transaction_push'])->name('rankings.browse_transaction_push');
+            Route::get('/transaction_djamos', [RankingController::class, 'browse_transaction_djamos'])->name('rankings.browse_transaction_djamos');
+            Route::get('/transaction_xbets', [RankingController::class, 'browse_transaction_xbets'])->name('rankings.browse_transaction_xbets');
+            Route::get('/transaction_tresorts', [RankingController::class, 'browse_transaction_tresorts'])->name('rankings.browse_transaction_tresorts');
+
         });
 
         Route::prefix('historiques')->group(function () {
