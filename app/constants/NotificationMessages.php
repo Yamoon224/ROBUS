@@ -69,4 +69,7 @@ class NotificationMessages
 
     public const WALLET_RELOAD_ROBUS =
         'Nouvelle demande de transaction Robus';
+    
+     public const NEW_INTER_TRANSACTION =
+        'Nouvelle demande de transaction internationale';
 }

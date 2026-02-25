@@ -577,6 +577,7 @@ class PaymentController extends Controller
                             'amount_commission' => $commission_reload_inter_val_inter_percent_pay,
                             'amount_pay' => $commission_paiement_invoice_canal_val_inter,
                             'amount_receive' => $convertion_offer_receveid,
+                            'amount_conversion' => $convertion_offers,
                         ],
                     ], 200);
                 } else {
@@ -611,6 +612,7 @@ class PaymentController extends Controller
                             'amount_commission' => $commission_reload_inter_val_inter_percent_pay,
                             'amount_pay' => $commission_paiement_invoice_canal_val_inter,
                             'amount_receive' => $valeur_offer,
+                            'amount_conversion' => $commission_paiement_invoice_canal_val_inter,
                         ],
                     ], 200);
                 }

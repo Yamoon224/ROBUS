@@ -23,6 +23,8 @@ use Carbon\Carbon;
 use App\Models\Wallets\WalletAdmin;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Services\PercentRobusAuthService;
+use App\Http\Services\ConvertionService;
+
 
 class PaystackWebhookController extends Controller
 {
@@ -31,14 +33,18 @@ class PaystackWebhookController extends Controller
      */
     private $paystackSecret;
     protected $percentRobus;
+    private $convertionService;
 
     /**
      * Constructeur
      */
     public function __construct(
-        PercentRobusAuthService $percentRobus
+        PercentRobusAuthService $percentRobus,
+        ConvertionService $convertionService
+
     ) {
         $this->percentRobus = $percentRobus;
+        $this->convertionService = $convertionService;
         $this->paystackSecret = config('services.paystack.secret_key');
     }
 
@@ -342,18 +348,21 @@ class PaystackWebhookController extends Controller
                 }
 
                 $totalAmount = $transaction->amount;
-
                 $total_admin_commission = $transaction->costs_amount;
 
-                if ($totalAmount <= 0) {
+                $amount_total_conversion = $this->convertionService->convertAdminCommission($totalAmount);
+                $amount_commission_conversion = $this->convertionService->convertAdminCommission($total_admin_commission);
+
+
+                if ($amount_total_conversion <= 0) {
                     throw new \Exception('Montant final invalide');
                 }
 
-                if ($walletAdmin && $walletAdmin->amount >= $totalAmount) {
-                    $wallet_commission->decrement('amount', $totalAmount);
-                    $walletAdmin->increment('amount', $total_admin_commission);
+                if ($walletAdmin && $walletAdmin->amount >= $amount_total_conversion) {
+                    $wallet_commission->decrement('amount', $amount_total_conversion);
+                    $walletAdmin->increment('amount', $amount_commission_conversion);
                 } else {
-                    $admin_single->wallet->decrement('amount', $totalAmount);
+                    $admin_single->wallet->decrement('amount', $amount_total_conversion);
                 }
                 // Update wallet Transactions
                 $transaction->wallet->update([
@@ -507,15 +516,18 @@ class PaystackWebhookController extends Controller
 
                 $total_admin_commission = $transaction->costs_amount;
 
-                if ($totalAmount <= 0) {
+                $amount_total_conversion = $this->convertionService->convertAdminCommission($totalAmount);
+                $amount_commission_conversion = $this->convertionService->convertAdminCommission($total_admin_commission);
+
+                if ($amount_total_conversion <= 0) {
                     throw new \Exception('Montant final invalide');
                 }
 
-                if ($walletAdmin && $walletAdmin->amount >= $totalAmount) {
-                    $wallet_commission->decrement('amount', $totalAmount);
-                    $walletAdmin->increment('amount', $total_admin_commission);
+                if ($walletAdmin && $walletAdmin->amount >= $amount_total_conversion) {
+                    $wallet_commission->decrement('amount', $amount_total_conversion);
+                    $walletAdmin->increment('amount', $amount_commission_conversion);
                 } else {
-                    $admin_single->wallet->decrement('amount', $totalAmount);
+                    $admin_single->wallet->decrement('amount', $amount_total_conversion);
                 }
                 // Update wallet Transactions
                 $transaction->wallet->update([
@@ -602,7 +614,7 @@ class PaystackWebhookController extends Controller
                 'payment_method' => 'ACHAT D\'UV',
                 'currency' => $data['currency'] ?? 'XOF',
                 'balance_before' => $wallet->amount,
-                'amount_solde' => $wallet->amount ,
+                'amount_solde' => $wallet->amount,
                 'fees' => isset($data['fees']) ? $data['fees'] / 100 : 0,
                 'authorization' => json_encode($data['authorization'] ?? []),
                 'customer' => json_encode($data['customer'] ?? []),

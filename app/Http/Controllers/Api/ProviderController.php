@@ -68,7 +68,7 @@ class ProviderController extends Controller
         $this->initializeAppStatus($this->authService);
     }
 
- 
+
 
 
     public function index()
@@ -77,7 +77,7 @@ class ProviderController extends Controller
         $countrieId = robus()->country->id;
         $dashboard_data = [];
 
-        
+
         try {
             // 1️⃣ Cas où l'app est indisponible
             // if (!$appStatusResult['success']) {
@@ -175,49 +175,83 @@ class ProviderController extends Controller
             // 4️⃣ Construire le dashboard de manière dynamique
             if (robus()->is_under_distributer || robus()->is_api) {
 
-               $dashboard_data['Achat UV'] = ProviderSingleCollection::collection($providers['relaodUv']);
+                $dashboard_data['Achat UV'] = ProviderSingleCollection::collection($providers['relaodUv']);
 
-                if (!empty($activeButtons['showCreditButton'])) {
-                    $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($providers['phone']);
-                }
-                if (!empty($activeButtons['showPaiementButton'])) {
-                    $dashboard_data['Factures'] = ProviderSingleCollection::collection($providers['payment']);
-                }
-                if (!empty($activeButtons['showXbetsButton'])) {
-                    $dashboard_data['Xbets'] = ProviderSingleCollection::collection($providers['xbet']);
-                }
+                if (robus()->country->code == 'CI') {
 
-                if (!empty($activeButtons['showInterButton'])) {
-                    $dashboard_data['Transfert international'] = [
-                        "Factures" => !empty($activeButtons['showFacInterButton']) ? ProviderSingleCollection::collection($providers['paymentInter']) : [],
-                        "Transfert" => !empty($activeButtons['showTransacInterButton']) ? ProviderSingleCollection::collection($providers['inter']) : [],
-                        "Crédit téléphonique" => !empty($activeButtons['showTelInterButton']) ? ProviderSingleCollection::collection($providers['phoneInter']) : [],
-                        "Versement bancaire" => !empty($activeButtons['showBancInterButton']) ? ProviderSingleCollection::collection($providers['virementBank']) : [],
-                        "Rechargement de carte" => !empty($activeButtons['showCarteInterButton']) ? ProviderSingleCollection::collection($providers['reloadCardInter']) : [],
-                        "Push" => !empty($activeButtons['showPushInterButton']) ? ProviderSingleCollection::collection($providers['interPush']) : [],
-                        "Djamo" => !empty($activeButtons['showDjamoInterButton']) ? ProviderSingleCollection::collection($providers['interDjamo']) : [],
-                        "Tresort" => !empty($activeButtons['showTresortInterButton']) ? ProviderSingleCollection::collection($providers['interTresort']) : [],
-                        "Bank Send" => !empty($activeButtons['showFacBankSendInterButton']) ? ProviderSingleCollection::collection($providers['interBankSend']) : [],
-                        "Versement" => !empty($activeButtons['showVersementInterButton']) ? ProviderSingleCollection::collection($providers['interVersement']) : [],
-                        "Xbets" => !empty($activeButtons['showXbetsInterButton']) ? ProviderSingleCollection::collection($providers['interXbet']) : [],
-                    ];
-                }
+                    if (!empty($activeButtons['showCreditButton'])) {
+                        $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($providers['phone']);
+                    }
+                    if (!empty($activeButtons['showPaiementButton'])) {
+                        $dashboard_data['Factures'] = ProviderSingleCollection::collection($providers['payment']);
+                    }
+                    if (!empty($activeButtons['showXbetsButton'])) {
+                        $dashboard_data['Xbets'] = ProviderSingleCollection::collection($providers['xbet']);
+                    }
 
-                if (!empty($activeButtons['showVirementButton'])) {
-                    $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($providers['bank']);
-                }
-                if (!empty($activeButtons['showRechargementButton'])) {
-                    $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($providers['reloadCard']);
-                }
-                if (!empty($activeButtons['showMoneyButton'])) {
-                    $dashboard_data['Transfert national'] = [
-                        "Dépôts" => !empty($activeButtons['showDepotButton']) ? ProviderSingleCollection::collection($providers['depot']) : [],
-                        "Mobile Money" => !empty($activeButtons['showMobileButton']) ? ProviderSingleCollection::collection($providers['money']) : [],
-                        "Tresort Money" => !empty($activeButtons['showTresortButton']) ? ProviderSingleCollection::collection($providers['tresort']) : [],
-                    ];
-                }
-                if (!empty($activeButtons['showRetraitButton'])) {
-                    $dashboard_data['Retrait'] = ProviderSingleCollection::collection($providers['retrait']);
+                    if (!empty($activeButtons['showInterButton'])) {
+                        $dashboard_data['Transfert international'] = [
+                            "Factures" => !empty($activeButtons['showFacInterButton']) ? ProviderSingleCollection::collection($providers['paymentInter']) : [],
+                            "Transfert" => !empty($activeButtons['showTransacInterButton']) ? ProviderSingleCollection::collection($providers['inter']) : [],
+                            "Crédit téléphonique" => !empty($activeButtons['showTelInterButton']) ? ProviderSingleCollection::collection($providers['phoneInter']) : [],
+                            "Versement bancaire" => !empty($activeButtons['showBancInterButton']) ? ProviderSingleCollection::collection($providers['virementBank']) : [],
+                            "Rechargement de carte" => !empty($activeButtons['showCarteInterButton']) ? ProviderSingleCollection::collection($providers['reloadCardInter']) : [],
+                            "Push" => !empty($activeButtons['showPushInterButton']) ? ProviderSingleCollection::collection($providers['interPush']) : [],
+                            "Djamo" => !empty($activeButtons['showDjamoInterButton']) ? ProviderSingleCollection::collection($providers['interDjamo']) : [],
+                            "Tresort" => !empty($activeButtons['showTresortInterButton']) ? ProviderSingleCollection::collection($providers['interTresort']) : [],
+                            "Bank Send" => !empty($activeButtons['showFacBankSendInterButton']) ? ProviderSingleCollection::collection($providers['interBankSend']) : [],
+                            "Versement" => !empty($activeButtons['showVersementInterButton']) ? ProviderSingleCollection::collection($providers['interVersement']) : [],
+                            "Xbets" => !empty($activeButtons['showXbetsInterButton']) ? ProviderSingleCollection::collection($providers['interXbet']) : [],
+                        ];
+                    }
+
+                    if (!empty($activeButtons['showVirementButton'])) {
+                        $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($providers['bank']);
+                    }
+                    if (!empty($activeButtons['showRechargementButton'])) {
+                        $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($providers['reloadCard']);
+                    }
+                    if (!empty($activeButtons['showMoneyButton'])) {
+                        $dashboard_data['Transfert national'] = [
+                            "Dépôts" => !empty($activeButtons['showDepotButton']) ? ProviderSingleCollection::collection($providers['depot']) : [],
+                            "Mobile Money" => !empty($activeButtons['showMobileButton']) ? ProviderSingleCollection::collection($providers['money']) : [],
+                            "Tresort Money" => !empty($activeButtons['showTresortButton']) ? ProviderSingleCollection::collection($providers['tresort']) : [],
+                        ];
+                    }
+                    if (!empty($activeButtons['showRetraitButton'])) {
+                        $dashboard_data['Retrait'] = ProviderSingleCollection::collection($providers['retrait']);
+                    }
+                } else {
+
+                    if (!empty($activeButtons['showXbetsButton'])) {
+                        $dashboard_data['Xbets'] = ProviderSingleCollection::collection($providers['xbet']);
+                    }
+
+                    if (!empty($activeButtons['showMoneyButton'])) {
+                        $dashboard_data['Transfert national'] = [
+                            "Dépôts" => !empty($activeButtons['showDepotButton']) ? ProviderSingleCollection::collection($providers['depot']) : [],
+                        ];
+                    }
+
+                    if (!empty($activeButtons['showRetraitButton'])) {
+                        $dashboard_data['Retrait'] = ProviderSingleCollection::collection($providers['retrait']);
+                    }
+
+                    if (!empty($activeButtons['showInterButton'])) {
+                        $dashboard_data['Transfert international'] = [
+                            "Factures" => !empty($activeButtons['showFacInterButton']) ? ProviderSingleCollection::collection($providers['paymentInter']) : [],
+                            "Transfert" => !empty($activeButtons['showTransacInterButton']) ? ProviderSingleCollection::collection($providers['inter']) : [],
+                            "Crédit téléphonique" => !empty($activeButtons['showTelInterButton']) ? ProviderSingleCollection::collection($providers['phoneInter']) : [],
+                            "Versement bancaire" => !empty($activeButtons['showBancInterButton']) ? ProviderSingleCollection::collection($providers['virementBank']) : [],
+                            "Rechargement de carte" => !empty($activeButtons['showCarteInterButton']) ? ProviderSingleCollection::collection($providers['reloadCardInter']) : [],
+                            "Push" => !empty($activeButtons['showPushInterButton']) ? ProviderSingleCollection::collection($providers['interPush']) : [],
+                            "Djamo" => !empty($activeButtons['showDjamoInterButton']) ? ProviderSingleCollection::collection($providers['interDjamo']) : [],
+                            "Tresort" => !empty($activeButtons['showTresortInterButton']) ? ProviderSingleCollection::collection($providers['interTresort']) : [],
+                            "Bank Send" => !empty($activeButtons['showFacBankSendInterButton']) ? ProviderSingleCollection::collection($providers['interBankSend']) : [],
+                            "Versement" => !empty($activeButtons['showVersementInterButton']) ? ProviderSingleCollection::collection($providers['interVersement']) : [],
+                            "Xbets" => !empty($activeButtons['showXbetsInterButton']) ? ProviderSingleCollection::collection($providers['interXbet']) : [],
+                        ];
+                    }
                 }
             } else {
                 // Cas normal hors distributeur/API
@@ -230,10 +264,7 @@ class ProviderController extends Controller
                     $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($providers['reloadCard']);
                     $dashboard_data['Retrait'] = ProviderSingleCollection::collection($providers['retrait']);
                     $dashboard_data['Xbets'] = ProviderSingleCollection::collection($providers['xbet']);
-                    // $dashboard_data['Transfert international'] = [
-                    //     "Transfert" => ProviderSingleCollection::collection($providers['inter']),
-                    // ];
-                     $dashboard_data['Transfert international'] = [
+                    $dashboard_data['Transfert international'] = [
                         "Factures" => ProviderSingleCollection::collection($providers['paymentInter']),
                         "Transfert" => ProviderSingleCollection::collection($providers['inter']),
                         "Crédit téléphonique" => ProviderSingleCollection::collection($providers['phoneInter']),
@@ -242,7 +273,8 @@ class ProviderController extends Controller
                     ];
                 } else {
                     $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($providers['transaction']);
-                    $dashboard_data['Retrait'] = ProviderSingleCollection::collection($providers['retrait']);
+                    $dashboard_data['Xbets'] = ProviderSingleCollection::collection($providers['xbet']);
+                    $dashboard_data['Achat UV'] = ProviderSingleCollection::collection($providers['relaodUv']);
                     $dashboard_data['Transfert international'] = [
                         "Factures" => ProviderSingleCollection::collection($providers['paymentInter']),
                         "Transfert" => ProviderSingleCollection::collection($providers['inter']),

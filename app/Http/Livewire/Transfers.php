@@ -1631,7 +1631,7 @@ class Transfers extends Component
 
         $this->country_inter_robus_edit = $country->id ?? null;
         $this->currency_custumers = $check->wallet->currencie->code ?? null;
-        
+
         //Edit Invoice
         $this->choose_type_paiement = $check->provider_type ?? null;
         $this->paiement_num_contrat_edit = $check->number_contract ?? null;
@@ -1776,166 +1776,166 @@ class Transfers extends Component
 
         // try {
 
-            if ($check->status == 'PROCESSING' && $check->updated_by == sabdy()->id) {
+        if ($check->status == 'PROCESSING' && $check->updated_by == sabdy()->id) {
 
-                $this->validate([
-                    'phoneCreditStatus' => 'required',
-                    'password_transaction' => 'required',
+            $this->validate([
+                'phoneCreditStatus' => 'required',
+                'password_transaction' => 'required',
+            ]);
+
+            if (Hash::check($this->password_transaction, $user_auth->password)) {
+
+                $check->update([
+                    'description' => $this->description_phone_credit ?? null,
+                    'updated_by' => sabdy()->id,
+                    'status' => $this->phoneCreditStatus,
                 ]);
 
-                if (Hash::check($this->password_transaction, $user_auth->password)) {
+                $this->password_transaction = "";
+                $this->phoneCreditStatus = "";
+                $this->phoneCreditId = "";
 
-                    $check->update([
-                        'description' => $this->description_phone_credit ?? null,
-                        'updated_by' => sabdy()->id,
-                        'status' => $this->phoneCreditStatus,
-                    ]);
+                if ($check->updated_by == sabdy()->id) {
 
-                    $this->password_transaction = "";
-                    $this->phoneCreditStatus = "";
-                    $this->phoneCreditId = "";
+                    if ($check->status == 'SUCCESS') {
 
-                    if ($check->updated_by == sabdy()->id) {
+                        $commission_transaction = $check->amount_received;
 
-                        if ($check->status == 'SUCCESS') {
+                        $paymentPhoneCredit = app(TransfertServiceBackend::class)->createPhoneCredit($check, $transactionCode, $transactionCompiCode);
 
-                            $commission_transaction = $check->amount_received;
+                        app(TransfertServiceBackend::class)->createInvoicePhoneCredit($check, $paymentPhoneCredit);
 
-                            $paymentPhoneCredit = app(TransfertServiceBackend::class)->createPhoneCredit($check, $transactionCode, $transactionCompiCode);
+                        $this->updateUserWallet($commission_transaction);
 
-                            app(TransfertServiceBackend::class)->createInvoicePhoneCredit($check, $paymentPhoneCredit);
+                        if (sabdy()->is_distributer == 1) {
 
-                            $this->updateUserWallet($commission_transaction);
-
-                            if (sabdy()->is_distributer == 1) {
-
-                                $this->updateAdminCom($check, $commission_transaction);
-                            }
-
-                            $valeur_amount_com = $check->adminCom->amount;
-
-                            if ($check->wallet->sidUser->is_under_distributer == true) {
-
-                                if ($valeur_amount_com !== null && $check->commissions !== null) {
-
-                                    app(CommissionServiceBackend::class)->handleUnderDistributorPhoneCreditCommission($check, $admin_civ, "Paiment commission Credit telephonique");
-                                } else {
-                                    $this->cancelPhoneCreditField();
-                                    $this->emit('modal-hide-phoneCredit-validated');
-                                    $this->emit('modal-hide-phoneCredit');
-                                    $this->emit('success', 'Credit téléphonique Acceptée sans commission sous-distibuteur !');
-                                    return;
-                                }
-                            } else {
-
-                                app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
-                            }
-
-                            $this->notifyUsers($check, $admins, 'Credit téléphonique', 'La demande de Transferts de credit téléphonique a été acceptée après analyse', 'La demande de Transferts de credit téléphonique a été acceptée après analyse');
-
-                            $message = 'Votre demande de credit de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été acceptée avec succès ' .
-                                'Robus vous remercie';
-
-                            if ($this->shouldNotifyCI($check)) {
-
-                                $this->sendSuccessMessageNotification($check, $message);
-                            }
-
-                            $this->cancelPhoneCreditField();
-                            $this->emit('modal-hide-phoneCredit-validated');
-                            $this->emit('modal-hide-phoneCredit');
-                            $this->emit('success', 'La demande de Transferts de credit téléphonique a été acceptée après analyse');
-                            if ($admins->count() > 0) {
-                                $this->notifyAdmins($admins);
-                            }
-                            $this->sendMailPhoneCreditNotification($check);
-                        } elseif ($check->status == 'ERROR') {
-
-                            $commission = $check->amount;
-
-                            $this->updateReloadWallet($check, $commission);
-
-                            $this->updateWalletNull($check, $commission);
-
-
-                            $this->handleReloadClientCommission($check, $admin_civ);
-
-                            $paymentPhoneCredit  = app(TransfertServiceBackend::class)->createErrorPhoneCredit($check, $transactionCode, $transactionCompiCode);
-
-                            app(TransfertServiceBackend::class)->createInvoicePhoneCredit($check, $paymentPhoneCredit);
-
-                            $this->notifyUsers($check, $admins, 'Credit téléphonique', 'La demande de Transferts de credit téléphonique a été rejetée après analyse', 'La demande de Transferts de credit téléphonique a été rejetée après analyse');
-
-                            $message = 'Votre demande de crédit de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été refusée ' .
-                                'Robus vous remercie';
-
-                            if ($this->shouldNotifyCI($check)) {
-
-                                $this->sendSuccessMessageNotification($check, $message);
-                            }
-
-                            if ($admins->count() > 0) {
-                                $this->notifyAdmins($admins);
-                            }
-
-                            $this->cancelPhoneCreditField();
-                            $this->emit('modal-hide-phoneCredit-validated');
-                            $this->emit('modal-hide-phoneCredit');
-                            $this->emit('error', 'La demande de Transferts de credit téléphonique a été rejetée après analyse');
-                            $this->sendMailPhoneCreditNotification($check);
-                        } else {
-                            $this->cancelPhoneCreditField();
-                            $this->emit('modal-hide-phoneCredit-validated');
-                            $this->emit('modal-hide-phoneCredit');
-                            $this->emit('error', 'Pas de modification !');
-                            return;
+                            $this->updateAdminCom($check, $commission_transaction);
                         }
 
-                        event(new UpdatePhoneCreditEvent($check));
+                        $valeur_amount_com = $check->adminCom->amount;
+
+                        if ($check->wallet->sidUser->is_under_distributer == true) {
+
+                            if ($valeur_amount_com !== null && $check->commissions !== null) {
+
+                                app(CommissionServiceBackend::class)->handleUnderDistributorPhoneCreditCommission($check, $admin_civ, "Paiment commission Credit telephonique");
+                            } else {
+                                $this->cancelPhoneCreditField();
+                                $this->emit('modal-hide-phoneCredit-validated');
+                                $this->emit('modal-hide-phoneCredit');
+                                $this->emit('success', 'Credit téléphonique Acceptée sans commission sous-distibuteur !');
+                                return;
+                            }
+                        } else {
+
+                            app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                        }
+
+                        $this->notifyUsers($check, $admins, 'Credit téléphonique', 'La demande de Transferts de credit téléphonique a été acceptée après analyse', 'La demande de Transferts de credit téléphonique a été acceptée après analyse');
+
+                        $message = 'Votre demande de credit de ' .
+                            $check->amount .
+                            $check->wallet->currencie->code .
+                            ' ' .
+                            'par ' .
+                            $check->provider->name .
+                            ' le ' .
+                            $check->updated_at .
+                            ' a été acceptée avec succès ' .
+                            'Robus vous remercie';
+
+                        if ($this->shouldNotifyCI($check)) {
+
+                            $this->sendSuccessMessageNotification($check, $message);
+                        }
+
+                        $this->cancelPhoneCreditField();
+                        $this->emit('modal-hide-phoneCredit-validated');
+                        $this->emit('modal-hide-phoneCredit');
+                        $this->emit('success', 'La demande de Transferts de credit téléphonique a été acceptée après analyse');
+                        if ($admins->count() > 0) {
+                            $this->notifyAdmins($admins);
+                        }
+                        $this->sendMailPhoneCreditNotification($check);
+                    } elseif ($check->status == 'ERROR') {
+
+                        $commission = $check->amount;
+
+                        $this->updateReloadWallet($check, $commission);
+
+                        $this->updateWalletNull($check, $commission);
+
+
+                        $this->handleReloadClientCommission($check, $admin_civ);
+
+                        $paymentPhoneCredit  = app(TransfertServiceBackend::class)->createErrorPhoneCredit($check, $transactionCode, $transactionCompiCode);
+
+                        app(TransfertServiceBackend::class)->createInvoicePhoneCredit($check, $paymentPhoneCredit);
+
+                        $this->notifyUsers($check, $admins, 'Credit téléphonique', 'La demande de Transferts de credit téléphonique a été rejetée après analyse', 'La demande de Transferts de credit téléphonique a été rejetée après analyse');
+
+                        $message = 'Votre demande de crédit de ' .
+                            $check->amount .
+                            $check->wallet->currencie->code .
+                            ' ' .
+                            'par ' .
+                            $check->provider->name .
+                            ' le ' .
+                            $check->updated_at .
+                            ' a été refusée ' .
+                            'Robus vous remercie';
+
+                        if ($this->shouldNotifyCI($check)) {
+
+                            $this->sendSuccessMessageNotification($check, $message);
+                        }
+
+                        if ($admins->count() > 0) {
+                            $this->notifyAdmins($admins);
+                        }
+
+                        $this->cancelPhoneCreditField();
+                        $this->emit('modal-hide-phoneCredit-validated');
+                        $this->emit('modal-hide-phoneCredit');
+                        $this->emit('error', 'La demande de Transferts de credit téléphonique a été rejetée après analyse');
+                        $this->sendMailPhoneCreditNotification($check);
                     } else {
                         $this->cancelPhoneCreditField();
-                        $this->emit('modal-hide-phoneCredit');
                         $this->emit('modal-hide-phoneCredit-validated');
-                        $this->emit('error', 'Pas le valideur !');
+                        $this->emit('modal-hide-phoneCredit');
+                        $this->emit('error', 'Pas de modification !');
                         return;
                     }
+
+                    event(new UpdatePhoneCreditEvent($check));
                 } else {
                     $this->cancelPhoneCreditField();
                     $this->emit('modal-hide-phoneCredit');
                     $this->emit('modal-hide-phoneCredit-validated');
-                    $this->emit('error', 'Mot de passe Incorrect !');
+                    $this->emit('error', 'Pas le valideur !');
                     return;
                 }
-            } elseif ($this->password_transaction = "" ||  $this->phoneCreditStatus = "") {
-                $this->cancelPhoneCreditField();
-                $this->emit('modal-hide-phoneCredit-validated');
-                $this->emit('modal-hide-phoneCredit');
-                $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
-                return;
             } else {
                 $this->cancelPhoneCreditField();
                 $this->emit('modal-hide-phoneCredit');
                 $this->emit('modal-hide-phoneCredit-validated');
-                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
+                $this->emit('error', 'Mot de passe Incorrect !');
                 return;
             }
-            DB::commit();
+        } elseif ($this->password_transaction = "" ||  $this->phoneCreditStatus = "") {
+            $this->cancelPhoneCreditField();
+            $this->emit('modal-hide-phoneCredit-validated');
+            $this->emit('modal-hide-phoneCredit');
+            $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
+            return;
+        } else {
+            $this->cancelPhoneCreditField();
+            $this->emit('modal-hide-phoneCredit');
+            $this->emit('modal-hide-phoneCredit-validated');
+            $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
+            return;
+        }
+        DB::commit();
         // } catch (\Exception $exception) {
         //     $this->cancelPhoneCreditField();
         //     $this->emit('modal-hide-phoneCredit-validated');
@@ -2149,7 +2149,7 @@ class Transfers extends Component
                 if (Hash::check($this->password_transaction, $user_auth->password)) {
 
                     $check->update([
-                        'description' => $this->description_phone_credit ?? null,
+                        'description' => $this->xbetDescription ?? null,
                         'updated_by' => sabdy()->id,
                         'status' => $this->xbetStatus,
                     ]);
@@ -2170,7 +2170,7 @@ class Transfers extends Component
                             app(TransfertServiceBackend::class)->createInvoiceXbet($check, $paymentXbet);
 
                             if ($check->choose_type_transaction == 2) {
-                                $this->updateUserDrawalWallet($check->amount_received);
+                                $this->updateUserDrawalWallet($check->amount_received, $check->costs_amount ?? 0);
                                 $this->updateReloadWallet($check, $check->amount_received);
                                 $this->updatedAmountSoldeWallet($check, $check->amount_received);
                             } else {
@@ -2235,9 +2235,9 @@ class Transfers extends Component
 
                             if ($check->choose_type_transaction == 2) {
                                 $this->updateReloadDrawalWallet($check);
+                                $this->updateWalletNullDrawal($check);
                             } else {
                                 $this->updateReloadWallet($check, $commission);
-
                                 $this->updateWalletNull($check, $commission);
                             }
 
@@ -2664,7 +2664,7 @@ class Transfers extends Component
                             app(TransfertServiceBackend::class)->createInvoiceVersement($paymentXbet);
 
                             if ($check->choose_transaction == "Retrait" || $check->choose_transaction == 2) {
-                                $this->updateUserDrawalWallet($check->amount_received);
+                                $this->updateUserDrawalWallet($check->amount_received, $check->costs_amount ?? 0);
                                 $this->updateReloadWallet($check, $check->amount_received);
                                 $this->updatedAmountSoldeWallet($check, $check->amount_received);
                             } else {
@@ -2729,6 +2729,7 @@ class Transfers extends Component
 
                             if ($check->choose_transaction == "Retrait" || $check->choose_transaction == 2) {
                                 $this->updateReloadDrawalWallet($check);
+                                $this->updateWalletNullDrawal($check);
                             } else {
                                 $this->updateReloadWallet($check, $commission);
                                 $this->updateWalletNull($check, $commission);
@@ -2865,7 +2866,7 @@ class Transfers extends Component
                             app(TransfertServiceBackend::class)->createInvoiceVersement($paymentXbet);
 
                             if ($check->choose_transaction == "Retrait" || $check->choose_transaction == 2) {
-                                $this->updateUserDrawalWallet($check->amount_received);
+                                $this->updateUserDrawalWallet($check->amount_received, $check->costs_amount ?? 0);
                                 $this->updateReloadWallet($check, $check->amount_received);
                                 $this->updatedAmountSoldeWallet($check, $check->amount_received);
                             } else {
@@ -2930,6 +2931,7 @@ class Transfers extends Component
 
                             if ($check->choose_transaction == "Retrait" || $check->choose_transaction == 2) {
                                 $this->updateReloadDrawalWallet($check);
+                                $this->updateWalletNullDrawal($check);
                             } else {
                                 $this->updateReloadWallet($check, $commission);
                                 $this->updateWalletNull($check, $commission);
@@ -3070,7 +3072,7 @@ class Transfers extends Component
                             app(TransfertServiceBackend::class)->createInvoiceVersement($paymentXbet);
 
                             if ($check->choose_transaction == "Retrait" || $check->choose_transaction == 2) {
-                                $this->updateUserDrawalWallet($check->amount_received);
+                                $this->updateUserDrawalWallet($check->amount_received, $check->costs_amount ?? 0);
                                 $this->updateReloadWallet($check, $check->amount_received);
                                 $this->updatedAmountSoldeWallet($check, $check->amount_received);
                             } else {
@@ -3134,10 +3136,12 @@ class Transfers extends Component
 
                             if ($check->choose_transaction == "Retrait" || $check->choose_transaction == 2) {
                                 $this->updateReloadDrawalWallet($check);
+                                $this->updateWalletNullDrawal($check);
                             } else {
                                 $this->updateReloadWallet($check, $commission);
                                 $this->updateWalletNull($check, $commission);
                             }
+
 
                             $this->handleReloadClientCommission($check, $admin_civ);
 
@@ -3457,7 +3461,7 @@ class Transfers extends Component
                             app(TransfertServiceBackend::class)->createInvoiceTransaction($check, $transaction);
 
                             if ($check->type_transaction == "Retrait") {
-                                $this->updateUserDrawalWallet($check->amount_received);
+                                $this->updateUserDrawalWallet($check->amount_received, $check->costs_amount ?? 0);
                                 $this->updateReloadWallet($check, $check->amount_received);
                                 $this->updatedAmountSoldeWallet($check, $check->amount_received);
                             } else {
@@ -3526,6 +3530,7 @@ class Transfers extends Component
 
                             if ($check->type_transaction == "Retrait") {
                                 $this->updateReloadDrawalWallet($check);
+                                $this->updateWalletNullDrawal($check);
                             } else {
                                 $this->updateReloadWallet($check, $commission);
                                 $this->updateWalletNull($check, $commission);
@@ -4921,10 +4926,9 @@ class Transfers extends Component
         }
 
         // Transactions
-
         $transactions = $transaction
             ->join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', $walletUser->country->id)
+            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_transactions.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
@@ -4940,10 +4944,9 @@ class Transfers extends Component
             ->paginate(15);
 
 
-
         $paiements = $paiement
             ->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', $walletUser->country->id)
+            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_payments.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
@@ -4961,7 +4964,7 @@ class Transfers extends Component
 
         $tresortMoneys = $tresortMoney
             ->join('wallets', 'wallet_tresort_money.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', $walletUser->country->id)
+            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_tresort_money.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
@@ -4979,7 +4982,7 @@ class Transfers extends Component
         // Virements
         $virements = $virement_bank
             ->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', $walletUser->country->id)
+            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_banks.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
@@ -4998,7 +5001,7 @@ class Transfers extends Component
 
         $internationals = $inter_search
             ->join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', $walletUser->country->id)
+            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_inters.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
@@ -5016,7 +5019,7 @@ class Transfers extends Component
 
         $reloadCards = $reload_card
             ->join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', $walletUser->country->id)
+            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_deposits.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
@@ -5034,7 +5037,7 @@ class Transfers extends Component
 
         $phoneCredits = $phone_credit
             ->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', $walletUser->country->id)
+            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_phone_credits.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
@@ -5052,7 +5055,7 @@ class Transfers extends Component
 
         $xbets = $xbet
             ->join('wallets', 'wallet_xbets.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', $walletUser->country->id)
+            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_xbets.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
@@ -5070,7 +5073,7 @@ class Transfers extends Component
 
         $djamos = $djamo
             ->join('wallets', 'wallet_djamos.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', $walletUser->country->id)
+            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_djamos.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
@@ -5088,7 +5091,7 @@ class Transfers extends Component
 
         $bankSends = $bankSend
             ->join('wallets', 'wallet_bank_sends.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', $walletUser->country->id)
+            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_bank_sends.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
@@ -5106,7 +5109,7 @@ class Transfers extends Component
 
         $pushs = $push
             ->join('wallets', 'wallet_pushes.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', $walletUser->country->id)
+            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_pushes.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
@@ -5123,7 +5126,7 @@ class Transfers extends Component
 
         $versements = $versement
             ->join('wallets', 'wallet_versements.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', $walletUser->country->id)
+            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_versements.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
@@ -5317,12 +5320,13 @@ class Transfers extends Component
         ]);
     }
 
-    protected function updateUserDrawalWallet($commission_transaction)
+    protected function updateUserDrawalWallet($commission_transaction, $costs_amount)
     {
+        $amount_send = (float) $costs_amount + (float) $commission_transaction;
         return sabdy()->wallet->update([
             'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
             'sid_user_relod' => sabdy()->id,
-            'amount' => DB::raw('amount-' . $commission_transaction),
+            'amount' => DB::raw('amount-' . $amount_send),
         ]);
     }
 
@@ -5434,9 +5438,25 @@ class Transfers extends Component
         return  $check->update([
             'commissions' => 0,
             'commissions_admin' => 0,
+            'commission_companie' => 0,
             'costs_amount' => 0,
             'amount_solde' => $amount_solde,
             'amount_received' => $check->amount,
+        ]);
+    }
+
+    protected function updateWalletNullDrawal($check)
+    {
+
+        $wallet_received =  $check->amount_solde;
+
+        return  $check->update([
+            'commissions' => 0,
+            'commissions_admin' => 0,
+            'commission_companie' => 0,
+            'costs_amount' => 0,
+            'amount_solde' => $wallet_received,
+            'amount_received' => 0,
         ]);
     }
 

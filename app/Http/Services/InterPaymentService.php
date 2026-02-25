@@ -24,6 +24,7 @@ use App\Http\Services\ValidateDailyLimitService;
 use App\Http\Services\OperatorRestrictionService;
 use App\Http\Services\CommissionService;
 use App\Models\Wallets\WalletAdmin;
+use App\constants\NotificationMessages;
 
 class InterPaymentService
 {
@@ -276,24 +277,21 @@ class InterPaymentService
 
         $msg_title = 'Transfert internationnal Mobile money';
         $msg = 'Demande de transfert est en cours de validation ';
-        robus()->notify(
-            new UserNotification([
-                'title' => $msg_title,
-                'message' => $msg,
-            ])
-        );
+        safeNotify(
+                robus(),
+                new UserNotification([
+                    'title' => $msg_title,
+                    'message' => $msg
+                ])
+            );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletInterEvent($walletInter));
         $admins = $this->getAdminCIVProperty();
-        Notification::send(
+       safeNotifyMany(
             $admins,
-            new AdminNotification(
-                'Demande de transfert de ' .
-                    ' ' . $walletInter->wallet->sidUser->firstname
-            )
+            new AdminNotification(NotificationMessages::NEW_INTER_TRANSACTION.
+            ' ' . $walletInter->wallet->sidUser->firstname)
         );
-        Notification::send($admins, new AdminNotification('Transfers d\'argent Money de ' .
-            ' ' . $walletInter->wallet->sidUser->firstname));
 
         if ($admins->count() > 0) {
 
@@ -320,24 +318,20 @@ class InterPaymentService
 
         $msg_title = 'Demande de paiement ';
         $msg = 'Demande de transaction est en cours de validation ';
-        robus()->notify(
+        safeNotify(
+            robus(),
             new UserNotification([
                 'title' => $msg_title,
-                'message' => $msg,
+                'message' => $msg
             ])
         );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletInterEvent($walletInter));
         $admins = $this->getAdminCIVProperty();
-        Notification::send(
+       safeNotifyMany(
             $admins,
-            new AdminNotification(
-                'Demande de transaction de ' .
-                    ' ' . $walletInter->wallet->sidUser->firstname
-            )
+            new AdminNotification(NotificationMessages::NEW_INTER_TRANSACTION . ' ' . $walletInter->wallet->sidUser->firstname)
         );
-        Notification::send($admins, new AdminNotification('Transaction de ' .
-            ' ' . $walletInter->wallet->sidUser->firstname));
 
         if ($admins->count() > 0) {
 
@@ -363,24 +357,21 @@ class InterPaymentService
 
         $msg_title = 'Transfert internationnal Robus';
         $msg = 'Votre transfert vers Robus effectué avec success ';
-        robus()->notify(
-            new UserNotification([
-                'title' => $msg_title,
-                'message' => $msg,
-            ])
-        );
+        safeNotify(
+                robus(),
+                new UserNotification([
+                    'title' => $msg_title,
+                    'message' => $msg
+                ])
+            );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletInterEvent($walletInter));
         $admins = $this->getAdminCIVProperty();
-        Notification::send(
+       safeNotifyMany(
             $admins,
-            new AdminNotification(
-                'Transfert Robus de ' .
-                    ' ' . $walletInter->wallet->sidUser->firstname
-            )
+            new AdminNotification(NotificationMessages::NEW_INTER_TRANSACTION.
+            ' ' . $walletInter->wallet->sidUser->firstname)
         );
-        Notification::send($admins, new AdminNotification('Transfers d\'argent Robus de ' .
-            ' ' . $walletInter->wallet->sidUser->firstname));
 
         if ($admins->count() > 0) {
 
@@ -412,24 +403,21 @@ class InterPaymentService
 
         $msg_title = 'Transfert internationnal Robus';
         $msg = 'Votre transfert vers Robus effectué avec success ';
-        robus()->notify(
-            new UserNotification([
-                'title' => $msg_title,
-                'message' => $msg,
-            ])
-        );
+        safeNotify(
+                robus(),
+                new UserNotification([
+                    'title' => $msg_title,
+                    'message' => $msg
+                ])
+            );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletInterEvent($walletInter));
         $admins = $this->getAdminCIVProperty();
-        Notification::send(
+       safeNotifyMany(
             $admins,
-            new AdminNotification(
-                'Transfert Robus de ' .
-                    ' ' . $walletInter->wallet->sidUser->firstname
-            )
+            new AdminNotification(NotificationMessages::NEW_INTER_TRANSACTION.
+            ' ' . $walletInter->wallet->sidUser->firstname)
         );
-        Notification::send($admins, new AdminNotification('Transfers d\'argent Robus de ' .
-            ' ' . $walletInter->wallet->sidUser->firstname));
 
         if ($admins->count() > 0) {
 

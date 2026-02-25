@@ -838,6 +838,7 @@ class IntersPaymentController extends Controller
                                 $amount_commission = $percent_robus->amount_auther;
 
                                 $convertion_amount_pay =  $amount_valeur;
+                                
                             } else {
 
 
@@ -2519,6 +2520,7 @@ class IntersPaymentController extends Controller
                         'amount_commission' => $commission_reload_inter_val_inter_percent_pay,
                         'amount_pay' => $commission_paiement_invoice_val_inter_pay ,
                         'amount_receive' => $commission_paiement_invoice_val_inter_receive,
+                        'amount_conversion' => $commission_paiement_invoice_val_inter_receive,
                     ],
                 ], 200);
             }

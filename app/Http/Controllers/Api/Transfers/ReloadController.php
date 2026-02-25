@@ -26,6 +26,7 @@ use App\Models\Payments\PaymentReload;
 use App\Repositories\ReloadRepository;
 use App\Notifications\UserNotification;
 use App\Http\Services\ReloadCardService;
+use App\Http\Services\ConvertionService;
 use App\Notifications\AdminNotification;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletTransaction;
@@ -48,6 +49,7 @@ class ReloadController extends Controller
     protected $notificationOrderCard;
     protected $reloadCardService;
     private $authService;
+    private $convertionService;
 
     public function __construct(
         ReloadRepository $reloadReposi,
@@ -55,10 +57,12 @@ class ReloadController extends Controller
         PercentRobusAuthService $percentRobus,
         ValidateDailyLimitService $validatedamountDays,
         NotificationSendService $notificationOrderCard,
-        ReloadCardService $reloadCardService
+        ReloadCardService $reloadCardService,
+        ConvertionService $convertionService
     ) {
         $this->reloadRepository = $reloadReposi;
         $this->deletedService = $deletedService;
+        $this->convertionService = $convertionService;
         $this->percentRobus = $percentRobus;
         $this->validatedamountDays = $validatedamountDays;
         $this->notificationOrderCard = $notificationOrderCard;
@@ -1235,8 +1239,11 @@ class ReloadController extends Controller
                     $total_percent = (float) $percent_robus->percent + (float) $percent_robus->percent_admin;
                     $commission_phone_credit_val_nat_pay =   $total_percent  *  $reel_amount;
                     $commission_phone_credit_commission =   $reel_amount -   ($reel_amount *  ((float)$percent_robus->percent + (float) $percent_robus->percent_admin));
-
                     $countryNameGroup = robus()->country->name_groupe;
+
+                    $amount_conversion_credit_pay = $this->convertionService->convertAdminCommission($commission_phone_credit_val_nat_pay);
+                    $amount_conversion_credit_commission = $this->convertionService->convertAdminCommission($commission_phone_credit_commission);
+                    $amount_conversion_amount = $this->convertionService->convertAdminCommission($amount_reload);
 
                     $mobileMoneyGroups = ['CIV', 'AFL', 'AFC', 'AFE'];
 
@@ -1244,7 +1251,10 @@ class ReloadController extends Controller
                         'success' => $percent_robus != null ? true : false,
                         'data' =>  [
                             'amount_pay' => $commission_phone_credit_val_nat_pay,
+                            'amount_cfa' => $amount_conversion_amount,
                             'amount_send' => $commission_phone_credit_commission,
+                            'amount_send_cfa' => $amount_conversion_credit_commission,
+                            'amount_pay_cfa' => $amount_conversion_credit_pay,
                             'amount_receive' => in_array($countryNameGroup, $mobileMoneyGroups)
                                 ? 'Vous devez utiliser les rechargements Mobile Money'
                                 : 'Vous devez utiliser les cartes bancaires',
@@ -1291,11 +1301,18 @@ class ReloadController extends Controller
 
                     $mobileMoneyGroups = ['CIV', 'AFL', 'AFC', 'AFE'];
 
+                    $amount_conversion_credit_pay = $this->convertionService->convertAdminCommission($commission_phone_credit_val_nat_pay);
+                    $amount_conversion_credit_commission = $this->convertionService->convertAdminCommission($commission_phone_credit_commission);
+                    $amount_conversion_amount = $this->convertionService->convertAdminCommission($amount_reload);
+
                     return response()->json([
                         'success' => $percent_robus != null ? true : false,
                         'data' =>  [
                             'amount_pay' => $commission_phone_credit_val_nat_pay,
+                            'amount_cfa' => $amount_conversion_amount,
                             'amount_send' => $commission_phone_credit_commission,
+                            'amount_send_cfa' => $amount_conversion_credit_commission,
+                            'amount_pay_cfa' => $amount_conversion_credit_pay,
                             'amount_receive' => in_array($countryNameGroup, $mobileMoneyGroups)
                                 ? 'Vous devez utiliser les rechargements Mobile Money'
                                 : 'Vous devez utiliser les cartes bancaires',
