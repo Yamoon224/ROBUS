@@ -203,7 +203,7 @@ class PaymentInterService
 
             $admin_valeur =  (float)  $percent_robus->amount_auther;
             $banque_valeur =  (float)  $percent_robus->bank_comission;
-            $this->commissionServices->distributeAdminPaimentCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $admin_valeur, $banque_valeur);
+            $this->commissionServices->distributeAdminPaimentCommissions($admin_civ, 'wallet_inter_id', $walletPayment->id, $admin_valeur, $banque_valeur);
         }
 
 
@@ -285,7 +285,7 @@ class PaymentInterService
         } else {
 
             $admin_nocomission =   $percent_robus->amount_canal;
-            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $admin_nocomission);
+            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_inter_id', $walletPayment->id, $admin_nocomission);
         }
 
 

@@ -15,6 +15,7 @@ use App\Models\Wallets\WalletTresortMoney;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Custumers\Country;
+use App\Http\Services\ConvertionService;
 
 class withTransactionController extends Controller
 {
@@ -24,9 +25,11 @@ class withTransactionController extends Controller
         protected $validatedamountDays;
         protected $notificationPhone;
         protected $withService;
+        protected $convertionservice;
 
         public function __construct(
                 DeletedService $deletedService,
+                ConvertionService $convertionservice,
                 PercentRobusAuthService $percentRobus,
                 ValidateDailyLimitService $validatedamountDays,
                 NotificationSendService $notificationPhone,
@@ -37,6 +40,7 @@ class withTransactionController extends Controller
                 $this->validatedamountDays = $validatedamountDays;
                 $this->notificationPhone = $notificationPhone;
                 $this->withService = $withService;
+                $this->convertionservice = $convertionservice;
         }
 
         /**
@@ -1104,8 +1108,7 @@ class withTransactionController extends Controller
                 /**
                  * 🔁 Conversion utilisateur → CFA
                  */
-                $amountCfa = $amount_send * ($userCurrencyValue / $bankCurrencyValue);
-
+                $amountCfa    = $this->convertionservice->convertAdminCommissionPayment($amount_send);
                 $levels = $commissionBank->levelBankAuthers()
                         ->orderByRaw('CAST(amount_begin AS UNSIGNED) ASC')
                         ->get();
@@ -1119,20 +1122,20 @@ class withTransactionController extends Controller
                         ], 200);
                 }
 
-                $minAmount = $levels->min(fn($l) => (int) $l->amount_begin);
-                $maxAmount = $levels->min(fn($l) => (int) $l->amount_end);
+                $minAmount = $levels->min(fn($l) => (int)  $this->convertionservice->convertAdminCommissionPayment($l->amount_begin));
+                $maxAmount = $levels->max(fn($l) => (int) $this->convertionservice->convertAdminCommissionPayment($l->amount_end));
 
                 if ($minAmount !== null && $amountCfa < $minAmount) {
                         return response()->json([
                                 'success' => false,
-                                'message' => 'Montant minimum : ' . number_format($minAmount, 2, ',', ' ') . ' CFA',
+                                'message' => 'Montant minimum : ' . number_format($minAmount, 2, ',', ' ') . robus()->country->currencie->code ?? "CFA",
                         ], 200);
                 }
 
                 if ($maxAmount !== null && $amountCfa > $maxAmount) {
                         return response()->json([
                                 'success' => false,
-                                'message' => 'Montant maximum : ' . number_format($maxAmount, 2, ',', ' ') . ' CFA',
+                                'message' => 'Montant maximum : ' . number_format($maxAmount, 2, ',', ' ') . robus()->country->currencie->code ?? "CFA",
                         ], 200);
                 }
 
@@ -1153,8 +1156,8 @@ class withTransactionController extends Controller
                                 /**
                                  * 🔁 Conversion CFA → devise utilisateur
                                  */
-                                $commissionUser = ($commissionCfa * ($bankCurrencyValue / $userCurrencyValue));
-                                $commissionUnder = ($commissionCfaUnder * ($bankCurrencyValue / $userCurrencyValue));
+                                $commissionUser =  $this->convertionservice->convertAdminCommissionPayment($commissionCfa);
+                                $commissionUnder = $this->convertionservice->convertAdminCommissionPayment($commissionCfaUnder);
                                 $amountUser     =  $isDistributor ? (float) $commissionUnder : $amountCfa * ($bankCurrencyValue / $userCurrencyValue);
                                 $amountUnderReceived     =  $amountCfa * ($bankCurrencyValue / $userCurrencyValue);
                                 $amountRecevedUser     =  $isDistributor ? ((float)  $amountUnderReceived  - (float) $commissionUnder) : ((float)  $amountUser  - (float)  $commissionUser);

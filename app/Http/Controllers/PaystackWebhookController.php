@@ -488,9 +488,9 @@ class PaystackWebhookController extends Controller
                     'received_amount' => $transaction->amount_received,
                     'balance_before' => $oldBalance,
                     'balance_after' => $newBalance,
-                    'description' => 'Recharge via Paystack - ' . $data['reference'],
+                    'description' => 'Recharge via achat UV - ' . $data['reference'],
                     'reference' => $data['reference'],
-                    'operator_transaction_name' =>  "Paystack",
+                    'operator_transaction_name' =>  "Achat D'UV",
                     'status' => 'completed',
                     'created_at' => now(),
                     'updated_at' => now(),
@@ -641,9 +641,9 @@ class PaystackWebhookController extends Controller
                 'received_amount' => $transaction->amount,
                 'balance_before' => $oldBalance,
                 'balance_after' => $newBalance,
-                'description' => 'Recharge via Paystack - ' . $transaction->reference,
+                'description' => 'Recharge via achat UV - ' . $transaction->reference,
                 'reference' => $transaction->reference,
-                'operator_transaction_name' => 'Paystack',
+                'operator_transaction_name' => 'achat d\'UV',
                 'status' => 'completed',
             ]);
             // Déclencher l'événement succès et notification
@@ -736,9 +736,9 @@ class PaystackWebhookController extends Controller
                 'received_amount' => $transaction->amount,
                 'balance_before' => $oldBalance,
                 'balance_after' => $newBalance,
-                'description' => 'Recharge via Paystack - ' . $transaction->reference,
+                'description' => 'Recharge via achat UV - ' . $transaction->reference,
                 'reference' => $transaction->reference,
-                'operator_transaction_name' => 'Paystack',
+                'operator_transaction_name' => 'achat d\'UV',
                 'status' => 'completed',
             ]);
             // Déclencher l'événement succès et notification
@@ -938,14 +938,14 @@ class PaystackWebhookController extends Controller
                 // Transaction non trouvée localement mais existe sur Paystack
                 return response()->json([
                     'success' => true,
-                    'message' => 'Transaction vérifiée sur Paystack mais non enregistrée localement',
+                    'message' => 'Transaction vérifiée sur Achat d\'uv mais non enregistrée localement',
                     'data' => $verification
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Transaction non trouvée sur Paystack'
+                'message' => 'Transaction non trouvée sur Achat d\'uv'
             ], 404);
         } catch (\Exception $e) {
             Log::error('Erreur lors de la vérification manuelle', [
@@ -1150,7 +1150,7 @@ class PaystackWebhookController extends Controller
                 // Envoyer un SMS pour la Côte d'Ivoire
                 if ($user->country && $user->country->code == "CI" && $user->phone) {
                     $message = sprintf(
-                        'Vous avez rechargé votre compte Robus de %s FCFA via Paystack. Référence: %s. Nouveau solde: %s FCFA. Robus vous remercie!',
+                        'Vous avez rechargé votre compte Robus de %s FCFA via achat d\'UV. Référence: %s. Nouveau solde: %s FCFA. Robus vous remercie!',
                         number_format($transaction->amount, 0, ',', ' '),
                         $transaction->reference,
                         number_format($transaction->wallet->balance, 0, ',', ' ')

@@ -188,16 +188,28 @@
                         <div class="form-section mb-3">
                             <h4 class="section-title mb-4">Transaction</h4>
                             <div class="field-group">
-                                <div class="field-full">
+                                <div class="field">
                                     <label class="form-label required">
                                         <i class="fas fa-coins mr-2 text-primary"></i>
-                                        Montant
+                                        Montant envoyer
+                                    </label>
+                                    <div class="field-value amount-display">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                        <span
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 0, ',', ' ') }}</span>
+                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="form-label required">
+                                        <i class="fas fa-coins mr-2 text-primary"></i>
+                                        Montant recu
                                     </label>
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
                                             class="text-xl font-bold text-primary">{{ number_format($amount_virement_inter_edit ?? 0, 0, ',', ' ') }}</span>
-                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
+                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -347,16 +359,28 @@
                         <!-- Montant et Pays pour paiement -->
                         <div class="form-section">
                             <div class="field-group">
-                                <div class="field-full">
+                                <div class="field">
                                     <label class="form-label required">
                                         <i class="fas fa-coins mr-2 text-primary"></i>
-                                        Montant
+                                        Montant envoyer
+                                    </label>
+                                    <div class="field-value amount-display">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                        <span
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 0, ',', ' ') }}</span>
+                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
+                                    </div>
+                                </div>
+                                 <div class="field">
+                                    <label class="form-label required">
+                                        <i class="fas fa-coins mr-2 text-primary"></i>
+                                        Montant recu
                                     </label>
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
                                             class="text-xl font-bold text-primary">{{ number_format($amount_virement_inter_edit ?? 0, 0, ',', ' ') }}</span>
-                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
+                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
                                     </div>
                                 </div>
                                 
@@ -403,16 +427,28 @@
 
                         <div class="form-section mb-3">
                             <div class="field-group">
-                                <div class="field-full">
+                                <div class="field">
                                     <label class="form-label required">
                                         <i class="fas fa-coins mr-2 text-primary"></i>
-                                        Montant
+                                        Montant envoyer
+                                    </label>
+                                    <div class="field-value amount-display">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                        <span
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 0, ',', ' ') }}</span>
+                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="form-label required">
+                                        <i class="fas fa-coins mr-2 text-primary"></i>
+                                        Montant recu
                                     </label>
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
                                             class="text-xl font-bold text-primary">{{ number_format($amount_phone_credit_inter_edit ?? 0, 0, ',', ' ') }}</span>
-                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
+                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -485,16 +521,28 @@
 
                         <div class="form-section mb-3">
                             <div class="field-group">
-                                <div class="field-full">
+                                <div class="field">
                                     <label class="form-label required">
                                         <i class="fas fa-coins mr-2 text-primary"></i>
-                                        Montant
+                                        Montant envoyer
+                                    </label>
+                                    <div class="field-value amount-display">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                        <span
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 0, ',', ' ') }}</span>
+                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
+                                    </div>
+                                </div>
+                                 <div class="field">
+                                    <label class="form-label required">
+                                        <i class="fas fa-coins mr-2 text-primary"></i>
+                                        Montant recu
                                     </label>
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
                                             class="text-xl font-bold text-primary">{{ number_format($amount_virement_inter_edit ?? 0, 0, ',', ' ') }}</span>
-                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
+                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
                                     </div>
                                 </div>
                                
@@ -545,7 +593,19 @@
                                 <div class="field-full">
                                     <label class="form-label required">
                                         <i class="fas fa-coins mr-2 text-primary"></i>
-                                        Montant
+                                        Montant envoyer
+                                    </label>
+                                    <div class="field-value amount-display">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                        <span
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_virement_inter_edit ?? 0, 0, ',', ' ') }}</span>
+                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
+                                    </div>
+                                </div>
+                                <div class="field-full">
+                                    <label class="form-label required">
+                                        <i class="fas fa-coins mr-2 text-primary"></i>
+                                        Montant recu
                                     </label>
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
@@ -638,16 +698,28 @@
 
                         <div class="form-section mb-3">
                             <div class="field-group">
-                                <div class="field-full">
+                                <div class="field">
                                     <label class="form-label required">
                                         <i class="fas fa-coins mr-2 text-primary"></i>
-                                        Montant
+                                        Montant envoyer
+                                    </label>
+                                    <div class="field-value amount-display">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                        <span
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 0, ',', ' ') }}</span>
+                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
+                                    </div>
+                                </div>
+                                 <div class="field">
+                                    <label class="form-label required">
+                                        <i class="fas fa-coins mr-2 text-primary"></i>
+                                        Montant recu
                                     </label>
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
                                             class="text-xl font-bold text-primary">{{ number_format($versementAmount ?? 0, 0, ',', ' ') }}</span>
-                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
+                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
                                     </div>
                                 </div>
                                

@@ -458,17 +458,7 @@ class RobusTransactionService
         // Percent admin 
         $valeur_percent_admin  = $percent_robus->percent * $transaction_amount_robus;
 
-        if ($country_civ->currencie->value > robus()->country->currencie->value) {
-
-            $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) robus()->country->currencie->value;
-        } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
-
-            $admin_valeur_convertion = (float)   $valeur_percent_admin;
-        } else {
-
-            $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) robus()->country->currencie->value;
-        }
-
+        $admin_valeur_convertion = $this->convertAdminCommission($valeur_percent_admin);
 
         if ($admin_civ->count() > 0) {
 

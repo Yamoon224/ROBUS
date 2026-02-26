@@ -231,6 +231,87 @@ class InterPaymentService
     }
 
 
+    public function processCommissionWithVersementMobiles($amount, $percent_robus, $country_robus, $walletInter, $admin_civ)
+    {
+
+
+        $wallet = robus()->wallet;
+        $userId = robus()->id;
+        $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
+        $account_accepted = robus()->is_accepted_companie ?? false;
+        $company_id = robus()->company_id ?? null;
+
+        if ($company_id) {
+            $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+            $sidUserId = $account_accepted && $compagnie ? $compagnie->id : null;
+        } else {
+            $compagnie = null;
+            $sidUserId = null;
+        }
+
+        if ($sidUserId) {
+            $activeCButtons = $this->operatorRestrictionService->getActiveCButtons($sidUserId);
+        } else {
+            $activeCButtons = [];
+        }
+
+        // Préparez les valeurs mises à jour
+        $updatedValues = [
+            'reload_by' => robus()->firstname . ' ' . robus()->lastname,
+            'sid_user_relod' => robus()->id,
+            'amount' => DB::raw('amount - ' . $amount),
+        ];
+
+        $wallet->update($updatedValues);
+
+
+        $amount_bank =  $percent_robus->percent_bank_custumer * $amount;
+        $valuer_deposit = $percent_robus->percent_merchands *  $amount;
+        $percent_valeur_compagnie = $percent_robus->percent_companie *  $amount;
+        $bank_valeur_convertion =  $this->convertionService->convertAdminCommission($amount_bank);
+
+
+        // Commissions Inters 
+        if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
+
+            $valeur_amount_admin  = $percent_robus->percent_admin * $amount;
+            $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
+            $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
+            $company_valeur_convertion =  $this->convertionService->convertAdminCommission($percent_valeur_compagnie);
+
+            $cumul_amount =  (float) $admin_valeur_convertion + (float) $company_valeur_convertion;
+
+            if (!empty($activeButtons['showRemonterInterButton'])) {
+
+                $walletInter->update([
+                    'commissions' => DB::raw('commissions+'  . $valuer_deposit),
+                ]);
+
+                $account_accepted = robus()->is_accepted_companie ?? false;
+                $deposit_valeur_convertion =  $this->convertionService->convertAdminCommission($valuer_deposit);
+
+                if ($account_accepted && !empty($activeCButtons['showRemonterInterCButton'])) {
+                    $walletInter->increment('commission_companie', $percent_valeur_compagnie);
+                    $this->commissionServices->distributeAdminAndVersementCommissionAcceptedCompanies($admin_civ, 'wallet_inter_id', $walletInter->id, $admin_valeur_convertion, $company_valeur_convertion, $deposit_valeur_convertion, $bank_valeur_convertion);
+                } else {
+                    $this->commissionServices->distributeAdminAndBankCommissionAccepteds($admin_civ, 'wallet_inter_id', $walletInter->id, $cumul_amount, $deposit_valeur_convertion, $bank_valeur_convertion);
+                }
+            } else {
+                $valeur_percent_admin  = $percent_robus->percent * $amount;
+                $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
+                $this->commissionServices->distributeAdminAndBankCommissions($admin_civ, 'wallet_inter_id', $walletInter->id, $admin_valeur_convertion,  $bank_valeur_convertion);
+            }
+        } else {
+
+            $valeur_percent_admin  = $percent_robus->percent_admin_custumer * $amount;
+            $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
+            $this->commissionServices->distributeAdminAndBankCommissions($admin_civ, 'wallet_inter_id', $walletInter->id, $admin_valeur_convertion,  $bank_valeur_convertion);
+        }
+
+        return true;
+    }
+
+
 
     public function processCommissionsMobileRobus($amount_valeur, $percent_robus, $walletInter)
     {
@@ -278,19 +359,19 @@ class InterPaymentService
         $msg_title = 'Transfert internationnal Mobile money';
         $msg = 'Demande de transfert est en cours de validation ';
         safeNotify(
-                robus(),
-                new UserNotification([
-                    'title' => $msg_title,
-                    'message' => $msg
-                ])
-            );
+            robus(),
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ])
+        );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletInterEvent($walletInter));
         $admins = $this->getAdminCIVProperty();
-       safeNotifyMany(
+        safeNotifyMany(
             $admins,
-            new AdminNotification(NotificationMessages::NEW_INTER_TRANSACTION.
-            ' ' . $walletInter->wallet->sidUser->firstname)
+            new AdminNotification(NotificationMessages::NEW_INTER_TRANSACTION .
+                ' ' . $walletInter->wallet->sidUser->firstname)
         );
 
         if ($admins->count() > 0) {
@@ -328,7 +409,7 @@ class InterPaymentService
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletInterEvent($walletInter));
         $admins = $this->getAdminCIVProperty();
-       safeNotifyMany(
+        safeNotifyMany(
             $admins,
             new AdminNotification(NotificationMessages::NEW_INTER_TRANSACTION . ' ' . $walletInter->wallet->sidUser->firstname)
         );
@@ -358,19 +439,19 @@ class InterPaymentService
         $msg_title = 'Transfert internationnal Robus';
         $msg = 'Votre transfert vers Robus effectué avec success ';
         safeNotify(
-                robus(),
-                new UserNotification([
-                    'title' => $msg_title,
-                    'message' => $msg
-                ])
-            );
+            robus(),
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ])
+        );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletInterEvent($walletInter));
         $admins = $this->getAdminCIVProperty();
-       safeNotifyMany(
+        safeNotifyMany(
             $admins,
-            new AdminNotification(NotificationMessages::NEW_INTER_TRANSACTION.
-            ' ' . $walletInter->wallet->sidUser->firstname)
+            new AdminNotification(NotificationMessages::NEW_INTER_TRANSACTION .
+                ' ' . $walletInter->wallet->sidUser->firstname)
         );
 
         if ($admins->count() > 0) {
@@ -404,19 +485,19 @@ class InterPaymentService
         $msg_title = 'Transfert internationnal Robus';
         $msg = 'Votre transfert vers Robus effectué avec success ';
         safeNotify(
-                robus(),
-                new UserNotification([
-                    'title' => $msg_title,
-                    'message' => $msg
-                ])
-            );
+            robus(),
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ])
+        );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletInterEvent($walletInter));
         $admins = $this->getAdminCIVProperty();
-       safeNotifyMany(
+        safeNotifyMany(
             $admins,
-            new AdminNotification(NotificationMessages::NEW_INTER_TRANSACTION.
-            ' ' . $walletInter->wallet->sidUser->firstname)
+            new AdminNotification(NotificationMessages::NEW_INTER_TRANSACTION .
+                ' ' . $walletInter->wallet->sidUser->firstname)
         );
 
         if ($admins->count() > 0) {

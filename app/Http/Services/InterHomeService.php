@@ -113,7 +113,7 @@ class InterHomeService
         $userCountryId = Auth::guard('web')->user()->country->id;
 
         $query = $model::join('wallets', "$table.wallet_id", '=', 'wallets.id')
-            ->where('wallets.country_id', $userCountryId)
+            // ->where('wallets.country_id', $userCountryId)
             ->where("$table.status", $status)
             ->whereDate("$table.created_at", Carbon::today());
 

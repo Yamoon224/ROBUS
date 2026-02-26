@@ -21,7 +21,6 @@ class InterTransactionSingleCollection extends JsonResource
         if ($wallet_send != null) {
             $wallet_send = Wallet::where('wallet_id',  $this->number_compte)->first();
         } else {
-
             $wallet_send = null;
         }
 
@@ -31,10 +30,8 @@ class InterTransactionSingleCollection extends JsonResource
             'amount' =>  number_format((float)$this->amount, 2, '.', ''),
             'amount_wallet' =>  optional($this->wallet)->amount . ' ' . optional($this->wallet->currencie)->code,
             'name_user_desti' => isset(optional($wallet_send)->sidUser->firstname) ? (optional($wallet_send)->sidUser->firstname)  . ' ' . (optional($wallet_send)->sidUser->lastname) : null,
-            // 'name_user_desti' => isset(optional($wallet_send)->sidUser->lastname) ? (optional($wallet_send)->sidUser->lastname) : null,
             'phone_user_desti' => optional($wallet_send)->sidUser->phone ?? null,
             'name_user_send' => isset(optional($this->wallet)->sidUser->firstname) ? (optional($this->wallet)->sidUser->firstname) . ' ' . (optional($this->wallet)->sidUser->lastname) : null,
-            // 'name_user_send' => isset(optional($this->wallet)->sidUser->lastname) ? (optional($this->wallet)->sidUser->lastname) : null,
             'phone_user_send' => optional($this->wallet)->sidUser->phone ?? null,
             'date_created' =>  $this->created_at,
             'provider_type' =>  $this->provider_type,
@@ -51,7 +48,6 @@ class InterTransactionSingleCollection extends JsonResource
             'number_contract'  =>  $this->number_contract ?? null,
             'id_invoice_pre'  =>  $this->id_invoice_pre ?? null,
             'name'  =>  $this->name ?? $this->name_complet ?? null,
-
             // New information Projet
             'num_piece'  =>  $this->num_piece ?? null,
             'validated_date'  =>  $this->validated_date ??  null,
@@ -79,7 +75,6 @@ class InterTransactionSingleCollection extends JsonResource
             'devise'  =>  optional(optional($this->wallet)->currencie)->code ?? "CFA",
             'frais' => number_format((float)$this->costs_amount, 2, '.', ' ') . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA") ,
             'status'  =>  $this->status,
-            // 'amount_received'  => $this->amount_received ?? null,
             'balance_before'  => $this->balance_before . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
             'solde_account'  => $this->amount_solde . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
             'amount_solde_drawal' =>  $this->amount_solde_drawal .  ' ' . (optional(optional($this->country->currencie))->code ?? "CFA"),

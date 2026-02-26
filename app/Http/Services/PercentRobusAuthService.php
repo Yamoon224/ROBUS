@@ -247,6 +247,22 @@ class PercentRobusAuthService
         })->first();
     }
 
+    public function getRobusPercentagePhoneCreditInter()
+    {
+
+        $userAuth = auth_user();
+
+        if (!$userAuth) {
+            return null;
+        }
+
+        return  PhoneCreditCost::when($userAuth->is_under_distributer || $userAuth->is_api, function ($query) {
+            return $query->whereId(2);
+        }, function ($query) {
+            return $query->whereId(22);
+        })->first();
+    }
+
     public function getRobusPercentageReload()
     {
 
@@ -446,6 +462,7 @@ class PercentRobusAuthService
             return $query->whereId(22);
         })->first();
     }
+    
     public function getRobusPercentagePayment()
     {
         return PaymentCost::whereId(2)->first();
@@ -6462,9 +6479,9 @@ class PercentRobusAuthService
     public function getRobusPercentageBankSend(int $countryId): ?BankCommission
     {
         // On ne traite que la CIV
-        if (robus()->country->name_groupe !== 'CIV') {
-            return null;
-        }
+        // if (robus()->country->name_groupe == 'CIV') {
+        //     return null;
+        // }
 
         // Mapping des pays par commission
         $groups = [
