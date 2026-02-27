@@ -2051,8 +2051,8 @@ class Transfers extends Component
 
                             $this->updateWalletNull($check, $commission);
 
-
                             $this->handleReloadClientCommission($check, $admin_civ);;
+                            
                             app(TransfertServiceBackend::class)->createErrorBankSend($check, $transactionCode, $transactionCompiCode);
 
                             $this->notifyUsers($check, $admins, 'Bank Send', 'La demande de Transferts Bank send a été rejetée après analyse', 'La demande de Transferts Bank send a été rejetée après analyse');
@@ -3926,7 +3926,7 @@ class Transfers extends Component
 
                             $valeur_amount_com = $check->adminCom->amount;
 
-                            if ($check->provider_type == 7 || $check->provider_type == 8) {
+                            if ($check->provider_type == 7) {
 
                                 if ($check->wallet->sidUser->is_under_distributer == true) {
 
@@ -3936,6 +3936,22 @@ class Transfers extends Component
                                         $this->cancelInterField();
                                         $this->emit('modal-hide-inters');
                                         $this->emit('success', 'Rechargement Acceptée sans commission sous-distibuteur !');
+                                        return;
+                                    }
+                                } else {
+
+                                    app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                                }
+                            } else if($check->provider_type == 8) {
+                                if ($check->wallet->sidUser->is_under_distributer == true) {
+
+                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorXbetCommission($check, $admin_civ, "Paiment commission Transfert d'argent a international");
+                                    } else {
+                                        $this->cancelInterField();
+                                        $this->emit('modal-hide-inters');
+                                        $this->emit('success', 'Transfert d\'argent Acceptée sans commission sous-distibuteur !');
                                         return;
                                     }
                                 } else {

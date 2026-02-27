@@ -1412,20 +1412,36 @@ class IntersPaymentController extends Controller
 
 
 
+
+
+
                 if ($percent_robus != null) {
+
+                    $amount_min = 20700;
 
                     $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
+                    $convertion_amount_min =   $this->convertionservice->convertAdminCommissionPayment($amount_min);
+
+                    if ($reel_amount < $convertion_amount_min) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Le montant minimum est de ' . $convertion_amount_min . ' ' . robus()->country->currencie->code ?? 'FCFA',
+                            'data' => [
+                                'message' => 'Le montant minimum est de ' . $convertion_amount_min . ' ' . robus()->country->currencie->code ?? 'FCFA',
+                            ],
+                        ], 200);
+                    }
                     if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
                         if (robus()->is_under_distributer || robus()->is_api) {
 
-                            $percent_amount = $percent_robus->percent_merchands * $request->amount;
+                            $percent_amount = $percent_robus->percent * $request->amount;
                             $valeur_received = $request->amount -  $percent_amount;
                             $valeur_amount = $request->amount;
                         } else {
 
-                            $percent_amount = $percent_robus->percent * $request->amount;
+                            $percent_amount = $percent_robus->percent_custumer * $request->amount;
                             $valeur_received = $request->amount -  $percent_amount;
                             $valeur_amount = $request->amount + $percent_amount;
                         }
@@ -2034,7 +2050,22 @@ class IntersPaymentController extends Controller
 
         try {
 
+            $amount_min = 20700;
 
+            $convertion_amount =   $this->convertionservice->convertAdminCommission($amount_paiement);
+
+            $convertion_amount_min =   $this->convertionservice->convertAdminCommissionPayment($amount_min);
+
+            if ($amount_paiement < $convertion_amount_min) {
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'amount_commission' => 0,
+                        'amount_pay' => 0,
+                        'amount_receive' => 'Le montant minimum est de ' . $convertion_amount_min . ' ' . robus()->country->currencie->code ?? 'FCFA',
+                    ],
+                ], 200);
+            }
             if ($amount_paiement != '') {
 
                 $countrie = Country::whereId($countrie_id)->first();
@@ -2057,8 +2088,8 @@ class IntersPaymentController extends Controller
 
                 $is_under_or_distributor = robus()->is_under_distributer == 1 || robus()->is_distributer == 1 || robus()->is_api == 1;
                 $commission_transaction_val_percent_pay = $is_under_or_distributor
-                    ? (float)$commission_invoice->percent_merchands * (float)$amount_paiement
-                    : (float)$commission_invoice->percent * (float)$amount_paiement;
+                    ? (float)$commission_invoice->percent * (float)$amount_paiement
+                    : (float)$commission_invoice->percent_custumer * (float)$amount_paiement;
 
 
                 function calculateConversion($valeur_verify, $currencie_sender, $currencie_receiver)
@@ -2066,6 +2097,7 @@ class IntersPaymentController extends Controller
                     $conversion_cfa = (float)$valeur_verify * (float)$currencie_sender->value;
                     return $conversion_cfa / (float)$currencie_receiver->value;
                 }
+
                 if ($exchange_rate_sender > $exchange_rate_receiver) {
                     $convertion_transaction_countrie = (float)   $amount_paiement / (float) $countrie->currencie->value;
 
@@ -2117,6 +2149,15 @@ class IntersPaymentController extends Controller
                         'amount_commission'    => $commission_transaction_val_inter_pay,
                         'amount_pay'     => $commission_transaction_val_percent_pay,
                         'amount_receive' => $commission_transaction_val_inter_receive . ' ' .  $countrie->currencie->code,
+                    ],
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'amount_commission' => 0,
+                        'amount_pay' => 0,
+                        'amount_receive' => 'Veuillez saisir un montant valide.',
                     ],
                 ], 200);
             }

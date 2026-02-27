@@ -185,13 +185,13 @@ class PaymentInterService
 
                     $walletPayment->increment('commission_companie', $amountCompConvert);
 
-                    $valuer_admin_compagnie = (float)  $admin_valeur  - ((float) $valuer_deposit + (float)$valuer_companie + (float)$banque_valeur);
+                    $valuer_admin_compagnie = (float)  $admin_valeur  - ((float) $valuer_deposit_amount + (float)$valuer_companie + (float)$banque_valeur);
 
                     $this->commissionServices->distributeAdminCommissionUnderBankAcceptedCompanies($admin_civ, 'wallet_inter_id', $walletPayment->id,  $valuer_admin_compagnie, $valuer_companie, $valuer_deposit, $banque_valeur);
                 } else {
 
                     $valor_commission = $percent_robus->amount_auther;
-                    $admin_sender_valeur =  (float) $valor_commission - ((float)$valuer_deposit + (float)$banque_valeur);
+                    $admin_sender_valeur =  (float) $valor_commission - ((float)$valuer_deposit_amount + (float)$banque_valeur);
                     $this->commissionServices->distributeAdminNoCompagniePaimentCommissions($admin_civ, 'wallet_inter_id', $walletPayment->id, $admin_sender_valeur, $valuer_deposit_amount, $banque_valeur);
                 }
             } else {
@@ -273,9 +273,9 @@ class PaymentInterService
 
                     $walletPayment->increment('commission_companie', $amountCompConvert);
 
-                    $this->commissionServices->distributeAdminCommissionUnderBankAcceptedCompanies($admin_civ, 'wallet_inter_id', $walletPayment->id , $admin_compagnie_valeur, $compagnie_amount, $valuer_deposit , $banque_valeur);
+                    $this->commissionServices->distributeAdminCommissionUnderBankAcceptedCompanies($admin_civ, 'wallet_inter_id', $walletPayment->id , $admin_compagnie_valeur, $compagnie_amount, $valuer_deposit_amount , $banque_valeur);
                 } else {
-                    $this->commissionServices->distributeAdminNoCompagniePaimentCommissions($admin_civ, 'wallet_inter_id', $walletPayment->id, $admin_no_compagnie, $valuer_deposit , $banque_valeur);
+                    $this->commissionServices->distributeAdminNoCompagniePaimentCommissions($admin_civ, 'wallet_inter_id', $walletPayment->id, $admin_no_compagnie, $valuer_deposit_amount , $banque_valeur);
                 }
             } else {
 

@@ -1308,7 +1308,7 @@
     @include('livewire.commissions.modals.transactions.updatePaiementInvoice')
     @include('livewire.commissions.modals.transactions.addPhoneCredit')
     @include('livewire.commissions.modals.transactions.addOneXbet')
-    @include('livewire.commissions.modals.transactions.addVersement')
+    @include('livewire.commissions.modals.transactions.addVersement')e
     @include('livewire.commissions.modals.transactions.addPush')
     @include('livewire.commissions.modals.transactions.addTresort')
     @include('livewire.commissions.modals.transactions.addDjamo')

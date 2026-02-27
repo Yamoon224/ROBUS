@@ -33,6 +33,34 @@ class CommissionService
         //     Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
         // }
     }
+
+     public function distributeAdminCommissionIntersAcceptedCompanies($adminCiv, string $walletColumn, $walletId , $totalCommission, $totalCommissionCompany, $amountDeposit)
+    {
+
+        if ($adminCiv->isEmpty()) {
+            return;
+        }
+
+        $userUnder = auth_user();
+
+        if ($adminCiv->count() > 0) {
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create(array_merge([
+                    'amount' => $totalCommission,
+                    'sid_user_id' => $adminUser->id,
+                    'description' => 'Commission administrateur',
+                    'amount_compagnie' => $userUnder->is_under_distributer ? $totalCommissionCompany : 0,
+                    'amount_under' => $userUnder->is_under_distributer ? $amountDeposit : 0,
+                    'is_under' => true,
+                    'description_underdistributer' => $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null,
+                ], [$walletColumn => $walletId]));
+            }
+        }
+    }
+
     public function distributeAdminCommissionAcceptedCompanies($adminCiv, string $walletColumn, $walletId, $totalCommission, $amountDeposit)
     {
 

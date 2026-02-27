@@ -358,7 +358,7 @@ class CommissionServiceBackend
             foreach ($admin_civ as $user) {
                 $admin_single = SidUser::find($user->id);
                 $check->adminCom->update([
-                    'amount' =>   0,
+                    'amount' =>   $admin_amount,
                     'sid_user_id' =>   $admin_single->id,
                     'description' => $description,
                     'status'  => "SUCCESS",
@@ -474,7 +474,7 @@ class CommissionServiceBackend
                             false
                         );
                     } else {
-                        $admin_single->wallet->decrement('amount', $amount_invoice);
+                        $admin_single->wallet->increment('amount', $amount_invoice);
                         $walletAdmin->increment('amount', $amount_admin);
                     }
                 }

@@ -145,8 +145,7 @@ class VirementInterService
             if (!empty($activeButtons['showRemonterInterButton'])) {
 
                 $amountCompanie =  $amount_commission_compagnie;
-                $totalAmount = (float)$valuer_deposit + $amountCompanie;
-                $valuer_depositUnder = (float) $valuer_deposit;
+                $totalAmount =  (float) $percent_valeur  - ( (float)$valuer_deposit + $amountCompanie);
 
                 $walletBank->update([
                     'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
@@ -162,9 +161,11 @@ class VirementInterService
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterInterCButton'])) {
 
+                    $compagnie_convertion =  $this->convertionService->convertAdminCommission($amountCompanie);
+
                     $walletBank->increment('commission_companie', $amountCompanie);
 
-                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_inter_id' ,$walletBank->id, $admin_cumul_convertion, $valeur_amount_admin);
+                    $this->commissionServices->distributeAdminCommissionIntersAcceptedCompanies($admin_civ, 'wallet_inter_id' ,$walletBank->id, $admin_cumul_convertion , $compagnie_convertion, $admin_valeur_convertion);
 
                 } else {
                     $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ , 'wallet_inter_id', $walletBank->id, $valeur_amount_admin , $admin_valeur_convertion);

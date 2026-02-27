@@ -310,13 +310,14 @@ class withTransactionController extends Controller
                                 ->search_amount($request->amount);
 
                         if ($amountUser <= 0) {
-                                return json_message_response(false, "Montant invalide", 422);
+                                return json_message_response(false, "Montant invalide veuillez verifie votre montant", 422);
                         }
 
                         /** ===============================
                          *  2️⃣ Conversion en CFA (banque)
                          * =============================== */
-                        $amountCfa = $amountUser * ($userRate / $bankRate);
+                        // $amountCfa = $amountUser * ($userRate / $bankRate);
+                        $amountCfa    = $this->convertionservice->convertAdminCommission($amountUser);
 
                         /** ===============================
                          *  3️⃣ Vérification plafond journalier
@@ -342,22 +343,23 @@ class withTransactionController extends Controller
                         }
 
 
-                        $min = $levels->min(fn($l) => (int) $l->amount_begin);
-                        $max = $levels->min(fn($l) => (int) $l->amount_end);
+                        $min =$levels->min(fn($l) => ceil($this->convertionservice->convertAdminCommissionPayment($l->amount_begin)));
+                        $max = $levels->max(fn($l) => ceil($this->convertionservice->convertAdminCommissionPayment($l->amount_end)));
+
                         if ($amountCfa < $min || $amountCfa > $max) {
                                 return json_message_response(
                                         false,
                                         "Montant autorisé entre " .
                                                 number_format($min, 0, ',', ' ') . " et " .
-                                                number_format($max, 0, ',', ' ') . " CFA",
+                                                number_format($max, 0, ',', ' ') . robus()->country->currencie->code ?? " CFA",
                                         422
                                 );
                         }
 
                         $level = $levels->first(
                                 fn($l) =>
-                                $amountCfa >= $l->amount_begin &&
-                                        $amountCfa <= $l->amount_end
+                                $amountCfa >= ceil($this->convertionservice->convertAdminCommissionPayment($l->amount_begin)) &&
+                                        $amountCfa <= ceil($this->convertionservice->convertAdminCommissionPayment($l->amount_end))
                         );
 
                         if (!$level) {
@@ -1108,7 +1110,8 @@ class withTransactionController extends Controller
                 /**
                  * 🔁 Conversion utilisateur → CFA
                  */
-                $amountCfa    = $this->convertionservice->convertAdminCommissionPayment($amount_send);
+                $amountCfa    = $this->convertionservice->convertAdminCommission($amount_send);
+
                 $levels = $commissionBank->levelBankAuthers()
                         ->orderByRaw('CAST(amount_begin AS UNSIGNED) ASC')
                         ->get();
@@ -1122,17 +1125,18 @@ class withTransactionController extends Controller
                         ], 200);
                 }
 
-                $minAmount = $levels->min(fn($l) => (int)  $this->convertionservice->convertAdminCommissionPayment($l->amount_begin));
-                $maxAmount = $levels->max(fn($l) => (int) $this->convertionservice->convertAdminCommissionPayment($l->amount_end));
+                $minAmount = $levels->min(fn($l) => ceil($this->convertionservice->convertAdminCommissionPayment($l->amount_begin)));
+                $maxAmount = $levels->max(fn($l) => ceil($this->convertionservice->convertAdminCommissionPayment($l->amount_end)));
+                $maverify = $this->convertionservice->convertAdminCommissionPayment($amountCfa);
 
-                if ($minAmount !== null && $amountCfa < $minAmount) {
+                if ($minAmount !== null && $maverify < $minAmount) {
                         return response()->json([
                                 'success' => false,
                                 'message' => 'Montant minimum : ' . number_format($minAmount, 2, ',', ' ') . robus()->country->currencie->code ?? "CFA",
                         ], 200);
                 }
 
-                if ($maxAmount !== null && $amountCfa > $maxAmount) {
+                if ($maxAmount !== null && $maverify > $maxAmount) {
                         return response()->json([
                                 'success' => false,
                                 'message' => 'Montant maximum : ' . number_format($maxAmount, 2, ',', ' ') . robus()->country->currencie->code ?? "CFA",
@@ -1140,6 +1144,7 @@ class withTransactionController extends Controller
                 }
 
                 $isDistributor = robus()->is_under_distributer || robus()->is_distributer;
+
 
                 foreach ($levels as $level) {
 
@@ -1158,7 +1163,9 @@ class withTransactionController extends Controller
                                  */
                                 $commissionUser =  $this->convertionservice->convertAdminCommissionPayment($commissionCfa);
                                 $commissionUnder = $this->convertionservice->convertAdminCommissionPayment($commissionCfaUnder);
+
                                 $amountUser     =  $isDistributor ? (float) $commissionUnder : $amountCfa * ($bankCurrencyValue / $userCurrencyValue);
+
                                 $amountUnderReceived     =  $amountCfa * ($bankCurrencyValue / $userCurrencyValue);
                                 $amountRecevedUser     =  $isDistributor ? ((float)  $amountUnderReceived  - (float) $commissionUnder) : ((float)  $amountUser  - (float)  $commissionUser);
 
