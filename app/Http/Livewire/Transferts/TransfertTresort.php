@@ -144,9 +144,6 @@ class TransfertTresort extends Component
             if ($provider) {
 
 
-
-                $percent_robus = app(CommissionServicePercentBackend::class)->getRobusPercentageTresortMoney();
-
                 if ($walletUser->country->code != 'CI') {
                     $this->resetTresortField();
                     $this->emit(
@@ -169,14 +166,17 @@ class TransfertTresort extends Component
 
                 $val_amount = $reel_amount;
 
-                if ($val_amount > $walletUser->wallet->amount) {
-                    $this->resetTresortField();
-                    $this->emit(
-                        'error',
-                        'Verifier votre montant  svp !'
-                    );
-                    return;
+                if ($this->choose_transaction == 1) {
+                    if ($val_amount > $walletUser->wallet->amount) {
+                        $this->resetTresortField();
+                        $this->emit(
+                            'error',
+                            'Verifier votre montant  svp !'
+                        );
+                        return;
+                    }
                 }
+
 
                 $this->stepTresort = 2;
             } else {
@@ -387,15 +387,16 @@ class TransfertTresort extends Component
     public function updateamountTresortReceveid($admin_civ, $percent_robus, $walletTresort,  $walletUser, $amount)
     {
 
-        $amount_percent = $percent_robus->percent * $amount;
 
         $percent = ($this->choose_transaction == 1)
             ? $percent_robus->percent_merchands
-            : $percent_robus->percent_with_drawal;
+            : $percent_robus->percent_with_drawal_merchands;
+
+        $percent_compagnie =  ($this->choose_transaction == 1)
+            ? $percent_robus->percent_with_drawal_companie
+            : $percent_robus->percent_companie;
 
         $valuer_deposit = (float) $percent * $amount;
-
-        $amount_commission = $amount + ($percent_robus->percent * $amount);
 
         $amount_solde = sabdy()->wallet->amount - $amount;
 
@@ -403,17 +404,16 @@ class TransfertTresort extends Component
             'amount_solde' => $amount_solde,
         ]);
 
-        app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount);
+
+        if ($this->choose_transaction == 1) {
+            app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount);
+        }
 
         if (sabdy()->is_under_distributer) {
 
             if ($this->showRemonterTresortButton) {
 
-                $valuer_companie = $percent_robus->percent_companie * $amount;
-
-                $cumul_valeurs = (float) $valuer_companie + (float) $valuer_deposit;
-
-                $adminAmount = (float) $amount_percent - (float) $cumul_valeurs;
+                $valuer_companie = $percent_compagnie * $amount;
 
                 $walletTresort->increment('commissions', $valuer_deposit);
 
@@ -422,21 +422,12 @@ class TransfertTresort extends Component
                 if ($account_accepted && $this->showRemonterTresortCButton) {
                     $walletTresort->increment('commission_companie', $valuer_companie);
 
-                    $totalCommission =  $valuer_companie + $valuer_deposit;
-
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_tresort_money_id', $walletTresort->id, $totalCommission, $adminAmount);
+                    app(CommissionServiceBackend::class)->distributeUnderCommissionAcceptedCompanies($admin_civ, 'wallet_tresort_money_id', $walletTresort->id, $valuer_companie, $valuer_deposit);
                 } else {
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_tresort_money_id', $walletTresort->id, $adminAmount, $valuer_deposit);
+                    app(CommissionServiceBackend::class)->distributeAdminCommissionUnders($admin_civ, 'wallet_tresort_money_id', $walletTresort->id, $valuer_deposit);
                 }
-            } else {
-
-                app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_tresort_money_id', $walletTresort->id, $amount_percent);
             }
-        } else {
-
-            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_tresort_money_id', $walletTresort->id, $amount_percent);
         }
-
 
         return true;
     }

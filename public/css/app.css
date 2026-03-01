@@ -20,6 +20,7 @@
 
 /* Styles améliorés avec bordures plus visibles */
 
+
 .amount-balance:hover, .amount-commission-balance:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);

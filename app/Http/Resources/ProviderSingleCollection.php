@@ -50,7 +50,6 @@ class ProviderSingleCollection extends JsonResource
             'cost_bank' =>  $costBank,
             'cost_reload_card' =>  $costReloadCard,
             'cost_order_card' =>  $costOrderCard,
-
         ];
     }
 }

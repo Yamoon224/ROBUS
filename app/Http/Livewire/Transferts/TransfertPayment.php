@@ -446,14 +446,14 @@ class TransfertPayment extends Component
                         switch ($this->provider_payment) {
                             case 8: // CIE
                                 $reel_amount = $this->search_amount($this->paiement_amount_total);
-                                $valAmount = $reel_amount + $percent_robus->amount_auther;
+                                $valAmount = $reel_amount;
                                 $amountReceved = $reel_amount - (float) ($percent_robus->amount_auther);
 
                                 break;
 
                             case 10: // SODECI
                                 $reel_amount = $this->search_amount($this->paiement_amount_t_sodecie);
-                                $valAmount = $reel_amount + $percent_robus->amount_auther;
+                                $valAmount = $reel_amount;
                                 $amountReceved = $reel_amount - (float) ($percent_robus->amount_auther);
 
                                 break;
@@ -467,7 +467,6 @@ class TransfertPayment extends Component
 
                         $amount_solde = $walletUser->wallet->amount - $valAmount;
 
-
                         // ✅ Vérification solde
                         if ($valAmount > $walletUser->wallet->amount) {
                             $this->resetPaiementField();
@@ -475,14 +474,6 @@ class TransfertPayment extends Component
                             $this->emit('error', 'Verifier votre montant svp !');
                             return;
                         }
-
-                        if (!($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer)) {
-                            $this->resetPaiementField();
-                            $this->emit('modal-hide-paiement');
-                            $this->emit('error', 'Désolé, vous n\'êtes pas autorisé !');
-                            return;
-                        }
-
 
 
                         // ✅ Création du paiement selon provider
@@ -509,7 +500,7 @@ class TransfertPayment extends Component
                                 );
 
                                 if ($walletPayment) {
-                                    $commission = $walletPayment->amount + $percent_robus->amount_auther;
+                                    $commission = $walletPayment->amount;
                                     $this->updateAmountPaymentReceveid($admin_civ, $percent_robus, $walletPayment, $walletUser, $commission);
                                 }
                                 break;
@@ -536,7 +527,7 @@ class TransfertPayment extends Component
                                     $amount_solde
                                 );
                                 if ($walletPayment) {
-                                    $commission = $walletPayment->amount + $percent_robus->amount_auther;
+                                    $commission = $walletPayment->amount;
                                     $this->updateAmountPaymentReceveid($admin_civ, $percent_robus, $walletPayment, $walletUser, $commission);
                                 }
                                 break;
@@ -635,13 +626,13 @@ class TransfertPayment extends Component
 
             $valuer_deposit =  $percent_robus->comission_auther;
 
-            $adminAmount =  $percent_robus->amount_auther -  $percent_robus->comission_auther;
+            $banque_valeur =  (float)  $percent_robus->bank_comission;
+            $admin_valeur =  (float)  $percent_robus->amount_auther;
 
             if ($this->showRemonterPaiementButton) {
 
                 $walletPayment->update([
-                    'commissions' => $valuer_deposit,
-                    'amount_received' => $valuer_deposit,
+                    'commissions' => $valuer_deposit
                 ]);
 
                 $account_accepted = sabdy()->is_accepted_companie ?? false;
@@ -650,19 +641,29 @@ class TransfertPayment extends Component
                     $valuer_companie = $percent_robus->percent_companie;
                     $walletPayment->increment('commission_companie', $valuer_companie);
 
-                    $totalCommission =  $percent_robus->percent_companie +  $percent_robus->comission_auther;
+                    $valuer_admin_compagnie = (float)  $admin_valeur  - ((float) $valuer_deposit + (float)$valuer_companie + (float)$banque_valeur);
 
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_payment_id', $walletPayment->id, $totalCommission, $adminAmount);
+                    app(CommissionServiceBackend::class)->distributeAdminCommissionUnderBankAcceptedCompanies($admin_civ, 'wallet_payment_id', $walletPayment->id, $valuer_admin_compagnie, $valuer_companie, $valuer_deposit, $banque_valeur);
                 } else {
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_payment_id', $walletPayment->id, $adminAmount, $valuer_deposit);
+
+                    $valor_commission = $percent_robus->amount_auther;
+                    $banque_valeur =   (float)$percent_robus->bank_comission;
+                    $valuer_deposit = (float)$percent_robus->comission_auther;
+                    $admin_valeur =  (float) $valor_commission - ((float)$valuer_deposit + (float)$banque_valeur);
+                    app(CommissionServiceBackend::class)->distributeAdminNoCompagniePaimentCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $admin_valeur, $valuer_deposit, $banque_valeur);
                 }
             } else {
-                app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $adminAmount);
-            }
-        } else {
 
-            $adminAmount =  $percent_robus->amount_auther;
-            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $adminAmount);
+                if ($walletPayment->provider_id == 7) {
+                    $admin_valeur =   $percent_robus->comission_canal;
+                    app(CommissionServiceBackend::class)->distributeAdminPaymentCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $admin_valeur);
+                } else {
+
+                    $banque_valeur =  (float)  $percent_robus->bank_comission;
+                    $admin_valeur =  (float)  $percent_robus->amount_auther -  (float) $banque_valeur;
+                    app(CommissionServiceBackend::class)->distributeAdminPaimentCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $admin_valeur, $banque_valeur);
+                }
+            }
         }
 
         app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount);
@@ -682,8 +683,9 @@ class TransfertPayment extends Component
 
             if ($this->showRemonterPaiementButton) {
 
-                $valuer_deposit =  $percent_robus->comission_canal;
-
+                $valor_commission =  $percent_robus->comission_canal;
+                $banque_valeur =  0;
+                $valuer_deposit = 0;
 
                 $walletPayment->update([
                     'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
@@ -693,24 +695,21 @@ class TransfertPayment extends Component
 
                 if ($account_accepted) {
 
-                    $valuer_companie = $percent_robus->percent_companie;
-
+                    $valuer_companie = (float) $valor_commission * (float)$percent_robus->percent_companie;
                     $walletPayment->increment('commission_companie', $valuer_companie);
+                    $valuer_admin_compagnie = (float)  $percent_robus->comission_canal  - (float)$valuer_companie;
 
-                    $totalCommission =  $percent_robus->percent_companie +  $percent_robus->comission_canal;
-
-                    app(CommissionServiceBackend::class)->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_payment_id', $walletPayment->id, $totalCommission, $adminAmount);
+                    app(CommissionServiceBackend::class)->distributeAdminCommissionUnderBankAcceptedCompanies($admin_civ, 'wallet_payment_id', $walletPayment->id, $valuer_admin_compagnie, $valuer_companie, $valuer_deposit, $banque_valeur);
                 } else {
-                    app(CommissionServiceBackend::class)->distributeAdminCommissionAccepteds($admin_civ, 'wallet_payment_id', $walletPayment->id, $adminAmount, $valuer_deposit);
+                     $banque_valeur =  0;
+                    $valuer_deposit = 0;
+                    $admin_valeur =   $percent_robus->comission_canal;
+                    app(CommissionServiceBackend::class)->distributeAdminNoCompagniePaimentCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $admin_valeur, $valuer_deposit, $banque_valeur);
                 }
             } else {
 
-                app(CommissionServiceBackend::class)->distributeAdminCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $adminAmount);
+                app(CommissionServiceBackend::class)->distributeAdminPaiementCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $adminAmount);
             }
-        } else {
-
-            $adminAmount =  $percent_robus->amount_canal;
-            app(CommissionServiceBackend::class)->distributeAdminCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $adminAmount);
         }
 
         app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount);

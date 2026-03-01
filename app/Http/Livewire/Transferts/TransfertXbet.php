@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Transferts;
 
 use App\Models\OperatorService;
 use App\Http\Services\CommissionServiceBackend;
+use App\Http\Services\ConvertionPercentBackend;
 use App\Http\Services\TotalAmoutUserServiveBackend;
 use App\Http\Services\TransfertServiceBackend;
 use App\Http\Services\NotificationServiceBackend;
@@ -15,7 +16,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Events\CreateWalletXbetEvent;
 use Livewire\Component;
-
 
 class TransfertXbet extends Component
 {
@@ -174,18 +174,12 @@ class TransfertXbet extends Component
 
                     $this->validate(
                         [
-                            'citie_xbet' => 'required',
-                            'area_xbet' => 'required',
                             'code_compte' => 'required',
                             'amount_xbet' => 'required',
                             'id_compte' => 'required'
                         ],
                         [
 
-                            'citie_xbet.required' =>
-                            'La ville est obligatoire',
-                            'area_xbet.required' =>
-                            'la rue est obligatoire',
                             'code_compte.required' =>
                             'le code du compte est obligatoire',
                             'amount_xbet.required' =>
@@ -199,8 +193,6 @@ class TransfertXbet extends Component
 
                     $this->stepXbet = 2;
                 }
-
-                $percent_robus =  app(CommissionServicePercentBackend::class)->getRobusPercentageOnexbet();
 
 
                 if ($som_transfers >= $valeur_ceiling) {
@@ -216,11 +208,7 @@ class TransfertXbet extends Component
 
                 $reel_amount = $this->search_amount($this->amount_xbet);
 
-                if ($this->choose_type_transaction === 1) {
-                    $val_amount = $reel_amount +  $percent_robus->percent *  $reel_amount;
-                } else {
-                    $val_amount = $reel_amount +  $percent_robus->percent_with_drawal *  $reel_amount;
-                }
+                $val_amount = $reel_amount;
 
                 if ($val_amount > $walletUser->wallet->amount) {
                     $this->resetXbetTransactionField();
@@ -293,11 +281,7 @@ class TransfertXbet extends Component
             $reel_amount = $this->search_amount($this->amount_xbet);
             $percent_robus =  app(CommissionServicePercentBackend::class)->getRobusPercentageOnexbet();
 
-            if ($this->choose_type_transaction === 1) {
-                $val_amount = $reel_amount +  $percent_robus->percent *  $reel_amount;
-            } else {
-                $val_amount = $reel_amount +  $percent_robus->percent_with_drawal *  $reel_amount;
-            }
+            $val_amount = $reel_amount;
 
             if ($val_amount > $walletUser->wallet->amount) {
                 $this->resetXbetTransactionField();
@@ -306,12 +290,16 @@ class TransfertXbet extends Component
                 return;
             }
 
-            $amount_solde =  $walletUser->wallet->amount -  $val_amount;
+
+             $amount_solde =  $walletUser->wallet->amount ;
 
             if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
 
-                $amountReceved = $reel_amount;
-
+                if ($this->choose_type_transaction === 1) {
+                    $amountReceved = $reel_amount -  ($percent_robus->percent *  $reel_amount);
+                } else {
+                    $amountReceved = $reel_amount -  ($percent_robus->percent_with_drawal *  $reel_amount);
+                }
 
                 $walletXbet =  app(TransfertServiceBackend::class)->createXbetTransaction(
                     $reel_amount,
@@ -321,8 +309,6 @@ class TransfertXbet extends Component
                     $this->choose_type_transaction,
                     $this->full_nameXbet,
                     $this->id_compte,
-                    $this->citie_xbet,
-                    $this->area_xbet,
                     $this->code_compte,
                     $amountReceved
                 );
@@ -355,16 +341,12 @@ class TransfertXbet extends Component
                 }
 
 
-
                 app(NotificationServiceBackend::class)->sendSuccessMessageCreateNotification($walletUser, $message);
-
 
                 if ($walletXbet != null  && $walletXbet->status == 'PENDING') {
                     $this->updateamountXbetTrasaction($admin_civ, $percent_robus, $walletXbet,  $walletUser, $reel_amount, $this->choose_type_transaction);
                 }
-
                 event(new CreateWalletXbetEvent($walletXbet));
-
                 app(NotificationServiceBackend::class)->notifyCreateUsers($walletUser, $admins, 'Transaction 1XBET', 'Demande de 1XBET est en cours de validation', 'Demande de transaction 1XBET de ' . ' ' . $walletXbet->wallet->sidUser->firstname);
 
                 if ($admins->count() > 0) {
@@ -403,11 +385,23 @@ class TransfertXbet extends Component
 
             if ($choose_type_transaction ===  1) {
 
-                if ($this->showTransRemonteDepotXbetButton) {
+                $amount_commission = $val_amount_send;
 
+                app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount_commission);
+
+                $admin_nocomission = app(ConvertionPercentBackend::class)->convertAdminCommission($amount_user->percent * $amount_valeur);
+
+                if ($this->showTransRemonteDval_amount_sendepotXbetButton) {
+
+                    $amount__commission = $amount_valeur + ($amount_user->percent * $amount_valeur);
+                    $amount_solde = sabdy()->wallet->amount - $amount__commission;
                     $valuer_deposit = $amount_user->percent_merchands * $amount_valeur;
+                    $valuer_conversion_companie =  app(ConvertionPercentBackend::class)->convertAdminCommission($amount_user->percent_companie * $amount_valeur);
+                    $valuer_conversion_deposit =  app(ConvertionPercentBackend::class)->convertAdminCommission($amount_user->percent_merchands * $amount_valeur);
+                    $admin_valeur =  app(ConvertionPercentBackend::class)->convertAdminCommission($amount_user->percent_admin *  $amount_valeur);
 
                     $walletXbet->update([
+                        'amount_solde' => $amount_solde,
                         'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
                     ]);
 
@@ -418,52 +412,54 @@ class TransfertXbet extends Component
                         $valuer_companie = $amount_user->percent_companie * $amount_valeur;
 
                         $walletXbet->increment('commission_companie', $valuer_companie);
-
-                        $totalCommission =  (float)($valuer_companie) +  (float)($valuer_deposit);
-
-                        app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id, $totalCommission, $adminAmount);
+                        app(CommissionServiceBackend::class)->distributeAdminCommissionAcceptedXbetCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_valeur, $valuer_conversion_companie, $valuer_conversion_deposit);
                     } else {
-                        app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_xbet_id', $walletXbet->id, $adminAmount, $valuer_deposit);
+                        app(CommissionServiceBackend::class)->distributeAdminCommissionXbetNoCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id,  $admin_valeur, $valuer_conversion_deposit);
                     }
                 } else {
-
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_xbet_id', $walletXbet->id, $val_amount_send);
+                    app(CommissionServiceBackend::class)->distributeAdminPaiementCommissions($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_nocomission);
                 }
             } else {
+
+                $amount__commission = $amount_valeur + ($amount_user->percent_with_drawal * $amount_valeur);
+
+                $amount_solde = sabdy()->wallet->amount - $amount__commission;
+
+                $admin_nocomission = app(ConvertionPercentBackend::class)->convertAdminCommission($amount_user->percent_with_drawal * $amount_valeur);
 
                 if ($this->showTransRemonteRetraitXbetButton) {
 
                     $valuer_deposit =  $amount_user->percent_under_drawal * $amount_valeur;
+                    $valuer_conversion_deposit =  app(ConvertionPercentBackend::class)->convertAdminCommission($amount_user->percent_under_drawal * $amount_valeur);
+                    $admin_valeur =  app(ConvertionPercentBackend::class)->convertAdminCommission($amount_user->percent_admin *  $amount_valeur);
 
                     $walletXbet->update([
+                        'amount_solde' => $amount_solde,
                         'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
                     ]);
 
                     $account_accepted = sabdy()->is_accepted_companie ?? false;
 
                     if ($account_accepted && $this->showTransRemonteRetraitXbetCButton) {
-                        $valuer_companie =  $amount_user->percent_comp_drawal * $amount_valeur;
+
+                        $valuer_companie =  $amount_user->percent_companie * $amount_valeur;
+
+                        $valuer_conversion_companie =  app(ConvertionPercentBackend::class)->convertAdminCommission($amount_user->percent_companie * $amount_valeur);
+
                         $walletXbet->increment('commission_companie', $valuer_companie);
 
-                        $totalCommission =  (float)($valuer_companie) +  (float)($valuer_deposit);
-
-                        app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id, $totalCommission, $adminAmount);
+                        app(CommissionServiceBackend::class)->distributeAdminCommissionAcceptedXbetCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_valeur, $valuer_conversion_companie, $valuer_conversion_deposit);
                     } else {
-                        app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_xbet_id', $walletXbet->id, $adminAmount, $valuer_deposit);
+                        app(CommissionServiceBackend::class)->distributeAdminCommissionXbetNoCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id,  $admin_valeur, $valuer_conversion_deposit);
                     }
                 } else {
-
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_xbet_id', $walletXbet->id, $val_amount_send);
+                    app(CommissionServiceBackend::class)->distributeAdminPaiementCommissions($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_nocomission);
                 }
             }
         } else {
 
-            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_xbet_id', $walletXbet->id, $val_amount_send);
+            return null;
         }
-
-        $amount_commission = $val_amount_send;
-
-        app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount_commission);
 
         return true;
     }
@@ -508,7 +504,6 @@ class TransfertXbet extends Component
                     $this->commission_transaction_val_nat_xbet_receive = (float) $reel_amount;
                     $this->commission_transaction_val_nat_xbet_pay = (float) $commission_percent_transaction;
                     $this->commission_transaction_val_nat_xbet_com = (float) $commission_transaction->percent_merchands * $reel_amount;
-                
                 } else {
                     $commission_percent_transaction = (float) $commission_transaction->percent_with_drawal * $reel_amount;
                     $this->commission_transaction_val_admin_xbet_receive = (float) $commission_transaction->percent_admin * $reel_amount;

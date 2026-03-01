@@ -171,19 +171,21 @@
                             ])
 
 
-                            @include('components.transaction-text-input', [
-                                'id' => 'citie_xbet',
-                                'model' => 'citie_xbet',
-                                'label' => 'Ville',
-                                'error' => 'citie_xbet',
-                            ])
-
-                            @include('components.transaction-text-input', [
-                                'id' => 'area_xbet',
-                                'model' => 'area_xbet',
-                                'label' => 'Rue',
-                                'error' => 'area_xbet',
-                            ])
+                            <div  class="col-span-6 mt-3 form-group required">
+                                <label class="form-label required">Ville</label>
+                                <div class="field-value">
+                                    <i class="fas fa-city"></i>
+                                    <span> KAYA Centre-Nord</span>
+                                </div>
+                            </div>
+                             <div  class="col-span-6 mt-3 form-group required">
+                                <label class="form-label required">Rue</label>
+                                <div class="field-value">
+                                    <i class="fas fa-city"></i>
+                                    <span > Bar Namende 2</span>
+                                </div>
+                            </div>
+                            
                             <div class="col-span-12 mt-1">
                                 @include('components.transaction-amount-input', [
                                     'id' => 'amount_xbet',

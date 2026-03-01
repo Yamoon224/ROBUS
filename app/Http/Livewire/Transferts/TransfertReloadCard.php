@@ -145,12 +145,10 @@ class TransfertReloadCard extends Component
                     if (sabdy()->is_under_distributer) {
                         $valeur_first = $percent_robus->levelDepositIvories->where('is_ivoires', true)->first();
                         $valeur_end = $percent_robus->levelDepositIvories->where('is_ivoires', true)->last();
-                        $all_valeurs = $percent_robus->levelDepositIvories->where('is_ivoires', true);
                     } else {
 
                         $valeur_first = $percent_robus->levelDepositIvories->where('is_inter_bank', true)->first();
                         $valeur_end = $percent_robus->levelDepositIvories->where('is_inter_bank', true)->last();
-                        $all_valeurs = $percent_robus->levelDepositIvories->where('is_inter_bank', true);
                     }
 
                     $reel_amount = $this->search_amount($this->amount_reloadcard);
@@ -258,7 +256,6 @@ class TransfertReloadCard extends Component
                             return;
                         }
 
-
                         if ($valeur_first->amount_begin > $reel_amount) {
                             $this->resetReloadCardField();
                             $this->emit('modal-hide-reloadCard');
@@ -266,13 +263,9 @@ class TransfertReloadCard extends Component
                             return;
                         }
 
-
-
                         foreach ($all_valeurs as $amount_user) {
 
                             if ($reel_amount >= $amount_user->amount_begin && $reel_amount <= $amount_user->amount_end) {
-
-                                //  If amount is Null
 
                                 if ($amount_user->amount == null) {
 
@@ -421,6 +414,8 @@ class TransfertReloadCard extends Component
 
                 $valuer_deposit =  $percent_merchands;
 
+                $admin_valeur =  $valuer_deposit  + $commissionCompanie;
+
                 $walletOrderCard->update([
                     'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
                 ]);
@@ -430,28 +425,17 @@ class TransfertReloadCard extends Component
                 if ($account_accepted && $this->showRemonterRechargementCButton) {
                     $valuer_companie = $commissionCompanie;
                     $walletOrderCard->increment('commission_companie', $valuer_companie);
-
-                    $totalCommission =  $percent_merchands +  $valuer_companie;
-
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $totalCommission, $amount_commission);
+                    app(CommissionServiceBackend::class)->distributeUnderCommissionAcceptedCompanies($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $valuer_companie, $valuer_deposit);
                 } else {
-
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $amount_commission, $valuer_deposit);
+                    app(CommissionServiceBackend::class)->distributeAdminCommissionUnders($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $valuer_deposit);
                 }
-            } else {
-
-                $valuer_deposit =  $amount_commission;
-
-                app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $valuer_deposit);
             }
         } else {
-            $valuer_deposit =  $amount_commission;
 
-            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $valuer_deposit);
+            return null;
         }
 
         app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount_verify);
-
 
         return true;
     }
@@ -560,7 +544,7 @@ class TransfertReloadCard extends Component
             [$commission_reload_val_nat_true_pay, $commission_reload_val_nat_true_receive] =
                 $this->calculateCommission($levels, $this->amount_reloadcard);
         }
-        
+
         return view(
             'livewire.transferts.transfert-reload-card',
             [

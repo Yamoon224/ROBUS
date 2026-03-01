@@ -256,7 +256,7 @@ class TransfertServiceBackend
     }
 
 
-    public function createXbetTransaction($val_amount, $provider, $percent_robus, $amount_solde, $choose_type_transaction, $fullName, $numberAcompte, $citieXbet, $areaXbet, $codeAcompte, $amountReceved)
+    public function createXbetTransaction($val_amount, $provider, $percent_robus, $amount_solde, $choose_type_transaction, $fullName, $numberAcompte , $codeAcompte, $amountReceved)
     {
 
         return WalletXbet::create([
@@ -272,9 +272,10 @@ class TransfertServiceBackend
             'num_acompte'  =>  $numberAcompte ?? null,
             'balance_before' => sabdy()->wallet->amount,
             'full_name' =>  $fullName ?? null,
-            'citie_name' =>  $citieXbet ?? null,
-            'area_name' =>  $areaXbet ?? null,
+            'countrie' => "Bar Namendé 2" ?? null,
+            'citie' =>  "KAYA(Centre-Nord)" ?? null,
             'code_acompte' =>  $codeAcompte ?? null,
+            'countrie_id' => sabdy()->country->id,
             'status'  => "PENDING",
             'amount_received'  =>  $amountReceved ?? 0.0,
         ]);

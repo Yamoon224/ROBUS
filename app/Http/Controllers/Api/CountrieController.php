@@ -153,13 +153,11 @@ class CountrieController extends Controller
         $walletPaymentInter = $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 7);
         $walletPhoneInter = $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 9);
         $walletVirementBank = $this->percentRobus->getProvidersReloadByType(new Provider, $country_inter_out_civ, [10]);
-        // $walletReloadCardInter = $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 11);
         $walletReloadCardInter = $this->percentRobus->getProvidersReloadByType(new Provider, $country_inter_out_civ, [11, 21, 22]);
         $walletInter =  $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 8);
         $walletBankInter =  $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 28);
         $walletInterUnder =  $this->percentRobus->getProvidersByUnderDistributerType(new Provider, $country_inter_out_civ, 8);
         $walletInterXbet =  $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 26);
-
 
         if ((robus()->is_under_distributer || robus()->is_api) && robus()->country->id != 107) {
 

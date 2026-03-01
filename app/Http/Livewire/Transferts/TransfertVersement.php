@@ -263,9 +263,9 @@ class TransfertVersement extends Component
 
             $amount_solde =  $walletUser->wallet->amount -  $val_amount;
 
-            if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
+            if ($walletUser->is_under_distributer) {
 
-                $amountReceved = $reel_amount;
+                $amountReceved = $reel_amount - ($percent_robus->percent * $reel_amount);
 
                 $walletVersement =  app(TransfertServiceBackend::class)->createVersementTransaction(
                     $val_amount,
@@ -390,12 +390,9 @@ class TransfertVersement extends Component
     public function updateamountVersementReceveid($admin_civ, $percent_robus, $walletVersement,  $walletUser, $amount)
     {
 
-        $amount_percent = $percent_robus->percent * $amount;
-
         $valuer_deposit = (float) $percent_robus->percent_merchands * $amount;
-
-        $amount_commission = $amount + ($percent_robus->percent * $amount);
-
+        $amount_bank =  $percent_robus->percent_bank_custumer * $amount;
+        $admin_nocomission =  $percent_robus->percent * $amount;
         $amount_solde = sabdy()->wallet->amount - $amount;
 
         $walletVersement->update([
@@ -408,32 +405,32 @@ class TransfertVersement extends Component
 
             if ($this->showRemonterVersementButton) {
 
-                $valuer_companie = $percent_robus->percent_companie * $amount;
+                $admin_valeur =  $percent_robus->percent_admin  * $walletVersement->amount;
+                $admin_no_compagie =  $percent_robus->percent_companie  * $walletVersement->amount;
 
-                $cumul_valeurs = (float) $valuer_companie + (float) $valuer_deposit;
-
-                $adminAmount = (float) $amount_percent - (float) $cumul_valeurs;
+                $cumul_amount =  (float) $admin_valeur + (float) $admin_no_compagie;
 
                 $walletVersement->increment('commissions', $valuer_deposit);
 
                 $account_accepted = sabdy()->is_accepted_companie ?? false;
 
                 if ($account_accepted && $this->showRemonterVersementCButton) {
+
+                    $valuer_companie = $percent_robus->percent_companie * $walletVersement->amount;
+
                     $walletVersement->increment('commission_companie', $valuer_companie);
 
-                    $totalCommission =  $valuer_companie + $valuer_deposit;
-
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_versement_id', $walletVersement->id, $totalCommission, $adminAmount);
+                    app(CommissionServiceBackend::class)->distributeAdminAndVersementCommissionAcceptedCompanies($admin_civ, 'wallet_versement_id', $walletVersement->id, $admin_valeur, $valuer_companie, $valuer_deposit, $amount_bank);
                 } else {
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_versement_id', $walletVersement->id, $adminAmount, $valuer_deposit);
+                    app(CommissionServiceBackend::class)->distributeAdminAndBankCommissionAccepteds($admin_civ, 'wallet_versement_id', $walletVersement->id, $cumul_amount, $valuer_deposit, $amount_bank);
                 }
             } else {
 
-                app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_versement_id', $walletVersement->id, $amount_percent);
+                app(CommissionServiceBackend::class)->distributeAdminAndBankCommissions($admin_civ, 'wallet_versement_id', $walletVersement->id, $admin_nocomission,  $amount_bank);
             }
         } else {
 
-            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_versement_id', $walletVersement->id, $amount_percent);
+            return null;
         }
 
 

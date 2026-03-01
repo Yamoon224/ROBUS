@@ -85,8 +85,6 @@ class PhoneCreditService
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
-        $amount_percent = $percent_robus->percent * $amount;
-
         $valuer_deposit = (float) $percent_robus->percent_merchands * $amount;
 
         if (robus()->is_under_distributer || robus()->is_api) {
@@ -94,10 +92,6 @@ class PhoneCreditService
             if (!empty($activeButtons['showRemonterCreditButton'])) {
 
                 $valuer_companie = $percent_robus->percent_companie * $amount;
-
-                $cumul_valeurs = (float) $valuer_companie + (float) $valuer_deposit;
-
-                $admin_valeur = (float) $amount_percent - (float) $cumul_valeurs;
 
                 $walletPhone->increment('commissions', $valuer_deposit);
 

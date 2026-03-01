@@ -147,9 +147,6 @@ class TransfertPush extends Component
             if ($provider) {
 
 
-
-                $percent_robus = app(CommissionServicePercentBackend::class)->getRobusPercentagePush();
-
                 if ($walletUser->country->code != 'CI') {
                     $this->resetPushField();
                     $this->emit(
@@ -172,13 +169,15 @@ class TransfertPush extends Component
 
                 $val_amount = $reel_amount;
 
-                if ($val_amount > $walletUser->wallet->amount) {
-                    $this->resetPushField();
-                    $this->emit(
-                        'error',
-                        'Verifier votre montant  svp !'
-                    );
-                    return;
+                if ($this->choose_transaction == 1) {
+                    if ($val_amount > $walletUser->wallet->amount) {
+                        $this->resetPushField();
+                        $this->emit(
+                            'error',
+                            'Verifier votre montant  svp !'
+                        );
+                        return;
+                    }
                 }
 
                 $this->stepPush = 2;
@@ -253,19 +252,20 @@ class TransfertPush extends Component
 
             $val_amount = $reel_amount;
 
-            if ($val_amount > $walletUser->wallet->amount) {
-                $this->resetPushField();
-                $this->emit('error', 'Vérifier votre montant SVP !');
-                return;
+            if ($this->choose_transaction == 1) {
+                if ($val_amount > $walletUser->wallet->amount) {
+                    $this->resetPushField();
+                    $this->emit('error', 'Vérifier votre montant SVP !');
+                    return;
+                }
             }
 
             $amount_solde =  $walletUser->wallet->amount -  $val_amount;
 
-            if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
+            if ($walletUser->is_under_distributer) {
 
                 $amountReceved = $reel_amount;
 
-                // dd($this->choose_transaction);
                 $walletPush =  app(TransfertServiceBackend::class)->createPushTransaction(
                     $val_amount,
                     $provider,
@@ -389,15 +389,15 @@ class TransfertPush extends Component
     public function updateamountPushReceveid($admin_civ, $percent_robus, $walletPush,  $walletUser, $amount)
     {
 
-        $amount_percent = $percent_robus->percent * $amount;
-
         $percent = ($this->choose_transaction == 1)
             ? $percent_robus->percent_merchands
-            : $percent_robus->percent_with_drawal;
+            : $percent_robus->percent_with_drawal_merchands;
+
+        $percent_compagnie =  ($this->choose_transaction == 1)
+            ? $percent_robus->percent_with_drawal_companie
+            : $percent_robus->percent_companie;
 
         $valuer_deposit = (float) $percent * $amount;
-
-        $amount_commission = $amount + ($percent_robus->percent * $amount);
 
         $amount_solde = sabdy()->wallet->amount - $amount;
 
@@ -405,17 +405,16 @@ class TransfertPush extends Component
             'amount_solde' => $amount_solde,
         ]);
 
-        app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount);
+
+        if ($this->choose_transaction == 1) {
+            app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount);
+        }
 
         if (sabdy()->is_under_distributer) {
 
             if ($this->showRemonterPushButton) {
 
-                $valuer_companie = $percent_robus->percent_companie * $amount;
-
-                $cumul_valeurs = (float) $valuer_companie + (float) $valuer_deposit;
-
-                $adminAmount = (float) $amount_percent - (float) $cumul_valeurs;
+                $valuer_companie = $percent_compagnie * $amount;
 
                 $walletPush->increment('commissions', $valuer_deposit);
 
@@ -423,19 +422,11 @@ class TransfertPush extends Component
 
                 if ($account_accepted && $this->showRemonterPushCButton) {
                     $walletPush->increment('commission_companie', $valuer_companie);
-                    $totalCommission =  $valuer_companie + $valuer_deposit;
-
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_push_id', $walletPush->id, $totalCommission, $adminAmount);
+                    app(CommissionServiceBackend::class)->distributeUnderCommissionAcceptedCompanies($admin_civ, 'wallet_push_id', $walletPush->id, $valuer_companie, $valuer_deposit);
                 } else {
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_push_id', $walletPush->id, $adminAmount, $valuer_deposit);
+                    app(CommissionServiceBackend::class)->distributeAdminCommissionUnders($admin_civ, 'wallet_push_id', $walletPush->id, $valuer_deposit);
                 }
-            } else {
-
-                app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_push_id', $walletPush->id, $amount_percent);
             }
-        } else {
-
-            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_push_id', $walletPush->id, $amount_percent);
         }
 
 

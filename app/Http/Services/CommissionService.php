@@ -306,7 +306,7 @@ class CommissionService
                     'amount' => $commissionPerAdmin,
                     'sid_user_id' => $adminUser->id,
                     'description' => 'Commission administrateur',
-                    'amount_under' => $userUnder->is_under_distributer ? $totalCommission : 0,
+                    'amount_under' =>  0,
                     'description_underdistributer' => null,
                 ], [$walletColumn => $walletId]));
             }

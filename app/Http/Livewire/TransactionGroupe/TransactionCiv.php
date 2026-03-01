@@ -687,16 +687,10 @@ class TransactionCiv extends Component
                         if ($this->choose_transaction == 1) {
                             $this->validate([
                                 'transaction_amount_money' => 'required',
-                                'transaction_phone' => 'required',
-                                // "name_custumer" => 'required',
-                                // "num_piece_custumer" => 'required',
-                                // "date_piece" => 'required',
+                                'transaction_phone' => 'required'
                             ], [
                                 'transaction_amount_money.required' => 'Votre montant est obligatoire',
                                 'transaction_phone.required' => 'le numero est obligatoire',
-                                // 'name_custumer.required' => 'Nom est obligatoire',
-                                // 'num_piece_custumer.required' => 'Numero piece est obligatoire',
-                                // 'date_piece.required' => 'date de validité est obligatoire',
 
                             ]);
                         } else {
@@ -722,7 +716,6 @@ class TransactionCiv extends Component
 
 
                         if (sabdy()->country->name_groupe == 'CIV') {
-
                             $percent_robus = app(CommissionServicePercentBackend::class)->getRobusPercentageMobile();
                         } elseif (sabdy()->country->name_groupe == 'MAG') {
 
@@ -1329,21 +1322,18 @@ class TransactionCiv extends Component
 
         $valeur_percent_valeur  = $choose_transaction == 1 ?  $percent_robus->percent * $transaction_amount_money : $percent_robus->percent_with_drawal * $transaction_amount_money;
 
-        // Commissions Inters 
-        // Calcul des valeurs de commissions
-        $valuer_admin = $percent_robus->percent_admin * $valeur_percent_valeur;
         $valuer_deposit = $percent_robus->percent_deposit * $valeur_percent_valeur;
-
+        $valuer_companie = $percent_robus->percent_companie * $commission;
 
         if ($country_civ->currencie->value > sabdy()->country->currencie->value) {
             $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) sabdy()->country->currencie->value;
-            $percent_valeur_convertion =   (float)  $valuer_admin *   (float) sabdy()->country->currencie->value;
+            $percent_valeur_compagnie =   (float)  $valuer_companie *   (float) sabdy()->country->currencie->value;
         } elseif ($country_civ->currencie->value == sabdy()->country->currencie->value) {
             $admin_valeur_convertion =   (float)  $valuer_deposit;
-            $percent_valeur_convertion =   (float)  $valuer_admin;
+            $percent_valeur_compagnie =   (float)  $valuer_companie;
         } else {
             $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) sabdy()->country->currencie->value;
-            $percent_valeur_convertion =   (float)  $valuer_admin *   (float) sabdy()->country->currencie->value;
+            $percent_valeur_compagnie =   (float)  $valuer_companie *   (float) sabdy()->country->currencie->value;
         }
 
         if ($this->showRemonterMoneyButton) {
@@ -1354,20 +1344,14 @@ class TransactionCiv extends Component
 
             $account_accepted = sabdy()->is_accepted_companie ?? false;
             $valuer_companie = $percent_robus->percent_companie * $valeur_percent_valeur;
-            $cumul_valeurs = (float) $valuer_companie + (float) $valuer_deposit;
-            $adminAmount = (float) $valuer_admin - (float) $cumul_valeurs;
 
             if ($account_accepted) {
-                $walletTransaction->increment('commission_companie', $valuer_companie);
-                $totalCommission =  $valuer_companie + $valuer_deposit;
-                app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $totalCommission, $adminAmount);
+                $walletTransaction->increment('commission_companie', $percent_valeur_compagnie);
+                app(CommissionServiceBackend::class)->distributeUnderCommissionAcceptedCompanies($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $percent_valeur_compagnie, $admin_valeur_convertion);
             } else {
-                app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $adminAmount, $valuer_deposit);
+                app(CommissionServiceBackend::class)->distributeAdminCommissionUnders($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $admin_valeur_convertion);
             }
-        } else {
-
-            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $percent_valeur_convertion);
-        }
+        } 
         return true;
     }
 

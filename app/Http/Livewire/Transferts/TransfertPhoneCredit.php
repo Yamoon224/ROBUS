@@ -150,9 +150,7 @@ class TransfertPhoneCredit extends Component
                 $reel_amount = $this->search_amount($this->amount_phone_credit);
 
 
-                $val_amount = $reel_amount +  $percent_robus->percent *  $reel_amount;
-
-                if ($val_amount > $walletUser->wallet->amount) {
+                if ($reel_amount > $walletUser->wallet->amount) {
                     $this->resetPhoneCreditField();
                     $this->emit('modal-hide-phoneCredit');
                     $this->emit(
@@ -234,18 +232,17 @@ class TransfertPhoneCredit extends Component
 
             $reel_amount = $this->search_amount($this->amount_phone_credit);
             $percent_robus = PhoneCreditCost::find(1);
-            $val_amount = $reel_amount + $percent_robus->percent * $reel_amount;
 
-            if ($val_amount > $walletUser->wallet->amount) {
+            if ($reel_amount > $walletUser->wallet->amount) {
                 $this->resetPhoneCreditField();
                 $this->emit('modal-hide-phoneCredit');
                 $this->emit('error', 'Vérifier votre montant SVP !');
                 return;
             }
 
-            $amount_solde =  $walletUser->wallet->amount -  $val_amount;
+            $amount_solde =  $walletUser->wallet->amount -  $reel_amount;
 
-            if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
+            if ($walletUser->is_under_distributer) {
 
                 $amountReceved = $reel_amount;
 
@@ -314,25 +311,19 @@ class TransfertPhoneCredit extends Component
 
         $valuer_deposit = (float) $percent_robus->percent_merchands * $amount;
 
-        $amount_commission = $amount + ($percent_robus->percent * $amount);
-
-        $amount_solde = sabdy()->wallet->amount - $amount_commission;
+        $amount_solde = sabdy()->wallet->amount - $amount;
 
         $walletPhone->update([
             'amount_solde' => $amount_solde,
         ]);
 
-        app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount_commission);
+        app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount);
 
         if (sabdy()->is_under_distributer) {
 
             if ($this->showRemonterCreditButton) {
 
                 $valuer_companie = $percent_robus->percent_companie * $amount;
-
-                $cumul_valeurs = (float) $valuer_companie + (float) $valuer_deposit;
-
-                $adminAmount = (float) $amount_percent - (float) $cumul_valeurs;
 
                 $walletPhone->increment('commissions', $valuer_deposit);
 
@@ -341,19 +332,11 @@ class TransfertPhoneCredit extends Component
                 if ($account_accepted && $this->showRemonterCreditCButton) {
                     $walletPhone->increment('commission_companie', $valuer_companie);
 
-                    $totalCommission =  $valuer_companie + $valuer_deposit;
-
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_phone_credit_id', $walletPhone->id, $totalCommission, $adminAmount);
+                    app(CommissionServiceBackend::class)->distributeUnderCommissionAcceptedCompanies($admin_civ, 'wallet_phone_credit_id', $walletPhone->id, $valuer_companie, $valuer_deposit);
                 } else {
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_phone_credit_id', $walletPhone->id, $adminAmount, $valuer_deposit);
+                    app(CommissionServiceBackend::class)->distributeAdminCommissionUnders($admin_civ, 'wallet_phone_credit_id', $walletPhone->id, $valuer_deposit);
                 }
-            } else {
-
-                app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_phone_credit_id', $walletPhone->id, $amount_percent);
             }
-        } else {
-
-            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_phone_credit_id', $walletPhone->id, $amount_percent);
         }
 
 
@@ -371,7 +354,7 @@ class TransfertPhoneCredit extends Component
         return $reel_amount;
     }
 
-   
+
 
     public function cancelPhoneCreditField()
     {

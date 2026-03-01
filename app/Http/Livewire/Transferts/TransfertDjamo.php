@@ -178,13 +178,15 @@ class TransfertDjamo extends Component
 
                 $val_amount = $reel_amount;
 
-                if ($val_amount > $walletUser->wallet->amount) {
-                    $this->resetDjamoField();
-                    $this->emit(
-                        'error',
-                        'Verifier votre montant  svp !'
-                    );
-                    return;
+                if ($this->choose_transaction == 1) {
+                    if ($val_amount > $walletUser->wallet->amount) {
+                        $this->resetDjamoField();
+                        $this->emit(
+                            'error',
+                            'Verifier votre montant  svp !'
+                        );
+                        return;
+                    }
                 }
 
                 $this->stepDjamo = 2;
@@ -251,10 +253,15 @@ class TransfertDjamo extends Component
             $percent_robus = app(CommissionServicePercentBackend::class)->getRobusPercentageDjamo();
             $val_amount = $reel_amount;
 
-            if ($val_amount > $walletUser->wallet->amount) {
-                $this->resetDjamoField();
-                $this->emit('error', 'Vérifier votre montant SVP !');
-                return;
+            if ($this->choose_transaction == 1) {
+                if ($val_amount > $walletUser->wallet->amount) {
+                    $this->resetDjamoField();
+                    $this->emit(
+                        'error',
+                        'Vérifiez votre montant SVP !'
+                    );
+                    return;
+                }
             }
 
             $amount_solde = $walletUser->wallet->amount - $val_amount;
@@ -280,7 +287,7 @@ class TransfertDjamo extends Component
                     $percent_robus,
                     $amount_solde,
                     $this->full_name_djamo,
-                    $savedPath, 
+                    $savedPath,
                     $amountReceved,
                     $this->identity_number,
                     $this->choose_transaction
@@ -474,10 +481,17 @@ class TransfertDjamo extends Component
 
                 $commission_transaction = app(CommissionServicePercentBackend::class)->getRobusPercentageDjamo();
 
-                $commission_percent_transaction = (float) $commission_transaction->percent * $reel_amount;
-                $this->commission_transaction_val_admin_djamo_receive = (float) $commission_percent_transaction;
-                $this->commission_transaction_val_nat_djamo_receive = (float) $reel_amount;
-                $this->commission_transaction_val_nat_djamo_pay = (float) $commission_transaction->percent_merchands * $reel_amount;
+                if ($this->choose_transaction == 1) {
+                    $commission_percent_transaction = (float) $commission_transaction->percent * $reel_amount;
+                    $this->commission_transaction_val_admin_djamo_receive = (float) $commission_percent_transaction;
+                    $this->commission_transaction_val_nat_djamo_receive = (float) $reel_amount;
+                    $this->commission_transaction_val_nat_djamo_pay = (float) $commission_transaction->percent_merchands * $reel_amount;
+                } else {
+                    $commission_percent_transaction = (float) $commission_transaction->percent * $reel_amount;
+                    $this->commission_transaction_val_admin_djamo_receive = (float) $commission_percent_transaction;
+                    $this->commission_transaction_val_nat_djamo_receive = (float) $reel_amount;
+                    $this->commission_transaction_val_nat_djamo_pay = (float) $commission_transaction->percent_with_drawal * $reel_amount;
+                }
             }
         }
     }
@@ -497,7 +511,7 @@ class TransfertDjamo extends Component
         $this->full_name_djamo = '';
         $this->stepDjamo = 1;
         $this->choose_transaction = null;
-        
+
         $this->emit('modal-hide-djamo');
         $this->emit('menu-djamo-active');
     }
@@ -521,15 +535,17 @@ class TransfertDjamo extends Component
     public function updateamountDjamoReceveid($admin_civ, $percent_robus, $walletDjamo,  $walletUser, $amount)
     {
 
-        $amount_percent = $percent_robus->percent * $amount;
 
         $percent = ($this->choose_transaction == 1)
             ? $percent_robus->percent_merchands
-            : $percent_robus->percent_with_drawal;
+            : $percent_robus->percent_with_drawal_merchands;
+
+        $percent_compagnie =  ($this->choose_transaction == 1)
+            ? $percent_robus->percent_with_drawal_companie
+            : $percent_robus->percent_companie;
+
 
         $valuer_deposit = (float) $percent * $amount;
-
-        $amount_commission = $amount + ($percent_robus->percent * $amount);
 
         $amount_solde = sabdy()->wallet->amount - $amount;
 
@@ -543,11 +559,7 @@ class TransfertDjamo extends Component
 
             if ($this->showRemonterDjamoButton) {
 
-                $valuer_companie = $percent_robus->percent_companie * $amount;
-
-                $cumul_valeurs = (float) $valuer_companie + (float) $valuer_deposit;
-
-                $adminAmount = (float) $amount_percent - (float) $cumul_valeurs;
+                $valuer_companie = $percent_compagnie * $amount;
 
                 $walletDjamo->increment('commissions', $valuer_deposit);
 
@@ -556,22 +568,12 @@ class TransfertDjamo extends Component
                 if ($account_accepted && $this->showRemonterDjamoCButton) {
                     $walletDjamo->increment('commission_companie', $valuer_companie);
 
-                    $totalCommission =  $valuer_companie + $valuer_deposit;
-
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_djamo_id', $walletDjamo->id, $totalCommission, $adminAmount);
+                    app(CommissionServiceBackend::class)->distributeUnderCommissionAcceptedCompanies($admin_civ, 'wallet_djamo_id', $walletDjamo->id, $valuer_companie, $valuer_deposit);
                 } else {
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_djamo_id', $walletDjamo->id, $adminAmount, $valuer_deposit);
+                    app(CommissionServiceBackend::class)->distributeAdminCommissionUnders($admin_civ, 'wallet_djamo_id', $walletDjamo->id, $valuer_deposit);
                 }
-            } else {
-
-                app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_djamo_id', $walletDjamo->id, $amount_percent);
             }
-        } else {
-
-            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_djamo_id', $walletDjamo->id, $amount_percent);
         }
-
-
         return true;
     }
 

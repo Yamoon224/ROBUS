@@ -21,6 +21,14 @@
 
         </div>
 
+        <!-- Label -->
+        @include('components.modal-header', [
+            'title' => 'Canal de paiement a l\'internationnal',
+            'icon' => 'fas fa-check-circle',
+            'service' => 'Paiement internationnal',
+            'serviceIcon' => 'fas fa-dice',
+            'onClose' => 'cancelInterOutCivField',
+        ])
         @if ($is_under)
             @if ($showTransacInterButton)
                 <div class="modal-body grid grid-cols-12 gap-4 gap-y-3 ">
@@ -33,7 +41,9 @@
                             <option value="null" selected>Selectionnez le pays</option>
                             @foreach ($countrie_inter_ivoires as $item)
                                 <option value="{{ $item->id }}">
-                                    {{ $item->name }}</option>
+                                    {{ $item->name }}
+
+                                </option>
                             @endforeach
                         </select>
                         @error('country_inter_out_civ')
@@ -44,71 +54,131 @@
             @endif
         @else
             <div class="modal-body grid grid-cols-12 gap-4 gap-y-3 ">
-
                 <div class="col-span-12 mt-space">
-                    <label for="country_inter_out_civ" class="form-label">Pays<span class="text-danger">
-                            *</span></label>
-                    <select wire:model.debounce.10ms="country_inter_out_civ" wire:change="updateProviderTransaction"
-                        id="country_inter_out_civ" class="form-control">
-                        <option value="null" selected>Selectionnez le pays</option>
-                        @foreach ($countrie_inter_ivoires as $item)
-                            <option value="{{ $item->id }}">
-                                {{ $item->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('country_inter_out_civ')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
+                    <label for="country_inter_out_civ" class="form-label">Aucune données disponible pour vous !!!<span
+                            class="text-danger">
+                        </span></label>
                 </div>
             </div>
         @endif
 
-
         @if (!is_null($country_inter_out_civ))
-            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
+            <div class="modal-body mt-1">
                 @php
                     $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
+                    $region = match ($countrie_indicative->name_groupe) {
+                        'AFL' => '🌍 Afrique de L\'Ouest',
+                        'AFC' => '🌍 Afrique Centrale',
+                        'MAG' => '🌍 Maghreb',
+                        'URP' => '🌍 Europe',
+                        'USA' => '🇺🇸 États-Unis',
+                        'CIV' => '🇨🇮 Côte d\'Ivoire',
+                        'ASIE' => '🌏 Asie',
+                        'AFE' => '🌍 Afrique de l\'Est',
+                        default => '🌍 Autre',
+                    };
                 @endphp
                 <div class="col-span-12 text-center">
                     <span
                         class="alert alert-primary inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                        @if ($countrie_indicative->name_groupe == 'AFL')
-                            Afrique de L'Ouest
-                        @elseif ($countrie_indicative->name_groupe == 'AFC')
-                            Afrique de Centrale
-                        @elseif ($countrie_indicative->name_groupe == 'MAG')
-                            Maghreb
-                        @elseif ($countrie_indicative->name_groupe == 'URP')
-                            Europe
-                        @elseif ($countrie_indicative->name_groupe == 'USA')
-                            Etat Unis
-                        @elseif ($countrie_indicative->name_groupe == 'CIV')
-                            Côte d'Ivoire
-                        @elseif ($countrie_indicative->name_groupe == 'ASIE')
-                            Asie
-                        @elseif ($countrie_indicative->name_groupe == 'AFE')
-                            Afrique de l'EST
-                        @endif
+                        {{ $region }}
                     </span>
                 </div>
 
                 <input type="hidden" wire:init="loadChoose3">
-                <div class="col-span-12 mt-3">
-                    <label for="provider_inter_out_civ" class="form-label">Canal du paiement money<span
-                            class="text-danger">
-                            *</span></label>
-                    <select wire:model.debounce.10ms="provider_inter_out_civ" id="provider_inter_out_civ"
-                        class="form-control">
-                        <option value="null" disabled>Selectionnez le canal</option>
-                        @foreach ($providers as $provider)
-                            <option value="{{ $provider->id }}">{{ $provider->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('provider_inter_out_civ')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
+                <div class="col-span-12 mt-6">
 
+
+                    @if (!empty($providers) && is_array($providers))
+
+                        <div class="grid grid-cols-12 gap-6 mt-4">
+
+                            @foreach ($providers as $mainCategory => $subCategories)
+                                @foreach ($subCategories as $categoryName => $categoryProviders)
+                                    @if (!empty($categoryProviders))
+                                        <!-- COL-SPAN-6 -->
+                                        <div class="col-span-12 md:col-span-6">
+
+                                            <div
+                                                class="bg-white border border-gray-200 rounded-xl shadow-sm p-5 
+                                                     hover:shadow-md transition duration-300 h-full">
+
+                                                <!-- Category Title -->
+                                                <div class="amount-section">
+                                                    <div class="amount-label"> Canal de transaction</div>
+                                                    <div class="amount-received">
+                                                        <div class="flex items-baseline justify-between">
+                                                            <span class="amount-received-value">
+                                                                {{ $categoryName }}
+
+                                                            </span>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <!-- Select -->
+                                                <div class="relative">
+                                                    <select wire:model.debounce.300ms="provider_inter_out_civ"
+                                                        id="provider_inter_out_civ_{{ Str::slug($categoryName) }}"
+                                                        class="w-full appearance-none bg-gray-50 border border-gray-300 
+                                                        text-gray-700 text-sm rounded-lg px-4 py-3
+                                                        focus:ring-2 focus:ring-indigo-500 
+                                                        focus:border-indigo-500
+                                                        transition duration-200 outline-none">
+
+                                                        <option value="">
+                                                            Sélectionnez une {{ $categoryName }}
+                                                        </option>
+
+                                                        @foreach ($categoryProviders as $provider)
+                                                            @if (is_object($provider) && property_exists($provider, 'id'))
+                                                                <option value="{{ $provider->id }}">
+                                                                    {{ $provider->name }}
+                                                                </option>
+                                                            @elseif(is_array($provider) && isset($provider['id']))
+                                                                <option value="{{ $provider['id'] }}">
+                                                                    {{ $provider['name'] }}
+                                                                </option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+
+                                                    <!-- Custom Arrow -->
+                                                    <div
+                                                        class="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                                                        <svg class="w-4 h-4 text-gray-400" fill="none"
+                                                            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                d="M19 9l-7 7-7-7" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            @endforeach
+
+                        </div>
+                    @else
+                        <div
+                            class="bg-red-50 border border-red-200 text-red-600 
+                    text-sm rounded-lg px-4 py-3">
+                            Aucun service disponible
+                        </div>
+                    @endif
+
+                    <!-- Error -->
+                    @error('provider_inter_out_civ')
+                        <p class="mt-2 text-sm text-red-600 font-medium">
+                            {{ $message }}
+                        </p>
+                    @enderror
+
+                </div>
             </div>
         @endif
 
@@ -145,12 +215,20 @@
                         105 => ['name' => 'Push', 'image' => 'push.png'],
                         106 => ['name' => 'Tresort Money', 'image' => 'tresorMoney.png'],
                         124 => ['name' => 'Bank send', 'image' => 'bank_send.png'],
+                        // New Service sender
+                        52 => ['name' => 'CANAL', 'image' => 'bank_send.png'],
+                        53 => ['name' => 'CIE', 'image' => 'bank_send.png'],
+                        54 => ['name' => 'SODECI', 'image' => 'bank_send.png'],
+                        56 => ['name' => 'Orange', 'image' => 'bank_send.png'],
+                        57 => ['name' => 'Moov', 'image' => 'bank_send.png'],
+                        58 => ['name' => 'Mtn', 'image' => 'bank_send.png'],
+
                     ];
 
                     $provider = $providerData[$provider_inter_out_civ] ?? null;
                     $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                     $wallet_name = $wallet_name ?? '';
-
+52
                 @endphp
 
                 @if ($provider)
@@ -179,1045 +257,24 @@
                             @if (sabdy()->is_under_distributer == 1)
 
                                 @if ($provider['name'] == 'Remittance Money')
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'name_sender',
-                                        'model' => 'name_sender',
-                                        'label' => 'Nom & prenom du bénéficiaire',
-                                        'error' => 'name_sender',
-                                    ])
-
-                                    <div class="col-span-6 mt-3">
-                                        <label for="phone_inter_out_civ" class="form-label">Numero de telephone du
-                                            bénéficiaire<span class="text-danger">*</span></label>
-
-                                        <div class="flex">
-                                            <div
-                                                class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-indicatif">
-                                                {{ $countrie_indicative->indecative ?? null }}
-                                            </div>
-                                            <input wire:model.defer="phone_inter_out_civ" id="phone_inter_out_civ"
-                                                type="number" class="form-control" placeholder="Numero" value=""
-                                                minlength="6" maxlength="15">
-                                            @error('phone_inter_out_civ')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'name',
-                                        'model' => 'name',
-                                        'label' => 'Nom de la banque',
-                                        'error' => 'name',
-                                    ])
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'account_number',
-                                        'model' => 'account_number',
-                                        'label' => 'Numero du compte du bénéficiaire',
-                                        'error' => 'account_number',
-                                    ])
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'name_custumer',
-                                        'model' => 'name_custumer',
-                                        'label' => 'Nom & prenom de l\'expediteur',
-                                        'error' => 'name_custumer',
-                                    ])
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'num_piece_custumer',
-                                        'model' => 'num_piece_custumer',
-                                        'label' => 'Numero piece',
-                                        'error' => 'num_piece_custumer',
-                                    ])
-
-                                    @include('components.transaction-date-input', [
-                                        'id' => 'date_piece',
-                                        'model' => 'date_piece',
-                                        'label' => 'Date piece',
-                                        'error' => 'date_piece',
-                                    ])
+                                    @include('components.partials.remittance-fields')
                                 @elseif ($provider_inter_out_civ == 124)
-                                    <div class="col-span-12 flex flex-col items-center gap-4">
-
-                                        <!-- Preview avec Base64 ou image existante -->
-                                        <div class="w-full flex justify-center">
-                                            @if ($image_preview)
-                                                <div
-                                                    class="relative group w-80 h-50 rounded-lg overflow-hidden border-2 border-green-300 shadow hover:shadow-lg transition">
-                                                    <img src="{{ $image_preview }}" alt="Preview"
-                                                        class="h-full w-full object-cover">
-                                                    <div
-                                                        class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-25 flex items-center justify-center transition">
-                                                        <span
-                                                            class="text-white font-medium text-sm opacity-0 group-hover:opacity-100">Aperçu</span>
-                                                    </div>
-                                                </div>
-                                            @elseif(is_string($image) && $image)
-                                                <div
-                                                    class="relative group w-80 h-50 rounded-lg overflow-hidden border-2 border-blue-300 shadow hover:shadow-lg transition">
-                                                    <img src="{{ Storage::url($image) }}" alt="Image existante"
-                                                        class="h-full w-full object-cover">
-                                                    <div
-                                                        class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-25 flex items-center justify-center transition">
-                                                        <span
-                                                            class="text-white font-medium text-sm opacity-0 group-hover:opacity-100">Image
-                                                            actuelle</span>
-                                                    </div>
-                                                </div>
-                                            @else
-                                                <div
-                                                    class="w-40 h-40 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 text-gray-400">
-                                                    <svg class="w-10 h-10 mb-2" fill="none" stroke="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                                        </path>
-                                                    </svg>
-                                                    <span class="text-xs text-center">Télecharger la piece</span>
-                                                </div>
-                                            @endif
-                                        </div>
-
-                                        <!-- Input file -->
-                                        <div class="w-full flex justify-center">
-                                            <label class="cursor-pointer">
-                                                <div
-                                                    class="bg-primary hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium flex items-center space-x-2 shadow hover:shadow-md transition">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
-                                                        </path>
-                                                    </svg>
-                                                    <span>{{ $image ? 'Changer l\'image' : 'Choisir une image' }}</span>
-                                                </div>
-                                                <input type="file" wire:model="image" accept="image/*"
-                                                    class="hidden">
-                                            </label>
-                                        </div>
-
-                                        <!-- Erreurs -->
-                                        @error('image')
-                                            <div
-                                                class="flex items-center space-x-2 text-red-600 bg-red-50 px-4 py-2 rounded-lg border border-red-200 w-full max-w-md">
-                                                <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                </svg>
-                                                <span class="text-sm">{{ $message }}</span>
-                                            </div>
-                                        @enderror
-
-                                        <!-- Chargement -->
-                                        <div wire:loading wire:target="image"
-                                            class="flex items-center gap-2 text-blue-600 w-full justify-center">
-                                            <div
-                                                class="animate-spin rounded-full h-5 w-5 border-2 border-blue-600 border-t-transparent">
-                                            </div>
-                                            <span class="font-medium">Chargement de l'image...</span>
-                                        </div>
-
-                                    </div>
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'name_sender',
-                                        'model' => 'name_sender',
-                                        'label' => 'Nom & prenom du bénéficiaire',
-                                        'error' => 'name_sender',
-                                    ])
-
-                                    <div class="col-span-6 mt-3">
-                                        <label for="phone_inter_out_civ" class="form-label">Numero de telephone du
-                                            bénéficiaire<span class="text-danger">*</span></label>
-
-                                        <div class="flex">
-                                            <div
-                                                class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-indicatif">
-                                                {{ $countrie_indicative->indecative ?? null }}
-                                            </div>
-                                            <input wire:model.defer="phone_inter_out_civ" id="phone_inter_out_civ"
-                                                type="number" class="form-control" placeholder="Numero"
-                                                value="" minlength="6" maxlength="15">
-                                            @error('phone_inter_out_civ')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'account_number',
-                                        'model' => 'account_number',
-                                        'label' => 'Numero du compte du bénéficiaire',
-                                        'error' => 'account_number',
-                                    ])
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'name_custumer',
-                                        'model' => 'name_custumer',
-                                        'label' => 'Nom & prenom de l\'expediteur',
-                                        'error' => 'name_custumer',
-                                    ])
-
-                                    <div class="col-span-6 mt-3">
-                                        <label for="phone_inter_expe" class="form-label">Numero de telephone de
-                                            l'expediteur<span class="text-danger">*</span></label>
-
-                                        <div class="flex">
-                                            <div
-                                                class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-indicatif">
-                                                {{ $countrie_indicative->indecative ?? null }}
-                                            </div>
-                                            <input wire:model.defer="phone_inter_expe" id="phone_inter_expe"
-                                                type="number" class="form-control" placeholder="Numero"
-                                                value="" minlength="6" maxlength="15">
-                                            @error('phone_inter_expe')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'num_piece_custumer',
-                                        'model' => 'num_piece_custumer',
-                                        'label' => 'Numero piece',
-                                        'error' => 'num_piece_custumer',
-                                    ])
-
-                                    @include('components.transaction-date-input', [
-                                        'id' => 'date_piece',
-                                        'model' => 'date_piece',
-                                        'label' => 'Date piece',
-                                        'error' => 'date_piece',
-                                    ])
-
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'name',
-                                        'model' => 'name',
-                                        'label' => 'Nom de la banque',
-                                        'error' => 'name',
-                                    ])
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'swit_code',
-                                        'model' => 'swit_code',
-                                        'label' => 'Code swift/IFSC/Bic Code',
-                                        'error' => 'swit_code',
-                                    ])
-
-                                    @include('components.transaction-inter-amount-input', [
-                                        'id' => 'transaction_bank_amount',
-                                        'model' => 'transaction_bank_amount',
-                                        'label' => 'Montant',
-                                        'error' => 'transaction_bank_amount',
-                                    ])
+                                    @include('components.partials.provider-hunders-fields')
                                 @else
-                                    @if ($provider_inter_out_civ == 104)
-                                        <div class="col-span-12 flex flex-col items-center gap-4">
-
-                                            <!-- Preview avec Base64 ou image existante -->
-                                            <div class="w-full flex justify-center">
-                                                @if ($image_preview)
-                                                    <div
-                                                        class="relative group w-80 h-50 rounded-lg overflow-hidden border-2 border-green-300 shadow hover:shadow-lg transition">
-                                                        <img src="{{ $image_preview }}" alt="Preview"
-                                                            class="h-full w-full object-cover">
-                                                        <div
-                                                            class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-25 flex items-center justify-center transition">
-                                                            <span
-                                                                class="text-white font-medium text-sm opacity-0 group-hover:opacity-100">Aperçu</span>
-                                                        </div>
-                                                    </div>
-                                                @elseif(is_string($image) && $image)
-                                                    <div
-                                                        class="relative group w-80 h-50 rounded-lg overflow-hidden border-2 border-blue-300 shadow hover:shadow-lg transition">
-                                                        <img src="{{ Storage::url($image) }}" alt="Image existante"
-                                                            class="h-full w-full object-cover">
-                                                        <div
-                                                            class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-25 flex items-center justify-center transition">
-                                                            <span
-                                                                class="text-white font-medium text-sm opacity-0 group-hover:opacity-100">Image
-                                                                actuelle</span>
-                                                        </div>
-                                                    </div>
-                                                @else
-                                                    <div
-                                                        class="w-40 h-40 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 text-gray-400">
-                                                        <svg class="w-10 h-10 mb-2" fill="none"
-                                                            stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                                            </path>
-                                                        </svg>
-                                                        <span class="text-xs text-center">Télecharger le code QR</span>
-                                                    </div>
-                                                @endif
-                                            </div>
-
-                                            <!-- Input file -->
-                                            <div class="w-full flex justify-center">
-                                                <label class="cursor-pointer">
-                                                    <div
-                                                        class="bg-primary hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium flex items-center space-x-2 shadow hover:shadow-md transition">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                            viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
-                                                            </path>
-                                                        </svg>
-                                                        <span>{{ $image ? 'Changer l\'image' : 'Choisir une image' }}</span>
-                                                    </div>
-                                                    <input type="file" wire:model="image" accept="image/*"
-                                                        class="hidden">
-                                                </label>
-                                            </div>
-
-                                            <!-- Erreurs -->
-                                            @error('image')
-                                                <div
-                                                    class="flex items-center space-x-2 text-red-600 bg-red-50 px-4 py-2 rounded-lg border border-red-200 w-full max-w-md">
-                                                    <svg class="w-5 h-5 flex-shrink-0" fill="none"
-                                                        stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                    </svg>
-                                                    <span class="text-sm">{{ $message }}</span>
-                                                </div>
-                                            @enderror
-
-                                            <!-- Chargement -->
-                                            <div wire:loading wire:target="image"
-                                                class="flex items-center gap-2 text-blue-600 w-full justify-center">
-                                                <div
-                                                    class="animate-spin rounded-full h-5 w-5 border-2 border-blue-600 border-t-transparent">
-                                                </div>
-                                                <span class="font-medium">Chargement de l'image...</span>
-                                            </div>
-
-                                        </div>
-
-                                    @endif
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'name_custumer',
-                                        'model' => 'name_custumer',
-                                        'label' => 'Nom & prenom',
-                                        'error' => 'name_custumer',
-                                    ])
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'num_piece_custumer',
-                                        'model' => 'num_piece_custumer',
-                                        'label' => 'Numero piece',
-                                        'error' => 'num_piece_custumer',
-                                    ])
-
-                                    <div class="col-span-12 mt-3">
-                                        <label for="date_piece" class="form-label">Date piece<span
-                                                class="text-danger">*</span></label>
-
-                                        <div class="flex">
-
-                                            <input wire:model.defer="date_piece" id="date_piece" type="date"
-                                                class="form-control" placeholder="Date">
-                                            @error('date_piece')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="col-span-6 mt-3">
-                                        <label for="phone_inter_out_civ" class="form-label">Numero de
-                                            telephone<span class="text-danger">*</span></label>
-
-                                        <div class="flex">
-                                            <div
-                                                class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-indicatif">
-                                                {{ $countrie_indicative->indecative ?? null }}
-                                            </div>
-                                            <input wire:model.defer="phone_inter_out_civ" id="phone_inter_out_civ"
-                                                type="number" class="form-control" placeholder="Numero"
-                                                value="" minlength="6" maxlength="15">
-                                            @error('phone_inter_out_civ')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
+                                    @include('components.partials.authers-fields')
                                 @endif
                             @else
-                                @if ($provider['name'] == 'Remittance Money')
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'name_sender',
-                                        'model' => 'name_sender',
-                                        'label' => 'Nom & prenom du bénéficiaire',
-                                        'error' => 'name_sender',
-                                    ])
+                                <div class="field-group">
 
-                                    <div class="col-span-6 mt-3">
-                                        <label for="phone_inter_out_civ" class="form-label">Numero de telephone du
-                                            bénéficiaire<span class="text-danger">*</span></label>
-
-                                        <div class="flex">
-                                            <div
-                                                class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-indicatif">
-                                                {{ $countrie_indicative->indecative ?? null }}
-                                            </div>
-                                            <input wire:model.defer="phone_inter_out_civ" id="phone_inter_out_civ"
-                                                type="number" class="form-control" placeholder="Numero"
-                                                value="" minlength="6" maxlength="15">
-                                            @error('phone_inter_out_civ')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
+                                    <div class="field-full">
+                                        <label class="form-label required">Aucune données pour vous </label>
+                                        <div class="field-value">
+                                            <i class="fas fa-network-wired"></i>
+                                            <span id="provider_push"> Verifiez a l'administration</span>
                                         </div>
                                     </div>
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'name',
-                                        'model' => 'name',
-                                        'label' => 'Nom de la banque',
-                                        'error' => 'name',
-                                    ])
+                                </div>
 
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'account_number',
-                                        'model' => 'account_number',
-                                        'label' => 'Numero du compte du bénéficiaire',
-                                        'error' => 'account_number',
-                                    ])
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'name_custumer',
-                                        'model' => 'name_custumer',
-                                        'label' => 'Nom & prenom de l\'expediteur',
-                                        'error' => 'name_custumer',
-                                    ])
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'num_piece_custumer',
-                                        'model' => 'num_piece_custumer',
-                                        'label' => 'Numero piece',
-                                        'error' => 'num_piece_custumer',
-                                    ])
-
-                                    @include('components.transaction-date-input', [
-                                        'id' => 'date_piece',
-                                        'model' => 'date_piece',
-                                        'label' => 'Date piece',
-                                        'error' => 'date_piece',
-                                    ])
-                                @elseif ($provider_inter_out_civ == 124)
-                                    <div class="col-span-12 mt-space">
-                                        <label for="piece_type" class="form-label">Type de pice<span
-                                                class="text-danger">
-                                                *</span></label>
-                                        <select wire:model.debounce.10ms="piece_type" id="piece_type"
-                                            class="form-control">
-                                            <option value="null" selected>Selectionnez le type de piece</option>
-                                            <option value="Passport"> Passport</option>
-                                            <option value="CNI"> CNI</option>
-                                            <option value="Permis"> Permis</option>
-                                            <option value="Carte consulaire"> Carte consulaire</option>
-
-                                        </select>
-                                        @error('piece_type')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-
-                                    @if (!is_null($piece_type))
-                                        @if ($piece_type == "Passport" || $piece_type == "Carte consulaire")
-                                            <div class="col-span-12 flex flex-col items-center gap-4">
-
-                                                <!-- Preview avec Base64 ou image existante -->
-                                                <div class="w-full flex justify-center">
-                                                    @if ($image_preview)
-                                                        <div
-                                                            class="relative group w-80 h-50 rounded-lg overflow-hidden border-2 border-green-300 shadow hover:shadow-lg transition">
-                                                            <img src="{{ $image_preview }}" alt="Preview"
-                                                                class="h-full w-full object-cover">
-                                                            <div
-                                                                class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-25 flex items-center justify-center transition">
-                                                                <span
-                                                                    class="text-white font-medium text-sm opacity-0 group-hover:opacity-100">Aperçu</span>
-                                                            </div>
-                                                        </div>
-                                                    @elseif(is_string($image) && $image)
-                                                        <div
-                                                            class="relative group w-80 h-50 rounded-lg overflow-hidden border-2 border-blue-300 shadow hover:shadow-lg transition">
-                                                            <img src="{{ Storage::url($image) }}"
-                                                                alt="Image existante"
-                                                                class="h-full w-full object-cover">
-                                                            <div
-                                                                class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-25 flex items-center justify-center transition">
-                                                                <span
-                                                                    class="text-white font-medium text-sm opacity-0 group-hover:opacity-100">Image
-                                                                    actuelle</span>
-                                                            </div>
-                                                        </div>
-                                                    @else
-                                                        <div
-                                                            class="w-40 h-40 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 text-gray-400">
-                                                            <svg class="w-10 h-10 mb-2" fill="none"
-                                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="2"
-                                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                                                </path>
-                                                            </svg>
-                                                            <span class="text-xs text-center">Télecharger la
-                                                                piece</span>
-                                                        </div>
-                                                    @endif
-                                                </div>
-
-                                                <!-- Input file -->
-                                                <div class="w-full flex justify-center">
-                                                    <label class="cursor-pointer">
-                                                        <div
-                                                            class="bg-primary hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium flex items-center space-x-2 shadow hover:shadow-md transition">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                                viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="2"
-                                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
-                                                                </path>
-                                                            </svg>
-                                                            <span>{{ $image ? 'Changer l\'image' : 'Choisir une image' }}</span>
-                                                        </div>
-                                                        <input type="file" wire:model="image" accept="image/*"
-                                                            class="hidden">
-                                                    </label>
-                                                </div>
-
-                                                <!-- Erreurs -->
-                                                @error('image')
-                                                    <div
-                                                        class="flex items-center space-x-2 text-red-600 bg-red-50 px-4 py-2 rounded-lg border border-red-200 w-full max-w-md">
-                                                        <svg class="w-5 h-5 flex-shrink-0" fill="none"
-                                                            stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                                                            </path>
-                                                        </svg>
-                                                        <span class="text-sm">{{ $message }}</span>
-                                                    </div>
-                                                @enderror
-
-                                                <!-- Chargement -->
-                                                <div wire:loading wire:target="image"
-                                                    class="flex items-center gap-2 text-blue-600 w-full justify-center">
-                                                    <div
-                                                        class="animate-spin rounded-full h-5 w-5 border-2 border-blue-600 border-t-transparent">
-                                                    </div>
-                                                    <span class="font-medium">Chargement de l'image...</span>
-                                                </div>
-
-                                            </div>
-                                        @elseif ($piece_type == "CNI" || $piece_type == "Permis")
-                                            <div class="col-span-6 flex flex-col items-center gap-4">
-
-                                                <!-- Preview avec Base64 ou image existante -->
-                                                <div class="w-full flex justify-center">
-                                                    @if ($image_preview_frontend)
-                                                        <div
-                                                            class="relative group w-80 h-50 rounded-lg overflow-hidden border-2 border-green-300 shadow hover:shadow-lg transition">
-                                                            <img src="{{ $image_preview_frontend }}" alt="Preview"
-                                                                class="h-full w-full object-cover">
-                                                            <div
-                                                                class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-25 flex items-center justify-center transition">
-                                                                <span
-                                                                    class="text-white font-medium text-sm opacity-0 group-hover:opacity-100">Aperçu</span>
-                                                            </div>
-                                                        </div>
-                                                    @elseif(is_string($image_frontend) && $image)
-                                                        <div
-                                                            class="relative group w-80 h-50 rounded-lg overflow-hidden border-2 border-blue-300 shadow hover:shadow-lg transition">
-                                                            <img src="{{ Storage::url($image) }}"
-                                                                alt="Image existante"
-                                                                class="h-full w-full object-cover">
-                                                            <div
-                                                                class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-25 flex items-center justify-center transition">
-                                                                <span
-                                                                    class="text-white font-medium text-sm opacity-0 group-hover:opacity-100">Image
-                                                                    actuelle</span>
-                                                            </div>
-                                                        </div>
-                                                    @else
-                                                        <div
-                                                            class="w-40 h-40 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 text-gray-400">
-                                                            <svg class="w-10 h-10 mb-2" fill="none"
-                                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="2"
-                                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                                                </path>
-                                                            </svg>
-                                                            <span class="text-xs text-center">Télecharger la piece
-                                                                recto</span>
-                                                        </div>
-                                                    @endif
-                                                </div>
-
-                                                <!-- Input file -->
-                                                <div class="w-full flex justify-center">
-                                                    <label class="cursor-pointer">
-                                                        <div
-                                                            class="bg-primary hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium flex items-center space-x-2 shadow hover:shadow-md transition">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                                viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="2"
-                                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
-                                                                </path>
-                                                            </svg>
-                                                            <span>{{ $image_frontend ? 'Changer l\'image' : 'Choisir une image' }}</span>
-                                                        </div>
-                                                        <input type="file" wire:model="image_frontend"
-                                                            accept="image/*" class="hidden">
-                                                    </label>
-                                                </div>
-
-                                                <!-- Erreurs -->
-                                                @error('image_frontend')
-                                                    <div
-                                                        class="flex items-center space-x-2 text-red-600 bg-red-50 px-4 py-2 rounded-lg border border-red-200 w-full max-w-md">
-                                                        <svg class="w-5 h-5 flex-shrink-0" fill="none"
-                                                            stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                                                            </path>
-                                                        </svg>
-                                                        <span class="text-sm">{{ $message }}</span>
-                                                    </div>
-                                                @enderror
-
-                                                <!-- Chargement -->
-                                                <div wire:loading wire:target="image_frontend"
-                                                    class="flex items-center gap-2 text-blue-600 w-full justify-center">
-                                                    <div
-                                                        class="animate-spin rounded-full h-5 w-5 border-2 border-blue-600 border-t-transparent">
-                                                    </div>
-                                                    <span class="font-medium">Chargement de l'image...</span>
-                                                </div>
-
-                                            </div>
-                                            <div class="col-span-6 flex flex-col items-center gap-4">
-
-                                                <!-- Preview avec Base64 ou image existante -->
-                                                <div class="w-full flex justify-center">
-                                                    @if ($image_preview_backend)
-                                                        <div
-                                                            class="relative group w-80 h-50 rounded-lg overflow-hidden border-2 border-green-300 shadow hover:shadow-lg transition">
-                                                            <img src="{{ $image_preview_backend }}" alt="Preview"
-                                                                class="h-full w-full object-cover">
-                                                            <div
-                                                                class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-25 flex items-center justify-center transition">
-                                                                <span
-                                                                    class="text-white font-medium text-sm opacity-0 group-hover:opacity-100">Aperçu</span>
-                                                            </div>
-                                                        </div>
-                                                    @elseif(is_string($image_backend) && $image)
-                                                        <div
-                                                            class="relative group w-80 h-50 rounded-lg overflow-hidden border-2 border-blue-300 shadow hover:shadow-lg transition">
-                                                            <img src="{{ Storage::url($image) }}"
-                                                                alt="Image existante"
-                                                                class="h-full w-full object-cover">
-                                                            <div
-                                                                class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-25 flex items-center justify-center transition">
-                                                                <span
-                                                                    class="text-white font-medium text-sm opacity-0 group-hover:opacity-100">Image
-                                                                    actuelle</span>
-                                                            </div>
-                                                        </div>
-                                                    @else
-                                                        <div
-                                                            class="w-40 h-40 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 text-gray-400">
-                                                            <svg class="w-10 h-10 mb-2" fill="none"
-                                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="2"
-                                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                                                </path>
-                                                            </svg>
-                                                            <span class="text-xs text-center">Télecharger la piece
-                                                                verso</span>
-                                                        </div>
-                                                    @endif
-                                                </div>
-
-                                                <!-- Input file -->
-                                                <div class="w-full flex justify-center">
-                                                    <label class="cursor-pointer">
-                                                        <div
-                                                            class="bg-primary hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium flex items-center space-x-2 shadow hover:shadow-md transition">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                                viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="2"
-                                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
-                                                                </path>
-                                                            </svg>
-                                                            <span>{{ $image_backend ? 'Changer l\'image' : 'Choisir une image' }}</span>
-                                                        </div>
-                                                        <input type="file" wire:model="image_backend"
-                                                            accept="image/*" class="hidden">
-                                                    </label>
-                                                </div>
-
-                                                <!-- Erreurs -->
-                                                @error('image_backend')
-                                                    <div
-                                                        class="flex items-center space-x-2 text-red-600 bg-red-50 px-4 py-2 rounded-lg border border-red-200 w-full max-w-md">
-                                                        <svg class="w-5 h-5 flex-shrink-0" fill="none"
-                                                            stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                                                            </path>
-                                                        </svg>
-                                                        <span class="text-sm">{{ $message }}</span>
-                                                    </div>
-                                                @enderror
-
-                                                <!-- Chargement -->
-                                                <div wire:loading wire:target="image_backend"
-                                                    class="flex items-center gap-2 text-blue-600 w-full justify-center">
-                                                    <div
-                                                        class="animate-spin rounded-full h-5 w-5 border-2 border-blue-600 border-t-transparent">
-                                                    </div>
-                                                    <span class="font-medium">Chargement de l'image...</span>
-                                                </div>
-
-                                            </div>
-                                        @else
-                                            <div class="col-span-12 flex flex-col items-center gap-4">
-
-                                                <!-- Preview avec Base64 ou image existante -->
-                                                <div class="w-full flex justify-center">
-                                                    @if ($image_preview)
-                                                        <div
-                                                            class="relative group w-80 h-50 rounded-lg overflow-hidden border-2 border-green-300 shadow hover:shadow-lg transition">
-                                                            <img src="{{ $image_preview }}" alt="Preview"
-                                                                class="h-full w-full object-cover">
-                                                            <div
-                                                                class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-25 flex items-center justify-center transition">
-                                                                <span
-                                                                    class="text-white font-medium text-sm opacity-0 group-hover:opacity-100">Aperçu</span>
-                                                            </div>
-                                                        </div>
-                                                    @elseif(is_string($image) && $image)
-                                                        <div
-                                                            class="relative group w-80 h-50 rounded-lg overflow-hidden border-2 border-blue-300 shadow hover:shadow-lg transition">
-                                                            <img src="{{ Storage::url($image) }}"
-                                                                alt="Image existante"
-                                                                class="h-full w-full object-cover">
-                                                            <div
-                                                                class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-25 flex items-center justify-center transition">
-                                                                <span
-                                                                    class="text-white font-medium text-sm opacity-0 group-hover:opacity-100">Image
-                                                                    actuelle</span>
-                                                            </div>
-                                                        </div>
-                                                    @else
-                                                        <div
-                                                            class="w-40 h-40 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 text-gray-400">
-                                                            <svg class="w-10 h-10 mb-2" fill="none"
-                                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="2"
-                                                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                                                </path>
-                                                            </svg>
-                                                            <span class="text-xs text-center">Télecharger la
-                                                                piece</span>
-                                                        </div>
-                                                    @endif
-                                                </div>
-
-                                                <!-- Input file -->
-                                                <div class="w-full flex justify-center">
-                                                    <label class="cursor-pointer">
-                                                        <div
-                                                            class="bg-primary hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium flex items-center space-x-2 shadow hover:shadow-md transition">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                                viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="2"
-                                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
-                                                                </path>
-                                                            </svg>
-                                                            <span>{{ $image ? 'Changer l\'image' : 'Choisir une image' }}</span>
-                                                        </div>
-                                                        <input type="file" wire:model="image" accept="image/*"
-                                                            class="hidden">
-                                                    </label>
-                                                </div>
-
-                                                <!-- Erreurs -->
-                                                @error('image')
-                                                    <div
-                                                        class="flex items-center space-x-2 text-red-600 bg-red-50 px-4 py-2 rounded-lg border border-red-200 w-full max-w-md">
-                                                        <svg class="w-5 h-5 flex-shrink-0" fill="none"
-                                                            stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                                                            </path>
-                                                        </svg>
-                                                        <span class="text-sm">{{ $message }}</span>
-                                                    </div>
-                                                @enderror
-
-                                                <!-- Chargement -->
-                                                <div wire:loading wire:target="image"
-                                                    class="flex items-center gap-2 text-blue-600 w-full justify-center">
-                                                    <div
-                                                        class="animate-spin rounded-full h-5 w-5 border-2 border-blue-600 border-t-transparent">
-                                                    </div>
-                                                    <span class="font-medium">Chargement de l'image...</span>
-                                                </div>
-
-                                            </div>
-                                        @endif
-                                    @endif
-
-
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'name_sender',
-                                        'model' => 'name_sender',
-                                        'label' => 'Nom & prenom du bénéficiaire',
-                                        'error' => 'name_sender',
-                                    ])
-
-                                    <div class="col-span-6 mt-3">
-                                        <label for="phone_inter_out_civ" class="form-label">Numero de telephone du
-                                            bénéficiaire<span class="text-danger">*</span></label>
-
-                                        <div class="flex">
-                                            <div
-                                                class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-indicatif">
-                                                {{ $countrie_indicative->indecative ?? null }}
-                                            </div>
-                                            <input wire:model.defer="phone_inter_out_civ" id="phone_inter_out_civ"
-                                                type="number" class="form-control" placeholder="Numero"
-                                                value="" minlength="6" maxlength="15">
-                                            @error('phone_inter_out_civ')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'account_number',
-                                        'model' => 'account_number',
-                                        'label' => 'Numero du compte du bénéficiaire',
-                                        'error' => 'account_number',
-                                    ])
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'name_custumer',
-                                        'model' => 'name_custumer',
-                                        'label' => 'Nom & prenom de l\'expediteur',
-                                        'error' => 'name_custumer',
-                                    ])
-
-                                    <div class="col-span-6 mt-3">
-                                        <label for="phone_inter_expe" class="form-label">Numero de telephone de
-                                            l'expediteur<span class="text-danger">*</span></label>
-
-                                        <div class="flex">
-                                            <div
-                                                class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-indicatif">
-                                                {{ $countrie_indicative->indecative ?? null }}
-                                            </div>
-                                            <input wire:model.defer="phone_inter_expe" id="phone_inter_expe"
-                                                type="number" class="form-control" placeholder="Numero"
-                                                value="" minlength="6" maxlength="15">
-                                            @error('phone_inter_expe')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'num_piece_custumer',
-                                        'model' => 'num_piece_custumer',
-                                        'label' => 'Numero piece',
-                                        'error' => 'num_piece_custumer',
-                                    ])
-
-                                    @include('components.transaction-date-input', [
-                                        'id' => 'date_piece',
-                                        'model' => 'date_piece',
-                                        'label' => 'Date piece',
-                                        'error' => 'date_piece',
-                                    ])
-
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'name',
-                                        'model' => 'name',
-                                        'label' => 'Nom de la banque',
-                                        'error' => 'name',
-                                    ])
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'swit_code',
-                                        'model' => 'swit_code',
-                                        'label' => 'Code swift/IFSC/Bic Code',
-                                        'error' => 'swit_code',
-                                    ])
-
-                                    @include('components.transaction-inter-amount-input', [
-                                        'id' => 'transaction_bank_amount',
-                                        'model' => 'transaction_bank_amount',
-                                        'label' => 'Montant',
-                                        'error' => 'transaction_bank_amount',
-                                    ])
-                                @else
-                                    @if ($provider_inter_out_civ == 104)
-
-
-                                        <div class="col-span-12 flex flex-col items-center gap-4">
-
-                                            <!-- Preview avec Base64 ou image existante -->
-                                            <div class="w-full flex justify-center">
-                                                @if ($image_preview)
-                                                    <div
-                                                        class="relative group w-80 h-50 rounded-lg overflow-hidden border-2 border-green-300 shadow hover:shadow-lg transition">
-                                                        <img src="{{ $image_preview }}" alt="Preview"
-                                                            class="h-full w-full object-cover">
-                                                        <div
-                                                            class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-25 flex items-center justify-center transition">
-                                                            <span
-                                                                class="text-white font-medium text-sm opacity-0 group-hover:opacity-100">Aperçu</span>
-                                                        </div>
-                                                    </div>
-                                                @elseif(is_string($image) && $image)
-                                                    <div
-                                                        class="relative group w-80 h-50 rounded-lg overflow-hidden border-2 border-blue-300 shadow hover:shadow-lg transition">
-                                                        <img src="{{ Storage::url($image) }}" alt="Image existante"
-                                                            class="h-full w-full object-cover">
-                                                        <div
-                                                            class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-25 flex items-center justify-center transition">
-                                                            <span
-                                                                class="text-white font-medium text-sm opacity-0 group-hover:opacity-100">Image
-                                                                actuelle</span>
-                                                        </div>
-                                                    </div>
-                                                @else
-                                                    <div
-                                                        class="w-40 h-40 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 text-gray-400">
-                                                        <svg class="w-10 h-10 mb-2" fill="none"
-                                                            stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                                            </path>
-                                                        </svg>
-                                                        <span class="text-xs text-center">Télecharger le code QR</span>
-                                                    </div>
-                                                @endif
-                                            </div>
-
-                                            <!-- Input file -->
-                                            <div class="w-full flex justify-center">
-                                                <label class="cursor-pointer">
-                                                    <div
-                                                        class="bg-primary hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium flex items-center space-x-2 shadow hover:shadow-md transition">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                            viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12">
-                                                            </path>
-                                                        </svg>
-                                                        <span>{{ $image ? 'Changer l\'image' : 'Choisir une image' }}</span>
-                                                    </div>
-                                                    <input type="file" wire:model="image" accept="image/*"
-                                                        class="hidden">
-                                                </label>
-                                            </div>
-
-                                            <!-- Erreurs -->
-                                            @error('image')
-                                                <div
-                                                    class="flex items-center space-x-2 text-red-600 bg-red-50 px-4 py-2 rounded-lg border border-red-200 w-full max-w-md">
-                                                    <svg class="w-5 h-5 flex-shrink-0" fill="none"
-                                                        stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                    </svg>
-                                                    <span class="text-sm">{{ $message }}</span>
-                                                </div>
-                                            @enderror
-
-                                            <!-- Chargement -->
-                                            <div wire:loading wire:target="image"
-                                                class="flex items-center gap-2 text-blue-600 w-full justify-center">
-                                                <div
-                                                    class="animate-spin rounded-full h-5 w-5 border-2 border-blue-600 border-t-transparent">
-                                                </div>
-                                                <span class="font-medium">Chargement de l'image...</span>
-                                            </div>
-
-                                        </div>
-
-                                    @endif
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'name_custumer',
-                                        'model' => 'name_custumer',
-                                        'label' => 'Nom & prenom',
-                                        'error' => 'name_custumer',
-                                    ])
-
-                                    @include('components.transaction-custumer-input', [
-                                        'id' => 'num_piece_custumer',
-                                        'model' => 'num_piece_custumer',
-                                        'label' => 'Numero piece',
-                                        'error' => 'num_piece_custumer',
-                                    ])
-
-                                    <div class="col-span-12 mt-3">
-                                        <label for="date_piece" class="form-label">Date piece<span
-                                                class="text-danger">*</span></label>
-
-                                        <div class="flex">
-
-                                            <input wire:model.defer="date_piece" id="date_piece" type="date"
-                                                class="form-control" placeholder="Date">
-                                            @error('date_piece')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="col-span-6 mt-3">
-                                        <label for="phone_inter_out_civ" class="form-label">Numero de
-                                            telephone<span class="text-danger">*</span></label>
-
-                                        <div class="flex">
-                                            <div
-                                                class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-indicatif">
-                                                {{ $countrie_indicative->indecative ?? null }}
-                                            </div>
-                                            <input wire:model.defer="phone_inter_out_civ" id="phone_inter_out_civ"
-                                                type="number" class="form-control" placeholder="Numero"
-                                                value="" minlength="6" maxlength="15">
-                                            @error('phone_inter_out_civ')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                @endif
                             @endif
 
                             @if ($provider_inter_out_civ != 124)
@@ -1269,8 +326,8 @@
                                 <div class="flex">
 
                                     <input wire:model.debounce.500ms="transaction_inter_amount_money_receved" readonly
-                                        id="transaction_inter_amount_money_receved" type="number"
-                                        class="form-control" placeholder="Montant à recevoir">
+                                        id="transaction_inter_amount_money_receved" type="number" class="form-control"
+                                        placeholder="Montant à recevoir">
                                     <div
                                         class="px-5 py-3 flex-1 zoom-in alert alert-primary relative font-medium leading-6 pl-3 2xl:pl-4 style-devise">
                                         {{ $countrie_indicative->currencie->code ?? null }}
@@ -1316,7 +373,6 @@
 
                 @endif
             @endif
-
 
             <div class="modal-footer style-foo">
                 <button wire:click="cancelInterOutCivField" type="button"

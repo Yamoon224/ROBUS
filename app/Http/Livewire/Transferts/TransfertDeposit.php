@@ -76,7 +76,6 @@ class TransfertDeposit extends Component
                 }
             }
         }
-
     }
 
 
@@ -234,8 +233,6 @@ class TransfertDeposit extends Component
 
                                 if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
 
-
-
                                     $walletBank = app(TransfertServiceBackend::class)->createNewVirement(
                                         $walletUser,
                                         $reel_amount,
@@ -325,38 +322,30 @@ class TransfertDeposit extends Component
     {
 
 
-        $adminAmount = $amount_user->amount;
-
         if (sabdy()->is_under_distributer) {
 
 
             if ($this->showRemonterVirementButton) {
 
-                $valuer_deposit =  $amount_user->comission_distributer;
+                $amountDeposit =  $amount_user->comission_distributer;
+                $amountCompanie =  $amount_user->percent_companie;
+                $amountDepositUnder = (float) $amountDeposit;
 
                 $walletBank->update([
-                    'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
+                    'commissions' => DB::raw('commissions+'  .  $amountDepositUnder),
                 ]);
 
                 $account_accepted = sabdy()->is_accepted_companie ?? false;
 
                 if ($account_accepted && $this->showRemonterVirementCButton) {
-                    $valuer_companie = $amount_user->percent_companie;
-                    $walletBank->increment('commission_companie', $valuer_companie);
-
-                    $totalCommission =  $amount_user->percent_companie +  $valuer_deposit;
-
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_bank_id', $walletBank->id, $totalCommission, $adminAmount);
+                    $walletBank->increment('commission_companie', $amountCompanie);
+                    app(CommissionServiceBackend::class)->distributeUnderCommissionAcceptedCompanies($admin_civ, 'wallet_bank_id', $walletBank->id, $amountCompanie, $amountDepositUnder);
                 } else {
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_bank_id', $walletBank->id, $adminAmount, $valuer_deposit);
+                    app(CommissionServiceBackend::class)->distributeAdminCommissionUnders($admin_civ, 'wallet_bank_id', $walletBank->id, $amountDepositUnder);
                 }
-            } else {
-
-                app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_bank_id', $walletBank->id, $adminAmount);
             }
         } else {
-
-            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_bank_id', $walletBank->id, $adminAmount);
+            return null;
         }
 
         $amount_commission = $amount_valeur;

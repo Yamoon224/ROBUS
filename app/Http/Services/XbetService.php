@@ -110,7 +110,6 @@ class XbetService
 
 
         $amount__commission = $amount + ($percent_robus->percent * $amount);
-
         $amount_solde = robus()->wallet->amount - $amount__commission;
         $amount_solde_under = robus()->wallet->amount - $amount;
 
@@ -135,7 +134,6 @@ class XbetService
                 $walletXbet->update([
                     'commissions' => $valuer_deposit,
                 ]);
-
 
                 $admin_valeur =  $this->convertionService->convertAdminCommission($percent_robus->percent_admin *  $amount);
 
@@ -219,11 +217,12 @@ class XbetService
             $valuer_deposit =  $this->convertionService->convertAdminCommission($percent_robus->percent_under_drawal * $amount);
             $admin_nocomission =  $this->convertionService->convertAdminCommission($percent_robus->percent_with_drawal * $amount);
             $admin_percent =  $this->convertionService->convertAdminCommission($percent_robus->percent_admin * $amount);
+            $under_commission = $percent_robus->percent_under_drawal * $amount;
 
             if (!empty($activeButtons['showRemonterXbetDrawalButton'])) {
 
                 $walletXbet->update([
-                    'commissions' => $valuer_deposit,
+                    'commissions' => $under_commission,
                 ]);
 
 
@@ -233,10 +232,10 @@ class XbetService
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterXbetDrawalCButton'])) {
 
-
                     $valuer_companie =  $this->convertionService->convertAdminCommission($percent_robus->percent_companie * $amount);
-
-                    $walletXbet->increment('commission_companie', $valuer_companie);
+                    $compagnie_commission = $percent_robus->percent_companie * $amount;
+                    
+                    $walletXbet->increment('commission_companie', $compagnie_commission);
 
                     $this->commissionServices->distributeAdminCommissionAcceptedXbetCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_percent,  $valuer_deposit, $valuer_companie);
                 } else {
