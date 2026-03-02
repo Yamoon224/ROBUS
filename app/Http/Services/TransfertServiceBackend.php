@@ -77,7 +77,7 @@ class TransfertServiceBackend
                 'num_piece' => null,
                 'validated_date' => null,
                 'created_by' => sabdy()->id,
-            'balance_before' => sabdy()->wallet->amount,
+                'balance_before' => sabdy()->wallet->amount,
                 'provider_id' => $provider->id,
                 'choose_type_transaction' => 1,
                 'type_transaction' => 'Depot',
@@ -107,7 +107,7 @@ class TransfertServiceBackend
                 'provider_id'  =>   $provider->id,
                 'num_wallet'   =>  null,
                 'costs_amount' => $valuer_deposit_com,
-            'balance_before' => sabdy()->wallet->amount,
+                'balance_before' => sabdy()->wallet->amount,
 
                 'name_complet' => $name_custumers ?? null,
                 'num_piece' => $identity_number ?? null,
@@ -136,7 +136,7 @@ class TransfertServiceBackend
                 'costs_amount' => 0,
                 'choose_type_transaction' => 1,
                 'amount_received'  => $valeur_receive,
-            'balance_before' => sabdy()->wallet->amount,
+                'balance_before' => sabdy()->wallet->amount,
 
                 'type_transaction' => 'Réequilibrage',
                 'type_received' => 'Transfert',
@@ -256,7 +256,7 @@ class TransfertServiceBackend
     }
 
 
-    public function createXbetTransaction($val_amount, $provider, $percent_robus, $amount_solde, $choose_type_transaction, $fullName, $numberAcompte , $codeAcompte, $amountReceved)
+    public function createXbetTransaction($val_amount, $provider, $percent_robus, $amount_solde, $choose_type_transaction, $fullName, $numberAcompte, $codeAcompte, $amountReceved)
     {
 
         return WalletXbet::create([
@@ -350,7 +350,7 @@ class TransfertServiceBackend
     }
 
 
-    public function createDjamoTransaction($val_amount, $provider, $percent_robus, $amount_solde, $fullName, $image, $amountReceved, $choose_transaction, $identity_number)
+    public function createDjamoTransaction($val_amount, $provider, $percent_robus, $amount_solde, $fullName, $image, $amountReceved, $choose_transaction, $identity_number, $phone)
     {
 
         return WalletDjamo::create([
@@ -364,6 +364,7 @@ class TransfertServiceBackend
             'costs_amount' => ($percent_robus->percent * $val_amount),
             'image'  =>  $image ?? null,
             'full_name' =>  $fullName ?? null,
+            'phone' =>  $phone ?? null,
             'balance_before' => sabdy()->wallet->amount,
             'status'  => "PENDING",
             'identity_number' =>  $identity_number ?? null,
@@ -406,6 +407,153 @@ class TransfertServiceBackend
             return false;
         }
     }
+
+
+     public function createWithVersementWalletInter(
+        $amount_transaction,
+        $percent_robus,
+        $country_robus,
+        $provider_payment,
+        $provider_type,
+        $name_custumers,
+        $guichet_code,
+        $bank_code,
+        $account_number,
+        $name,
+
+    ) {
+
+        $amount_solde = sabdy()->wallet->amount - $amount_transaction;
+
+        return WalletInter::create([
+            'wallet_id' => sabdy()->wallet->id,
+            'amount' => $amount_transaction,
+            'description' => null,
+            'balance_before' =>  sabdy()->wallet->amount,
+            'inter_cost_id' => null,
+            'virement_percent_id' => $percent_robus->id ?? null,
+            'number_compte' => $account_number,
+            'created_by' => sabdy()->id,
+            'provider_id' => $provider_payment,
+            'name' => $name,
+            'num_authers' => $name_custumers ?? null,
+            'bank_code' => $bank_code ?? null,
+            'guichet_code' => $guichet_code ?? null,
+            'costs_amount' => (sabdy()?->is_under_distributer || sabdy()?->is_api) ?  ($percent_robus->percent_merchands * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
+            'provider_type' => 9,
+            'status' => 'PENDING',
+            'country_id' => $country_robus->id,
+            'choose_type_transaction' => $provider_type,
+            'amount_solde' => $amount_solde ?? null,
+        ]);
+    }
+
+
+    public function createRobusWalletTransactionOrderCard(
+        $val_amount,
+        $account_number,
+        $country_robus,
+        $provider,
+        $amount_user,
+        $name,
+        $amount_receveid
+    ) {
+        $amount_solde = sabdy()->wallet->amount - $val_amount;
+
+        return WalletInter::create(
+            [
+
+                'amount_solde' => $amount_solde ?? null,
+                'wallet_id' => sabdy()->wallet->id,
+                'amount' => $val_amount,
+                'balance_before' =>  sabdy()->wallet->amount,
+                'inter_cost_id' => null,
+                'deposit_cost_id' => 1,
+                'number_compte' =>  null,
+                'balance_before' =>  sabdy()->wallet->amount,
+                'created_by' => sabdy()->id,
+                'provider_id' =>  $provider,
+                'number_card' =>  $account_number,
+                'country_id' => $country_robus->id,
+                'name' => $name,
+                'provider_type' => 8,
+                'costs_amount' => $amount_user,
+                'status' => 'PENDING',
+                'amount_received' =>  $amount_receveid ?? null,
+
+            ]
+        );
+    }
+
+    public function createRobusWalletTransactionVirement(
+        $val_amount,
+        $account_number,
+        $country_robus,
+        $provider,
+        $amount_user,
+        $phone,
+        $firstname,
+        $lastname,
+        $amount_receveid
+    ) {
+        $amount_solde = sabdy()->wallet->amount - $val_amount;
+
+        return WalletInter::create([
+            'wallet_id' => sabdy()->wallet->id,
+            'amount_solde' => $amount_solde ?? null,
+            'amount' => $val_amount,
+            'inter_cost_id' => null,
+            'bank_cost_id' => 1,
+            'balance_before' =>  sabdy()->wallet->amount,
+            'phone' => $phone,
+            'number_compte' => $account_number,
+            'created_by' => sabdy()->id,
+            'provider_id' => $provider,
+            'status' => 'PENDING',
+            'country_id' => $country_robus->id,
+            'provider_type' => 7,
+            'firstname' =>  $firstname ??  null,
+            'lastname' => $lastname ?? null,
+            'costs_amount' =>  $amount_user,
+            'amount_received' =>  $amount_receveid ?? null,
+        ]);
+    }
+
+
+    public function createRobusWalletTransactionCreditPayment(
+        $val_amount,
+        $percent_robus,
+        $country_robus,
+        $provider,
+        $name_custumer,
+        $number_phone,
+        $amount_conversion,
+        $paiementChoix_phone,
+        $amount_receveid
+    ) {
+        $amount_solde = sabdy()->wallet->amount - $val_amount;
+
+        return WalletInter::create([
+            'amount_solde' => $amount_solde ?? null,
+            'wallet_id' =>   sabdy()->wallet->id,
+            'amount' => $val_amount,
+            'description'  => "Payment de Credit Téléphonique",
+            'balance_before' =>  sabdy()->wallet->amount,
+            'provider_type' =>  6,
+            'payment_cost_id' => $percent_robus->id,
+            'phone' =>   $country_robus->indecative . $number_phone ?? null,
+            'name' => $name ?? null,
+            'created_by' => sabdy()->id,
+            'provider_id'  =>   $provider,
+            'name'  =>   $name_custumer ?? null,
+            'status'  => "PENDING",
+            'costs_amount' =>  $amount_conversion,
+            'country_id'  =>   $country_robus->id,
+            'paiementChoix_phone'  => $paiementChoix_phone ?? null,
+            'amount_received' =>  $amount_receveid ?? null,
+        ]);
+    }
+
 
 
     public function createMobileWalletInter(
@@ -493,6 +641,51 @@ class TransfertServiceBackend
             'choose_type_transaction' => 1,
             'amount_solde' => $amount_solde ?? null,
             'image' => $imagePath ?? null,
+        ]);
+    }
+
+
+    public function createRobusWalletTransactionPayment(
+        $val_amount,
+        $percent_robus,
+        $country_robus,
+        $provider,
+        $id_invoice,
+        $number_decoder,
+        $number_phone,
+        $amount_conversion,
+        $number_contract,
+        $paiementChoix_phone,
+        $facture_choix_type,
+        $offers,
+        $amount_receveid,
+        $name
+    ) {
+        $amount_solde = sabdy()->wallet->amount - $val_amount;
+
+        return WalletInter::create([
+            'amount_solde' => $amount_solde ?? null,
+            'wallet_id' =>   sabdy()->wallet->id,
+            'balance_before' =>  sabdy()->wallet->amount,
+            'amount' => $val_amount,
+            'description'  => "Paiement facture",
+            'inter_cost_id' => null,
+            'provider_type' =>  5,
+            'payment_cost_id' => $percent_robus->id,
+            'number_decoder'   => $number_decoder ?? null,
+            'id_invoice' => $id_invoice ?? null,
+            'number_contract' => $number_contract ?? null,
+            'name' => $name ?? null,
+            'created_by' => sabdy()->id,
+            'provider_id'  =>   $provider,
+            'number_phone' => $number_phone ?? null,
+            'offer_id'  =>  $offers->id ?? null,
+            'status'  => "PENDING",
+            'costs_amount' =>  $amount_conversion,
+            'country_id'  =>   $country_robus->id,
+            'paiementChoix_phone'  => $paiementChoix_phone ?? null,
+            'factureChoix_type' =>  $facture_choix_type ?? null,
+            'amount_received' =>  $amount_receveid ?? null,
         ]);
     }
 
@@ -1206,7 +1399,7 @@ class TransfertServiceBackend
                 'description' => $reloadcard_description,
                 'num_carte' =>  $account_number_reload_card,
                 'name' => $name_reloadcard,
-            'balance_before' => sabdy()->wallet->amount,
+                'balance_before' => sabdy()->wallet->amount,
                 'deposit_cost_id' => 2,
                 'costs_amount' =>  $amount_user,
                 'created_by' => Auth::guard('web')->user()->id,
@@ -1373,7 +1566,6 @@ class TransfertServiceBackend
             $message = 'Code de validation : ' . $code_valdated  . ' . Ne partagez ce code qu\'avec un agent ROBUS lors d\'une transaction ' . ' Expire dans 5 min';
 
             sendTryCashMessage($wallet_search->sidUser->phone, $message);
-
         }
 
         if ($wallet_search->sidUser->email != null) {

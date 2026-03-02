@@ -29,6 +29,7 @@ class TransfertPayment extends Component
     public $offer_paiement;
     public $paiementStatus;
     public $provider_payment;
+    
     // CIE
     public $paiement_name_cie;
     public $paiement_id_invoice;

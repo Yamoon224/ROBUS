@@ -1410,11 +1410,6 @@ class IntersPaymentController extends Controller
                     );
                 }
 
-
-
-
-
-
                 if ($percent_robus != null) {
 
                     $amount_min = 20700;

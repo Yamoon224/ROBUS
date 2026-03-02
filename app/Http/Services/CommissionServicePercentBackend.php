@@ -9,7 +9,9 @@ use App\Models\Onexbet;
 use App\Models\PushPercent;
 use App\Models\DjamoPercent;
 use App\Models\VirementPercent;
+use App\Models\Costs\PaymentCost;
 use App\Models\Costs\BankCommission;
+use App\Models\Costs\DepositCost;
 
 class CommissionServicePercentBackend
 {
@@ -50,11 +52,28 @@ class CommissionServicePercentBackend
 
         return null;
     }
+
+    public function getRobusPercentageInterVersement()
+    {
+
+        return VirementPercent::whereId(14)->first();
+    }
     public function getRobusPercentagePushInter()
     {
         $isSpecialProfile = sabdy()->is_under_distributer || sabdy()->is_api;
 
         return  $isSpecialProfile ? PushPercent::whereId(2)->first() : PushPercent::whereId(4)->first();
+    }
+
+      public function getRobusPercentageOrderCard()
+    {
+        return DepositCost::whereId(1)->first();
+    }
+
+
+    public function getRobusPercentagePaymentInter()
+    {
+        return PaymentCost::whereId(1)->first();
     }
 
     public function getRobusPercentageDjamoInter()

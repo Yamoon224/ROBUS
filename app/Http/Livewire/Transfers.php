@@ -233,7 +233,6 @@ class Transfers extends Component
     public $image_back_transaction;
     public $type_image_transaction;
 
-
     // Choise
     public $paiementChoix_phone;
     public $paiementChoix_type;
@@ -400,6 +399,7 @@ class Transfers extends Component
     public $id_accompte;
     public $references;
 
+    
 
 
     protected $listeners = [

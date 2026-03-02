@@ -29,9 +29,11 @@ class TransfertDjamo extends Component
     public $image;
     public $amount_djamo;
     public $full_name_djamo;
+    public $number_phone;
     public $image_preview;
     public $operators;
     public $operatorsCompagnie;
+
     // Compagnies
     public $showRemonterDjamoCButton = false;
     public $operatorsTransaction;
@@ -135,6 +137,7 @@ class TransfertDjamo extends Component
                 'image' => 'required|image|mimes:png,jpg,jpeg|max:102400',
                 'full_name_djamo' => 'required',
                 'amount_djamo' => 'required',
+                'number_phone' => 'required',
                 'choose_transaction' => 'required',
 
             ],
@@ -143,6 +146,8 @@ class TransfertDjamo extends Component
                 'Image est obligatoire',
                 'full_name_djamo.required' =>
                 'Nom & prénom sont obligatoire',
+                 'number_phone.required' =>
+                'Numero de telephone sont obligatoire',
                 'amount_djamo.required' =>
                 'Montant est obligatoire',
                 'choose_transaction.required' => 'Le choix est obligatoire est obligatoire',
@@ -218,12 +223,14 @@ class TransfertDjamo extends Component
                 'password_validated' => 'required',
                 'image' => 'required|image|mimes:png,jpg,jpeg|max:102400',
                 'full_name_djamo' => 'required',
+                'number_phone' => 'required',
                 'amount_djamo' => 'required',
                 'choose_transaction' => 'required',
             ], [
                 'password_validated.required' => 'Mot de passe est obligatoire',
                 'image.required' => 'Numero est obligatoire',
                 'full_name_djamo.required' => 'Nom & prénom sont obligatoire',
+                'number_phone.required' => 'Numero de telephone sont obligatoire',
                 'amount_djamo.required' => 'Montant est obligatoire',
                 'choose_transaction.required' => 'Le choix est obligatoire est obligatoire',
             ]);
@@ -290,7 +297,8 @@ class TransfertDjamo extends Component
                     $savedPath,
                     $amountReceved,
                     $this->identity_number,
-                    $this->choose_transaction
+                    $this->choose_transaction,
+                    $this->number_phone,
                 );
 
                 $message =

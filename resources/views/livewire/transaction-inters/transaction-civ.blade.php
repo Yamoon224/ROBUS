@@ -211,24 +211,55 @@
                         100 => ['name' => 'MAURITEL', 'image' => 'mauritel.png'],
                         101 => ['name' => 'MATTEL', 'image' => 'mattel.png'],
                         102 => ['name' => 'CHINGUITTELy', 'image' => 'hinguittel.jpeg'],
+                       
                         104 => ['name' => 'Djamo', 'image' => 'djamo.png'],
                         105 => ['name' => 'Push', 'image' => 'push.png'],
                         106 => ['name' => 'Tresort Money', 'image' => 'tresorMoney.png'],
+                       
                         124 => ['name' => 'Bank send', 'image' => 'bank_send.png'],
                         // New Service sender
-                        52 => ['name' => 'CANAL', 'image' => 'bank_send.png'],
-                        53 => ['name' => 'CIE', 'image' => 'bank_send.png'],
-                        54 => ['name' => 'SODECI', 'image' => 'bank_send.png'],
-                        56 => ['name' => 'Orange', 'image' => 'bank_send.png'],
-                        57 => ['name' => 'Moov', 'image' => 'bank_send.png'],
-                        58 => ['name' => 'Mtn', 'image' => 'bank_send.png'],
+                        52 => ['name' => 'CANAL', 'image' => 'canal.png'],
+                        53 => ['name' => 'CIE', 'image' => 'cie.png'],
+                        54 => ['name' => 'SODECI', 'image' => 'sodeci.png'],
+                        // Credit
+                        56 => ['name' => 'Orange', 'image' => 'orange.png'],
+                        57 => ['name' => 'Moov', 'image' => 'moov.png'],
+                        58 => ['name' => 'Mtn', 'image' => 'mtn.png'],
+
+                        // Versements
+                        59 => ['name' => 'ECOBANK', 'image' => 'ecobank.png'],
+                        60 => ['name' => 'NSIA', 'image' => 'nsia.png'],
+
+                        // Virements
+                        129 => ['name' => 'AFG', 'image' => 'afg_bank.png'],
+                        130 => ['name' => 'UBA', 'image' => 'uba.png'],
+                        131 => ['name' => 'GT BANK', 'image' => 'gt_bank.png'],
+                        132 => ['name' => 'VERSUS BANK', 'image' => 'versus.png'],
+                        134 => ['name' => 'ATLANTIQUE BANQUE', 'image' => 'atlantique.png'],
+                        135 => ['name' => 'BNI', 'image' => 'bni.png'],
+                        136 => ['name' => 'SGBCI', 'image' => 'sgbci.png'],
+                        137 => ['name' => 'SIB', 'image' => 'sib.png'],
+                        138 => ['name' => 'BANK OF AFRICA(BOA)', 'image' => 'boa.png'],
+                        139 => ['name' => 'BDA', 'image' => 'bda_bank.png'],
+                        140 => ['name' => 'BRIDGE BANK', 'image' => 'bridge_bank.png'],
+                        141 => ['name' => 'ORABANK', 'image' => 'Orabank_bank.png'],
+                        
+                        // Rechargement carte
+                        61 => ['name' => 'UBA CI', 'image' => 'uba.png'],
+                        62 => ['name' => 'BNI', 'image' => 'bni.png'],
+                        63 => ['name' => 'UBA BF', 'image' => 'uba.png'],
+                        64 => ['name' => 'ECOBANK', 'image' => 'ecobank.png'],
+                        65 => ['name' => 'BSIC', 'image' => 'bsic.png'],
+
+                        67 => ['name' => 'Master Card', 'image' => 'mastercard-mobile.png'],
+                        69 => ['name' => 'Master carte', 'image' => 'mastercard-mobile.png']
 
                     ];
 
                     $provider = $providerData[$provider_inter_out_civ] ?? null;
                     $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                     $wallet_name = $wallet_name ?? '';
-52
+
                 @endphp
 
                 @if ($provider)
@@ -260,6 +291,42 @@
                                     @include('components.partials.remittance-fields')
                                 @elseif ($provider_inter_out_civ == 124)
                                     @include('components.partials.provider-hunders-fields')
+                                @elseif ($provider_inter_out_civ == 52 || $provider_inter_out_civ == 53 || $provider_inter_out_civ == 54)
+                                    @include('components.partials.paiement-fields')
+                                @elseif ($provider_inter_out_civ == 56 || $provider_inter_out_civ == 57 || $provider_inter_out_civ == 58)
+                                    @include('components.partials.phoneCredit-fields')
+                                @elseif (
+                                    $provider_inter_out_civ == 59 ||
+                                        $provider_inter_out_civ == 60 ||
+                                        $provider_inter_out_civ == 129 ||
+                                        $provider_inter_out_civ == 130 ||
+                                        $provider_inter_out_civ == 131 ||
+                                        $provider_inter_out_civ == 132 ||
+                                        $provider_inter_out_civ == 133 ||
+                                        $provider_inter_out_civ == 134 ||
+                                        $provider_inter_out_civ == 136 ||
+                                        $provider_inter_out_civ == 137 ||
+                                        $provider_inter_out_civ == 138 ||
+                                        $provider_inter_out_civ == 139 ||
+                                        $provider_inter_out_civ == 140 ||
+                                        $provider_inter_out_civ == 141 ||
+                                        $provider_inter_out_civ == 135)
+                                    @include('components.partials.versement-fields')
+                                @elseif (
+                                    $provider_inter_out_civ == 61 ||
+                                        $provider_inter_out_civ == 62 ||
+                                        $provider_inter_out_civ == 63 ||
+                                        $provider_inter_out_civ == 64 ||
+                                        $provider_inter_out_civ == 65 ||
+                                        $provider_inter_out_civ == 67 ||
+                                        $provider_inter_out_civ == 69)
+                                    @include('components.partials.reloadCard-fields')
+                                @elseif ($provider_inter_out_civ == 106)
+                                    @include('components.partials.tresortMoney-fields')
+                                @elseif ($provider_inter_out_civ == 105)
+                                    @include('components.partials.push-fields')
+                                @elseif ($provider_inter_out_civ == 104)
+                                    @include('components.partials.djamo-fields')
                                 @else
                                     @include('components.partials.authers-fields')
                                 @endif
@@ -277,7 +344,40 @@
 
                             @endif
 
-                            @if ($provider_inter_out_civ != 124)
+                            @if (
+                                $provider_inter_out_civ == 56 ||
+                                    $provider_inter_out_civ == 57 ||
+                                    $provider_inter_out_civ == 58 ||
+                                    $provider_inter_out_civ == 53 ||
+                                    $provider_inter_out_civ == 105 ||
+                                    $provider_inter_out_civ == 106 ||
+                                    $provider_inter_out_civ == 59 ||
+                                    $provider_inter_out_civ == 60 ||
+                                    $provider_inter_out_civ == 129 ||
+                                    $provider_inter_out_civ == 130 ||
+                                    $provider_inter_out_civ == 131 ||
+                                    $provider_inter_out_civ == 132 ||
+                                    $provider_inter_out_civ == 134 ||
+                                    $provider_inter_out_civ == 135 ||
+                                    $provider_inter_out_civ == 136 ||
+                                    $provider_inter_out_civ == 137 ||
+                                    $provider_inter_out_civ == 138 ||
+                                    $provider_inter_out_civ == 139 ||
+                                    $provider_inter_out_civ == 140 ||
+                                    $provider_inter_out_civ == 141 ||
+                                    $provider_inter_out_civ == 104)
+                                <div class="col-span-12 mt-3">
+                                    <label for="transaction_inter_amount_money" class="form-label">Montant<span
+                                            class="text-danger">*</span></label>
+
+                                    <input wire:model.live="transaction_inter_amount_money"
+                                        id="transaction_inter_amount_money" type="number" class="form-control"
+                                        placeholder="Montant" value="" minlength="6" maxlength="15">
+                                    @error('transaction_inter_amount_money')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            @elseif($provider_inter_out_civ != 124)
                                 @include('components.transaction-inter-amount-input', [
                                     'id' => 'transaction_inter_amount_money',
                                     'model' => 'transaction_inter_amount_money',
@@ -343,8 +443,6 @@
                         @else
                             <x-transaction-inter-detail title="Montant à payer" value="{{ $amount_to_pay ?? null }}"
                                 country="{{ $usersCountry }}" />
-
-
 
                             <div class="col-span-6 mt-3">
                                 <label for="transaction_inter_amount_money_receved" class="form-label">Montant

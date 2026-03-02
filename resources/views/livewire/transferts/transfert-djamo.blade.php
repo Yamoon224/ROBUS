@@ -128,7 +128,6 @@
 
                     </div>
 
-
                     <div class="col-span-6 mt-1">
                         @include('components.transaction-text-input', [
                             'id' => 'full_name_djamo',
@@ -138,7 +137,16 @@
                         ])
                     </div>
 
-                    <div class="col-span-6 mt-1">
+
+
+                    @include('components.transaction-phone-input', [
+                        'id' => 'number_phone',
+                        'model' => 'number_phone',
+                        'label' => 'Numero de teléphone',
+                        'error' => 'number_phone',
+                    ])
+
+                    <div class="col-span-12 mt-1">
                         @include('components.transaction-amount-input', [
                             'id' => 'amount_djamo',
                             'model' => 'amount_djamo',
@@ -260,7 +268,7 @@
 
                 </div>
 
-                    @include('components.info_confirme_passe')
+                @include('components.info_confirme_passe')
 
                 <div class="col-span-6 mt-1">
                     <label class="form-label">Nom et prénom</label>
@@ -342,4 +350,3 @@
             });
     });
 </script>
-

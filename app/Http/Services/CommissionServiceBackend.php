@@ -11,6 +11,7 @@ use App\Models\Custumers\Country;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\LedgerEntry;
+use App\Models\Costs\BankCost;
 
 class CommissionServiceBackend
 {
@@ -44,7 +45,8 @@ class CommissionServiceBackend
         ]);
     }
 
-     public function distributeAdminAndBankCommissions($adminCiv, $walletColumn, $walletId, $totalCommission, $amountBank)
+
+    public function distributeAdminAndBankCommissions($adminCiv, $walletColumn, $walletId, $totalCommission, $amountBank)
     {
 
         if ($adminCiv->isEmpty()) {
@@ -69,8 +71,8 @@ class CommissionServiceBackend
             }
         }
     }
-    
-      public function distributeAdminAndBankCommissionAccepteds($adminCiv, string $walletColumn, $walletId, $totalCommission, $amountDeposit, $amountBank)
+
+    public function distributeAdminAndBankCommissionAccepteds($adminCiv, string $walletColumn, $walletId, $totalCommission, $amountDeposit, $amountBank)
     {
 
 
@@ -99,7 +101,7 @@ class CommissionServiceBackend
         }
     }
 
-     public function distributeAdminAndVersementCommissionAcceptedCompanies($adminCiv, string $walletColumn, $walletId, $admin_amount, $totalCompanie, $amountDeposit, $amountBank)
+    public function distributeAdminAndVersementCommissionAcceptedCompanies($adminCiv, string $walletColumn, $walletId, $admin_amount, $totalCompanie, $amountDeposit, $amountBank)
     {
 
         if ($adminCiv->isEmpty()) {
@@ -128,7 +130,7 @@ class CommissionServiceBackend
         }
     }
 
-     public function distributeAdminCommissionXbetNoCompanies($adminCiv, string $walletColumn, $walletId, $admin_valeur, $amountDeposit)
+    public function distributeAdminCommissionXbetNoCompanies($adminCiv, string $walletColumn, $walletId, $admin_valeur, $amountDeposit)
     {
 
         if ($adminCiv->isEmpty()) {
@@ -155,7 +157,7 @@ class CommissionServiceBackend
         }
     }
 
-     public function distributeAdminCommissionAcceptedXbetCompanies($adminCiv, string $walletColumn, $walletId, $admin_valeur, $totalCommission, $amountDeposit)
+    public function distributeAdminCommissionAcceptedXbetCompanies($adminCiv, string $walletColumn, $walletId, $admin_valeur, $totalCommission, $amountDeposit)
     {
 
         if ($adminCiv->isEmpty()) {
@@ -181,7 +183,40 @@ class CommissionServiceBackend
             }
         }
     }
-     public function distributeAdminPaiementCommissions($adminCiv, $walletColumn, $walletId, $totalCommission)
+
+    public function distributeAdminCommissionIntersAcceptedCompanies($adminCiv, string $walletColumn, $walletId, $totalCommission, $totalCommissionCompany, $amountDeposit)
+    {
+
+        if ($adminCiv->isEmpty()) {
+            return;
+        }
+
+        $userUnder = sabdy();
+
+        if ($adminCiv->count() > 0) {
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create(array_merge([
+                    'amount' => $totalCommission,
+                    'sid_user_id' => $adminUser->id,
+                    'description' => 'Commission administrateur',
+                    'amount_compagnie' => $userUnder->is_under_distributer ? $totalCommissionCompany : 0,
+                    'amount_under' => $userUnder->is_under_distributer ? $amountDeposit : 0,
+                    'is_under' => true,
+                    'description_underdistributer' => $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null,
+                ], [$walletColumn => $walletId]));
+            }
+        }
+    }
+
+    public function getRobusPercentageRelaodCard()
+    {
+        return BankCost::whereId(1)->first();
+    }
+
+    public function distributeAdminPaiementCommissions($adminCiv, $walletColumn, $walletId, $totalCommission)
     {
 
         if ($adminCiv->isEmpty()) {
@@ -204,8 +239,8 @@ class CommissionServiceBackend
             }
         }
     }
-    
-     public function distributeAdminPaimentCommissions($adminCiv, $walletColumn, $walletId, $totalCommission, $banquecommission)
+
+    public function distributeAdminPaimentCommissions($adminCiv, $walletColumn, $walletId, $totalCommission, $banquecommission)
     {
 
         if ($adminCiv->isEmpty()) {
@@ -230,7 +265,7 @@ class CommissionServiceBackend
         }
     }
 
-       public function distributeAdminPaymentCommissions($adminCiv, $walletColumn, $walletId, $totalCommission)
+    public function distributeAdminPaymentCommissions($adminCiv, $walletColumn, $walletId, $totalCommission)
     {
 
         if ($adminCiv->isEmpty()) {
@@ -256,7 +291,7 @@ class CommissionServiceBackend
         }
     }
 
-     public function distributeAdminNoCompagniePaimentCommissions($adminCiv, $walletColumn, $walletId, $commissionAdmin, $undercommission, $amountBank)
+    public function distributeAdminNoCompagniePaimentCommissions($adminCiv, $walletColumn, $walletId, $commissionAdmin, $undercommission, $amountBank)
     {
 
         if ($adminCiv->isEmpty()) {
@@ -326,6 +361,35 @@ class CommissionServiceBackend
 
                 AdminsCom::create(array_merge([
                     'amount' => 0,
+                    'sid_user_id' => $adminUser->id,
+                    'description' => 'Commission administrateur',
+                    'amount_under' =>  $userUnder->is_under_distributer ? $amountDeposit : 0,
+                    'description_underdistributer' =>  $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                ], [$walletColumn => $walletId]));
+            }
+        }
+    }
+
+
+    public function distributeAdminNoCommissionInterCompagnies($adminCiv, string $walletColumn, $walletId, $amountAdmin, $amountDeposit)
+    {
+
+
+        if ($adminCiv->isEmpty()) {
+            return;
+        }
+
+        $userUnder = sabdy();
+
+
+        if ($adminCiv->count() > 0) {
+            $commissionPerAdmin = $amountAdmin / $adminCiv->count();
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create(array_merge([
+                    'amount' => $commissionPerAdmin,
                     'sid_user_id' => $adminUser->id,
                     'description' => 'Commission administrateur',
                     'amount_under' =>  $userUnder->is_under_distributer ? $amountDeposit : 0,

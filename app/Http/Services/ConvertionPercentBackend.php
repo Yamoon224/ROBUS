@@ -12,6 +12,51 @@ class ConvertionPercentBackend
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
 
+      public function convertAdminTransactionCommission($amount)
+    {
+        $country_civ = Country::find(107);
+
+        $robus_currency = robus()->country->currencie->value;
+
+        if ($country_civ->currencie->value > robus()->country->currencie->value) {
+            return $amount * $robus_currency;
+        } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
+            return $amount;
+        } else {
+            return $amount * $robus_currency;
+        }
+    }
+
+      public function convertAdminCommissionPayment($amount)
+    {
+        $country_civ = Country::find(107);
+
+        $robus_currency = sabdy()->country->currencie->value;
+
+        if ($country_civ->currencie->value > sabdy()->country->currencie->value) {
+            return $amount * $robus_currency;
+        } elseif ($country_civ->currencie->value == sabdy()->country->currencie->value) {
+            return $amount;
+        } else {
+            return $amount / $robus_currency;
+        }
+    }
+
+     public function convertAdminCommissionInvoice($amount)
+    {
+        $country_civ = Country::find(107);
+
+        $robus_currency = sabdy()->country->currencie->value;
+
+        if ($country_civ->currencie->value > sabdy()->country->currencie->value) {
+            return $amount * $robus_currency;
+        } elseif ($country_civ->currencie->value == sabdy()->country->currencie->value) {
+            return $amount;
+        } else {
+            return $amount / $robus_currency;
+        }
+    }
+
     public function convertAdminCommissionInter($amount, $walletSend, $walletReceveid)
     {
 

@@ -544,12 +544,10 @@ class PaymentController extends Controller
 
                         $offer_amount = $offer->whereId($amount_offer)->first();
 
-
                         $valeur_offer =  $offer_amount->amount + $commission_invoice->amount_canal;
 
                         $valeur_offer_receveid =  $offer_amount->amount;
 
-                        // Convertion valeurs offers
                         $convertion_offers = $this->convertionservice->convertAdminCommissionInvoice($valeur_offer);
 
                         $convertion_offer_receveid = $this->convertionservice->convertAdminCommissionInvoice($valeur_offer_receveid);
