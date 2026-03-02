@@ -16,11 +16,11 @@ class ConvertionPercentBackend
     {
         $country_civ = Country::find(107);
 
-        $robus_currency = robus()->country->currencie->value;
+        $robus_currency = sabdy()->country->currencie->value;
 
-        if ($country_civ->currencie->value > robus()->country->currencie->value) {
+        if ($country_civ->currencie->value > sabdy()->country->currencie->value) {
             return $amount * $robus_currency;
-        } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
+        } elseif ($country_civ->currencie->value == sabdy()->country->currencie->value) {
             return $amount;
         } else {
             return $amount * $robus_currency;

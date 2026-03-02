@@ -211,11 +211,11 @@
                         100 => ['name' => 'MAURITEL', 'image' => 'mauritel.png'],
                         101 => ['name' => 'MATTEL', 'image' => 'mattel.png'],
                         102 => ['name' => 'CHINGUITTELy', 'image' => 'hinguittel.jpeg'],
-                       
+
                         104 => ['name' => 'Djamo', 'image' => 'djamo.png'],
                         105 => ['name' => 'Push', 'image' => 'push.png'],
                         106 => ['name' => 'Tresort Money', 'image' => 'tresorMoney.png'],
-                       
+
                         124 => ['name' => 'Bank send', 'image' => 'bank_send.png'],
                         // New Service sender
                         52 => ['name' => 'CANAL', 'image' => 'canal.png'],
@@ -243,7 +243,7 @@
                         139 => ['name' => 'BDA', 'image' => 'bda_bank.png'],
                         140 => ['name' => 'BRIDGE BANK', 'image' => 'bridge_bank.png'],
                         141 => ['name' => 'ORABANK', 'image' => 'Orabank_bank.png'],
-                        
+
                         // Rechargement carte
                         61 => ['name' => 'UBA CI', 'image' => 'uba.png'],
                         62 => ['name' => 'BNI', 'image' => 'bni.png'],
@@ -252,8 +252,7 @@
                         65 => ['name' => 'BSIC', 'image' => 'bsic.png'],
 
                         67 => ['name' => 'Master Card', 'image' => 'mastercard-mobile.png'],
-                        69 => ['name' => 'Master carte', 'image' => 'mastercard-mobile.png']
-
+                        69 => ['name' => 'Master carte', 'image' => 'mastercard-mobile.png'],
                     ];
 
                     $provider = $providerData[$provider_inter_out_civ] ?? null;
@@ -377,7 +376,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
-                            @elseif($provider_inter_out_civ != 124)
+                            @elseif($provider_inter_out_civ != 124 && $provider_inter_out_civ != 52)
                                 @include('components.transaction-inter-amount-input', [
                                     'id' => 'transaction_inter_amount_money',
                                     'model' => 'transaction_inter_amount_money',
@@ -405,41 +404,61 @@
 
                         @if (sabdy()->is_under_distributer == 1)
 
-                            @if ($showRemonterInterButton)
-                                <x-transaction-inter-detail title="Commission" value="{{ $commission ?? null }}"
-                                    country="{{ $usersCountry }}" />
+                            @if ($provider_inter_out_civ == 52)
+
+                                @if (!is_null($offer_paiement) && $offer_paiement > 0)
+                                    <x-payment-summary :commission="$user_auth->is_under_distributer == 1 && $showRemonterInterButton
+                                        ? $amount_paiement_invoice_canal_inter
+                                        : null" :fee="$user_auth->is_under_distributer == 1 ? $amount_received_canal : null" :total="$amount_received_canal"
+                                        :currency="$usersCountry" :showCommission="$user_auth->is_under_distributer == 1 && $showRemonterInterButton" :showFee="$user_auth->is_under_distributer == 1" :showTotal="true" />
+                                @endif
+                            @elseif($provider_inter_out_civ == 53 || $provider_inter_out_civ == 54)
+                                @if (!is_null($transaction_inter_amount_money) && $transaction_inter_amount_money > 0)
+                                    <x-payment-summary :commission="$user_auth->is_under_distributer == 1 && $showRemonterInterButton
+                                        ? $amount_paiement_invoice_auther_pay
+                                        : null" :fee="$user_auth->is_under_distributer == 1
+                                        ? $amount_paiemet_frais_receive
+                                        : null" :total="$amount_paiement_invoice_auther_receive"
+                                        :currency="$usersCountry" :showCommission="$user_auth->is_under_distributer == 1 && $showRemonterInterButton" :showFee="$user_auth->is_under_distributer == 1" :showTotal="true" />
+                                @endif
                             @else
+                                @if ($showRemonterInterButton)
+                                    <x-transaction-inter-detail title="Commission" value="{{ $commission ?? null }}"
+                                        country="{{ $usersCountry }}" />
+                                @else
+                                    <div class="col-span-6 mt-3">
+                                        <label class="form-label">Pas de commission<span class="text-danger">
+                                                *</span></label>
+                                        <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
+                                            style="font-size: 25px; color:white;">
+
+                                        </div>
+                                    </div>
+                                @endif
+
+
                                 <div class="col-span-6 mt-3">
-                                    <label class="form-label">Pas de commission<span class="text-danger">
-                                            *</span></label>
-                                    <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
-                                        style="font-size: 25px; color:white;">
+                                    <label for="transaction_inter_amount_money_receved" class="form-label">Montant
+                                        à recevoir<span class="text-danger">*</span></label>
 
+                                    <div class="flex">
+
+                                        <input wire:model.debounce.500ms="transaction_inter_amount_money_receved"
+                                            readonly id="transaction_inter_amount_money_receved" type="number"
+                                            class="form-control" placeholder="Montant à recevoir">
+                                        <div
+                                            class="px-5 py-3 flex-1 zoom-in alert alert-primary relative font-medium leading-6 pl-3 2xl:pl-4 style-devise">
+                                            {{ $countrie_indicative->currencie->code ?? null }}
+                                        </div>
+                                        @error('transaction_inter_amount_money_receved')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
+
+                                <x-transaction-send title="Frais d'envoie" value="{{ $frais ?? null }}"
+                                    country="{{ $usersCountry }}" />
                             @endif
-
-                            <div class="col-span-6 mt-3">
-                                <label for="transaction_inter_amount_money_receved" class="form-label">Montant
-                                    à recevoir<span class="text-danger">*</span></label>
-
-                                <div class="flex">
-
-                                    <input wire:model.debounce.500ms="transaction_inter_amount_money_receved" readonly
-                                        id="transaction_inter_amount_money_receved" type="number" class="form-control"
-                                        placeholder="Montant à recevoir">
-                                    <div
-                                        class="px-5 py-3 flex-1 zoom-in alert alert-primary relative font-medium leading-6 pl-3 2xl:pl-4 style-devise">
-                                        {{ $countrie_indicative->currencie->code ?? null }}
-                                    </div>
-                                    @error('transaction_inter_amount_money_receved')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <x-transaction-send title="Frais d'envoie" value="{{ $frais ?? null }}"
-                                country="{{ $usersCountry }}" />
                         @else
                             <x-transaction-inter-detail title="Montant à payer" value="{{ $amount_to_pay ?? null }}"
                                 country="{{ $usersCountry }}" />

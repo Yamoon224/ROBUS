@@ -139,10 +139,10 @@
                                 </div>
 
                                 @if (!is_null($offer_paiement) && $offer_paiement > 0)
-                                    <x-payment-summary :commission="$user_auth->is_under_distributer == 1 && $showRemonterPaiementButton
+                                    <x-payment-summary :commission="$user_auth->is_under_distributer == 1 && $showRemonterInterButton
                                         ? $amount_paiement_invoice_canal_inter
                                         : null" :fee="$user_auth->is_under_distributer == 1 ? $amount_received_canal : null" :total="$amount_received_canal"
-                                        :currency="$usersCountry" :showCommission="$user_auth->is_under_distributer == 1 && $showRemonterPaiementButton" :showFee="$user_auth->is_under_distributer == 1" :showTotal="true" />
+                                        :currency="$usersCountry" :showCommission="$user_auth->is_under_distributer == 1 && $showRemonterInterButton" :showFee="$user_auth->is_under_distributer == 1" :showTotal="true" />
                                 @endif
                             </div>
                         @endif

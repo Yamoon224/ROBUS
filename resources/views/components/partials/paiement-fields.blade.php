@@ -45,7 +45,7 @@
                @enderror
            </div>
 
-           <div class="col-span-6 form-group required mt-3">
+           <div class="col-span-12 form-group required mt-3">
                <label for="paiement_name" class="form-label">Nom & Prénom</label>
                <input wire:model.defer="paiement_name" id="paiement_name" type="text" class="form-control"
                    placeholder="Nom & Prénom" required>

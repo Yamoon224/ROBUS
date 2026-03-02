@@ -12,12 +12,23 @@ use App\Models\VirementPercent;
 use App\Models\Costs\PaymentCost;
 use App\Models\Costs\BankCommission;
 use App\Models\Costs\DepositCost;
+use App\Models\Costs\PhoneCreditCost;
 
 class CommissionServicePercentBackend
 {
     /**
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
+
+    public function getRobusPercentagePhoneInter()
+    {
+        return  PhoneCreditCost::when(sabdy()->is_under_distributer || sabdy()->is_api, function ($query) {
+            return $query->whereId(2);
+        }, function ($query) {
+            return $query->whereId(22);
+        })->first();
+    }
+
 
     public function getRobusPercentageBankSend(int $countryId): ?BankCommission
     {
@@ -65,7 +76,7 @@ class CommissionServicePercentBackend
         return  $isSpecialProfile ? PushPercent::whereId(2)->first() : PushPercent::whereId(4)->first();
     }
 
-      public function getRobusPercentageOrderCard()
+    public function getRobusPercentageOrderCard()
     {
         return DepositCost::whereId(1)->first();
     }

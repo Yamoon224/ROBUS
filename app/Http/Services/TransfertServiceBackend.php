@@ -528,7 +528,6 @@ class TransfertServiceBackend
         $name_custumer,
         $number_phone,
         $amount_conversion,
-        $paiementChoix_phone,
         $amount_receveid
     ) {
         $amount_solde = sabdy()->wallet->amount - $val_amount;
@@ -549,7 +548,6 @@ class TransfertServiceBackend
             'status'  => "PENDING",
             'costs_amount' =>  $amount_conversion,
             'country_id'  =>   $country_robus->id,
-            'paiementChoix_phone'  => $paiementChoix_phone ?? null,
             'amount_received' =>  $amount_receveid ?? null,
         ]);
     }
