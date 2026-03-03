@@ -3985,7 +3985,7 @@ class Transfers extends Component
 
                                     if ($valeur_amount_com !== null && $check->commissions !== null) {
 
-                                        app(CommissionServiceBackend::class)->handleUnderDistributorPhoneCreditCommission($check, $admin_civ, "Paiment commission Credit telephonique a international");
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorInterPhoneCreditCommission($check, $admin_civ, "Paiment commission Credit telephonique a international");
                                     } else {
                                         $this->cancelInterField();
                                         $this->emit('modal-hide-inters');

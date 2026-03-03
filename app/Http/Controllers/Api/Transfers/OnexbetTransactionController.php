@@ -15,6 +15,7 @@ use App\Repositories\OnexbetRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Custumers\Country;
+use App\Http\Services\ConvertionService;
 
 class OnexbetTransactionController extends Controller
 {
@@ -26,10 +27,12 @@ class OnexbetTransactionController extends Controller
         protected $validatedamountDays;
         protected $notificationPhone;
         protected $oneXbetService;
+        protected $convertionservice;
 
         public function __construct(
                 OnexbetRepository $xbetRepository,
                 DeletedService $deletedService,
+                ConvertionService $convertionservice,
                 PercentRobusAuthService $percentRobus,
                 ValidateDailyLimitService $validatedamountDays,
                 NotificationSendService $notificationPhone,
@@ -41,6 +44,7 @@ class OnexbetTransactionController extends Controller
                 $this->validatedamountDays = $validatedamountDays;
                 $this->notificationPhone = $notificationPhone;
                 $this->oneXbetService = $oneXbetService;
+                $this->convertionservice = $convertionservice;
         }
 
         /**
@@ -435,6 +439,8 @@ class OnexbetTransactionController extends Controller
                                         $commission_wave_val_nat_commission =  $percent_robus->percent_merchands  * $reel_amount;
                                 }
                                 $commission_wave_val_nat_receive = $reel_amount - $commission_wave_val_nat_pay;
+
+                               $commission_conversion_val_nat_receive =   $this->convertionservice->convertAdminCommission($commission_wave_val_nat_receive);
                         } else {
                                 return response()->json([
                                         'success' => false,
@@ -447,7 +453,7 @@ class OnexbetTransactionController extends Controller
                                 'data' =>  [
                                         'amount_pay' => $commission_wave_val_nat_pay,
                                         'amount_send' => (robus()->is_under_distributer || robus()->is_api) ? $commission_wave_val_nat_commission  : $commission_wave_val_nat_pay,
-                                        'amount_receive' => $commission_wave_val_nat_receive,
+                                        'amount_receive' => $commission_conversion_val_nat_receive,
                                 ],
                         ], 200);
                 } catch (\Exception $exception) {

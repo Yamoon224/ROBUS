@@ -78,7 +78,7 @@ class PhoneCreditInterService
     public function updateamountPhoneCreditReceveid($admin_civ, $percent_robus, $walletPhone, $amount)
     {
 
-        $amount_commission = $amount + ($percent_robus->percent * $amount);
+        $amount_commission = $amount;
         $amount_solde = robus()->wallet->amount - $amount_commission;
         $userId = robus()->id;
         $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
@@ -111,12 +111,13 @@ class PhoneCreditInterService
         $amount_percent =  $amount * $percent_robus->percent;
 
         $valuer_deposit = (float) $percent_robus->percent_merchands * $amount;
+        $admin_deposit = (float) $percent_robus->percent_banque * $amount;
         $valuer_companie = $percent_robus->percent_companie * $amount;
 
         $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($amount_percent);
-
         $commission_convertion =  $this->convertionService->convertAdminCommission($valuer_deposit);
         $commission_bank_convertion =  $this->convertionService->convertAdminCommission($valuer_companie);
+        $commission_admin_convertion =  $this->convertionService->convertAdminCommission($admin_deposit);
 
         if (robus()->is_under_distributer || robus()->is_api) {
 
@@ -128,9 +129,9 @@ class PhoneCreditInterService
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterInterCButton'])) {
                     $walletPhone->increment('commission_companie', $valuer_companie);
-                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ,  'wallet_inter_id',  $walletPhone->id, $commission_bank_convertion, $commission_convertion);
+                    $this->commissionServices->distributeAdminCommissionAcceptedXbetCompanies($admin_civ,  'wallet_inter_id',  $walletPhone->id , $commission_admin_convertion, $commission_bank_convertion, $commission_convertion);
                 } else {
-                    $this->commissionServices->distributeAdminNoCommissionInterCompagnies($admin_civ,  'wallet_inter_id',  $walletPhone->id, $commission_bank_convertion , $commission_convertion);
+                    $this->commissionServices->distributeAdminCommissionXbetNoCompanies($admin_civ,  'wallet_inter_id',  $walletPhone->id, $commission_admin_convertion , $commission_convertion);
                 }
             }
         } else {

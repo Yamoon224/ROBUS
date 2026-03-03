@@ -127,12 +127,13 @@ class XbetService
             ]);
 
             $valuer_deposit =  $this->convertionService->convertAdminCommission($percent_robus->percent_merchands  * $amount);
+            $valuer_unders =  $percent_robus->percent_merchands  * $amount;
             $admin_nocomission =  $this->convertionService->convertAdminCommission($percent_robus->percent  * $amount);
 
             if (!empty($activeButtons['showRemonterXbetButton'])) {
 
                 $walletXbet->update([
-                    'commissions' => $valuer_deposit,
+                    'commissions' => $valuer_unders,
                 ]);
 
                 $admin_valeur =  $this->convertionService->convertAdminCommission($percent_robus->percent_admin *  $amount);

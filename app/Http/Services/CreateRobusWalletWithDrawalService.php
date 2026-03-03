@@ -144,9 +144,11 @@ class CreateRobusWalletWithDrawalService
 
         $amount_payment_drawal = $verify_code->amount + $percent_drawal;
 
-        $amount_payment_receved = $verify_code->amount - $percent_drawal;
+        $amount_payment_receved = $verify_code->amount;
 
         $percent_under =  $percent_robus->percent_with_drawal  *  $verify_code->amount;
+
+        $under_valeur_convertion = $this->convertAdminCommission($percent_under);
 
         $wallet_user_search->update([
             'reload_by' =>  robus()->firstname .
@@ -201,6 +203,7 @@ class CreateRobusWalletWithDrawalService
                 'commissions' => DB::raw('commissions+' . $percent_under),
             ]);
 
+
             $account_accepted = robus()->is_accepted_companie ?? false;
 
             if ($account_accepted && !empty($activeCButtons['showRemonterRetraitCButton'])) {
@@ -215,13 +218,14 @@ class CreateRobusWalletWithDrawalService
 
                 $admin_valeur_convertion = $this->convertAdminCommission($valuer_admimCom);
 
+                $compagnie_valeur_convertion = $this->convertAdminCommission($valuer_companie);
 
                 if ($admin_civ->count() > 0) {
                     $nmbre_admin = $admin_civ->count();
                     $valeur_single = ($admin_valeur_convertion) / $nmbre_admin;
                     foreach ($admin_civ as $user) {
                         $valeur_single = $admin_valeur_convertion / $nmbre_admin;
-                        $this->commissionServices->processUnderDrawalCompagnieCommissionSDistributer($user->id, $verify_code->id, $valeur_single, $percent_under, $valuer_companie);
+                        $this->commissionServices->processUnderDrawalCompagnieCommissionSDistributer($user->id, $verify_code->id, $valeur_single, $under_valeur_convertion, $compagnie_valeur_convertion);
                     }
                 }
             } else {
@@ -232,7 +236,7 @@ class CreateRobusWalletWithDrawalService
                     $nmbre_admin = $admin_civ->count();
                     foreach ($admin_civ as $user) {
                         $valeur_single = $admin_valeur_convertion / $nmbre_admin;
-                        $this->commissionServices->processUnderDrawalNoCompagnieCommissionSDistributer($user->id, $verify_code->id, $valeur_single, $percent_under);
+                        $this->commissionServices->processUnderDrawalNoCompagnieCommissionSDistributer($user->id, $verify_code->id, $valeur_single, $under_valeur_convertion);
                     }
                 }
             }

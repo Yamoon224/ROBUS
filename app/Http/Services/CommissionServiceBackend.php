@@ -731,6 +731,40 @@ class CommissionServiceBackend
         }
     }
 
+      public function handleUnderDistributorInterPhoneCreditCommission($check, $admin_civ, $description)
+    {
+        $valeur_amount_com = (float)$check->adminCom->amount;
+        $walletAdmin = WalletAdmin::find(1);
+
+        if ($admin_civ->count() > 0) {
+
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+                $check->adminCom->update([
+                    'amount' =>   $valeur_amount_com,
+                    'sid_user_id' =>   $admin_single->id,
+                    'description' => $description,
+                    'status'  => "SUCCESS",
+                    'amount_under' =>  $check->adminCom->amount_under,
+                    'description_underdistributer' =>  $description
+                ]);
+
+                if ($walletAdmin && $walletAdmin->amount >= $valeur_amount_com) {
+                    $walletAdmin->increment('amount', $valeur_amount_com);
+                    $this->credit(
+                        $check->adminCom->id,
+                        $valeur_amount_com,
+                        'Commission administrateur',
+                        true,
+                        false
+                    );
+                } else {
+                    $admin_single->wallet->increment('amount', $valeur_amount_com);
+                }
+            }
+        }
+    }
+
     public function handleUnderDistributorXbetCommission($check, $admin_civ, $description)
     {
         $admin_amount = (float)$check->adminCom->amount;

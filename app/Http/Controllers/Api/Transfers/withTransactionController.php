@@ -343,10 +343,11 @@ class withTransactionController extends Controller
                         }
 
 
-                        $min =$levels->min(fn($l) => ceil($this->convertionservice->convertAdminCommissionPayment($l->amount_begin)));
+                        $min = $levels->min(fn($l) => ceil($this->convertionservice->convertAdminCommissionPayment($l->amount_begin)));
                         $max = $levels->max(fn($l) => ceil($this->convertionservice->convertAdminCommissionPayment($l->amount_end)));
 
-                        if ($amountCfa < $min || $amountCfa > $max) {
+
+                        if ($amountUser < $min || $amountUser > $max) {
                                 return json_message_response(
                                         false,
                                         "Montant autorisé entre " .
@@ -358,9 +359,10 @@ class withTransactionController extends Controller
 
                         $level = $levels->first(
                                 fn($l) =>
-                                $amountCfa >= ceil($this->convertionservice->convertAdminCommissionPayment($l->amount_begin)) &&
-                                        $amountCfa <= ceil($this->convertionservice->convertAdminCommissionPayment($l->amount_end))
+                                $amountCfa >= (($l->amount_begin)) &&
+                                        $amountCfa <= (($l->amount_end))
                         );
+
 
                         if (!$level) {
                                 return json_message_response(false, "Aucun niveau de commission trouvé", 422);
@@ -375,10 +377,13 @@ class withTransactionController extends Controller
                                 ? (float) $amountCfa
                                 : (float) $amountCfa;
 
+
+
                         /** ===============================
                          *  6️⃣ Vérification solde utilisateur
                          * =============================== */
                         $totalDebitUser = $totalDebitCfa * ($bankRate / $userRate);
+
 
                         if ($totalDebitUser > robus()->wallet->amount) {
                                 return json_message_response(false, "Veuillez verifeir votre solde", 422);
@@ -458,7 +463,13 @@ class withTransactionController extends Controller
 
                         $totalAmountRecevedCustumer = (float) $totalAmountReceivedCfa - (float) $level->amount;
 
-                        $totalAmountRecevedUser = $totalAmountRecevedCustumer * ($bankRate / $userRate);
+                        if ($country_robus->currencie->value > robus()->country->currencie->value) {
+                                $totalAmountRecevedUser = $totalAmountRecevedCustumer / robus()->country->currencie->value;
+                        } else if ($country_robus->currencie->value == robus()->country->currencie->value) {
+                                $totalAmountRecevedUser = $totalAmountRecevedCustumer;
+                        } else {
+                                $totalAmountRecevedUser = $totalAmountRecevedCustumer * $country_robus->currencie->value;
+                        }
 
                         $this->withService->updateamountReceveidBankSend(
                                 $this->validatedamountDays->adminCiv(),
@@ -467,7 +478,6 @@ class withTransactionController extends Controller
                                 $amountCfa,
                                 $totalAmountRecevedUser
                         );
-
                         /** ===============================
                          *  🔟 Notifications
                          * =============================== */
@@ -1078,6 +1088,7 @@ class withTransactionController extends Controller
         {
                 // Pays banque (CFA)
                 $bankCountry = Country::find(107);
+                $bankCountryReceived = Country::find($countryId);
 
                 if (!$amount_send || $amount_send <= 0) {
                         return response()->json([
@@ -1146,6 +1157,13 @@ class withTransactionController extends Controller
                 $isDistributor = robus()->is_under_distributer || robus()->is_distributer;
 
 
+                function calculateConversion($valeur_verify, $currencie_sender, $currencie_receiver)
+                {
+                        $conversion_cfa = (float)$valeur_verify * (float)$currencie_sender->value;
+                        return $conversion_cfa / (float)$currencie_receiver->value;
+                }
+
+
                 foreach ($levels as $level) {
 
                         if ($amountCfa >= $level->amount_begin && $amountCfa <= $level->amount_end) {
@@ -1169,12 +1187,21 @@ class withTransactionController extends Controller
                                 $amountUnderReceived     =  $amountCfa * ($bankCurrencyValue / $userCurrencyValue);
                                 $amountRecevedUser     =  $isDistributor ? ((float)  $amountUnderReceived  - (float) $commissionUnder) : ((float)  $amountUser  - (float)  $commissionUser);
 
+
+                                if ($bankCountryReceived->currencie->value > robus()->country->currencie->value) {
+                                        $totalAmountRecevedUser = calculateConversion($amountRecevedUser, robus()->country->currencie, $bankCountryReceived->currencie);
+                                } else if ($bankCountryReceived->currencie->value == robus()->country->currencie->value) {
+                                        $totalAmountRecevedUser = $amountRecevedUser;
+                                } else {
+                                        $totalAmountRecevedUser = calculateConversion($amountRecevedUser, robus()->country->currencie, $bankCountryReceived->currencie);
+                                }
+
                                 return response()->json([
                                         'success' => true,
                                         'data' => [
                                                 'amount_send'    => $amountUser,
                                                 'amount_pay'     => $commissionUser,
-                                                'amount_receive' => $amountRecevedUser,
+                                                'amount_receive' => $totalAmountRecevedUser . ' ' . $bankCountryReceived->currencie->code ?? "CFA",
                                         ],
                                 ], 200);
                         }

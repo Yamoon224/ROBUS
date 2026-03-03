@@ -23,6 +23,7 @@ class WithService
     public $pushRepository;
     public $operatorRestrictionService;
     protected $commissionServices;
+    protected $convertionservice;
 
     public function __construct(
         TresortRepository $tresortRepository,
@@ -30,12 +31,15 @@ class WithService
         DjamoRepository $djamoRepository,
         OperatorRestrictionService $operatorRestrictionService,
         CommissionService $commissionServices,
+        ConvertionService $convertionservice,
+
     ) {
         $this->tresortRepository = $tresortRepository;
         $this->djamoRepository = $djamoRepository;
         $this->pushRepository = $pushRepository;
         $this->operatorRestrictionService = $operatorRestrictionService;
         $this->commissionServices = $commissionServices;
+        $this->convertionservice = $convertionservice;
     }
 
 
@@ -178,7 +182,7 @@ class WithService
 
         $amount_solde = (float) $user->wallet->amount;
 
-
+        $amount_cost_conversion =  $this->convertionservice->convertAdminCommissionPayment($percent_robus->amount);
 
         return WalletBankSend::create([
             'wallet_id' => robus()->wallet->id,
@@ -196,7 +200,7 @@ class WithService
             'phone_inter_expe' => $phone_inter_expe ?? null,
             'swit_code' => $swit_code ?? null,
             'validated_date' => $date_piece ?? null,
-            'costs_amount' => robus()->is_under_distributer ? ($percent_robus->amount) : ($percent_robus->amount),
+            'costs_amount' => robus()->is_under_distributer ? ($amount_cost_conversion) : ($amount_cost_conversion),
             'provider_type' => 1,
             'status' => 'PENDING',
             'countrie_id' => $country_robus->id,

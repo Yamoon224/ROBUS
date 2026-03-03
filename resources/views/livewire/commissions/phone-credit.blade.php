@@ -35,7 +35,7 @@
                         <th class="whitespace-nowrap">Date</th>
                         <th class="whitespace-nowrap">Nom</th>
                         <th class="whitespace-nowrap text-center">Pourcentage</th>
-                        <th class="whitespace-nowrap text-center">Pourcentage marchants</th>
+                        <th class="whitespace-nowrap text-center">Commission</th>
                         <th class="whitespace-nowrap text-center">Comission Compagnie</th>
                         <th class="text-center whitespace-nowrap">Status</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
@@ -62,15 +62,22 @@
                                     </p>
 
                                 </td>
-                                <td class="text-center">
+                                  <td class="text-center">
                                     <p href="" class="font-medium whitespace-nowrap">
-                                        {{ $item->percent_merchands * 100 ?? null }} %
+                                        {{ $item->percent * 100 ?? null }} %
+                                    </p>
+
+                                     <p href="" class="font-medium whitespace-nowrap">
+                                      SD :  {{ $item->percent_merchands * 100 ?? null }} %
+                                    </p>
+                                      <p href="" class="font-medium whitespace-nowrap">
+                                      Compagnie :  {{ $item->percent_companie * 100 ?? null }} %
                                     </p>
 
                                 </td>
                                 <td class="text-center">
                                     <p href="" class="font-medium whitespace-nowrap">
-                                        {{ $item->percent_companie * 100 ?? null }} %
+                                        {{ $item->percent_banque * 100 ?? null }} %
                                     </p>
 
                                 </td>

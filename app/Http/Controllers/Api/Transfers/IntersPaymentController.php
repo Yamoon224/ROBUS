@@ -966,9 +966,11 @@ class IntersPaymentController extends Controller
 
                             $amount_receved = $request->amount;
 
+                            $amount_receved_senders = (float) $request->amount -  (float) $amount_commission;
+
                             $valeur_convertion_comi =   $this->convertionservice->convertAdminCommissionPayment($amount_commission);
 
-                            $valeur_convertion_amount_receved =   $this->convertionservice->convertAdminCommission($amount_receved);
+                            $valeur_convertion_amount_receved =   $this->convertionservice->convertAdminCommission($amount_receved_senders);
 
                             if ($this->validatedamountDays->validateAmount($amount_valeur)) {
 
@@ -2549,11 +2551,11 @@ class IntersPaymentController extends Controller
                 }
 
 
-                $amount_invoice_conversion = $this->convertionservice->convertAdminCommission($amount_invoice_inter);
+                $valeur_receive = (robus()->is_under_distributer || robus()->is_api) ? ((float) $amount_invoice_inter - (float) $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->amount_auther)) : ((float) $amount_invoice_inter - (float) $commission_reload_inter_val_inter_percent_pay);
 
-                $valeur_receive = (robus()->is_under_distributer || robus()->is_api) ? ((float) $amount_invoice_conversion - (float) $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->amount_auther)) : ((float) $amount_invoice_conversion - (float) $commission_reload_inter_val_inter_percent_pay);
+                $amount_invoice_conversion = $this->convertionservice->convertAdminCommission($valeur_receive);
 
-                $commission_paiement_invoice_val_inter_receive =  $valeur_receive;
+                $commission_paiement_invoice_val_inter_receive =  $amount_invoice_conversion;
 
 
                 return response()->json([
@@ -2650,6 +2652,51 @@ class IntersPaymentController extends Controller
                     $commission_inter = BankCost::whereId(1)->first();
 
                     $commission_reload_inter_val_inter_percent_pay = 0;
+
+                    if (!$commission_inter) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Pas de tranche de virement bancaire',
+                        ], 200);
+                    }
+
+
+                    $levels = $commission_inter->levelBanks()
+                        ->orderByRaw('CAST(amount_begin AS UNSIGNED) ASC')
+                        ->get();
+
+                    if ($levels->isEmpty()) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Aucune tranche de commission disponible.',
+                        ], 200);
+                    }
+
+                    $minAmount = $levels->min(fn($l) => ceil($this->convertionservice->convertAdminCommissionPayment($l->amount_begin)));
+                    $maxAmount = $levels->max(fn($l) => ceil($this->convertionservice->convertAdminCommissionPayment($l->amount_end)));
+                    $maverify = $this->convertionservice->convertAdminCommissionPayment($valeur_amount);
+
+                    if ($minAmount !== null && $maverify < $minAmount) {
+                         return response()->json([
+                            'success' => $commission_inter != null ? true : false,
+                            'data' =>  [
+                                'amount_commission' => $commission_reload_inter_val_inter_percent_pay,
+                                'amount_pay' => 0,
+                                'amount_receive' => 'Montant minimum : ' . number_format($minAmount, 2, ',', ' ') . robus()->country->currencie->code ?? "CFA",
+                            ],
+                        ], 200);
+                    }
+
+                    if ($maxAmount !== null && $maverify > $maxAmount) {
+                        return response()->json([
+                            'success' => $commission_inter != null ? true : false,
+                            'data' =>  [
+                                'amount_commission' => $commission_reload_inter_val_inter_percent_pay,
+                                'amount_pay' => 0,
+                                'amount_receive' => 'Montant maximum : ' . number_format($maxAmount, 2, ',', ' ') . robus()->country->currencie->code ?? "CFA",
+                            ],
+                        ], 200);
+                    }
 
                     foreach ($commission_inter->levelBanks as $amount_comission) {
 
@@ -2880,10 +2927,8 @@ class IntersPaymentController extends Controller
                     : $commission_phone_credit_val_inter_pay;
 
                 if ($valeur_receive < 0) {
-
                     $commission_phone_credit_val_inter_receive = "Montant negatif";
                 } else {
-
                     $commission_phone_credit_val_inter_receive =  $valeur_receive;
                 }
 

@@ -45,7 +45,7 @@ class PhoneCredit extends Component
                     'name' => $this->phoneName,
                     'percent'  => $this->phonePercent,
                     'percent_merchands'  => $this->orderCardMerchant,
-                    // 'percent_companie'  => $this->comission_master,
+                    'percent_banque'  => $this->comission_admin,
                     'created_by' => Auth::guard('web')->user()->id,
                     'percent_companie'  => $this->comissionCompanie,
                     'status'  => 1

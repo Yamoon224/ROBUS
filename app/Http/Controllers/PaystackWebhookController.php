@@ -24,7 +24,9 @@ use App\Models\Wallets\WalletAdmin;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Services\PercentRobusAuthService;
 use App\Http\Services\ConvertionService;
-
+use App\Models\Custumers\Country;
+use Illuminate\Support\Str;
+use App\Models\LedgerEntry;
 
 class PaystackWebhookController extends Controller
 {
@@ -136,11 +138,21 @@ class PaystackWebhookController extends Controller
                     ], 404);
                 }
 
+                $country_civ = Country::find(107);
+                $robus_currency =  $wallet->country->currencie->value;
+                if ($country_civ->currencie->value > $wallet->country->currencie->value) {
+                    $amount_send = $request->amount * $robus_currency;
+                } elseif ($country_civ->currencie->value == $wallet->country->currencie->value) {
+                    $amount_send = $request->amount;
+                } else {
+                    $amount_send = $request->amount / $robus_currency;
+                }
+
                 // Créer la recharge en attente
                 WalletReload::create([
                     'wallet_id' => $wallet->id,
                     'provider_id' => $provider->id,
-                    'amount' => $request->amount,
+                    'amount' => $amount_send,
                     'fees' => 0,
                     'currency' => 'XOF',
                     'reference' => $request->reference,
@@ -149,7 +161,7 @@ class PaystackWebhookController extends Controller
                         $request->metadata ?? [],
                         ['user_id' => $user->id, 'wallet_id' => $wallet->id]
                     )),
-                    'payment_method' => 'paystack',
+                    'payment_method' => 'ACHAT d\'UV',
                     'created_at' => now(),
                     'updated_at' => now(),
                     'payment_link' => $response['data']['authorization_url'] ?? null
@@ -260,7 +272,7 @@ class PaystackWebhookController extends Controller
             }
 
             // Valider le montant
-            $expectedAmount = $transaction->amount * 100; // Convertir en kobo/centimes
+            $expectedAmount = $transaction->amount * 100; 
             if ($data['amount'] != $expectedAmount) {
                 Log::error('Montant incorrect', [
                     'expected' => $expectedAmount,
@@ -283,7 +295,10 @@ class PaystackWebhookController extends Controller
             $total_percent = (float) $commission_robus->percent + (float) $commission_robus->percent_admin;
             $total_commission = $total_percent * $transaction->amount;
             $amountReceived = (float) $transaction->amount - (float)$total_commission;
-            // Mettre à jour la transaction
+
+            $country_civ = Country::find(107);
+            $robus_currency =  $wallet->country->currencie->value;
+
             $transaction->update([
                 'status' => 'success',
                 'gateway_response' => $data['gateway_response'],
@@ -350,9 +365,19 @@ class PaystackWebhookController extends Controller
                 $totalAmount = $transaction->amount;
                 $total_admin_commission = $transaction->costs_amount;
 
-                $amount_total_conversion = $this->convertionService->convertAdminCommission($totalAmount);
-                $amount_commission_conversion = $this->convertionService->convertAdminCommission($total_admin_commission);
+                $country_civ = Country::find(107);
+                $robus_currency =  $wallet->country->currencie->value;
 
+                if ($country_civ->currencie->value > $wallet->country->currencie->value) {
+                    $amount_total_conversion = $totalAmount * $robus_currency;
+                    $amount_commission_conversion = $total_admin_commission * $robus_currency;
+                } elseif ($country_civ->currencie->value == $wallet->country->currencie->value) {
+                    $amount_total_conversion = $totalAmount;
+                    $amount_commission_conversion = $total_admin_commission;
+                } else {
+                    $amount_total_conversion = $totalAmount * $robus_currency;
+                    $amount_commission_conversion = $total_admin_commission * $robus_currency;
+                }
 
                 if ($amount_total_conversion <= 0) {
                     throw new \Exception('Montant final invalide');
@@ -360,7 +385,23 @@ class PaystackWebhookController extends Controller
 
                 if ($walletAdmin && $walletAdmin->amount >= $amount_total_conversion) {
                     $wallet_commission->decrement('amount', $amount_total_conversion);
+                    LedgerEntry::create([
+                        'transaction_id' => (string) Str::uuid(),
+                        'admin_com_id' => null,
+                        'debit' => 0,
+                        'credit' => $amount_commission_conversion,
+                        'description' => "Commission adminstrateur",
+                        'is_admin' => true,
+                    ]);
                     $walletAdmin->increment('amount', $amount_commission_conversion);
+                    LedgerEntry::create([
+                        'transaction_id' => (string) Str::uuid(),
+                        'admin_com_id' => null,
+                        'debit' => $amount_commission_conversion,
+                        'credit' => 0,
+                        'description' => "Commission banque",
+                        'is_comission' => true,
+                    ]);
                 } else {
                     $admin_single->wallet->decrement('amount', $amount_total_conversion);
                 }
@@ -515,9 +556,19 @@ class PaystackWebhookController extends Controller
                 $totalAmount = $transaction->amount;
 
                 $total_admin_commission = $transaction->costs_amount;
+                $country_civ = Country::find(107);
+                $robus_currency =  $wallet->country->currencie->value;
 
-                $amount_total_conversion = $this->convertionService->convertAdminCommission($totalAmount);
-                $amount_commission_conversion = $this->convertionService->convertAdminCommission($total_admin_commission);
+                if ($country_civ->currencie->value > $wallet->country->currencie->value) {
+                    $amount_total_conversion = $totalAmount * $robus_currency;
+                    $amount_commission_conversion = $total_admin_commission * $robus_currency;
+                } elseif ($country_civ->currencie->value == $wallet->country->currencie->value) {
+                    $amount_total_conversion = $totalAmount;
+                    $amount_commission_conversion = $total_admin_commission;
+                } else {
+                    $amount_total_conversion = $totalAmount * $robus_currency;
+                    $amount_commission_conversion = $total_admin_commission * $robus_currency;
+                }
 
                 if ($amount_total_conversion <= 0) {
                     throw new \Exception('Montant final invalide');
@@ -525,7 +576,23 @@ class PaystackWebhookController extends Controller
 
                 if ($walletAdmin && $walletAdmin->amount >= $amount_total_conversion) {
                     $wallet_commission->decrement('amount', $amount_total_conversion);
+                    LedgerEntry::create([
+                        'transaction_id' => (string) Str::uuid(),
+                        'admin_com_id' => null,
+                        'debit' => 0,
+                        'credit' => $amount_commission_conversion,
+                        'description' => "Commission adminstrateur",
+                        'is_admin' => true,
+                    ]);
                     $walletAdmin->increment('amount', $amount_commission_conversion);
+                    LedgerEntry::create([
+                        'transaction_id' => (string) Str::uuid(),
+                        'admin_com_id' => null,
+                        'debit' => $amount_commission_conversion,
+                        'credit' => 0,
+                        'description' => "Commission banque",
+                        'is_comission' => true,
+                    ]);
                 } else {
                     $admin_single->wallet->decrement('amount', $amount_total_conversion);
                 }
@@ -900,30 +967,32 @@ class PaystackWebhookController extends Controller
                         return $this->handleSuccessfulCharge($data);
                     } elseif (in_array($data['status'], ['failed', 'abandoned']) && $transaction->status === 'pending') {
 
-                        $amountPaid = $data['amount'] / 100;
-                        $paystackFees = ($data['fees'] ?? 0) / 100;
-                        $amountReceived = $amountPaid - $paystackFees;
-                        $wallet = $transaction->wallet;
+                        return $this->handleSuccessfulCharge($data);
 
-                        $transaction->update([
-                            'status' => 'failed',
-                            'gateway_response' => $data['gateway_response'],
-                            'verified' => true,
-                            'verified_at' => now(),
-                            'balance_before' =>  $wallet->amount,
-                            'amount_solde' => $wallet->amount,
-                            'fees' => $paystackFees,
-                            'amount_received' => $amountReceived,
-                            'raw_response' => json_encode($data),
-                        ]);
+                        // $amountPaid = $data['amount'] / 100;
+                        // $paystackFees = ($data['fees'] ?? 0) / 100;
+                        // $amountReceived = $amountPaid - $paystackFees;
+                        // $wallet = $transaction->wallet;
 
-                        return $this->handleCancelledCharge($data);
+                        // $transaction->update([
+                        //     'status' => 'failed',
+                        //     'gateway_response' => $data['gateway_response'],
+                        //     'verified' => true,
+                        //     'verified_at' => now(),
+                        //     'balance_before' =>  $wallet->amount,
+                        //     'amount_solde' => $wallet->amount,
+                        //     'fees' => $paystackFees,
+                        //     'amount_received' => $amountReceived,
+                        //     'raw_response' => json_encode($data),
+                        // ]);
 
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'Paiement échoué',
-                            'transaction' => $transaction
-                        ]);
+                        // return $this->handleCancelledCharge($data);
+
+                        // return response()->json([
+                        //     'success' => false,
+                        //     'message' => 'Paiement échoué',
+                        //     'transaction' => $transaction
+                        // ]);
                     }
 
                     // Retourner le statut actuel
