@@ -455,8 +455,12 @@ class RobusTransactionService
 
         $wallet->update($updatedValues);
 
+        $walletAmountSend = Wallet::where('wallet_id',  $walletTransaction->num_wallet)->first();
+
+        $is_unders = $walletAmountSend->sidUser->is_under_distributer;
+
         // Percent admin 
-        $valeur_percent_admin  = $percent_robus->percent * $transaction_amount_robus;
+        $valeur_percent_admin = $is_unders ? $percent_robus->percent_under_scanner * $walletTransaction->amount : $percent_robus->percent * $walletTransaction->amount;
 
         $admin_valeur_convertion = $this->convertAdminCommission($valeur_percent_admin);
 

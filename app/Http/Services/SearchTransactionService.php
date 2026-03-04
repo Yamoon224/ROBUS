@@ -107,6 +107,10 @@ class SearchTransactionService
             $commissionTransaction = ($underDistributer == 1) ? TransactionCost::whereId(35)->first() : TransactionCost::whereId(40)->first();
         } elseif ($countryGroup == 'MAG') {
             $commissionTransaction = ($underDistributer == 1) ? TransactionCost::whereId(36)->first() : TransactionCost::whereId(41)->first();
+        }elseif ($countryGroup == 'ASIE') {
+            $commissionTransaction = ($underDistributer == 1) ? TransactionCost::whereId(44)->first() : TransactionCost::whereId(46)->first();
+        }elseif ($countryGroup == 'AFE') {
+            $commissionTransaction = ($underDistributer == 1) ? TransactionCost::whereId(45)->first() : TransactionCost::whereId(48)->first();
         }
 
         return $commissionTransaction;

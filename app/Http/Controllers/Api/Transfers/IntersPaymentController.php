@@ -2054,12 +2054,15 @@ class IntersPaymentController extends Controller
             $convertion_amount_min =   $this->convertionservice->convertAdminCommissionPayment($amount_min);
 
             if ($amount_paiement < $convertion_amount_min) {
+
+                $currency = robus()->country->currencie->code ?? 'FCFA';
+
                 return response()->json([
                     'success' => true,
                     'data' => [
                         'amount_commission' => 0,
                         'amount_pay' => 0,
-                        'amount_receive' => 'Le montant minimum est de ' . $convertion_amount_min . ' ' . robus()->country->currencie->code ?? 'FCFA',
+                        'amount_receive' => "Le montant minimum à recevoir est de {$convertion_amount_min} {$currency} (Équivalent à 20 000 FCFA).",
                     ],
                 ], 200);
             }
@@ -2677,7 +2680,7 @@ class IntersPaymentController extends Controller
                     $maverify = $this->convertionservice->convertAdminCommissionPayment($valeur_amount);
 
                     if ($minAmount !== null && $maverify < $minAmount) {
-                         return response()->json([
+                        return response()->json([
                             'success' => $commission_inter != null ? true : false,
                             'data' =>  [
                                 'amount_commission' => $commission_reload_inter_val_inter_percent_pay,

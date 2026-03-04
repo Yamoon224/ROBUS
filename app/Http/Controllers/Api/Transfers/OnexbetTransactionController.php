@@ -453,7 +453,7 @@ class OnexbetTransactionController extends Controller
                                 'data' =>  [
                                         'amount_pay' => $commission_wave_val_nat_pay,
                                         'amount_send' => (robus()->is_under_distributer || robus()->is_api) ? $commission_wave_val_nat_commission  : $commission_wave_val_nat_pay,
-                                        'amount_receive' => $commission_conversion_val_nat_receive,
+                                        'amount_receive' => $commission_conversion_val_nat_receive . ' ' . 'FCFA',
                                 ],
                         ], 200);
                 } catch (\Exception $exception) {

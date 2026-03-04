@@ -1544,11 +1544,13 @@ class TransactionController extends Controller
                         $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
                         $commission_transaction_val_nat_pay = $isUnders ? (float)$commission_transaction->percent_deposit * (float) $commission_transaction_val_percent_pay : (float)$commission_transaction->percent_deposit * $amount_transaction;
                         $commission_transaction_val_nat_receive = (float)$amount_transaction - (float) $commission_transaction_val_percent_pay;
+                    
                     } else if ($commission_transaction && $data?->sidUser?->is_under_distributer) {
 
                         $commission_transaction_val_percent_pay =  $isUnders ?  $commission_transaction->percent_deposit * (float) $amount_transaction  : (float)$commission_transaction->percent_under_scanner * $amount_transaction;
                         $commission_transaction_val_nat_pay = $isUnders ? (float)$commission_transaction->percent_deposit * (float) $commission_transaction_val_percent_pay : (float)$commission_transaction->percent_deposit * $amount_transaction;
                         $commission_transaction_val_nat_receive = (float)$amount_transaction - (float) $commission_transaction_val_percent_pay;
+                    
                     }
 
                     $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);

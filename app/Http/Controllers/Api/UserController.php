@@ -137,8 +137,8 @@ class UserController extends Controller
             'data' => robus()
                 ->notifications()
                 ->where('is_interface', true)
-                ->latest() 
-                ->take(3)  
+                ->latest()
+                ->take(3)
                 ->get(),
 
             'status' => true,
@@ -147,7 +147,7 @@ class UserController extends Controller
     public function dashboard()
     {
 
-      
+
 
         $wallet_solde = Wallet::where('sid_user_id', robus()->id)->first();
         $dashboard_data['wallet_user'] = new WalletSingleCollection($wallet_solde);
@@ -1506,10 +1506,16 @@ class UserController extends Controller
 
                 $amount_solde = (float)robus()->wallet->amount + (float)$som_commissions;
 
+                $rt = rand(40, 5000) * time();
+                $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+                $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
+
                 $valeur_received = WithMerchant::create([
                     'amount_with_draw' =>    $som_commissions,
+                    'balance_before' =>   (float)robus()->wallet->amount,
                     'sid_user_id' =>   $wallet_user->id,
                     'amount_solde' =>   $amount_solde,
+                    'ref' => 'RB_' . 'ROBUS' . '_' . $transactionCode,
                     'type_transaction' =>  "COMMISSION",
                     'status' =>  "SUCCESS",
                     'date_removed' => Carbon::now(),

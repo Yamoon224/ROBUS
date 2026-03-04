@@ -153,6 +153,8 @@ class PaystackWebhookController extends Controller
                     'wallet_id' => $wallet->id,
                     'provider_id' => $provider->id,
                     'amount' => $amount_send,
+                    'balance_before' =>  $wallet->amount,
+                    'amount_solde' => $wallet->amount,
                     'fees' => 0,
                     'currency' => 'XOF',
                     'reference' => $request->reference,
@@ -255,6 +257,7 @@ class PaystackWebhookController extends Controller
         DB::beginTransaction();
 
         try {
+
             // Récupérer la transaction
             $transaction = WalletReload::where('reference', $data['reference'])->first();
 
@@ -272,16 +275,16 @@ class PaystackWebhookController extends Controller
             }
 
             // Valider le montant
-            $expectedAmount = $transaction->amount * 100; 
-            if ($data['amount'] != $expectedAmount) {
-                Log::error('Montant incorrect', [
-                    'expected' => $expectedAmount,
-                    'received' => $data['amount'],
-                    'reference' => $data['reference']
-                ]);
-                DB::rollBack();
-                return response()->json(['error' => 'Montant incorrect'], 400);
-            }
+            // $expectedAmount = $transaction->amount * 100; 
+            // if ($data['amount'] != $expectedAmount) {
+            //     Log::error('Montant incorrect', [
+            //         'expected' => $expectedAmount,
+            //         'received' => $data['amount'],
+            //         'reference' => $data['reference']
+            //     ]);
+            //     DB::rollBack();
+            //     return response()->json(['error' => 'Montant incorrect'], 400);
+            // }
 
             $wallet = $transaction->wallet;
             $wallet_details = Wallet::whereId($transaction->wallet_id)->first();
@@ -298,6 +301,7 @@ class PaystackWebhookController extends Controller
 
             $country_civ = Country::find(107);
             $robus_currency =  $wallet->country->currencie->value;
+
 
             $transaction->update([
                 'status' => 'success',
@@ -324,6 +328,7 @@ class PaystackWebhookController extends Controller
 
             // Mettre à jour le solde du portefeuille
             if ($wallet) {
+
                 $oldBalance = $wallet->amount;
                 $newBalance = $oldBalance + $transaction->amount_received;
 
@@ -397,7 +402,7 @@ class PaystackWebhookController extends Controller
                     LedgerEntry::create([
                         'transaction_id' => (string) Str::uuid(),
                         'admin_com_id' => null,
-                        'debit' => $amount_commission_conversion,
+                        'debit' => $amount_total_conversion,
                         'credit' => 0,
                         'description' => "Commission banque",
                         'is_comission' => true,
@@ -967,32 +972,31 @@ class PaystackWebhookController extends Controller
                         return $this->handleSuccessfulCharge($data);
                     } elseif (in_array($data['status'], ['failed', 'abandoned']) && $transaction->status === 'pending') {
 
-                        return $this->handleSuccessfulCharge($data);
 
-                        // $amountPaid = $data['amount'] / 100;
-                        // $paystackFees = ($data['fees'] ?? 0) / 100;
-                        // $amountReceived = $amountPaid - $paystackFees;
-                        // $wallet = $transaction->wallet;
+                        $amountPaid = $data['amount'] / 100;
+                        $paystackFees = ($data['fees'] ?? 0) / 100;
+                        $amountReceived = $amountPaid - $paystackFees;
+                        $wallet = $transaction->wallet;
 
-                        // $transaction->update([
-                        //     'status' => 'failed',
-                        //     'gateway_response' => $data['gateway_response'],
-                        //     'verified' => true,
-                        //     'verified_at' => now(),
-                        //     'balance_before' =>  $wallet->amount,
-                        //     'amount_solde' => $wallet->amount,
-                        //     'fees' => $paystackFees,
-                        //     'amount_received' => $amountReceived,
-                        //     'raw_response' => json_encode($data),
-                        // ]);
+                        $transaction->update([
+                            'status' => 'failed',
+                            'gateway_response' => $data['gateway_response'],
+                            'verified' => true,
+                            'verified_at' => now(),
+                            'balance_before' =>  $wallet->amount,
+                            'amount_solde' => $wallet->amount,
+                            'fees' => $paystackFees,
+                            'amount_received' => $amountReceived,
+                            'raw_response' => json_encode($data),
+                        ]);
 
-                        // return $this->handleCancelledCharge($data);
+                        return $this->handleCancelledCharge($data);
 
-                        // return response()->json([
-                        //     'success' => false,
-                        //     'message' => 'Paiement échoué',
-                        //     'transaction' => $transaction
-                        // ]);
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Paiement échoué',
+                            'transaction' => $transaction
+                        ]);
                     }
 
                     // Retourner le statut actuel
