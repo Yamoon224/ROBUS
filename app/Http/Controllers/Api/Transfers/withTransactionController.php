@@ -475,7 +475,7 @@ class withTransactionController extends Controller
                                 $this->validatedamountDays->adminCiv(),
                                 $level,
                                 $wallet,
-                                $amountCfa,
+                                $amountUser,
                                 $totalAmountRecevedUser
                         );
                         /** ===============================

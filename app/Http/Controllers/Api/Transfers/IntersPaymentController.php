@@ -1115,13 +1115,13 @@ class IntersPaymentController extends Controller
 
                                                 $percent_distr_cfa =   $amount_user->percent * $amount_request;
 
-                                                $amount_valeur_send = (float)$amount_request +  (float)$percent_distr_cfa;
+                                                $amount_valeur_send = (float)$amount_request ;
 
                                                 if (robus()->is_under_distributer || robus()->is_api) {
                                                     $amount_valeur_convertion_send =  $this->convertionservice->convertAdminCommissionPayment($amount_request);
                                                 } else {
 
-                                                    $amount_valeur_convertion_send =  $this->convertionservice->convertAdminCommissionPayment($amount_valeur_send);
+                                                    $amount_valeur_convertion_send =  $this->convertionservice->convertAdminCommissionPayment($amount_request);
                                                 }
 
                                                 if ($this->validatedamountDays->validateAmountVirement($amount_valeur_convertion_send)) {
@@ -1322,7 +1322,7 @@ class IntersPaymentController extends Controller
 
                                             $amount_valeur_send = (float)$amount_request +  (float)$percent_valeur;
 
-                                            $amount_valeur_convertion_send =  $this->convertionservice->convertAdminCommissionPayment($amount_valeur_send);
+                                            $amount_valeur_convertion_send =  $this->convertionservice->convertAdminCommissionPayment($amount_request);
                                         }
 
                                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
@@ -1603,7 +1603,7 @@ class IntersPaymentController extends Controller
 
                                             $amount_valeur_send = (float)$amount_request +  (float)$percent_valeur;
 
-                                            $amount_valeur_convertion_send =  $this->convertionservice->convertAdminCommissionPayment($amount_valeur_send);
+                                            $amount_valeur_convertion_send =  $this->convertionservice->convertAdminCommissionPayment($amount_request);
                                         }
 
                                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {

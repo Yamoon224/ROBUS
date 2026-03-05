@@ -658,7 +658,7 @@ class InterPaymentService
             'num_authers' => $name_custumers ?? null,
             'bank_code' => $bank_code ?? null,
             'guichet_code' => $guichet_code ?? null,
-            'costs_amount' => (robus()?->is_under_distributer || robus()?->is_api) ?  ($percent_robus->percent_merchands * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
+            'costs_amount' => (robus()?->is_under_distributer || robus()?->is_api) ?  ($percent_robus->percent_merchands * $amount_transaction) : ($percent_robus->percent_custumer * $amount_transaction),
             'provider_type' => 9,
             'status' => 'PENDING',
             'country_id' => $country_robus->id,
