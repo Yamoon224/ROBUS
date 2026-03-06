@@ -3931,7 +3931,7 @@ class Transfers extends Component
                                 if ($check->wallet->sidUser->is_under_distributer == true) {
 
                                     if ($valeur_amount_com !== null && $check->commissions !== null) {
-                                        app(CommissionServiceBackend::class)->handleUnderDistributorAndCompanieCommission($check, $admin_civ, "Paiment commission Paiement international");
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorVirementInterCompanieCommission($check, $admin_civ, "Paiment commission Paiement international");
                                     } else {
                                         $this->cancelInterField();
                                         $this->emit('modal-hide-inters');
@@ -3964,7 +3964,7 @@ class Transfers extends Component
 
                                     if ($valeur_amount_com !== null && $check->commissions !== null) {
 
-                                        app(CommissionServiceBackend::class)->handleUnderDistributorPaiementCommission($check, $admin_civ, "Paiment commission Paiement de facture a international");
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorInterPaiementCommission($check, $admin_civ, "Paiment commission Paiement de facture a international");
                                     } else {
                                         $this->cancelInterField();
                                         $this->emit('modal-hide-inters');
@@ -4002,7 +4002,7 @@ class Transfers extends Component
 
                                     if ($valeur_amount_com !== null && $check->commissions !== null) {
 
-                                        app(CommissionServiceBackend::class)->handleUnderDistributorAndCompanieCommission($check, $admin_civ, "Paiment commission Rechargement de carte");
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorVirementInterCompanieCommission($check, $admin_civ, "Paiment commission Rechargement de carte");
                                     } else {
                                         $this->cancelInterField();
                                         $this->emit('modal-hide-inters');

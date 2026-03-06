@@ -386,7 +386,8 @@ class WithService
             if (!empty($activeButtons['showRemonterBankSendButton'])) {
 
 
-                $amountUnderDeposit = $valuer_deposit * ($userRate / $bankRate);
+
+                $amountUnderDeposit = $this->convertionservice->convertAdminCommissionInvoice($valuer_deposit);
 
                 $walletWith->update([
                     'commissions' => DB::raw('COALESCE(commissions, 0) + ' . (float) $amountUnderDeposit),
@@ -395,7 +396,8 @@ class WithService
                 $account_accepted = $user->is_accepted_companie ?? false;
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterBankSendCButton'])) {
-                    $amountCompanieDeposit = $percent_valeur_compagnie * ($userRate / $bankRate);
+                    $amountCompanieDeposit = $this->convertionservice->convertAdminCommissionInvoice($percent_valeur_compagnie);
+
                     $walletWith->increment('commission_companie', $amountCompanieDeposit);
                     $this->commissionServices->distributeAdminCommissionUnderBankAcceptedCompanies($admin_civ, 'wallet_bank_send_id', $walletWith->id,  $percent_amount_admin, $percent_valeur_compagnie, $valuer_deposit, $percent_amount_bank);
                 } else {

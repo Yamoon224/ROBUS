@@ -59,9 +59,9 @@
                 <div class="col-span-6">
                     <label for="modal-form-1" class="form-label">Pourcentage S-agent retrait<span class="text-danger">
                             *</span></label>
-                    <input wire:model.defer="distributer_drawal" id="modal-form-1" type="number" class="form-control"
+                    <input wire:model.defer="percent_with_drawal_merchands" id="modal-form-1" type="number" class="form-control"
                         placeholder="Pourcentage retrait marchant">
-                    @error('distributer_drawal')
+                    @error('percent_with_drawal_merchands')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>

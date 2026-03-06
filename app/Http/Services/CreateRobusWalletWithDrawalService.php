@@ -230,7 +230,7 @@ class CreateRobusWalletWithDrawalService
                 }
             } else {
 
-                $valeur_percent_admin = (float)$percent_drawal;
+                $valeur_percent_admin = (float)$commissionAdmin_drawal;
                 $admin_valeur_convertion = $this->convertAdminCommission($valeur_percent_admin);
                 if ($admin_civ->count() > 0) {
                     $nmbre_admin = $admin_civ->count();

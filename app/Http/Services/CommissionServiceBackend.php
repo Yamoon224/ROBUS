@@ -608,7 +608,7 @@ class CommissionServiceBackend
     {
         $amountValeur = $check->adminCom->amount;
         $amountBanque = $check->adminCom->amount_cie;
-        $amount_amount =  $check->adminCom->amount -  $amountBanque;
+        $amount_amount =  $check->adminCom->amount;
 
         $walletAdmin = WalletAdmin::find(1);
         $walletAdminCommission = WalletCommission::find(1);
@@ -836,6 +836,41 @@ class CommissionServiceBackend
         }
     }
 
+    public function handleUnderDistributorVirementInterCompanieCommission($check, $admin_civ, $description)
+    {
+        $valeur_amount_com = (float) $check->adminCom->amount;
+        $walletAdmin = WalletAdmin::find(1);
+
+        if ($admin_civ->count() > 0) {
+
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+                $check->adminCom->update([
+                    'amount' =>   $valeur_amount_com,
+                    'sid_user_id' =>   $admin_single->id,
+                    'description' => $description,
+                    'status'  => "SUCCESS",
+                    'amount_under' => $check->adminCom->amount_under ?? 0,
+                    'amount_compagnie' => $check->adminCom->amount_compagnie ?? 0,
+                    'description_underdistributer' =>  $description
+                ]);
+
+                if ($walletAdmin && $walletAdmin->amount >= $valeur_amount_com) {
+                    $walletAdmin->increment('amount', $valeur_amount_com);
+                    $this->credit(
+                        $check->adminCom->id,
+                        $valeur_amount_com,
+                        'Commission administrateur',
+                        true,
+                        false
+                    );
+                } else {
+                    $admin_single->wallet->increment('amount', $valeur_amount_com);
+                }
+            }
+        }
+    }
+
     public function handleUnderDistributorPaiementCommission($check, $admin_civ, $description)
     {
         $amount_admin = (float) $check->adminCom->amount;
@@ -860,6 +895,69 @@ class CommissionServiceBackend
                 ]);
 
                 if ($payment_seach == 7) {
+                    if ($walletAdmin && $walletAdmin->amount >= $amount_offer) {
+                        $walletAdmin->increment('amount', $amount_offer);
+                        $this->credit(
+                            $check->adminCom->id,
+                            $amount_offer,
+                            'Commission administrateur',
+                            true,
+                            false
+                        );
+                    }
+                } else {
+
+                    if ($walletCommission && $walletCommission->amount >= $amount_invoice) {
+                        // $walletCommission->decrement('amount', $amount_invoice);
+                        $walletCommission->increment('amount', $amount_cie_invoice);
+                        $this->credit(
+                            $check->adminCom->id,
+                            $amount_cie_invoice,
+                            'Commission banque',
+                            false,
+                            true
+                        );
+                        $walletAdmin->increment('amount', $amount_admin);
+                        $this->credit(
+                            $check->adminCom->id,
+                            $amount_admin,
+                            'Commission administrateur',
+                            true,
+                            false
+                        );
+                    } else {
+                        $admin_single->wallet->increment('amount', $amount_invoice);
+                        $walletAdmin->increment('amount', $amount_admin);
+                    }
+                }
+            }
+        }
+    }
+
+      public function handleUnderDistributorInterPaiementCommission($check, $admin_civ, $description)
+    {
+        $amount_admin = (float) $check->adminCom->amount;
+        $amount_invoice = (float)$check->adminCom->amount_under + (float)$check->adminCom->amount_compagnie;
+        $amount_cie_invoice = (float) $check->adminCom->amount_cie;
+        $amount_offer = (float) $check->adminCom->amount;
+        $payment_seach = $check->adminCom->walletInter->provider_id;
+        $walletCommission = WalletCommission::find(1);
+        $walletAdmin = WalletAdmin::find(1);
+
+        if ($admin_civ->count() > 0) {
+
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+                $check->adminCom->update([
+                    'amount' => $amount_admin,
+                    'sid_user_id' =>   $admin_single->id,
+                    'description' => $description,
+                    'status'  => "SUCCESS",
+                    'amount_under' =>  $amount_invoice,
+                    'description_underdistributer' =>  $description
+                ]);
+
+                if ($payment_seach == 52) {
                     if ($walletAdmin && $walletAdmin->amount >= $amount_offer) {
                         $walletAdmin->increment('amount', $amount_offer);
                         $this->credit(

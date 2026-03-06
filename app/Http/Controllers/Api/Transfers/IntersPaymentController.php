@@ -645,7 +645,7 @@ class IntersPaymentController extends Controller
 
                                         if (robus()->is_under_distributer || robus()->is_api) {
 
-                                            $percent_amount = $percent_djamo->percent_merchands * $request->amount;
+                                            $percent_amount = $percent_djamo->percent * $request->amount;
 
                                             $valeur_received = $request->amount -  $percent_amount;
 
@@ -1115,7 +1115,7 @@ class IntersPaymentController extends Controller
 
                                                 $percent_distr_cfa =   $amount_user->percent * $amount_request;
 
-                                                $amount_valeur_send = (float)$amount_request ;
+                                                $amount_valeur_send = (float)$amount_request;
 
                                                 if (robus()->is_under_distributer || robus()->is_api) {
                                                     $amount_valeur_convertion_send =  $this->convertionservice->convertAdminCommissionPayment($amount_request);
@@ -2309,7 +2309,7 @@ class IntersPaymentController extends Controller
 
             $is_under_or_distributor = robus()->is_under_distributer == 1 || robus()->is_distributer == 1 || robus()->is_api == 1;
             $commission_transaction_val_percent_pay = $is_under_or_distributor
-                ? (float)$percent_robus->percent_merchands * (float)$amount_paiement_robus
+                ? (float)$percent_robus->percent * (float)$amount_paiement_robus
                 : (float)$percent_robus->percent * (float)$amount_paiement_robus;
 
             function calculateConversion($valeur_verify, $currencie_sender, $currencie_receiver)
@@ -2717,11 +2717,14 @@ class IntersPaymentController extends Controller
                                     $valeur_cfa =   $amount_comission->percent * $valeur_amount;
                                 }
 
-                                $commission_reload_inter_val_inter_pay =  $this->convertionservice->convertAdminCommissionInvoice($valeur_cfa);
+                                $commission_reload_inter_val_inter_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
 
                                 $receive_valeur = $valeur_amount - $percent_distr_cfa;
 
                                 $commission_reload_inter_val_inter_percent_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
+
+
+                                $commission_unders_percent_pay =  $this->convertionservice->convertAdminCommissionInvoice($valeur_cfa);
 
 
                                 if ($receive_valeur < 0) {
@@ -2751,6 +2754,8 @@ class IntersPaymentController extends Controller
 
                                 $commission_reload_inter_val_inter_percent_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
 
+                                $commission_unders_percent_pay =  $this->convertionservice->convertAdminCommissionInvoice($valeur_cfa);
+
                                 // Convertion commission
 
                                 if ($valeur_cfa_receive < 0) {
@@ -2766,7 +2771,7 @@ class IntersPaymentController extends Controller
                     return response()->json([
                         'success' => $commission_inter != null ? true : false,
                         'data' =>  [
-                            'amount_commission' => $commission_reload_inter_val_inter_percent_pay,
+                            'amount_commission' => (robus()->is_under_distributer || robus()->is_api) ? $commission_unders_percent_pay  : $commission_reload_inter_val_inter_percent_pay,
                             'amount_pay' => $commission_reload_inter_val_inter_pay,
                             'amount_receive' => $commission_reload_inter_val_inter_receive . ' ' .  $countrie->currencie->code,
                         ],
@@ -3026,7 +3031,9 @@ class IntersPaymentController extends Controller
                                 $valeur_cfa =   $amount_comission->percent * $valeur_amount;
                             }
 
-                            $commission_reload_inter_val_inter_pay =  $this->convertionservice->convertAdminCommissionInvoice($valeur_cfa);
+                            $commission_reload_inter_val_inter_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
+
+                            $commission_under_pay =  $this->convertionservice->convertAdminCommissionInvoice($valeur_cfa);
 
                             // Valeur receive 
 
@@ -3056,11 +3063,13 @@ class IntersPaymentController extends Controller
                             }
 
 
-                            $commission_reload_inter_val_inter_pay =  $this->convertionservice->convertAdminCommissionInvoice($valeur_cfa);
+                            $commission_reload_inter_val_inter_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
 
                             $valeur_cfa_receive = $valeur_amount - $percent_distr_cfa;
 
                             $commission_reload_inter_val_inter_percent_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
+
+                            $commission_under_pay =  $this->convertionservice->convertAdminCommissionInvoice($valeur_cfa);
 
                             // Convertion commission
 
@@ -3077,7 +3086,7 @@ class IntersPaymentController extends Controller
                 return response()->json([
                     'success' => $commission_inter != null ? true : false,
                     'data' =>  [
-                        'amount_commission' => $commission_reload_inter_val_inter_percent_pay,
+                        'amount_commission' => (robus()->is_under_distributer || robus()->is_api) ?  $commission_under_pay : $commission_reload_inter_val_inter_percent_pay,
                         'amount_pay' => $commission_reload_inter_val_inter_pay ?? null,
                         'amount_receive' => $commission_reload_inter_val_inter_receive,
                     ],
