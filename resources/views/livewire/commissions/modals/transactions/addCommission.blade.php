@@ -24,8 +24,8 @@
                             *</span></label>
                     <select wire:model="providerAllCommission" id="modal-form-1" class="form-control">
                         <option value="null" disabled>Selectionnez le canal</option>
-                        <option value="1">Commission</option>
-                        <option value="2">Compte transactions</option>
+                        <option value="1">Compte des commissions SD total</option>
+                        <option value="2">Compte des commissions Admin</option>
 
                     </select>
                     @error('providerAllCommission')

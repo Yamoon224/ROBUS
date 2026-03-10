@@ -14,6 +14,8 @@ class BroadcastServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // 🔥 SOLUTION : Spécifier le guard 'api' pour l'authentification
+        // Broadcast::routes(['middleware' => ['auth:api']]);
         Broadcast::routes();
 
         require base_path('routes/channels.php');

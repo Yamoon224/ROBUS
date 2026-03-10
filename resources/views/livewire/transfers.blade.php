@@ -7,8 +7,8 @@
 
 <div>
     <!-- inject:js -->
-    {{-- <script src="{{ asset_url('/dist/js/app.js') }}"></script>
-    <script src="{{ asset_url('/css/app.css') }}"></script> --}}
+    <script src="{{ asset_url('/dist/js/app.js') }}"></script>
+    <script src="{{ asset_url('/css/app.css') }}"></script>
     {{-- <script src="{{ asset_url('/css/appModal.css') }}"></script> --}}
 
 
@@ -31,6 +31,7 @@
     </h2>
     <div class="intro-y grid grid-cols-12 gap-5 mt-5">
 
+        {{-- Is is_un || $is_distributer transaction send after update transactions --}}
         @if ($is_distributer)
 
             <h2 class="text-lg font-medium truncate mr-5 mt-6">
@@ -140,7 +141,7 @@
     </div>
     <div class="intro-y box px-5 pt-1 mt-1 ">
         <div class="grid grid-cols-12 gap-6 mt-6">
-            @if ($is_under || $is_distributer)
+            @if ($is_distributer)
                 <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
                     <div class="report-box zoom-in">
                         <div class="box p-wallet style_table_factures">
@@ -790,7 +791,7 @@
 
             @if (sabdy()->country->code == 'CI')
 
-                @if ($is_under || $is_distributer)
+                @if ($is_distributer)
 
                     <div class="flex flex-wrap gap-3 p-4">
                         @if ($showDepotButton)
@@ -1293,7 +1294,7 @@
         </div>
 
     </div>
-    
+
     @include('livewire.commissions.modals.transactions.updatePhoneCredit')
     @include('livewire.commissions.modals.transactions.updateVirementBank')
     @include('livewire.commissions.modals.transactions.updateInterTransfer')
@@ -1308,7 +1309,7 @@
     @include('livewire.commissions.modals.transactions.updatePaiementInvoice')
     @include('livewire.commissions.modals.transactions.addPhoneCredit')
     @include('livewire.commissions.modals.transactions.addOneXbet')
-    @include('livewire.commissions.modals.transactions.addVersement')e
+    @include('livewire.commissions.modals.transactions.addVersement')
     @include('livewire.commissions.modals.transactions.addPush')
     @include('livewire.commissions.modals.transactions.addTresort')
     @include('livewire.commissions.modals.transactions.addDjamo')
@@ -1323,16 +1324,112 @@
 </div>
 
 <script>
-    window.addEventListener('notification', event => {
-        const { type, message } = event.detail;
+    // Variable pour suivre l'onglet actif
+    let activeTab = {
+        navId: null,
+        tabId: null
+    };
 
-        if (type === 'success') {
-            alert(message); // ou toast
+    // Au chargement, détecter l'onglet actif
+    $(document).ready(function() {
+        // Sauvegarder l'onglet actif initial
+        const $activeNav = $('.nav-link.active').first();
+        if ($activeNav.length) {
+            activeTab = {
+                navId: $activeNav.attr('id'),
+                tabId: $activeNav.attr('data-tw-target').replace('#', '')
+            };
         }
 
-        if (type === 'error') {
-            alert(message);
+        // Sauvegarder quand on change d'onglet manuellement
+        $(document).on('click', '.nav-link', function() {
+            activeTab = {
+                navId: $(this).attr('id'),
+                tabId: $(this).attr('data-tw-target').replace('#', '')
+            };
+        });
+    });
+
+    // Écouter les événements Livewire mais NE PAS CHANGER D'ONGLET
+    document.addEventListener('livewire:load', function() {
+
+        // Pour les notifications - on NE fait RIEN
+        Livewire.on('menu-transaction-active', () => {
+            // NE RIEN FAIRE - l'utilisateur reste sur son onglet actuel
+            console.log('Notification reçue - onglet non changé');
+        });
+
+        Livewire.on('menu-paiement-active', () => {
+            // NE RIEN FAIRE
+        });
+
+        Livewire.on('menu-virement-active', () => {
+            // NE RIEN FAIRE
+        });
+
+        Livewire.on('menu-inters-active', () => {
+            // NE RIEN FAIRE
+        });
+
+        Livewire.on('menu-phoneCredit-active', () => {
+            // NE RIEN FAIRE
+        });
+        Livewire.on('menu-xbet-active', () => {
+            // NE RIEN FAIRE
+        });
+
+
+        // ... et ainsi de suite pour tous les autres menus
+    });
+
+    // Gestionnaire de notifications toast
+    window.addEventListener('notification', event => {
+        const {
+            type,
+            message
+        } = event.detail;
+
+        if (typeof toastr !== 'undefined') {
+            // Configuration des toasts
+            const options = {
+                closeButton: true,
+                progressBar: true,
+                positionClass: 'toast-bottom-right',
+                timeOut: 4000,
+                extendedTimeOut: 1000
+            };
+
+            switch (type) {
+                case 'success':
+                    toastr.success(message, '✅ Succès', options);
+                    break;
+                case 'error':
+                    toastr.error(message, '❌ Erreur', options);
+                    break;
+                case 'warning':
+                    toastr.warning(message, '⚠️ Attention', options);
+                    break;
+                default:
+                    toastr.info(message, '📬 Notification', options);
+                    break;
+            }
         }
     });
-</script>
 
+    // Fonction pour changer d'onglet UNIQUEMENT quand l'utilisateur le demande
+    window.switchTab = function(tabId, navId) {
+        // Désactiver tous les onglets
+        $('.nav-link').removeClass('active').attr('aria-selected', false);
+        $('.tab-pane').removeClass('active');
+
+        // Activer le nouvel onglet
+        $(`#${navId}`).addClass('active').attr('aria-selected', true);
+        $(`#${tabId}`).addClass('active');
+
+        // Mettre à jour la variable
+        activeTab = {
+            navId,
+            tabId
+        };
+    };
+</script>

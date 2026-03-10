@@ -69,9 +69,9 @@ class PercentRobusAuthService
             case 'MAG':
                 return TransactionCost::whereId(36)->first();
             case 'ASIE':
-                return TransactionCost::whereId(44)->first();
-            case 'AFE':
                 return TransactionCost::whereId(45)->first();
+            case 'AFE':
+                return TransactionCost::whereId(47)->first();
             default:
                 return null;
         }

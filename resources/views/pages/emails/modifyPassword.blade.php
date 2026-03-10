@@ -123,7 +123,7 @@ url: https://github.com/sendgrid/email-templates/blob/master/paste-templates/pas
         style="display: none; max-width: 0;
       max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px;
       color: #fff; opacity: 0;">
-       Renitialisation du mot de passe
+        Renitialisation du mot de passe
     </div>
     <!-- end preheader -->
 
@@ -136,7 +136,8 @@ url: https://github.com/sendgrid/email-templates/blob/master/paste-templates/pas
                     style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';color:#3d4852;font-size:19px;font-weight:bold;text-decoration:none;
                     display:inline-block ; padding-top: 12px;width:10%;"
                     target="_blank">
-                    <img src="https://robus.home.ci/public/dist/images/login.jpg" alt="" style="width:80%;">
+                    <img src="https://robus.home.ci/public/dist/images/logo_orange.png" alt=""
+                        style="width:80%;">
                 </a>
             </td>
         </tr>
@@ -154,7 +155,7 @@ url: https://github.com/sendgrid/email-templates/blob/master/paste-templates/pas
                             <h1
                                 style="margin: 0; font-size: 16px; font-weight: 600;
                 letter-spacing: -1px; line-height: 48px;">
-                               Renitialisation du mot de passe
+                                Renitialisation du mot de passe
                                 <br>
 
                         </td>

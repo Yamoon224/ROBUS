@@ -403,22 +403,23 @@ class ReloadCardController extends Controller
 
 
     // Search Valeur receive and valeur pay of Virement
-    public function search_reload_card($provider, $amount_virement)
+    public function search_reload_card($amount_virement, $provider = null)
     {
 
-        $wallet_user = Auth::guard('api')->user();
 
         try {
 
 
-            $is_distributor = $wallet_user->is_under_distributer;
+            $is_distributor = robus()->is_under_distributer ||  robus()->is_api;
             $commission_type = $is_distributor ? 'is_ivoires' : 'is_inter_bank';
             $commission_reload = DepositCost::whereId(2)->first();
 
             if (!$commission_reload) {
+
                 return response()->json([
                     'success' => false,
                     'message' => 'Aucune configuration de commission trouvée',
+
                 ], 404);
             }
 
@@ -428,14 +429,22 @@ class ReloadCardController extends Controller
             $valeur_begin = $levelDeposits->first();
 
             $conversion_valeur_end = $valeur_end->amount_end ?? 0;
-            $conversion_valeur_begin = $valeur_begin->amount_begin ?? 0;
+            $conversion_valeur_begin = $valeur_end->amount_begin ?? 0;
 
             if ($amount_virement > $conversion_valeur_end) {
+
                 return response()->json([
                     'success' => false,
-                    'message' => "Le montant maximum autorisé est de : $conversion_valeur_end",
+                    'message' => 'Le montant maximum autorisé est de ' . $conversion_valeur_end,
+                    'data' => [
+                        'amount_pay' => 0,
+                        'amount_send' => 0,
+                        'amount_receive' => 0,
+                    ],
                 ], 200);
             }
+
+
 
             if (empty($amount_virement)) {
                 return response()->json([
@@ -446,12 +455,17 @@ class ReloadCardController extends Controller
 
             $result = $this->calculateCommission($amount_virement, $levelDeposits);
 
+            if (isset($result['error'])) {
+                return $this->errorResponse($result['error']);
+            }
+
+
             return response()->json([
                 'success' => true,
                 'data' => [
-                    'amount_pay' => $result['amount_pay'],
-                    'amount_send' => $result['amount_send'],
-                    'amount_receive' => $result['amount_receive'],
+                    'amount_pay' => $result['amount_pay'] ?? "Verifier le montant",
+                    'amount_send' => $result['amount_send'] ?? "Verifier le montant",
+                    'amount_receive' => $result['amount_receive'] ?? "Verifier le montant de saisie",
                 ],
             ], 200);
         } catch (\Exception $exception) {
@@ -460,6 +474,20 @@ class ReloadCardController extends Controller
                 'message' => 'Pas d\'utilisateur',
             ], 200);
         }
+    }
+
+    private function errorResponse($message, $data = null)
+    {
+        $response = [
+            'success' => false,
+            'message' => $message,
+        ];
+
+        if ($data) {
+            $response['data'] = $data;
+        }
+
+        return response()->json($response, 200);
     }
 
     public function search_reload_card_received($provider, $amount_virement)
@@ -573,8 +601,7 @@ class ReloadCardController extends Controller
         }
 
         return [
-            'amount_pay' => "Montant invalide",
-            'amount_receive' => "Montant invalide",
+            'error' => 'Montant invalide ou hors des plages autorisées qui commence par 2000 FCFA'
         ];
     }
 
@@ -624,8 +651,7 @@ class ReloadCardController extends Controller
         }
 
         return [
-            'amount_pay' => "Montant invalide",
-            'amount_receive' => "Montant invalide",
+            'error' => 'Montant invalide ou hors des plages autorisées'
         ];
     }
 }

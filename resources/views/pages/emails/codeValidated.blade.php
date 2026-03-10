@@ -490,8 +490,8 @@
                                         <a href="{{ route('/') }}"
                                             style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';color:#3d4852;font-size:19px;font-weight:bold;text-decoration:none;display:inline-block"
                                             target="_blank">
-                                            <img src="https://robus.home.ci/public/dist/images/login.jpg" alt="Robus"
-                                                border="0" width="48"
+                                            <img src="https://robus.home.ci/public/dist/images/logo_orange.png"
+                                                alt="Robus" border="0" width="48"
                                                 style="display: block; width: 48px; max-width: 48px; min-width: 48px;">
                                             Robus
                                         </a>
@@ -513,30 +513,35 @@
                                                         </h1>
                                                         <p
                                                             style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';font-size:16px;line-height:1.5em;margin-top:0;text-align:left">
-                                                            Vous avez récemment tenté de faire un retrait sur votre compte ROBUS . 
-                                                            Passez en revue la tentative de retrait pour confirmer qu'il s'agissait bien de vous. 
+                                                            Vous avez récemment tenté de faire un retrait sur votre
+                                                            compte ROBUS .
+                                                            Passez en revue la tentative de retrait pour confirmer qu'il
+                                                            s'agissait bien de vous.
 
                                                         </p>
                                                         <p
                                                             style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';font-size:16px;line-height:1.5em;margin-top:0;text-align:left">
                                                             C'était moi
-                                                            Si vous reconnaissez cette activité, autorisez votre ce reatrait à l'aide du code de validation ci-dessous : 
-                                                            
-                                                        </p>
-                                                        <p style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol'
-                                                        ;font-size:1.5rem;line-height:1.5em;margin-top:0;text-align:left ; font-weight : bold; margin-top:16px;">
-                                                       
-                                                          {!! $message !!}
+                                                            Si vous reconnaissez cette activité, autorisez votre ce
+                                                            reatrait à l'aide du code de validation ci-dessous :
 
-                                                       </p>
-                                                        
+                                                        </p>
+                                                        <p
+                                                            style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol'
+                                                        ;font-size:1.5rem;line-height:1.5em;margin-top:0;text-align:left ; font-weight : bold; margin-top:16px;">
+
+                                                            {!! $message !!}
+
+                                                        </p>
+
                                                         <p
                                                             style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';font-size:16px;line-height:1.5em;margin-top:0;text-align:left">
-                                                            Ce n'était pas moi 
-                                                            Vous ne reconnaissez pas cette activité ? 
-                                                            Veuillez réinitialiser votre mot de passe et contacter immédiatement le service client . 
+                                                            Ce n'était pas moi
+                                                            Vous ne reconnaissez pas cette activité ?
+                                                            Veuillez réinitialiser votre mot de passe et contacter
+                                                            immédiatement le service client .
                                                         </p>
-                                                     
+
 
                                                         <p
                                                             style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';font-size:16px;line-height:1.5em;margin-top:0;text-align:left">

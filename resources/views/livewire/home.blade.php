@@ -1,8 +1,8 @@
 <div>
 
-        <!-- inject:js -->
+    <!-- inject:js -->
     {{-- <script src="{{ asset_url('/js/app.js') }}"></script> --}}
-   <script src="{{ asset_url('/css/app.css') }}"></script>
+    <script src="{{ asset_url('/css/app.css') }}"></script>
     <script src="{{ asset_url('/css/appModal.css') }}"></script>
 
     <div class="intro-y col-span-12 lg:col-span-12">
@@ -144,33 +144,36 @@
                 </div>
             </div>
 
-            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
-                <div class="amount-label text-sm text-gray-500">Compte des commissions SD total</div>
-                <div class="amount-commission-balance">
-                    <div class="flex items-baseline justify-between">
-                        <span class="amount-balance-value text-xl font-semibold">
-                            {{ $walletCommissions ?? 0 }}
-                        </span>
-                        <span class="amount-balance-currency text-white">
-                            {{ $usersCountry ?? 'CFA' }}
-                        </span>
+            @if (Auth::guard('web')->user()->hasPermissionTo('voir-commission-admin'))
+                <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
+                    <div class="amount-label text-sm text-gray-500">Compte des commissions SD total</div>
+                    <div class="amount-commission-balance">
+                        <div class="flex items-baseline justify-between">
+                            <span class="amount-balance-value text-xl font-semibold">
+                                {{ $walletCommissions ?? 0 }}
+                            </span>
+                            <span class="amount-balance-currency text-white">
+                                {{ $usersCountry ?? 'CFA' }}
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
-                <div class="amount-label text-sm text-gray-500">Compte des commissions Admin </div>
-                <div class="amount-admin-balance">
-                    <div class="flex items-baseline justify-between">
-                        <span class="amount-balance-value text-xl font-semibold">
-                            {{ $walletAdmin ?? 0 }}
-                        </span>
-                        <span class="amount-balance-currency text-white">
-                            {{ $usersCountry ?? 'CFA' }}
-                        </span>
+                <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
+                    <div class="amount-label text-sm text-gray-500">Compte des commissions Admin </div>
+                    <div class="amount-admin-balance">
+                        <div class="flex items-baseline justify-between">
+                            <span class="amount-balance-value text-xl font-semibold">
+                                {{ $walletAdmin ?? 0 }}
+                            </span>
+                            <span class="amount-balance-currency text-white">
+                                {{ $usersCountry ?? 'CFA' }}
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
+
         </div>
 
         <div class="grid grid-cols-12 gap-6 mt-6">
@@ -796,13 +799,9 @@
                         deposit="{{ json_encode($sum_deposit) }}" payment="{{ json_encode($sum_payment) }}"
                         reload="{{ json_encode($sum_reload) }}" transaction="{{ json_encode($sum_transaction) }}"
                         inter="{{ json_encode($sum_inter) }}" phone="{{ json_encode($sum_phoneCredit) }}"
-                        xbet="{{ json_encode($sum_phoneCredit) }}"
-                        push="{{ json_encode($sum_push) }}"
-                        djamo="{{ json_encode($sum_djamo) }}"
-                        versment="{{ json_encode($sum_versment) }}"
-                        tresort="{{ json_encode($sum_tresortMoney) }}"
-                        
-                        >
+                        xbet="{{ json_encode($sum_phoneCredit) }}" push="{{ json_encode($sum_push) }}"
+                        djamo="{{ json_encode($sum_djamo) }}" versment="{{ json_encode($sum_versment) }}"
+                        tresort="{{ json_encode($sum_tresortMoney) }}">
                     </canvas>
 
                 </div>
@@ -818,8 +817,7 @@
                     </h2>
                 </div>
                 <div class="intro-y box p-5 mt-12 sm:mt-5">
-                    <canvas id="sum_month" 
-                       virement_month="{{ json_encode($sum_bank_month) }}"
+                    <canvas id="sum_month" virement_month="{{ json_encode($sum_bank_month) }}"
                         deposit_month="{{ json_encode($sum_deposit_month) }}"
                         payment_month="{{ json_encode($sum_payment_month) }}"
                         reload_month="{{ json_encode($sum_reload_month) }}"
@@ -827,14 +825,10 @@
                         inter_month="{{ json_encode($sum_inter_month) }}"
                         phone_month="{{ json_encode($sum_phoneCredit_month) }}"
                         xbet_month="{{ json_encode($sum_xbet_month) }}"
-
                         push_month="{{ json_encode($sum_push_month) }}"
                         djamo_month="{{ json_encode($sum_djamo_month) }}"
                         versment_month="{{ json_encode($sum_versment_month) }}"
-                        tresort_month="{{ json_encode($sum_tresort_month) }}"
-
-                        
-                        ></canvas>
+                        tresort_month="{{ json_encode($sum_tresort_month) }}"></canvas>
                 </div>
             </div>
             <!-- END: Sales Report -->
@@ -909,7 +903,8 @@
 
                     label: 'Activites du jours',
                     data: [sumVirement, sumDeposit, sumPayment, sumReload,
-                        sumTransaction, sumInter,  sumPhone, sumXbet, sumPush, sumDjamo, sumVersment, sumTresort
+                        sumTransaction, sumInter, sumPhone, sumXbet, sumPush, sumDjamo, sumVersment,
+                        sumTresort
                     ],
                     backgroundColor: [
                         '#84cc17', // ✅ sumVirement → vert clair
@@ -963,7 +958,7 @@
             type: 'bar',
             data: {
                 labels: [
-                   'Virements',
+                    'Virements',
                     'Cartes',
                     'Paiements',
                     'Rechargement',
@@ -981,11 +976,11 @@
                     label: 'Activites du mois',
                     data: [sum_v_month, sum_d_month,
                         sum_p_month, sum_r_month, sum_t_month, sum_i_month, sum_phone_month,
-                        sum_1xbetw_month , sum_push_month , sum_djamo_month , sum_versment_month,
+                        sum_1xbetw_month, sum_push_month, sum_djamo_month, sum_versment_month,
                         sum_tresortMoney_month
                     ],
                     backgroundColor: [
-                       '#84cc17', // ✅ sumVirement → vert clair
+                        '#84cc17', // ✅ sumVirement → vert clair
                         '#f97417', // ✅ sumDeposit → orange vif
                         '#ff0101', // ✅ sumPayment → rouge
                         '#e11d48', // ✅ sumReload → rouge rosé

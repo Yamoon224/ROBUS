@@ -20,7 +20,7 @@ class Onexbets extends Component
     public $percent_deposit;
     public $percent_with_drawal;
     public $distributer_custumer;
-    public $distributer_drawal;
+    public $percent_with_drawal_merchands;
     public $comission_master;
     public $comissionCompanie;
     public $editTypeTresort = false;
@@ -39,7 +39,7 @@ class Onexbets extends Component
         $this->percent_transaction = $check->percent * 100;
         $this->percent_admin = $check->percent_admin * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
-        $this->distributer_drawal = $check->percent_under_drawal * 100;
+        $this->percent_with_drawal_merchands = $check->percent_under_drawal * 100;
         $this->percent_deposit = $check->percent_merchands * 100;
         $this->comissionCompanie = $check->percent_companie * 100;
         $this->distributer_custumer = $check->distributer_custumer;
@@ -74,7 +74,7 @@ class Onexbets extends Component
             'percent_merchands' => $this->percent_deposit,
             'percent_with_drawal'  => $this->percent_with_drawal,
             'percent_companie'  => $this->comissionCompanie,
-            'percent_under_drawal'  => $this->distributer_drawal,
+            'percent_under_drawal'  => $this->percent_with_drawal_merchands,
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
         ]);
@@ -92,7 +92,7 @@ class Onexbets extends Component
         $this->percent_with_drawal = 0;
         $this->percent_transaction = 0;
         $this->comissionCompanie = 0;
-         $this->distributer_drawal= 0;
+         $this->percent_with_drawal_merchands= 0;
         $this->emit('modal-hide', 'hide');
     }
 

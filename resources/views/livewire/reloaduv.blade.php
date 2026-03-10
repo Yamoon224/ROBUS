@@ -18,33 +18,36 @@
                 </div>
             </div>
 
-            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
-                <div class="amount-label text-sm text-gray-500">Compte des commissions total</div>
-                <div class="amount-commission-balance">
-                    <div class="flex items-baseline justify-between">
-                        <span class="amount-balance-value text-xl font-semibold">
-                            {{ $walletCommissions ?? 0 }}
-                        </span>
-                        <span class="amount-balance-currency text-white">
-                            {{ $usersCountry ?? 'CFA' }}
-                        </span>
+            @if (Auth::guard('web')->user()->hasPermissionTo('voir-commission-admin'))
+                <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
+                    <div class="amount-label text-sm text-gray-500">Compte des commissions SD total</div>
+                    <div class="amount-commission-balance">
+                        <div class="flex items-baseline justify-between">
+                            <span class="amount-balance-value text-xl font-semibold">
+                                {{ $walletCommissions ?? 0 }}
+                            </span>
+                            <span class="amount-balance-currency text-white">
+                                {{ $usersCountry ?? 'CFA' }}
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
-                <div class="amount-label text-sm text-gray-500">Compte des transactions </div>
-                <div class="amount-admin-balance">
-                    <div class="flex items-baseline justify-between">
-                        <span class="amount-balance-value text-xl font-semibold">
-                            {{ $walletAdmin ?? 0 }}
-                        </span>
-                        <span class="amount-balance-currency text-white">
-                            {{ $usersCountry ?? 'CFA' }}
-                        </span>
+                <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
+                    <div class="amount-label text-sm text-gray-500">Compte des commissions Admin </div>
+                    <div class="amount-admin-balance">
+                        <div class="flex items-baseline justify-between">
+                            <span class="amount-balance-value text-xl font-semibold">
+                                {{ $walletAdmin ?? 0 }}
+                            </span>
+                            <span class="amount-balance-currency text-white">
+                                {{ $usersCountry ?? 'CFA' }}
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
+
         </div>
 
         <div class="grid grid-cols-12 gap-6 mt-6">
@@ -181,6 +184,7 @@
 
         </div>
 
+       
         <ul class="nav nav-link-tabs flex-col sm:flex-row justify-center lg:justify-start text-center mt-3"
             role="tablist">
             <li id="reload-tab" class="nav-item" role="presentation">
@@ -461,10 +465,9 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-
                                                             @else
                                                                 <div class="user-name">
-                                                                   Pas un transfert de compte wallet
+                                                                    Pas un transfert de compte wallet
                                                                 </div>
                                                             @endif
 

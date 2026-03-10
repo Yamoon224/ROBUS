@@ -1055,7 +1055,7 @@ class withTransactionController extends Controller
                                                 'success' => $commission_invoice != null ? true : false,
                                                 'data' =>  [
                                                         'amount_pay' => $commission_paiement_invoice_val_nat_pay,
-                                                        'amount_send' => $commission_transaction_val_percent_pay,
+                                                        'amount_send' => ($wallet_user->is_under_distributer == 1 || $wallet_user->is_api) ? $commission_paiement_invoice_val_nat_pay : $commission_transaction_val_percent_pay,
                                                         'amount_receive' => $commission_paiement_invoice_val_nat_receive,
                                                 ],
                                         ], 200);
@@ -1287,7 +1287,7 @@ class withTransactionController extends Controller
                         return response()->json([
                                 'success' => true,
                                 'data' => [
-                                        'amount_send'    => $reel_amount,
+                                        'amount_send'    => (robus()->is_under_distributer || robus()->is_api) ? $commission : $reel_amount,
                                         'amount_pay'     => $commission,
                                         'amount_receive' => $net_amount,
                                 ],

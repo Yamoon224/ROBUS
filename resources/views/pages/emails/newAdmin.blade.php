@@ -136,7 +136,8 @@ url: https://github.com/sendgrid/email-templates/blob/master/paste-templates/pas
                     style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';color:#3d4852;font-size:19px;font-weight:bold;text-decoration:none;
                     display:inline-block ; padding-top: 12px;width:10%;"
                     target="_blank">
-                    <img src="https://robus.home.ci/public/dist/images/login.jpg" alt="" style="width:80%;">
+                    <img src="https://robus.home.ci/public/dist/images/logo_orange.png" alt=""
+                        style="width:80%;">
                 </a>
             </td>
         </tr>

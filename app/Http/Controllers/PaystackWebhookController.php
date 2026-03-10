@@ -57,12 +57,13 @@ class PaystackWebhookController extends Controller
     {
         // Valider les données d'entrée
         $validator = Validator::make($request->all(), [
-            'amount' => 'required|numeric|min:100|max:1000000',
-            'email' => 'required|email',
+            'amount' => 'required|min:1|max:1000000',
+            'email' => 'nullable|email',
             'reference' => 'required|string|unique:wallet_reloads,reference',
             'metadata' => 'nullable|array',
             'callback_url' => 'nullable|url',
         ]);
+
 
         if ($validator->fails()) {
             return response()->json([
@@ -83,12 +84,12 @@ class PaystackWebhookController extends Controller
             }
 
             // Vérifier que l'email correspond à l'utilisateur authentifié
-            if ($user->email !== $request->email) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Email ne correspond pas à l\'utilisateur authentifié'
-                ], 403);
-            }
+            // if ($user->email !== $request->email) {
+            //     return response()->json([
+            //         'status' => false,
+            //         'message' => 'Email ne correspond pas à l\'utilisateur authentifié'
+            //     ], 403);
+            // }
 
             $paystackService = new PaystackService();
 
@@ -96,7 +97,7 @@ class PaystackWebhookController extends Controller
             $amountInKobo = $request->amount * 100;
 
             $data = [
-                'email' => $request->email,
+                'email' => $request->email ?? "",
                 'amount' => $amountInKobo,
                 'reference' => $request->reference,
                 'currency' => 'XOF',
@@ -343,7 +344,7 @@ class PaystackWebhookController extends Controller
                     'received_amount' => $transaction->amount_received,
                     'balance_before' => $oldBalance,
                     'balance_after' => $newBalance,
-                    'description' => 'Recharge via Paystack - ' . $data['reference'],
+                    'description' => 'Recharge via achat UV - ' . $data['reference'],
                     'reference' => $data['reference'],
                     'operator_transaction_name' =>  "Paystack",
                     'status' => 'completed',
@@ -439,6 +440,7 @@ class PaystackWebhookController extends Controller
                 'wallet' => $wallet->fresh(),
                 'paystack_data' => $data
             ], 200);
+            
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -469,18 +471,20 @@ class PaystackWebhookController extends Controller
             // Vérifier si la transaction a déjà été traitée
             if ($transaction->status === 'success') {
                 Log::info('Transaction déjà traitée', ['reference' => $data['reference']]);
+
+                return redirect()->route('payment.failed', ['reference' => $data['reference']]);
             }
 
             // Valider le montant
-            $expectedAmount = $transaction->amount * 100;
-            if ($data['amount'] != $expectedAmount) {
-                Log::error('Montant incorrect', [
-                    'expected' => $expectedAmount,
-                    'received' => $data['amount'],
-                    'reference' => $data['reference']
-                ]);
-                DB::rollBack();
-            }
+            // $expectedAmount = $transaction->amount * 100;
+            // if ($data['amount'] != $expectedAmount) {
+            //     Log::error('Montant incorrect', [
+            //         'expected' => $expectedAmount,
+            //         'received' => $data['amount'],
+            //         'reference' => $data['reference']
+            //     ]);
+            //     DB::rollBack();
+            // }
 
             $wallet = $transaction->wallet;
             $wallet_details = Wallet::whereId($transaction->wallet_id)->first();

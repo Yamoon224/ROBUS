@@ -491,10 +491,10 @@
                                             style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';color:#3d4852;font-size:19px;font-weight:bold;text-decoration:none;display:inline-block"
                                             target="_blank">
 
-                                            <img src="https://robus.home.ci/public/dist/images/login.jpg" alt="Robus"
-                                                border="0" width="48"
+                                            <img src="https://robus.home.ci/public/dist/images/logo_orange.png"
+                                                alt="Robus" border="0" width="48"
                                                 style="display: block; width: 48px; max-width: 48px; min-width: 48px;">
-                                        Robus
+                                            Robus
                                         </a>
                                     </td>
                                 </tr>
@@ -537,7 +537,6 @@
                                                                 votre demande est en-cours de validation
 
                                                             </p>
-                                                      
                                                         @else
                                                             <p
                                                                 style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';font-size:16px;line-height:1.5em;margin-top:0;text-align:left">

@@ -399,7 +399,8 @@ class Transfers extends Component
     public $id_accompte;
     public $references;
 
-    
+    public $modalActive = false;
+    public $pendingMenu = null;
 
 
     protected $listeners = [
@@ -457,8 +458,26 @@ class Transfers extends Component
         'echo:wallet-drawal-choose-created,.Created_wallet_drawal_choose' =>
         'notifyNewDjamo',
 
-        'cancelTransactionInTransfers' => 'cancelTransactionField'
+        'cancelTransactionInTransfers' => 'cancelTransactionField',
+        'modal-opened' => 'setModalActive',
+        'modal-closed' => 'setModalInactive',
     ];
+
+    public function setModalActive()
+    {
+        $this->modalActive = true;
+    }
+
+    public function setModalInactive()
+    {
+        $this->modalActive = false;
+
+        // Si un menu était en attente, on l'active maintenant
+        if ($this->pendingMenu) {
+            $this->emit('menu-' . $this->pendingMenu . '-active');
+            $this->pendingMenu = null;
+        }
+    }
 
 
     public function mount()
@@ -827,6 +846,17 @@ class Transfers extends Component
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-phoneCredit');
         // $this->emit('menu-phoneCredit-active');
+        if (!$this->modalActive) {
+            $this->emit('menu-phoneCredit-active');
+        } else {
+            $this->pendingMenu = 'Crédit télephonique';
+        }
+
+        $this->emit('show-toast-notification', [
+            'type' => 'info',
+            'message' => 'Nouveau télephonique disponible',
+            'menu' => 'credit'
+        ]);
     }
 
     public function notifyNewXbet()
@@ -1794,6 +1824,8 @@ class Transfers extends Component
                         'status' => $this->phoneCreditStatus,
                     ]);
 
+                    DB::commit();
+
                     $this->password_transaction = "";
                     $this->phoneCreditStatus = "";
                     $this->phoneCreditId = "";
@@ -1975,6 +2007,8 @@ class Transfers extends Component
                         'status' => $this->bankStatus,
                     ]);
 
+                    DB::commit();
+
                     $this->password_transaction = "";
                     $this->bankStatus = "";
                     $this->bankId = "";
@@ -2052,7 +2086,7 @@ class Transfers extends Component
                             $this->updateWalletNull($check, $commission);
 
                             $this->handleReloadClientCommission($check, $admin_civ);;
-                            
+
                             app(TransfertServiceBackend::class)->createErrorBankSend($check, $transactionCode, $transactionCompiCode);
 
                             $this->notifyUsers($check, $admins, 'Bank Send', 'La demande de Transferts Bank send a été rejetée après analyse', 'La demande de Transferts Bank send a été rejetée après analyse');
@@ -2155,6 +2189,8 @@ class Transfers extends Component
                         'updated_by' => sabdy()->id,
                         'status' => $this->xbetStatus,
                     ]);
+
+                    DB::commit();
 
                     $this->password_transaction = "";
                     $this->xbetStatus = "";
@@ -2469,6 +2505,8 @@ class Transfers extends Component
                         'status' => $this->versementStatus,
                     ]);
 
+                    DB::commit();
+
                     $this->password_transaction = "";
                     $this->versementStatus = "";
                     $this->versementId = "";
@@ -2660,6 +2698,8 @@ class Transfers extends Component
                         'updated_by' => sabdy()->id,
                         'status' => $this->pushStatus,
                     ]);
+
+                    DB::commit();
 
                     $this->password_transaction = "";
                     $this->pushStatus = "";
@@ -2862,6 +2902,8 @@ class Transfers extends Component
                         'updated_by' => sabdy()->id,
                         'status' => $this->djamoStatus,
                     ]);
+
+                    DB::commit();
 
                     $this->password_transaction = "";
                     $this->djamoStatus = "";
@@ -3068,6 +3110,7 @@ class Transfers extends Component
                         'status' => $this->tresortStatus,
                     ]);
 
+                    DB::commit();
 
                     $this->password_transaction = "";
                     $this->tresortStatus = "";
@@ -3269,6 +3312,8 @@ class Transfers extends Component
                         'status' => $this->reloadcardStatus,
                     ]);
 
+                    DB::commit();
+
                     $this->password_transaction = "";
                     $this->reloadcardStatus = "";
                     $this->reloadcardId = "";
@@ -3461,6 +3506,8 @@ class Transfers extends Component
                         'status' => $this->transactionStatus,
                     ]);
 
+                    DB::commit();
+
                     $this->password_transaction = "";
                     $this->transactionStatus = "";
                     $this->transactionId = "";
@@ -3635,6 +3682,8 @@ class Transfers extends Component
                         'updated_by' => sabdy()->id,
                         'status' => $this->virementStatus,
                     ]);
+
+                    DB::commit();
 
                     $this->password_transaction = "";
                     $this->virementStatus = "";
@@ -3841,6 +3890,8 @@ class Transfers extends Component
                         'status' => $this->interStatus,
                     ]);
 
+                    DB::commit();
+
                     $this->password_transaction = "";
                     $this->interStatus = "";
                     $this->interId = "";
@@ -3942,7 +3993,7 @@ class Transfers extends Component
 
                                     app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
                                 }
-                            } else if($check->provider_type == 8) {
+                            } else if ($check->provider_type == 8) {
                                 if ($check->wallet->sidUser->is_under_distributer == true) {
 
                                     if ($valeur_amount_com !== null && $check->commissions !== null) {
@@ -4159,6 +4210,8 @@ class Transfers extends Component
                         'updated_by' => sabdy()->id,
                         'status' => $this->paiementStatus,
                     ]);
+
+                    DB::commit();
 
                     $this->password_transaction = "";
                     $this->paiementStatus = "";
@@ -4962,7 +5015,8 @@ class Transfers extends Component
                 $q->where('wallet_transactions.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_transactions.status', 'PROCESSING')
-                            ->where('wallet_transactions.updated_by', $walletUser->id);
+                            ->where('wallet_transactions.updated_by', $walletUser->id)
+                            ->where('wallet_transactions.provider_id', '!=', 9);
                     });
             })
             ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {

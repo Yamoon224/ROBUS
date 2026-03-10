@@ -82,19 +82,19 @@ class ProviderController extends Controller
 
             $cacheKey = "dashboard_data_user_" . robus()->id . "_country_" . $countrieId;
             // 1️⃣ Cas où l'app est indisponible
-            // if (!$appStatusResult['success']) {
-            //     $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
-            //     $dashboard_data['Transfert national'] = [
-            //         "Dépôts" => ProviderSingleCollection::collection($walletTransactionDepot),
-            //         "Mobile Money" => [],
-            //         "Tresort Money" => [],
-            //     ];
-            //     return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
-            // }
+            if (!$appStatusResult['success']) {
+                $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
+                $dashboard_data['Transfert national'] = [
+                    "Dépôts" => ProviderSingleCollection::collection($walletTransactionDepot),
+                    // "Mobile Money" => [],
+                    // "Tresort Money" => [],
+                ];
+                return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
+            }
 
             // 2️⃣ Récupération des assignations et mapping restrictions
 
-            return Cache::remember($cacheKey, 3600, function () use ($countrieId) {
+            return Cache::remember($cacheKey, 1800, function () use ($countrieId) {
                 $assignations = $this->percentRobus->operatorServices();
                 $restrictionMap = [
                     'TRANSFERT CREDIT' => 'showCreditButton',
@@ -205,7 +205,7 @@ class ProviderController extends Controller
                         }
                     }
                 }
-              
+
 
                 // 4️⃣ Construire le dashboard de manière dynamique
                 if (robus()->is_under_distributer || robus()->is_api) {
@@ -226,17 +226,7 @@ class ProviderController extends Controller
 
                         if (!empty($activeButtons['showInterButton'])) {
                             $dashboard_data['Transfert international'] = [
-                                "Factures" => !empty($activeButtons['showFacInterButton']) ? ProviderSingleCollection::collection($providers['paymentInter']) : [],
                                 "Transfert" => !empty($activeButtons['showTransacInterButton']) ? ProviderSingleCollection::collection($providers['inter']) : [],
-                                "Crédit téléphonique" => !empty($activeButtons['showTelInterButton']) ? ProviderSingleCollection::collection($providers['phoneInter']) : [],
-                                "Versement bancaire" => !empty($activeButtons['showBancInterButton']) ? ProviderSingleCollection::collection($providers['virementBank']) : [],
-                                "Rechargement de carte" => !empty($activeButtons['showCarteInterButton']) ? ProviderSingleCollection::collection($providers['reloadCardInter']) : [],
-                                "Push" => !empty($activeButtons['showPushInterButton']) ? ProviderSingleCollection::collection($providers['interPush']) : [],
-                                "Djamo" => !empty($activeButtons['showDjamoInterButton']) ? ProviderSingleCollection::collection($providers['interDjamo']) : [],
-                                "Tresort" => !empty($activeButtons['showTresortInterButton']) ? ProviderSingleCollection::collection($providers['interTresort']) : [],
-                                "Bank Send" => !empty($activeButtons['showFacBankSendInterButton']) ? ProviderSingleCollection::collection($providers['interBankSend']) : [],
-                                "Versement" => !empty($activeButtons['showVersementInterButton']) ? ProviderSingleCollection::collection($providers['interVersement']) : [],
-                                "Xbets" => !empty($activeButtons['showXbetsInterButton']) ? ProviderSingleCollection::collection($providers['interXbet']) : [],
                             ];
                         }
 
@@ -274,17 +264,8 @@ class ProviderController extends Controller
 
                         if (!empty($activeButtons['showInterButton'])) {
                             $dashboard_data['Transfert international'] = [
-                                "Factures" => !empty($activeButtons['showFacInterButton']) ? ProviderSingleCollection::collection($providers['paymentInter']) : [],
                                 "Transfert" => !empty($activeButtons['showTransacInterButton']) ? ProviderSingleCollection::collection($providers['inter']) : [],
-                                "Crédit téléphonique" => !empty($activeButtons['showTelInterButton']) ? ProviderSingleCollection::collection($providers['phoneInter']) : [],
-                                "Versement bancaire" => !empty($activeButtons['showBancInterButton']) ? ProviderSingleCollection::collection($providers['virementBank']) : [],
-                                "Rechargement de carte" => !empty($activeButtons['showCarteInterButton']) ? ProviderSingleCollection::collection($providers['reloadCardInter']) : [],
-                                "Push" => !empty($activeButtons['showPushInterButton']) ? ProviderSingleCollection::collection($providers['interPush']) : [],
-                                "Djamo" => !empty($activeButtons['showDjamoInterButton']) ? ProviderSingleCollection::collection($providers['interDjamo']) : [],
-                                "Tresort" => !empty($activeButtons['showTresortInterButton']) ? ProviderSingleCollection::collection($providers['interTresort']) : [],
                                 "Bank Send" => !empty($activeButtons['showFacBankSendInterButton']) ? ProviderSingleCollection::collection($providers['interBankSend']) : [],
-                                "Versement" => !empty($activeButtons['showVersementInterButton']) ? ProviderSingleCollection::collection($providers['interVersement']) : [],
-                                "Xbets" => !empty($activeButtons['showXbetsInterButton']) ? ProviderSingleCollection::collection($providers['interXbet']) : [],
                             ];
                         }
                     }
@@ -300,11 +281,8 @@ class ProviderController extends Controller
                         $dashboard_data['Retrait'] = ProviderSingleCollection::collection($providers['retrait']);
                         $dashboard_data['Xbets'] = ProviderSingleCollection::collection($providers['xbet']);
                         $dashboard_data['Transfert international'] = [
-                            "Factures" => ProviderSingleCollection::collection($providers['paymentInter']),
                             "Transfert" => ProviderSingleCollection::collection($providers['inter']),
-                            "Crédit téléphonique" => ProviderSingleCollection::collection($providers['phoneInter']),
-                            "Versement bancaire" => ProviderSingleCollection::collection($providers['virementBank']),
-                            "Rechargement de carte" => ProviderSingleCollection::collection($providers['reloadCardInter']),
+                            "Bank Send" => !empty($activeButtons['showFacBankSendInterButton']) ? ProviderSingleCollection::collection($providers['interBankSend']) : [],
                         ];
                     } else {
                         $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($providers['transaction']);
@@ -316,6 +294,8 @@ class ProviderController extends Controller
                             "Crédit téléphonique" => ProviderSingleCollection::collection($providers['phoneInter']),
                             "Versement bancaire" => ProviderSingleCollection::collection($providers['virementBank']),
                             "Rechargement de carte" => ProviderSingleCollection::collection($providers['reloadCardInter']),
+                            "Rechargement de carte" => !empty($activeButtons['showCarteInterButton']) ? ProviderSingleCollection::collection($providers['reloadCardInter']) : [],
+                            "Bank Send" => !empty($activeButtons['showFacBankSendInterButton']) ? ProviderSingleCollection::collection($providers['interBankSend']) : [],
                         ];
                     }
                 }

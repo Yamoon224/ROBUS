@@ -27,7 +27,7 @@
             <div class="modal-body grid grid-cols-12 gap-4 gap-y-3 mt-3">
 
                 <div class="col-span-12">
-                    <div class="amount-label text-sm text-gray-500">Compte des transactions </div>
+                    <div class="amount-label text-sm text-gray-500">Compte des commissions Admin </div>
                     <div class="amount-admin-balance">
                         <div class="flex items-baseline justify-between">
                             <span class="amount-balance-value text-xl font-semibold">

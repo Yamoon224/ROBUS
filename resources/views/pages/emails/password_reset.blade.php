@@ -492,7 +492,7 @@
                                             target="_blank">
                                             <img align="center" alt="{{ env('APP_NAME') }}"
                                                 class="center standard-header" height="30"
-                                                src="https://robus.home.ci/robus/public/dist/images/login.jpg"
+                                                src="https://robus.home.ci/robus/public/dist/images/logo_orange.png"
                                                 style="outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;width:auto;max-width:100%;clear:both;display:block;border:none;padding-bottom:16px;padding-top:48px;max-height:30px">
                                         </a>
                                         Robus
@@ -514,19 +514,19 @@
                                                             Salut {{ $content['lastname'] ?? '' }}
                                                             <strong>{{ strtoupper($content['firstname']) ?? '' }}</strong>
                                                         </h1>
- <p
+                                                        <p
                                                             style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';font-size:16px;line-height:1.5em;margin-top:0;text-align:left">
                                                             Vous venez de renitialiser votre mot de passe chez Robus
                                                         </p>
                                                         <p
                                                             style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';font-size:16px;line-height:1.5em;margin-top:0;text-align:left">
-                                                            Soyez le bienvenue . Connectez-vous à votre compte 
+                                                            Soyez le bienvenue . Connectez-vous à votre compte
                                                         </p>
-                                                      
+
                                                         <p
                                                             style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';font-size:16px;line-height:1.5em;margin-top:0;text-align:left">
                                                             Merci,<br>
-                                                           Robus</p>
+                                                            Robus</p>
 
                                                     </td>
                                                 </tr>
@@ -544,10 +544,12 @@
                                                 <tr>
                                                     <td align="center"
                                                         style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';max-width:100vw;padding:32px">
-                                                     
-                                                          <i>  <p
-                                                            style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';line-height:1.5em;margin-top:0;color:#b0adc5;font-size:12px;text-align:center">
-                                                   All rights reserved.</p></i> 
+
+                                                        <i>
+                                                            <p
+                                                                style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';line-height:1.5em;margin-top:0;color:#b0adc5;font-size:12px;text-align:center">
+                                                                All rights reserved.</p>
+                                                        </i>
                                                     </td>
                                                 </tr>
                                             </tbody>

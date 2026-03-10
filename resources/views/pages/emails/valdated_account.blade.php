@@ -490,8 +490,8 @@
                                         <a href="{{ route('/') }}"
                                             style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';color:#3d4852;font-size:19px;font-weight:bold;text-decoration:none;display:inline-block"
                                             target="_blank">
-                                            <img src="https://robus.home.ci/public/dist/images/login.jpg" alt="Robus"
-                                                border="0" width="48"
+                                            <img src="https://robus.home.ci/public/dist/images/logo_orange.png"
+                                                alt="Robus" border="0" width="48"
                                                 style="display: block; width: 48px; max-width: 48px; min-width: 48px;">
                                             Robus
                                         </a>
@@ -509,7 +509,8 @@
                                                         style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';max-width:100vw;padding:32px">
                                                         <h1
                                                             style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';color:#3d4852;font-size:18px;font-weight:bold;margin-top:0;text-align:left">
-                                                            Salut M/Mme  {{ $content->firstname ?? null }}  {{ $content->lastname ?? null }}
+                                                            Salut M/Mme {{ $content->firstname ?? null }}
+                                                            {{ $content->lastname ?? null }}
 
                                                         </h1>
                                                         <p
@@ -517,7 +518,7 @@
                                                             Votre compte a été validez avec Success.
 
                                                             Votre pays : {{ $content->country->name ?? null }} <br>
-                                                             Ville :  {{ $content->city->name ?? null }}
+                                                            Ville : {{ $content->city->name ?? null }}
 
                                                         </p>
                                                         <p

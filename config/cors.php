@@ -20,22 +20,28 @@ return [
         'broadcasting/auth',
     ],
 
+    'allowed_methods' => ['*'],
+
+    'allowed_origins' => ['*'], // Pour test, puis restreignez
+
+    'allowed_headers' => ['*'],
+
     'allowed_methods' => ['POST', 'GET', 'OPTIONS'],
 
-    'allowed_origins' => [
-        'https://robus.home.ci',
-        'https://votre-app-flutter.com',
-    ],
+    // 'allowed_origins' => [
+    //     'https://robus.home.ci',
+    //     'https://manager.robus.africa',
+    // ],
 
     'allowed_origins_patterns' => [],
 
-    'allowed_headers' => [
-        'Authorization',
-        'Content-Type',
-        'Accept',
-        'X-Requested-With',
-        'X-Socket-ID',
-    ],
+    // 'allowed_headers' => [
+    //     'Authorization',
+    //     'Content-Type',
+    //     'Accept',
+    //     'X-Requested-With',
+    //     'X-Socket-ID',
+    // ],
 
     'exposed_headers' => [],
 

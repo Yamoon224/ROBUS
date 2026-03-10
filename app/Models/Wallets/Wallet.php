@@ -156,23 +156,24 @@ class Wallet extends Model
     {
         parent::boot();
 
-        static::forceDeleting(function ($wallet) {
+        
+        // static::forceDeleting(function ($wallet) {
 
-            $wallet->walletBanks()->forceDelete();
-            $wallet->walletDeposits()->forceDelete();
-            $wallet->orderCards()->forceDelete();
-            $wallet->walletInters()->forceDelete();
-            $wallet->walletReloads()->forceDelete();
-            $wallet->walletPayments()->forceDelete();
-            $wallet->walletTransactions()->forceDelete();
-            $wallet->walletPushs()->forceDelete();
-            $wallet->walletBankSends()->forceDelete();
-            $wallet->walletDjamos()->forceDelete();
-            $wallet->walletTresortsMoneys()->forceDelete();
-            $wallet->walletXbets()->forceDelete();
-            $wallet->walletWaves()->forceDelete();
-            $wallet->walletPhoneCredits()->forceDelete();
-        });
+        //     $wallet->walletBanks()->forceDelete();
+        //     $wallet->walletDeposits()->forceDelete();
+        //     $wallet->orderCards()->forceDelete();
+        //     $wallet->walletInters()->forceDelete();
+        //     $wallet->walletReloads()->forceDelete();
+        //     $wallet->walletPayments()->forceDelete();
+        //     $wallet->walletTransactions()->forceDelete();
+        //     $wallet->walletPushs()->forceDelete();
+        //     $wallet->walletBankSends()->forceDelete();
+        //     $wallet->walletDjamos()->forceDelete();
+        //     $wallet->walletTresortsMoneys()->forceDelete();
+        //     $wallet->walletXbets()->forceDelete();
+        //     $wallet->walletWaves()->forceDelete();
+        //     $wallet->walletPhoneCredits()->forceDelete();
+        // });
     }
 
     public function getActivitylogOptions(): LogOptions

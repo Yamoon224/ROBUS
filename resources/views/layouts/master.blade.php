@@ -61,10 +61,7 @@
     @include('layouts.scripts_toastr')
 
     <script>
-        // Livewire.on('reloadPage', function() {
-        //     location.reload();
-        // });
-
+ 
         Livewire.on('show-disabled-modal', () => {
             $('#disabled-user_admin-modal').removeClass('hide');
             $('#disabled-user_admin-modal').addClass('show');

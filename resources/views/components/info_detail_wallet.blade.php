@@ -152,7 +152,7 @@
                 <div class="w-full flex justify-center mt-6">
                     @if ($user->wallet && $user->wallet->qr_code)
                         <div class="w-40 h-40 p-2 bg-white rounded-lg shadow-md flex items-center justify-center">
-                            <img src="{{ asset($user->wallet->qr_code) }}" alt="QR Code Wallet"
+                            <img src="{{ asset('public/'. $user->wallet->qr_code) }}" alt="QR Code Wallet"
                                 class="w-full h-full object-contain">
                         </div>
                     @else

@@ -2112,7 +2112,7 @@
                                                                 @endif
                                                             @elseif ($item->status == 'SUCCESS')
                                                                 <a target="_bank"
-                                                                    href="{{ route('transfers.invoice.print', $item->id) }}"
+                                                                    href="#"
                                                                     class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                     title="Facture">
                                                                     Facture

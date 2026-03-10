@@ -73,35 +73,6 @@
             </a>
         </li>
 
-        {{-- <li class="side-nav__devider my-4"></li>
-        <li>
-
-            <a href="{{ route('underdistributors.browse_reloads') }}"
-            class="side-menu {{ $route == 'underdistributors.browse_reloads' ? 'side-menu--active' : '' }}">
-            <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
-            </div>
-            <div class="side-menu__title"> Réchargements </div>
-        </a>
-        </li> --}}
-        {{-- <li class="side-nav__devider my-4"></li>
-        <li>
-
-            <a href="{{ route('underdistributors.browse_dumps') }}"
-                class="side-menu {{ $route == 'underdistributors.browse_dumps' ? 'side-menu--active' : '' }}">
-                <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
-                </div>
-                <div class="side-menu__title"> Déchargements </div>
-            </a>
-        </li> --}}
-        {{-- <li class="side-nav__devider my-4"></li>
-        <li>
-
-            <a href="{{ route('comzones.browse.states') }}"
-                class="side-menu {{ $route == 'comzones.browse.states' ? 'side-menu--active' : '' }}">
-                <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i></div>
-                <div class="side-menu__title"> Statistiques </div>
-            </a>
-        </li> --}}
         <li class="side-nav__devider my-4"></li>
         <li>
 

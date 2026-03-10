@@ -25,8 +25,9 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PixelPaymentController;
-
-
+use App\Models\Wallets\Wallet;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Request;
 
 
 
@@ -617,15 +618,22 @@ Route::get('/process-queue', function () {
 
 Route::get('clear-route-robus',  function () {
     Artisan::call('config:cache');
-    Artisan::call('cache:clear');
-    Artisan::call('view:clear');
-    Artisan::call('route:cache');
-
     return "Config setting update";
 });
 
 Route::get('clear-cache-robus',  function () {
     Artisan::call('cache:clear');
+    return "Config setting update";
+});
+
+Route::get('clear-queue-robus',  function () {
+    Artisan::call('queue:work');
+    Artisan::call('config:clear');
+    return "Config setting update";
+});
+
+Route::get('clear-cache-route-list',  function () {
+    Artisan::call('route:clear');
     return "Config setting update";
 });
 
@@ -642,15 +650,24 @@ Route::get('clear-route-mon_bara',  function () {
 Route::get('/reads_notifications', function () {
     Artisan::call('app:close-company-status');
     Artisan::call('app:close-status');
-    Artisan::call('wallet:generate-qrcodes');
     Artisan::call('status:readNotifications');
     return 'Artisan commands executed successfully.';
 });
 
-Route::get('/reads_qrCode', function () {
-    Artisan::call('wallet:generate-qrcodes');
+Route::get('clear-route-mon_bara',  function () {
+    Artisan::call('route:cache');
+    Artisan::call('config:cache');
+    Artisan::call('event:clear');
+    Artisan::call('event:cache');
+    Artisan::call('view:cache');
+    return "Config clear route";
+});
+
+Route::get('/clear_log', function () {
+    Artisan::call('log:clear');
     return 'Artisan commands executed successfully.';
 });
+
 
 Route::get('/secure-link-storage', function () {
     // abort_unless(
@@ -673,11 +690,234 @@ Route::get('/reads_applications', function () {
     return 'Artisan commands executed successfully.';
 });
 
+Route::get('/code_qr_applications', function () {
+
+    Artisan::call('wallet:generate-qrcodes --from-id=1524 --chunk=50 --sleep=2');
+    return 'Artisan commands executed successfully.';
+});
+
 Route::get('/reads_application_web', function () {
 
     return  Artisan::call('app:close-web-status');
 });
 
+
+Route::post('/qr-codes/generate', function (Request $request) {
+    try {
+        // Paramètres optionnels
+        $chunkSize = $request->get('chunk', 50);
+        $sleepTime = $request->get('sleep', 1);
+        
+        // Lancer la commande en arrière-plan (ne bloque pas)
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            // Windows
+            pclose(popen("start /B php artisan wallet:generate-qrcodes --chunk={$chunkSize} --sleep={$sleepTime} > NUL 2>&1", "r"));
+        } else {
+            // Linux/Mac
+            exec("php artisan wallet:generate-qrcodes --chunk={$chunkSize} --sleep={$sleepTime} > /dev/null 2>&1 &");
+        }
+        
+        // Stocker le statut de démarrage
+        Cache::put('qr_generation_started', now(), 3600);
+        Cache::forget('qr_generation_status');
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Génération des QR codes démarrée en arrière-plan',
+            'data' => [
+                'chunk_size' => $chunkSize,
+                'sleep_time' => $sleepTime,
+                'started_at' => now()->format('d/m/Y H:i:s')
+            ]
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur: ' . $e->getMessage()
+        ], 500);
+    }
+})->name('qr.generate');
+
+// =============================================
+// 2. Route pour SUIVRE la progression
+// =============================================
+Route::get('/qr-codes/progress', function () {
+    try {
+        // Récupérer les statistiques depuis le cache
+        $status = Cache::get('qr_generation_status', [
+            'total' => Wallet::whereNotNull('wallet_id')->count(),
+            'processed' => 0,
+            'errors' => 0,
+            'current_id' => 0,
+            'is_running' => false,
+            'started_at' => Cache::get('qr_generation_started'),
+            'completed_at' => null,
+            'memory_usage' => 0,
+            'execution_time' => 0
+        ]);
+
+        // Calculer le pourcentage
+        $percentage = $status['total'] > 0 
+            ? round(($status['processed'] / $status['total']) * 100, 2) 
+            : 0;
+
+        // Vérifier si le processus est encore en vie
+        $isRunning = $this->isProcessRunning('wallet:generate-qrcodes');
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'total' => $status['total'],
+                'processed' => $status['processed'],
+                'errors' => $status['errors'],
+                'percentage' => $percentage,
+                'is_running' => $isRunning || $status['is_running'],
+                'started_at' => $status['started_at'],
+                'completed_at' => $status['completed_at'],
+                'current_id' => $status['current_id'],
+                'memory_usage' => $this->formatBytes($status['memory_usage']),
+                'execution_time' => $this->formatTime($status['execution_time']),
+                'eta' => $this->calculateETA($status)
+            ]
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage()
+        ], 500);
+    }
+})->name('qr.progress');
+
+// =============================================
+// 3. Route pour ANNULER la génération
+// =============================================
+Route::post('/qr-codes/cancel', function () {
+    try {
+        // Tuer le processus (Linux/Mac)
+        if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+            exec("pkill -f 'wallet:generate-qrcodes'");
+        }
+        
+        Cache::forget('qr_generation_started');
+        Cache::put('qr_generation_cancelled', true, 60);
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Génération annulée'
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage()
+        ], 500);
+    }
+})->name('qr.cancel');
+
+// =============================================
+// 4. Route pour les STATISTIQUES des QR codes
+// =============================================
+Route::get('/qr-codes/stats', function () {
+    try {
+        $totalWallets = Wallet::whereNotNull('wallet_id')->count();
+        $withQr = Wallet::whereNotNull('qr_code')->count();
+        $withoutQr = $totalWallets - $withQr;
+        
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'total_wallets' => $totalWallets,
+                'with_qr_code' => $withQr,
+                'without_qr_code' => $withoutQr,
+                'completion_rate' => $totalWallets > 0 
+                    ? round(($withQr / $totalWallets) * 100, 2) 
+                    : 0,
+                'last_generation' => Cache::get('qr_generation_started'),
+                'qr_codes_path' => asset('qrcodes'),
+                'storage_used' => $this->getDirectorySize(public_path('qrcodes'))
+            ]
+        ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage()
+        ], 500);
+    }
+})->name('qr.stats');
+
+// =============================================
+// 5. Interface utilisateur pour piloter le tout
+// =============================================
+Route::get('/qr-codes/dashboard', function () {
+    return view('qr-codes-dashboard');
+})->name('qr.dashboard');
+
+// =============================================
+// Fonctions utilitaires (à mettre dans un helper)
+// =============================================
+if (!function_exists('isProcessRunning')) {
+    function isProcessRunning($command) {
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            exec("tasklist | findstr php", $output);
+        } else {
+            exec("ps aux | grep '{$command}' | grep -v grep", $output);
+        }
+        return count($output) > 0;
+    }
+}
+
+if (!function_exists('formatBytes')) {
+    function formatBytes($bytes, $precision = 2) {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        return round($bytes / pow(1024, $pow), $precision) . ' ' . $units[$pow];
+    }
+}
+
+if (!function_exists('formatTime')) {
+    function formatTime($seconds) {
+        if ($seconds < 60) return round($seconds) . 's';
+        if ($seconds < 3600) return floor($seconds / 60) . 'm ' . ($seconds % 60) . 's';
+        return floor($seconds / 3600) . 'h ' . floor(($seconds % 3600) / 60) . 'm';
+    }
+}
+
+if (!function_exists('calculateETA')) {
+    function calculateETA($status) {
+        if ($status['processed'] == 0 || $status['execution_time'] == 0) {
+            return 'Calcul en cours...';
+        }
+        
+        $rate = $status['processed'] / $status['execution_time'];
+        $remaining = $status['total'] - $status['processed'];
+        $etaSeconds = $remaining / $rate;
+        
+        return formatTime($etaSeconds);
+    }
+}
+
+if (!function_exists('getDirectorySize')) {
+    function getDirectorySize($path) {
+        $total = 0;
+        if (is_dir($path)) {
+            $files = scandir($path);
+            foreach ($files as $file) {
+                if ($file != '.' && $file != '..') {
+                    $filePath = $path . '/' . $file;
+                    if (is_file($filePath)) {
+                        $total += filesize($filePath);
+                    }
+                }
+            }
+        }
+        return formatBytes($total);
+    }
+}
 
 Auth::routes();
 

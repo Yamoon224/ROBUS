@@ -128,6 +128,7 @@
                                                     red;
                                                 @else
                                                     gray; @endif;">
+                                                    
                                     </div>
                                 @endif
 

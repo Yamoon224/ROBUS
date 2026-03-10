@@ -142,8 +142,8 @@ url: https://github.com/sendgrid/email-templates/blob/master/paste-templates/pas
                     <tr>
                         <td align="center" valign="top" style="padding: 36px 24px;">
                             <a href="{{ route('resetAdmin', $token) }}" target="_blank" style="display: inline-block;">
-                                <img src="https://robus.home.ci/robus/public/dist/images/login.jpg" alt="ROBUS" border="0"
-                                    width="48"
+                                <img src="https://robus.home.ci/robus/public/dist/images/logo_orange.png" alt="ROBUS"
+                                    border="0" width="48"
                                     style="display: block; width: 48px; max-width: 48px;
                   min-width: 48px;">
                             </a>

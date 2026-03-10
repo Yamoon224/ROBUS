@@ -15,9 +15,8 @@
                     class="flex flex-col sm:flex-row items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
                     <h2 class="font-medium text-base mr-auto">
                         <a href="{{ URL::previous() }}" class="btn btn-sm">
-                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor"
-                                stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"
-                                class="css-i6dzq1">
+                            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
                                 <line x1="19" y1="12" x2="5" y2="12"></line>
                                 <polyline points="12 19 5 12 12 5"></polyline>
                             </svg>
@@ -47,7 +46,8 @@
 
                             <div class="flex flex-col items-center pb-10">
                                 <img class="w-20 h-20 mb-3 rounded-full shadow-lg"
-                                    src="https://robus.home.ci/robus/public/dist/images/login.jpg" alt="Robus" />
+                                    src="https://robus.home.ci/robus/public/dist/images/logo_orange.png"
+                                    alt="Robus" />
 
                                 <div>
 

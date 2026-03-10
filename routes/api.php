@@ -35,8 +35,7 @@ use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PaystackWebhookController;
 use App\Http\Controllers\PixelPaymentController;
-
-
+use Illuminate\Support\Facades\Broadcast;
 
 
 /*
@@ -49,6 +48,8 @@ use App\Http\Controllers\PixelPaymentController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Broadcast::routes();
 
 Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
 
@@ -183,7 +184,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('reload_cards/store', [ReloadCardController::class, 'create_reload_card']);
             Route::get('reload_card/show/{id}', [ReloadCardController::class, 'reload_card_show']);
             Route::post('reload_card/delete/{id}', [ReloadCardController::class, 'delete_reload_card']);
-            Route::get('search_reload_card/{provider_id}/{commission_id}', [ReloadCardController::class, 'search_reload_card']);
+            Route::get('search_reload_card/{commission_id}/{provider_id?}', [ReloadCardController::class, 'search_reload_card']);
             Route::get('search_reload_card_received/{provider_id}/{commission_id}', [ReloadCardController::class, 'search_reload_card_received']);
 
             // Active cards
@@ -351,6 +352,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
     Route::post('/user/forget_password', [AuthentificationController::class, 'forgotPassword']);
     Route::get('/cities', [CitieController::class, 'index']);
 });
+
 
 Route::fallback(function () {
     return response()->json([

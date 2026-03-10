@@ -38,7 +38,7 @@ class AdminsCom extends Model
         return $this->belongsTo(WalletBank::class, 'wallet_bank_id', 'id')->withTrashed();
     }
 
-       public function walletVersement()
+    public function walletVersement()
     {
         return $this->belongsTo(WalletVersement::class, 'wallet_versement_id', 'id')->withTrashed();
     }
@@ -109,7 +109,7 @@ class AdminsCom extends Model
         return $this->belongsTo(WalletDjamo::class, 'wallet_djamo_id', 'id')->withTrashed();
     }
 
-      public function walletTresort()
+    public function walletTresort()
     {
         return $this->belongsTo(WalletTresortMoney::class, 'wallet_tresort_money_id', 'id')->withTrashed();
     }
@@ -124,5 +124,60 @@ class AdminsCom extends Model
     {
 
         return $this->belongsTo(SidUser::class, 'sid_user_id', 'id')->withTrashed();
+    }
+
+    // Dans app/Models/AdminsCom.php
+
+    public function getTypeAttribute()
+    {
+
+        if ($this->walletBank) return 'bank_transfer';
+        if ($this->walletVersement) return 'versement';
+        if ($this->walletDeposit) return 'deposit';
+        if ($this->walletBankSend) return 'bank_send';
+        if ($this->orderCard) return 'card_order';
+        if ($this->walletInter) return 'inter_transfer';
+        if ($this->walletReload) return 'reload';
+        if ($this->walletPayment) return 'payment';
+        if ($this->walletTransaction) return 'transaction';
+        if ($this->walletPhoneCredit) return 'phone_credit';
+        if ($this->walletXbet) return 'xbet';
+        if ($this->walletPush) return 'push';
+        if ($this->walletAdmin) return 'admin';
+        if ($this->walletCommission) return 'commission';
+        if ($this->walletDjamo) return 'djamo';
+        if ($this->walletTresort) return 'tresort';
+        if ($this->walletWave) return 'wave';
+
+
+        return 'unknown';
+    }
+
+    // Version avec labels directement (optionnel)
+    public function getTypeLabelAttribute()
+    {
+        $types = [
+            'bank_transfer' => '🏦 Transfert bancaire',
+            'versement' => '💰 Versement',
+            'deposit' => '📥 Dépôt',
+            'bank_send' => '📤 Envoi bancaire',
+            'card_order' => '💳 Commande carte',
+            'inter_transfer' => '🌍 Transfert international',
+            'reload' => '🔄 Rechargement',
+            'payment' => '💵 Paiement',
+            'transaction' => '📊 Transaction',
+            'phone_credit' => '📱 Crédit téléphonique',
+            'xbet' => '🎰 1xBet',
+            'push' => '📲 Push',
+            'admin' => '👤 Admin',
+            'commission' => '💸 Commission',
+            'djamo' => '💳 Djamo',
+            'tresort' => '💳 Tresort Money',
+            'wave' => '🌊 Wave',
+            'unknown' => '❓ Type inconnu'
+        ];
+
+        $type = $this->type;
+        return $types[$type] ?? $type;
     }
 }

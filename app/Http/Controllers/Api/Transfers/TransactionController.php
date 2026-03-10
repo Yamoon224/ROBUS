@@ -1533,7 +1533,6 @@ class TransactionController extends Controller
                     }
                 } else {
 
-
                     // Si l'utilisateur n'est pas sous distributeur, admin ou distributeur
                     $commission_transaction = $this->searchTransaction->getCommissionTransactionForCountryGroup(robus()->country->name_groupe, robus()->is_under_distributer);
 
@@ -1548,7 +1547,7 @@ class TransactionController extends Controller
                     } else if ($commission_transaction && $data?->sidUser?->is_under_distributer) {
 
                         $commission_transaction_val_percent_pay =  $isUnders ?  $commission_transaction->percent_deposit * (float) $amount_transaction  : (float)$commission_transaction->percent_under_scanner * $amount_transaction;
-                        $commission_transaction_val_nat_pay = $isUnders ? (float)$commission_transaction->percent_deposit * (float) $commission_transaction_val_percent_pay : (float)$commission_transaction->percent_deposit * $amount_transaction;
+                        $commission_transaction_val_nat_pay = $isUnders ? (float) $commission_transaction->percent_deposit * (float) $commission_transaction_val_percent_pay : (float)$commission_transaction->percent_deposit * $amount_transaction;
                         $commission_transaction_val_nat_receive = (float)$amount_transaction - (float) $commission_transaction_val_percent_pay;
                     
                     }

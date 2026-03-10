@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Nouveau Prospect - Notification</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         * {
             margin: 0;
@@ -198,7 +199,7 @@
             margin-bottom: 12px !important
         }
 
-        .mr-3{
+        .mr-3 {
             margin-left: 20px !important;
             margin-right: 20px !important
         }
@@ -248,12 +249,12 @@
 
         <!-- HEADER -->
         <div class="header mt-6">
-             <a href="https://robus.home.ci/"
-                    style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';color:#3d4852;font-size:19px;font-weight:bold;text-decoration:none;
+            <a href="https://robus.home.ci/"
+                style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';color:#3d4852;font-size:19px;font-weight:bold;text-decoration:none;
                     display:inline-block ; padding-top: 12px;width:10%;"
-                    target="_blank">
-                    <img src="https://robus.home.ci/public/dist/images/login.jpg" alt="" style="width:80%;">
-                </a>
+                target="_blank">
+                <img src="https://robus.home.ci/public/dist/images/logo_orange.png" alt="" style="width:80%;">
+            </a>
             <h2 class="text-center">🎯 Nouveau Prospect</h2>
             <p class="text-center">Un nouveau ticket a été créé dans votre système</p>
         </div>
@@ -313,4 +314,5 @@
     </div>
 
 </body>
+
 </html>
