@@ -128,16 +128,16 @@
                                                 <div class="mb-3">
                                                     @include('components.info')
                                                 </div>
-                                               
+
 
                                                 @if ($item->updated_by == null)
                                                     <div class="user-name">
-                                                        <span 
-                                                        class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                        Indicatif :
-                                                        {{ $item->wallet->sidUser->country->indecative ?? null }}
+                                                        <span
+                                                            class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                            Indicatif :
+                                                            {{ $item->wallet->sidUser->country->indecative ?? null }}
 
-                                                    </span>
+                                                        </span>
                                                         <p class="font-medium whitespace-nowrap">
                                                             {{ substr($item->phone ?? ($item->num_wallet ?? null), 0, 6) }}
                                                         </p>
@@ -163,7 +163,6 @@
                                                         </p>
                                                     </div>
 
-
                                                     <div class="flex items-center justify-center text-success mt-3">
                                                         @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                             @if ($item->type_transaction == 'Retrait')
@@ -186,12 +185,12 @@
                                                         </div>
                                                     @endif
                                                     <div class="user-name">
-                                                         <span 
-                                                        class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                        Indicatif :
-                                                        {{ $item->wallet->sidUser->country->indecative ?? null }}
+                                                        <span
+                                                            class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                            Indicatif :
+                                                            {{ $item->wallet->sidUser->country->indecative ?? null }}
 
-                                                    </span>
+                                                        </span>
                                                         <p class="font-medium whitespace-nowrap">
                                                             {{ $item->phone ?? null }}
                                                             {{ $item->num_wallet ?? null }}
@@ -239,8 +238,8 @@
                                                 <div class="flex justify-center items-center">
                                                     @if ($item->updated_by != null)
                                                         @if (
-                                                            ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
-                                                                ($item->status === 'PROCESSING' && $item->updated_by == Auth::guard('web')->user()->id))
+                                                            ($item->status == 'PENDING' && $item->updated_by == sabdy()->id) ||
+                                                                ($item->status === 'PROCESSING' && $item->updated_by == sabdy()->id))
                                                             @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                 <a wire:click="editTransaction({{ $item->id }}, 'update-transfersUV-modal')"
                                                                     class="btn btn-primary mr-1 mb-2 btn-sm"
@@ -258,7 +257,7 @@
                                                                     @endif
                                                                 </a>
                                                             @endif
-                                                        @elseif ($item->status == 'SUCCESS' && $item->updated_by == Auth::guard('web')->user()->id)
+                                                        @elseif ($item->status == 'SUCCESS' && $item->updated_by == sabdy()->id)
                                                             <a target="_bank"
                                                                 href="{{ route('transfers.invoice.print', $item->id) }}"
                                                                 class="btn btn-primary mr-1 mb-2 btn-sm"

@@ -84,11 +84,13 @@ class ProviderController extends Controller
             // 1️⃣ Cas où l'app est indisponible
             if (!$appStatusResult['success']) {
                 $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
+                $walletTransactionDrawal = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 29);
                 $dashboard_data['Transfert national'] = [
                     "Dépôts" => ProviderSingleCollection::collection($walletTransactionDepot),
-                    // "Mobile Money" => [],
-                    // "Tresort Money" => [],
                 ];
+
+                $dashboard_data['Retrait'] = ProviderSingleCollection::collection($walletTransactionDrawal);
+                
                 return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
             }
 

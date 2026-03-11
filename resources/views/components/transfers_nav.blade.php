@@ -7,7 +7,7 @@
 
     @if (sabdy()->country->code == 'CI')
 
-        {{-- Sous-agents & distributeurs --}}
+        {{-- Sous-agents & distributeurs $is_under  --}}
         @if ($is_under || $is_distributer)
 
             {{-- New Updated  --}}
@@ -26,6 +26,10 @@
                                 d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                         </svg>
                         <span class="nav-label"> Transferts d'argent
+                        </span>
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $transactions->count() }} éléments
                         </span>
                     </a>
                 </li>
@@ -46,6 +50,10 @@
                         </svg>
                         <span class="nav-label"> Paiements
                         </span>
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $paiements->count() }} éléments
+                        </span>
 
                     </a>
                 </li>
@@ -54,7 +62,7 @@
             @if ($showVirementButton && sabdy()->hasPermissionTo('virement-compte'))
                 <li id="virement-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
                         transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
@@ -68,7 +76,10 @@
                         </svg>
                         <span class="nav-label"> Virements
                         </span>
-
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $virements->count() }} éléments
+                        </span>
                     </a>
                 </li>
             @endif
@@ -76,7 +87,7 @@
             @if ($showRechargementButton && sabdy()->hasPermissionTo('rechargement-carte'))
                 <li id="carte-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
                         transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
@@ -90,7 +101,10 @@
                         </svg>
                         <span class="nav-label"> Réchargement carte
                         </span>
-
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $reloadCards->count() }} éléments
+                        </span>
                     </a>
                 </li>
             @endif
@@ -98,7 +112,7 @@
             @if ($showCreditButton && sabdy()->hasPermissionTo('rechargement-credit'))
                 <li id="phone-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                       class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
                         transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
@@ -112,15 +126,18 @@
                         </svg>
                         <span class="nav-label"> Crédit téléphonique
                         </span>
-
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $phoneCredits->count() }} éléments
+                        </span>
                     </a>
                 </li>
             @endif
 
-            @if ($showTransacInterButton && sabdy()->hasPermissionTo('rechargement-inters'))
+            {{-- @if ($showTransacInterButton && sabdy()->hasPermissionTo('rechargement-inters'))
                 <li id="inter-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
                         transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
@@ -134,10 +151,13 @@
                         </svg>
                         <span class="nav-label"> International
                         </span>
-
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $Internationals->count() }} éléments
+                        </span>
                     </a>
                 </li>
-            @endif
+            @endif --}}
 
             @if ($showXbetButton && sabdy()->hasPermissionTo('rechargement-xbets'))
                 <li id="xbet-tab" class="nav-item" role="presentation">
@@ -155,7 +175,10 @@
                         </svg>
                         <span class="nav-label"> 1Xbets
                         </span>
-
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $xbets->count() }} éléments
+                        </span>
                     </a>
                 </li>
             @endif
@@ -177,7 +200,10 @@
                         </svg>
                         <span class="nav-label"> Versements
                         </span>
-
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $versements->count() }} éléments
+                        </span>
                     </a>
                 </li>
             @endif
@@ -185,7 +211,7 @@
             @if ($showBankSendButton && sabdy()->hasPermissionTo('rechargement-bank-sends'))
                 <li id="bank-send-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                       class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
                         transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
@@ -199,7 +225,10 @@
                         </svg>
                         <span class="nav-label"> Bank send
                         </span>
-
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $bankSends->count() }} éléments
+                        </span>
                     </a>
                 </li>
             @endif
@@ -207,7 +236,7 @@
             @if ($showPushButton && sabdy()->hasPermissionTo('rechargement-push'))
                 <li id="push-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
                         transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
@@ -221,7 +250,10 @@
                         </svg>
                         <span class="nav-label"> Push
                         </span>
-
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $pushs->count() }} éléments
+                        </span>
                     </a>
                 </li>
             @endif
@@ -244,6 +276,10 @@
                         <span class="nav-label">
                             Trésort Money
                         </span>
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $tresortMoneys->count() }} éléments
+                        </span>
                     </a>
                 </li>
             @endif
@@ -265,7 +301,10 @@
                         </svg>
                         <span class="nav-label"> Djamo
                         </span>
-
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $djamos->count() }} éléments
+                        </span>
                     </a>
                 </li>
             @endif
@@ -288,6 +327,10 @@
                         </svg>
                         <span class="nav-label font-medium"> Transferts d'argent
                         </span>
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $transactions->count() }} éléments
+                        </span>
                     </a>
                 </li>
             @endif
@@ -295,7 +338,7 @@
             @if (sabdy()->hasPermissionTo('paiement-factures'))
                 <li id="paiement-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                     class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
                         transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
@@ -309,6 +352,10 @@
                         </svg>
                         <span class="nav-label"> Paiements
                         </span>
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $paiements->count() }} éléments
+                        </span>
 
                     </a>
                 </li>
@@ -317,7 +364,7 @@
             @if (sabdy()->hasPermissionTo('virement-compte'))
                 <li id="virement-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
                         transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
@@ -331,6 +378,10 @@
                         </svg>
                         <span class="nav-label"> Virements
                         </span>
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $virements->count() }} éléments
+                        </span>
 
                     </a>
                 </li>
@@ -339,7 +390,7 @@
             @if (sabdy()->hasPermissionTo('rechargement-carte'))
                 <li id="carte-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
                         transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
@@ -353,6 +404,10 @@
                         </svg>
                         <span class="nav-label"> Réchargement carte
                         </span>
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $reloadCards->count() }} éléments
+                        </span>
 
                     </a>
                 </li>
@@ -361,7 +416,7 @@
             @if (sabdy()->hasPermissionTo('rechargement-credit'))
                 <li id="phone-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                       class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
                         transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
@@ -375,6 +430,10 @@
                         </svg>
                         <span class="nav-label"> Crédit téléphonique
                         </span>
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $phoneCredits->count() }} éléments
+                        </span>
 
                     </a>
                 </li>
@@ -383,7 +442,7 @@
             @if (sabdy()->hasPermissionTo('rechargement-inters'))
                 <li id="inter-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                      class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
                         transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
@@ -396,6 +455,10 @@
                                 d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
                         </svg>
                         <span class="nav-label"> International
+                        </span>
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $Internationals->count() }} éléments
                         </span>
 
                     </a>
@@ -417,6 +480,10 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                         </svg>
                         <span class="nav-label"> 1Xbets
+                        </span>
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $xbets->count() }} éléments
                         </span>
 
                     </a>
@@ -440,6 +507,10 @@
                         </svg>
                         <span class="nav-label"> Versements
                         </span>
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $versements->count() }} éléments
+                        </span>
 
                     </a>
                 </li>
@@ -448,7 +519,7 @@
             @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
                 <li id="bank-send-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                       class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
                         transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
@@ -462,7 +533,10 @@
                         </svg>
                         <span class="nav-label"> Bank send
                         </span>
-
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $bankSends->count() }} éléments
+                        </span>
                     </a>
                 </li>
             @endif
@@ -470,7 +544,7 @@
             @if (sabdy()->hasPermissionTo('rechargement-push'))
                 <li id="push-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
                         transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
@@ -484,7 +558,10 @@
                         </svg>
                         <span class="nav-label"> Push
                         </span>
-
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $pushs->count() }} éléments
+                        </span>
                     </a>
                 </li>
             @endif
@@ -492,7 +569,7 @@
             @if (sabdy()->hasPermissionTo('rechargement-tresort'))
                 <li id="tresort-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                    class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
                         transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
@@ -506,6 +583,10 @@
                         </svg>
                         <span class="nav-label">
                             Trésort Money
+                        </span>
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $tresortMoneys->count() }} éléments
                         </span>
                     </a>
                 </li>
@@ -528,14 +609,17 @@
                         </svg>
                         <span class="nav-label"> Djamo
                         </span>
-
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $djamos->count() }} éléments
+                        </span>
                     </a>
                 </li>
             @endif
 
         @endif
     @else
-        {{-- Autres pays --}}
+        {{-- Autres pays $is_under --}}
         @if ($is_under || $is_distributer)
             @if ($showDepotButton && sabdy()->hasPermissionTo('transfers-argent'))
                 <li id="transfers-tab" class="nav-item" role="presentation">
@@ -554,14 +638,18 @@
                         </svg>
                         <span class="nav-label"> Transferts d'argent
                         </span>
+                          <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $transactions->count() }} éléments
+                        </span>
                     </a>
                 </li>
             @endif
 
-            @if ($showTransacInterButton && sabdy()->hasPermissionTo('rechargement-inters'))
+            {{-- @if ($showTransacInterButton && sabdy()->hasPermissionTo('rechargement-inters'))
                 <li id="inter-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
                         transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
@@ -575,10 +663,14 @@
                         </svg>
                         <span class="nav-label"> International
                         </span>
+                         <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $Internationals->count() }} éléments
+                        </span>
 
                     </a>
                 </li>
-            @endif
+            @endif --}}
         @else
             {{-- Admin autres pays --}}
             @if (sabdy()->hasPermissionTo('transfers-argent'))
@@ -598,13 +690,17 @@
                         </svg>
                         <span class="nav-label"> Transferts d'argent
                         </span>
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $transactions->count() }} éléments
+                        </span>
                     </a>
                 </li>
             @endif
-            @if (sabdy()->hasPermissionTo('rechargement-inters'))
+            {{-- @if (sabdy()->hasPermissionTo('rechargement-inters'))
                 <li id="inter-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
                         transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
@@ -618,10 +714,14 @@
                         </svg>
                         <span class="nav-label"> International
                         </span>
+                        <span
+                            class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                            {{ $Internationals->count() }} éléments
+                        </span>
 
                     </a>
                 </li>
-            @endif
+            @endif --}}
         @endif
     @endif
 </ul>

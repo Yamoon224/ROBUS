@@ -28,7 +28,7 @@ class WalletSingleCollection extends JsonResource
             'id' => (int) $this->id,
             'wallet_id' => $this->wallet_id,
             'amount' => number_format($this->amount , 2, ',', ' '),
-            'wallet_qrcode' => $this->qr_code ? $baseUrl .'/'. $this->qr_code : null,
+            'wallet_qrcode' => '/' . $this->qr_code ,
             'reload_by' => $this->reload_by,
             'status' => $this->status,
             'user' => [

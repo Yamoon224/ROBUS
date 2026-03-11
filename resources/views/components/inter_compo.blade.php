@@ -514,7 +514,7 @@
                                                                 </p>
                                                                 <p class="font-medium whitespace-nowrap">
                                                                     Nom du bénéficiaire :
-                                                                    {{ $item->name_benef ?? null }}
+                                                                    {{ $item->name_benef ?? $item->name_complet }}
 
                                                                 </p>
                                                                 <p class="font-medium whitespace-nowrap">

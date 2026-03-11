@@ -750,8 +750,8 @@ class Transfers extends Component
 
         // 2. VÉRIFICATION PERMISSION (HORS TRANSACTION - IMMÉDIAT)
         if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
-            $this->emit($config['menu']);
             $this->emit('info', 'Vous n\'êtes pas autorisé à choisir cette transaction.');
+            $this->emit($config['menu']);
             return;
         }
 
@@ -800,6 +800,7 @@ class Transfers extends Component
             $this->emit('error', 'Erreur système. Veuillez contacter le support.');
         }
     }
+
     //  Notify and real times and active menus
     public function notifyNewBank()
     {
@@ -4440,9 +4441,8 @@ class Transfers extends Component
             });
 
             $this->emit('modal-hide-transfers');
-            $this->emit('menu-transaction-active');
             $this->emit('info', 'Transaction confirmé et le destinateur vas recevoir les informations avec succès.');
-
+            $this->emit('menu-transaction-active');
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -4506,8 +4506,8 @@ class Transfers extends Component
             });
 
             $this->emit('modal-hide-djamo');
-            $this->emit('menu-djamo-active');
             $this->emit('info', 'Transaction choisie avec succès.');
+            $this->emit('menu-djamo-active');
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -4551,8 +4551,8 @@ class Transfers extends Component
             });
 
             $this->emit('modal-hide-tresort');
-            $this->emit('menu-tresort-active');
             $this->emit('info', 'Transaction choisie avec succès.');
+            $this->emit('menu-tresort-active');
         } catch (\Throwable $e) {
             DB::rollBack();
             report($e);
@@ -4593,9 +4593,8 @@ class Transfers extends Component
                 event(new ChooseDrawalEvent($walletLocked));
             });
 
-            $this->emit('modal-hide-push');
-            $this->emit('menu-push-active');
             $this->emit('info', 'Transaction choisie avec succès.');
+            $this->emit('menu-push-active');
         } catch (\Throwable $e) {
             DB::rollBack();
             report($e);
@@ -5017,6 +5016,9 @@ class Transfers extends Component
                         $q2->where('wallet_transactions.status', 'PROCESSING')
                             ->where('wallet_transactions.updated_by', $walletUser->id)
                             ->where('wallet_transactions.provider_id', '!=', 9);
+                            if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                                $q2->where('wallet_transactions.updated_by', $walletUser->id);
+                            }
                     });
             })
             ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
@@ -5033,8 +5035,10 @@ class Transfers extends Component
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_payments.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
-                        $q2->where('wallet_payments.status', 'PROCESSING')
-                            ->where('wallet_payments.updated_by', $walletUser->id);
+                        $q2->where('wallet_payments.status', 'PROCESSING');
+                             if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                                $q2->where('wallet_payments.updated_by', $walletUser->id);
+                            }
                     });
             })
             ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
@@ -5051,8 +5055,10 @@ class Transfers extends Component
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_tresort_money.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
-                        $q2->where('wallet_tresort_money.status', 'PROCESSING')
-                            ->where('wallet_tresort_money.updated_by', $walletUser->id);
+                        $q2->where('wallet_tresort_money.status', 'PROCESSING');
+                              if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                                $q2->where('wallet_tresort_money.updated_by', $walletUser->id);
+                            }
                     });
             })
             ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
@@ -5070,7 +5076,10 @@ class Transfers extends Component
                 $q->where('wallet_banks.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_banks.status', 'PROCESSING')
-                            ->where('wallet_banks.updated_by', $walletUser->id);
+                           ;
+                              if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                                $q2->where('wallet_banks.updated_by', $walletUser->id);
+                            }
                     });
             })
             ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
@@ -5089,7 +5098,10 @@ class Transfers extends Component
                 $q->where('wallet_inters.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_inters.status', 'PROCESSING')
-                            ->where('wallet_inters.updated_by', $walletUser->id);
+                           ;
+                              if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                                $q2->where('wallet_inters.updated_by', $walletUser->id);
+                            }
                     });
             })
             ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
@@ -5107,7 +5119,10 @@ class Transfers extends Component
                 $q->where('wallet_deposits.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_deposits.status', 'PROCESSING')
-                            ->where('wallet_deposits.updated_by', $walletUser->id);
+                           ;
+                              if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                                $q2->where('wallet_deposits.updated_by', $walletUser->id);
+                            }
                     });
             })
             ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
@@ -5125,7 +5140,10 @@ class Transfers extends Component
                 $q->where('wallet_phone_credits.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_phone_credits.status', 'PROCESSING')
-                            ->where('wallet_phone_credits.updated_by', $walletUser->id);
+                              ;
+                              if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                                $q2->where('wallet_phone_credits.updated_by', $walletUser->id);
+                            }
                     });
             })
             ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
@@ -5143,7 +5161,10 @@ class Transfers extends Component
                 $q->where('wallet_xbets.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_xbets.status', 'PROCESSING')
-                            ->where('wallet_xbets.updated_by', $walletUser->id);
+                             ;
+                              if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                                $q2->where('wallet_xbets.updated_by', $walletUser->id);
+                            }
                     });
             })
             ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
@@ -5161,7 +5182,10 @@ class Transfers extends Component
                 $q->where('wallet_djamos.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_djamos.status', 'PROCESSING')
-                            ->where('wallet_djamos.updated_by', $walletUser->id);
+                            ;
+                              if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                                $q2->where('wallet_djamos.updated_by', $walletUser->id);
+                            }
                     });
             })
             ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
@@ -5179,7 +5203,10 @@ class Transfers extends Component
                 $q->where('wallet_bank_sends.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_bank_sends.status', 'PROCESSING')
-                            ->where('wallet_bank_sends.updated_by', $walletUser->id);
+                           ;
+                              if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                                $q2->where('wallet_bank_sends.updated_by', $walletUser->id);
+                            }
                     });
             })
             ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
@@ -5197,7 +5224,10 @@ class Transfers extends Component
                 $q->where('wallet_pushes.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_pushes.status', 'PROCESSING')
-                            ->where('wallet_pushes.updated_by', $walletUser->id);
+                                ;
+                              if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                                $q2->where('wallet_pushes.updated_by', $walletUser->id);
+                            }
                     });
             })
             ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
@@ -5214,7 +5244,10 @@ class Transfers extends Component
                 $q->where('wallet_versements.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_versements.status', 'PROCESSING')
-                            ->where('wallet_versements.updated_by', $walletUser->id);
+                               ;
+                              if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                                $q2->where('wallet_versements.updated_by', $walletUser->id);
+                            }
                     });
             })
             ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {

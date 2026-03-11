@@ -2,7 +2,6 @@
 
         @if ($item->updated_by)
             <div class="transaction-progress-alert w-full text-center text-blue-500">
-
                 Choisi par
                 {{ sidUserInfo($item->updated_by) }}
             </div>

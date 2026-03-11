@@ -61,7 +61,43 @@
     @include('layouts.scripts_toastr')
 
     <script>
- 
+        Livewire.on('activate-tab', (tabId) => {
+
+            // Fonction pour activer l'onglet
+            function activateTab(id) {
+                // Désactiver tous les onglets
+                $('.nav-link').removeClass('active').attr('aria-selected', false);
+                $('.tab-pane').removeClass('active');
+
+                // Activer l'onglet spécifié
+                $(`#${id}-nav`).addClass('active').attr('aria-selected', true);
+                $(`#${id}`).addClass('active');
+
+                console.log(`✅ Onglet ${id} activé`);
+            }
+
+            // Activation immédiate
+            activateTab(tabId);
+
+            // Protection contre les désactivations (3 secondes max)
+            let protectionCount = 0;
+            const protectionInterval = setInterval(() => {
+                protectionCount++;
+
+                // Vérifier si l'onglet est toujours actif
+                if (!$(`#${tabId}-nav`).hasClass('active')) {
+
+                    activateTab(tabId);
+                }
+
+                // Arrêter après 3 secondes (30 tentatives à 100ms)
+                if (protectionCount >= 30) {
+                    clearInterval(protectionInterval);
+                    console.log(`🛡️ Protection arrêtée pour ${tabId}`);
+                }
+            }, 100);
+        });
+
         Livewire.on('show-disabled-modal', () => {
             $('#disabled-user_admin-modal').removeClass('hide');
             $('#disabled-user_admin-modal').addClass('show');
@@ -663,33 +699,8 @@
             $('#validated-inter-modal').removeClass('show');
             $('#validated-inter-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').addClass('active');
-            $('inter-nav').attr('aria-selected', true);
-            $('#inter').addClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
+            Livewire.emit('activate-tab', 'inter');
+
 
             // $('body').css('overflow', 'auto');
         });
@@ -706,40 +717,9 @@
 
             $('#validated-phoneCredit-modal').removeClass('show');
             $('#validated-phoneCredit-modal').addClass('hide');
-
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').addClass('active');
-            $('phone-nav').attr('aria-selected', true);
-            $('#phone').addClass('active');
+            Livewire.emit('activate-tab', 'phone');
 
 
-            // $('body').css('overflow', 'auto');
         });
 
         Livewire.on('modal-hide-inters-validated', () => {
@@ -754,38 +734,9 @@
             $('#validated-inter-modal').removeClass('show');
             $('#validated-inter-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
+            Livewire.emit('activate-tab', 'inter');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
 
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('#inter-nav').addClass('active');
-            $('inter-nav').attr('aria-selected', true);
-            $('#inter').addClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
-            // $('body').css('overflow', 'auto');
         });
 
         Livewire.on('modal-hide-phoneCredit-validated', () => {
@@ -800,39 +751,8 @@
             $('#validated-phoneCredit-modal').removeClass('show');
             $('#validated-phoneCredit-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
+            Livewire.emit('activate-tab', 'phone');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').addClass('active');
-            $('phone-nav').attr('aria-selected', true);
-            $('#phone').addClass('active');
-
-
-            // $('body').css('overflow', 'auto');
         });
 
         Livewire.on('modal-hide-phoneCreditHisto', () => {
@@ -852,36 +772,10 @@
             $('#update-reloadCards-modal').removeClass('show');
             $('#update-reloadCards-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', true);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+            Livewire.emit('activate-tab', 'carte');
 
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
 
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').addClass('active');
-            $('carte-nav').attr('aria-selected', true);
-            $('#carte').addClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
 
             // $('body').css('overflow', 'hidden');
         });
@@ -923,39 +817,8 @@
             $('#update-transfersUV-modal').removeClass('show');
             $('#update-transfersUV-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').addClass('active');
-            $('transfers-nav').attr('aria-selected', true);
-            $('#transfers').addClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
+            Livewire.emit('activate-tab', 'transfers');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
-
-            // $('body').css('overflow', 'auto');
         });
 
         Livewire.on('modal-hide-reloadCard-validated', () => {
@@ -970,36 +833,8 @@
             $('#validated-reloadCards-modal').removeClass('show');
             $('#validated-reloadCards-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', true);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
+            Livewire.emit('activate-tab', 'carte');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').addClass('active');
-            $('carte-nav').attr('aria-selected', true);
-            $('#carte').addClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
 
             // $('body').css('overflow', 'hidden');
         });
@@ -1016,39 +851,8 @@
             // $('#validated-paiementInvoice-modal').removeClass('show');
             // $('#validated-paiementInvoice-modal').addClass('hide');
 
-            $('#validated-transfersUV-modal').removeClass('show');
-            $('#validated-transfersUV-modal').addClass('hide');
+            Livewire.emit('activate-tab', 'transfers');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').addClass('active');
-            $('transfers-nav').attr('aria-selected', true);
-            $('#transfers').addClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
 
 
             // $('body').css('overflow', 'auto');
@@ -1066,36 +870,12 @@
             $('#validated-paiementInvoice-modal').removeClass('show');
             $('#validated-paiementInvoice-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('transfers').removeClass('active');
-            $('#paiement-nav').addClass('active');
-            $('paiement-nav').attr('aria-selected', true);
-            $('#paiement').addClass('active');
-            $('#virement-nav').removeClass('active');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
 
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
+            Livewire.emit('activate-tab', 'paiement');
 
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
+
+
         });
 
         Livewire.on('modal-bankSend-validted-show', () => {
@@ -1113,38 +893,10 @@
             $('#validated-bankSend-modal').removeClass('show');
             $('#validated-bankSend-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#bank-send-nav').addClass('active');
-            $('bank-send-nav').attr('aria-selected', true);
-            $('#bank-send').addClass('active');
-            $('#virement-nav').removeClass('active');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+            Livewire.emit('activate-tab', 'bank-send');
 
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
 
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
         });
 
         Livewire.on('modal-hide-virement-validated', () => {
@@ -1159,36 +911,9 @@
             $('#validated-virement-modal').removeClass('show');
             $('#validated-virement-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').addClass('active');
-            $('virement-nav').attr('aria-selected', true);
-            $('#virement').addClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+            Livewire.emit('activate-tab', 'virement');
 
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
 
             // $('body').css('overflow', 'auto');
         });
@@ -1205,35 +930,7 @@
             $('#validated-xbet-modal').removeClass('show');
             $('#validated-xbet-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').addClass('active');
-            $('xbet-nav').attr('aria-selected', true);
-
-            // $('body').css('overflow', 'auto');
+            Livewire.emit('activate-tab', 'xbet');
         });
 
         Livewire.on('modal-hide-versement-validated', () => {
@@ -1248,36 +945,8 @@
             $('#validated-versement-modal').removeClass('show');
             $('#validated-versement-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-
-            $('#versment-nav').addClass('active');
-            $('versment-nav').attr('aria-selected', true);
+            Livewire.emit('activate-tab', 'versment');
 
             // $('body').css('overflow', 'auto');
         });
@@ -1295,36 +964,9 @@
             $('#validated-push-modal').removeClass('show');
             $('#validated-push-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
+            Livewire.emit('activate-tab', 'push');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
 
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-
-            $('#push-nav').addClass('active');
-            $('push-nav').attr('aria-selected', true);
 
             // $('body').css('overflow', 'auto');
         });
@@ -1341,36 +983,9 @@
             $('#validated-djamo-modal').removeClass('show');
             $('#validated-djamo-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
+            Livewire.emit('activate-tab', 'djamo');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
 
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-
-            $('#push-nav').addClass('active');
-            $('push-nav').attr('aria-selected', true);
 
             // $('body').css('overflow', 'auto');
         });
@@ -1389,36 +1004,10 @@
             $('#validated-tresort-modal').removeClass('show');
             $('#validated-tresort-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
+            Livewire.emit('activate-tab', 'tresort');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
 
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
 
-            $('#push-nav').addClass('active');
-            $('push-nav').attr('aria-selected', true);
 
             // $('body').css('overflow', 'auto');
         });
@@ -1434,31 +1023,10 @@
             $('#validated-wave-modal').removeClass('show');
             $('#validated-wave-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('wave-nav').attr('aria-selected', true);
-            $('#wave-nav').addClass('active');
-            // $('body').css('overflow', 'auto');
+            Livewire.emit('activate-tab', 'wave');
+
+
+
         });
 
         Livewire.on('modal-hide-paiement', () => {
@@ -1470,37 +1038,11 @@
             $('#update-paiementInvoice-modal').removeClass('show');
             $('#update-paiementInvoice-modal').addClass('hide');
 
+            Livewire.emit('activate-tab', 'paiement');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('transfers').removeClass('active');
-            $('#paiement-nav').addClass('active');
-            $('paiement-nav').attr('aria-selected', true);
-            $('#paiement').addClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
 
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
 
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
         });
 
         Livewire.on('modal-hide-bankSend', () => {
@@ -1515,40 +1057,10 @@
             $('#validated-bankSend-modal').removeClass('show');
             $('#validated-bankSend-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('transfers').removeClass('active');
-            $('#paiement-nav').addClass('active');
-            $('paiement-nav').attr('aria-selected', false);
+            Livewire.emit('activate-tab', 'bank-send');
 
-            $('#bank-send-nav').addClass('active');
-            $('bank-send-nav').attr('aria-selected', true);
 
-            $('#bank-send').addClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
         });
 
         Livewire.on('modal-hide-paiementHisto', () => {
@@ -1573,39 +1085,11 @@
             $('#update-reloadWallet-modal').removeClass('show');
             $('#update-reloadWallet-modal').addClass('hide');
 
+            Livewire.emit('activate-tab', 'reload');
 
-            $('#reload-nav').addClass('active');
-            $('reload-nav').attr('aria-selected', true);
-            $('#reload').addClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
 
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
 
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
-            // $('body').css('overflow', 'auto');
         });
         Livewire.on('modal-hide-reload', () => {
 
@@ -1624,36 +1108,7 @@
             $('#update-reloadWallet-modal').addClass('hide');
 
 
-            $('#reload-nav').addClass('active');
-            $('reload-nav').attr('aria-selected', true);
-            $('#reload').addClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
+            Livewire.emit('activate-tab', 'reload');
 
             // $('body').css('overflow', 'auto');
         });
@@ -1674,38 +1129,9 @@
             $('#update-virementBank-modal').removeClass('show');
             $('#update-virementBank-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').addClass('active');
-            $('virement-nav').attr('aria-selected', true);
-            $('#virement').addClass('active');
+            Livewire.emit('activate-tab', 'virement');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
 
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
-            // $('body').css('overflow', 'auto');
         });
 
         Livewire.on('modal-hide-xbet', () => {
@@ -1716,38 +1142,11 @@
             $('#create-xbet-modal').removeClass('show');
             $('#create-xbet-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
 
-            $('#xbet-nav').addClass('active');
-            $('#xbet').addClass('active');
-            $('xbet-nav').attr('aria-selected', true);
+            Livewire.emit('activate-tab', 'xbet');
 
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
 
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
 
-            // $('body').css('overflow', 'auto');
         });
 
         Livewire.on('modal-hide-push', () => {
@@ -1758,41 +1157,10 @@
             $('#create-push-modal').removeClass('show');
             $('#create-push-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#xbet-nav').removeClass('active');
-            $('#xbet').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
+            Livewire.emit('activate-tab', 'push');
 
-            $('#push-nav').addClass('active');
-            $('#push').addClass('active');
-            $('push-nav').attr('aria-selected', true);
 
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
 
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
-            // $('body').css('overflow', 'auto');
         });
 
         Livewire.on('modal-hide-versement', () => {
@@ -1803,45 +1171,9 @@
             $('#create-versement-modal').removeClass('show');
             $('#create-versement-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#xbet-nav').removeClass('active');
-            $('#xbet').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
+            Livewire.emit('activate-tab', 'versment');
 
-            $('#push-nav').removeClass('active');
-            $('#push').removeClass('active');
-            $('push-nav').attr('aria-selected', false);
 
-            $('#versment-nav').addClass('active');
-            $('#versment').addClass('active');
-            $('versment-nav').attr('aria-selected', true);
-
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
-            // $('body').css('overflow', 'auto');
         });
 
 
@@ -1853,42 +1185,9 @@
             $('#create-tresort-modal').removeClass('show');
             $('#create-tresort-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#xbet-nav').removeClass('active');
-            $('#xbet').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#push-nav').removeClass('active');
-            $('#push').removeClass('active');
-            $('push-nav').attr('aria-selected', true);
 
-            $('#tresort-nav').addClass('active');
-            $('#tresort').addClass('active');
-            $('tresort-nav').attr('aria-selected', true);
+            Livewire.emit('activate-tab', 'tresort');
 
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
 
             // $('body').css('overflow', 'auto');
         });
@@ -1901,44 +1200,8 @@
             $('#create-djamo-modal').removeClass('show');
             $('#create-djamo-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#xbet-nav').removeClass('active');
-            $('#xbet').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#push-nav').removeClass('active');
-            $('#push').removeClass('active');
-            $('push-nav').attr('aria-selected', true);
+            Livewire.emit('activate-tab', 'djamo');
 
-            $('#djamo-nav').addClass('active');
-            $('#djamo').addClass('active');
-            $('djamo-nav').attr('aria-selected', true);
-
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
-            // $('body').css('overflow', 'auto');
         });
 
         Livewire.on('modal-hide-wave', () => {
@@ -1946,37 +1209,9 @@
             $('#update-wave-modal').removeClass('show');
             $('#update-wave-modal').addClass('hide');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#xbet-nav').removeClass('active');
-            $('#xbet').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
+            Livewire.emit('activate-tab', 'wave');
 
-            $('#wave-nav').addClass('active');
-            $('#wave').addClass('active');
-            $('wave-nav').attr('aria-selected', true);
 
-            $('#virement').addClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
-            // $('body').css('overflow', 'auto');
         });
 
         // Hide modals Visitors
@@ -2139,547 +1374,132 @@
         Livewire.on('menu-virement-active', () => {
 
             // Virement Bank
+            Livewire.emit('activate-tab', 'virement');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').addClass('active');
-            $('virement-nav').attr('aria-selected', true);
-            $('#virement').addClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            // $('#info-paie-hide').removeClass('info-paiement-hide');
-            // $('#info-paie-show').removeClass('info-paiement-hide');
         });
 
         Livewire.on('menu-paiement-active', () => {
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').addClass('active');
-            $('paiement-nav').attr('aria-selected', true);
-            $('#paiement').addClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+            Livewire.emit('activate-tab', 'paiement');
 
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
 
         });
 
         Livewire.on('menu-transaction-active', () => {
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').addClass('active');
-            $('transfers-nav').attr('aria-selected', true);
-            $('#transfers').addClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
+            ;
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+            Livewire.emit('activate-tab', 'transfers');
 
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
 
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
+
         });
 
         Livewire.on('menu-phoneCredit-active', () => {
 
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
+            Livewire.emit('activate-tab', 'phone');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
 
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').addClass('active');
-            $('phone-nav').attr('aria-selected', true);
-            $('#phone').addClass('active');
 
         });
 
         Livewire.on('menu-bankSend-active', () => {
 
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
+            Livewire.emit('activate-tab', 'bank-send');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
 
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
-            $('#bank-send-nav').addClass('active');
-            $('bank-send-nav').attr('aria-selected', true);
-            $('#bank-send').addClass('active');
 
         });
 
+        Livewire.on('activate-menu', (menu) => {
+
+            $('.nav-link').removeClass('active').attr('aria-selected', false);
+            $('.tab-pane').removeClass('active');
+
+            $('#' + menu + '-nav').addClass('active').attr('aria-selected', true);
+            $('#' + menu).addClass('active');
+
+        });
+
+
+        // Garder les anciens événements pour compatibilité, mais les rediriger
         Livewire.on('menu-push-active', () => {
+            Livewire.emit('activate-tab', 'push');
+        });
 
+        Livewire.on('menu-virement-active', () => {
+            Livewire.emit('activate-tab', 'virement');
+        });
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
+        Livewire.on('menu-paiement-active', () => {
+            Livewire.emit('activate-tab', 'paiement');
+        });
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+        Livewire.on('menu-transaction-active', () => {
+            Livewire.emit('activate-tab', 'transfers');
+        });
 
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
+        Livewire.on('menu-phoneCredit-active', () => {
+            Livewire.emit('activate-tab', 'phone');
+        });
 
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
-            $('#push-nav').addClass('active');
-            $('push-nav').attr('aria-selected', true);
-            $('#push').addClass('active');
-
+        Livewire.on('menu-bankSend-active', () => {
+            Livewire.emit('activate-tab', 'bank-send');
         });
 
         Livewire.on('menu-versement-active', () => {
-
-
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
-            $('#push-nav').removeClass('active');
-            $('push-nav').attr('aria-selected', true);
-            $('#push').removeClass('active');
-
-            $('#versment-nav').addClass('active');
-            $('versment-nav').attr('aria-selected', true);
-            $('#versment').addClass('active');
-
+            Livewire.emit('activate-tab', 'versment');
         });
 
-
         Livewire.on('menu-tresort-active', () => {
-
-
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
-            $('#push-nav').removeClass('active');
-            $('push-nav').attr('aria-selected', true);
-            $('#push').removeClass('active');
-
-            $('#tresort-nav').addClass('active');
-            $('tresort-nav').attr('aria-selected', true);
-            $('#tresort').addClass('active');
-
+            Livewire.emit('activate-tab', 'tresort');
         });
 
         Livewire.on('menu-djamo-active', () => {
-
-
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
-            $('#push-nav').removeClass('active');
-            $('push-nav').attr('aria-selected', true);
-            $('#push').removeClass('active');
-
-            $('#djamo-nav').addClass('active');
-            $('djamo-nav').attr('aria-selected', true);
-            $('#djamo').addClass('active');
-
+            Livewire.emit('activate-tab', 'djamo');
         });
 
         Livewire.on('menu-xbet-active', () => {
-
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('#xbet').addClass('active');
-
-            $('#xbet-nav').addClass('active');
-            $('xbet-nav').attr('aria-selected', true);
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
+            Livewire.emit('activate-tab', 'xbet');
         });
 
         Livewire.on('menu-wave-active', () => {
-
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('#wave-nav').addClass('active');
-            $('wave-nav').attr('aria-selected', true);
-            $('#wave').addClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
+            Livewire.emit('activate-tab', 'wave');
         });
 
         Livewire.on('menu-reload-active', () => {
-
-            // realod Wallet
-
-            $('#reload-nav').addClass('active');
-            $('reload-nav').attr('aria-selected', true);
-            $('#reload').addClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
-            // $('body').css('overflow', 'auto');
-
+            Livewire.emit('activate-tab', 'reload');
         });
 
+        Livewire.on('menu-reloadCarte-active', () => {
+            Livewire.emit('activate-tab', 'carte');
+        });
 
+        Livewire.on('menu-inters-active', () => {
+            Livewire.emit('activate-tab', 'inter');
+        });
+
+        // Cas spécial pour reloadAcompte
         Livewire.on('menu-reloadAcompte-active', () => {
-
-            // realod Wallet
+            console.log('🔄 Activation spéciale: commission');
 
             // ✅ Activer le menu "commission"
             $('#commission-tab a.nav-link').addClass('active').attr('aria-selected', true);
             $('#commission').addClass('active show');
 
-            // ❌ Désactiver le menu "reload" (à adapter selon tes vrais IDs)
+            // ❌ Désactiver le menu "reload"
             $('#reload-tab a.nav-link').removeClass('active').attr('aria-selected', false);
             $('#reload').removeClass('active show');
-
         });
 
-        Livewire.on('menu-reloadCarte-active', () => {
-
-            // realod cards
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').addClass('active');
-            $('carte-nav').attr('aria-selected', true);
-            $('#carte').addClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-
-            // $('body').css('overflow', 'auto');
-
+        // Garder activate-menu pour compatibilité
+        Livewire.on('activate-menu', (menu) => {
+            Livewire.emit('activate-tab', menu);
         });
 
 
-        Livewire.on('menu-inters-active', () => {
-
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('#inter-nav').addClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').addClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', true);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-        });
 
         // Active Menu Visitors Robus
 
@@ -3170,38 +1990,8 @@
         Livewire.on('update-reloadWallet-modal', () => {
             $('#update-reloadWallet-modal').removeClass('hide');
             $('#update-reloadWallet-modal').addClass('show');
-            $('#reload-nav').addClass('active');
-            $('reload-nav').attr('aria-selected', true);
-            $('#reload').addClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('"paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
+            Livewire.emit('activate-tab', 'carte');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
 
 
         });
@@ -3213,36 +2003,13 @@
             $('#create-phoneCredit-modal').removeClass('hide');
             $('#create-phoneCredit-modal').addClass('show');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+            $('.nav-link').removeClass('active').attr('aria-selected', false);
+            $('.tab-pane').removeClass('active');
 
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('#phone-nav').addClass('active');
-            $('phone-nav').attr('aria-selected', true);
+            $('#phone-nav').addClass('active').attr('aria-selected', true);
             $('#phone').addClass('active');
+
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
             $('#info-paie-hide-3').removeClass('info-paiement-hide');
@@ -3277,38 +2044,8 @@
             $('#update-phoneCredit-modal').removeClass('hide');
             $('#update-phoneCredit-modal').addClass('show');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
+            Livewire.emit('activate-tab', 'phone');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').addClass('active');
-            $('phone-nav').attr('aria-selected', true);
-            $('#phone').addClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
 
         });
 
@@ -3320,36 +2057,9 @@
             $('#create-reloadCards-modal').removeClass('hide');
             $('#create-reloadCards-modal').addClass('show');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
+            Livewire.emit('activate-tab', 'carte');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
 
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('#carte-nav').addClass('active');
-            $('carte-nav').attr('aria-selected', true);
-            $('#carte').addClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
             $('#info-paie-hide-3').removeClass('info-paiement-hide');
@@ -3377,38 +2087,8 @@
             $('#update-reloadCards-modal').removeClass('hide');
             $('#update-reloadCards-modal').addClass('show');
 
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('"paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
+            Livewire.emit('activate-tab', 'carte');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
-
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').addClass('active');
-            $('carte-nav').attr('aria-selected', true);
-            $('#carte').addClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
 
         });
 
@@ -3425,35 +2105,8 @@
         Livewire.on('modal-paiements-show', () => {
             $('#create-paiementInvoice-modal').removeClass('hide');
             $('#create-paiementInvoice-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('transfers').removeClass('active');
-            $('#paiement-nav').addClass('active');
-            $('paiement-nav').attr('aria-selected', true);
-            $('#paiement').addClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
+            Livewire.emit('activate-tab', 'paiement');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
             $('#info-paie-hide-3').removeClass('info-paiement-hide');
@@ -3476,132 +2129,31 @@
         Livewire.on('update-paiementInvoice-modal', () => {
             $('#update-paiementInvoice-modal').removeClass('hide');
             $('#update-paiementInvoice-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('transfers').removeClass('active');
-            $('#paiement-nav').addClass('active');
-            $('paiement-nav').attr('aria-selected', true);
-            $('#paiement').addClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
+            Livewire.emit('activate-tab', 'paiement');
         });
 
         Livewire.on('update-bankSend-modal', () => {
             $('#update-bankSend-modal').removeClass('hide');
             $('#update-bankSend-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('transfers').removeClass('active');
-            $('#paiement-nav').addClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#bank-send-nav').addClass('active');
-            $('bank-send-nav').attr('aria-selected', true);
-            $('#bank-send').addClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
+            Livewire.emit('activate-tab', 'bank-send');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
         });
 
 
         Livewire.on('update-xbet-modal', () => {
             $('#update-xbet-modal').removeClass('hide');
             $('#update-xbet-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#xbet-nav').addClass('active');
-            $('xbet-nav').attr('aria-selected', true);
-            $('#paiement').addClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+            Livewire.emit('activate-tab', 'xbet');
+
         });
 
         Livewire.on('update-wave-modal', () => {
             $('#update-wave-modal').removeClass('hide');
             $('#update-wave-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#wave-nav').addClass('active');
-            $('wave-nav').attr('aria-selected', true);
-            $('#paiement').addClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
+
+            Livewire.emit('activate-tab', 'xbet');
+
         });
 
         Livewire.on('update-paiementHisto-modal', () => {
@@ -3709,32 +2261,8 @@
         Livewire.on('modal-transfers-show', () => {
             $('#create-transfersUV-modal').removeClass('hide');
             $('#create-transfersUV-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').addClass('active');
-            $('#transfers').addClass('active');
-            $('transfers-nav').attr('aria-selected', true);
-            $('#transfers').addClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+            Livewire.emit('activate-tab', 'transfers');
 
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
@@ -3761,31 +2289,9 @@
         Livewire.on('update-transfersUV-modal', () => {
             $('#update-transfersUV-modal').removeClass('hide');
             $('#update-transfersUV-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').addClass('active');
-            $('transfers-nav').attr('aria-selected', true);
-            $('#transfers').addClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+            Livewire.emit('activate-tab', 'transfers');
+
 
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
@@ -3927,34 +2433,10 @@
         Livewire.on('modal-inters-show', () => {
             $('#create-interTransfers-modal').removeClass('hide');
             $('#create-interTransfers-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').addClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').addClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+            Livewire.emit('activate-tab', 'inter');
 
-            $('xbet-nav').attr('aria-selected', false);
+
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
             $('#info-paie-hide-3').removeClass('info-paiement-hide');
@@ -4027,56 +2509,9 @@
 
             $('#create-xbet-modal').removeClass('hide');
             $('#create-xbet-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#xbet-nav').addClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').addClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
 
-            $('#versment-nav').removeClass('active');
-            $('versment-nav').attr('aria-selected', false);
-            $('#versment').removeClass('active');
+            Livewire.emit('activate-tab', 'xbet');
 
-            $('#bank-send-nav').removeClass('active');
-            $('bank-send-nav').attr('aria-selected', false);
-            $('#bank-send').removeClass('active');
-
-            $('#djamo-nav').removeClass('active');
-            $('djamo-nav').attr('aria-selected', false);
-            $('#djamo').removeClass('active');
-
-
-            $('#push-nav').removeClass('active');
-            $('push-nav').attr('aria-selected', false);
-            $('#push').removeClass('active');
-
-            $('#djamo-nav').removeClass('active');
-            $('djamo-nav').attr('aria-selected', false);
-            $('#djamo').removeClass('active');
-
-
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
 
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
@@ -4101,50 +2536,9 @@
 
             $('#create-djamo-modal').removeClass('hide');
             $('#create-djamo-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
 
 
-            $('#versment-nav').removeClass('active');
-            $('versment-nav').attr('aria-selected', false);
-            $('#versment').removeClass('active');
-
-            $('#bank-send-nav').removeClass('active');
-            $('bank-send-nav').attr('aria-selected', false);
-            $('#bank-send').removeClass('active');
-
-            $('#push-nav').removeClass('active');
-            $('push-nav').attr('aria-selected', false);
-            $('#push').removeClass('active');
-
-            $('#djamo-nav').addClass('active');
-            $('djamo-nav').attr('aria-selected', false);
-            $('#djamo').addClass('active');
+            Livewire.emit('activate-tab', 'djamo');
 
 
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
@@ -4170,54 +2564,9 @@
 
             $('#create-versement-modal').removeClass('hide');
             $('#create-versement-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+            Livewire.emit('activate-tab', 'versment');
 
-            $('#versment-nav').addClass('active');
-            $('versment-nav').attr('aria-selected', false);
-            $('#versment').addClass('active');
-
-            $('#bank-send-nav').removeClass('active');
-            $('bank-send-nav').attr('aria-selected', false);
-            $('#bank-send').removeClass('active');
-
-            $('#djamo-nav').removeClass('active');
-            $('djamo-nav').attr('aria-selected', false);
-            $('#djamo').removeClass('active');
-
-
-            $('#push-nav').removeClass('active');
-            $('push-nav').attr('aria-selected', false);
-            $('#push').removeClass('active');
-
-            $('#djamo-nav').removeClass('active');
-            $('djamo-nav').attr('aria-selected', false);
-            $('#djamo').removeClass('active');
 
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
@@ -4242,55 +2591,8 @@
 
             $('#create-bank-send-modal').removeClass('hide');
             $('#create-bank-send-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-
-            $('#versment-nav').removeClass('active');
-            $('versment-nav').attr('aria-selected', false);
-            $('#versment').removeClass('active');
-
-            $('#bank-send-nav').addClass('active');
-            $('bank-send-nav').attr('aria-selected', false);
-            $('#bank-send').addClass('active');
-
-            $('#djamo-nav').removeClass('active');
-            $('djamo-nav').attr('aria-selected', false);
-            $('#djamo').removeClass('active');
-
-
-            $('#push-nav').removeClass('active');
-            $('push-nav').attr('aria-selected', false);
-            $('#push').removeClass('active');
-
-            $('#djamo-nav').removeClass('active');
-            $('djamo-nav').attr('aria-selected', false);
-            $('#djamo').removeClass('active');
+            Livewire.emit('activate-tab', 'bank-send');
 
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
@@ -4315,54 +2617,9 @@
 
             $('#create-push-modal').removeClass('hide');
             $('#create-push-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+            Livewire.emit('activate-tab', 'push');
 
-            $('#versment-nav').removeClass('active');
-            $('versment-nav').attr('aria-selected', false);
-            $('#versment').removeClass('active');
-
-            $('#bank-send-nav').removeClass('active');
-            $('bank-send-nav').attr('aria-selected', false);
-            $('#bank-send').removeClass('active');
-
-            $('#djamo-nav').removeClass('active');
-            $('djamo-nav').attr('aria-selected', false);
-            $('#djamo').removeClass('active');
-
-
-            $('#push-nav').addClass('active');
-            $('push-nav').attr('aria-selected', false);
-            $('#push').addClass('active');
-
-            $('#djamo-nav').removeClass('active');
-            $('djamo-nav').attr('aria-selected', false);
-            $('#djamo').removeClass('active');
 
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
@@ -4387,59 +2644,8 @@
 
             $('#create-tresort-modal').removeClass('hide');
             $('#create-tresort-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#versment-nav').removeClass('active');
-            $('versment-nav').attr('aria-selected', false);
-            $('#versment').removeClass('active');
-
-            $('#bank-send-nav').removeClass('active');
-            $('bank-send-nav').attr('aria-selected', false);
-            $('#bank-send').removeClass('active');
-
-            $('#djamo-nav').removeClass('active');
-            $('djamo-nav').attr('aria-selected', false);
-            $('#djamo').removeClass('active');
-
-
-            $('#push-nav').removeClass('active');
-            $('push-nav').attr('aria-selected', false);
-            $('#push').removeClass('active');
-
-
-            $('#tresort-nav').addClass('active');
-            $('tresort-nav').attr('aria-selected', false);
-            $('#tresort').addClass('active');
-
-            $('#djamo-nav').removeClass('active');
-            $('djamo-nav').attr('aria-selected', false);
-            $('#djamo').removeClass('active');
+            Livewire.emit('activate-tab', 'tresort');
 
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
@@ -4464,55 +2670,8 @@
 
             $('#update-xbet-modal').removeClass('hide');
             $('#update-xbet-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
 
-            $('#xbet-nav').addClass('active');
-            $('xbet-nav').attr('aria-selected', true);
-
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#versment-nav').removeClass('active');
-            $('versment-nav').attr('aria-selected', false);
-            $('#versment').removeClass('active');
-
-            $('#bank-send-nav').removeClass('active');
-            $('bank-send-nav').attr('aria-selected', false);
-            $('#bank-send').removeClass('active');
-
-            $('#djamo-nav').removeClass('active');
-            $('djamo-nav').attr('aria-selected', false);
-            $('#djamo').removeClass('active');
-
-
-            $('#push-nav').removeClass('active');
-            $('push-nav').attr('aria-selected', false);
-            $('#push').removeClass('active');
-
-            $('#djamo-nav').removeClass('active');
-            $('djamo-nav').attr('aria-selected', false);
-            $('#djamo').removeClass('active');
+            Livewire.emit('activate-tab', 'xbet');
 
 
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
@@ -4537,54 +2696,10 @@
 
             $('#update-djamo-modal').removeClass('hide');
             $('#update-djamo-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
-
-            $('#versment-nav').removeClass('active');
-            $('versment-nav').attr('aria-selected', false);
-            $('#versment').removeClass('active');
-
-            $('#bank-send-nav').removeClass('active');
-            $('bank-send-nav').attr('aria-selected', false);
-            $('#bank-send').removeClass('active');
-
-            $('#djamo-nav').removeClass('active');
-            $('djamo-nav').attr('aria-selected', false);
-            $('#djamo').removeClass('active');
 
 
-            $('#push-nav').removeClass('active');
-            $('push-nav').attr('aria-selected', false);
-            $('#push').removeClass('active');
+            Livewire.emit('activate-tab', 'djamo');
 
-            $('#djamo-nav').addClass('active');
-            $('djamo-nav').attr('aria-selected', false);
-            $('#djamo').addClass('active');
 
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
@@ -4608,33 +2723,10 @@
 
             $('#update-versement-modal').removeClass('hide');
             $('#update-versement-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').addClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').addClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+            Livewire.emit('activate-tab', 'versment');
+
+
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
             $('#info-paie-hide-3').removeClass('info-paiement-hide');
@@ -4657,33 +2749,10 @@
 
             $('#update-push-modal').removeClass('hide');
             $('#update-push-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').addClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').addClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+            Livewire.emit('activate-tab', 'push');
+
+
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
             $('#info-paie-hide-3').removeClass('info-paiement-hide');
@@ -4706,33 +2775,11 @@
 
             $('#update-tresort-modal').removeClass('hide');
             $('#update-tresort-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').addClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').addClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+
+            Livewire.emit('activate-tab', 'tresort');
+
+
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
             $('#info-paie-hide-3').removeClass('info-paiement-hide');
@@ -4755,33 +2802,11 @@
 
             $('#update-bank-send-modal').removeClass('hide');
             $('#update-bank-send-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').addClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').addClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+
+            Livewire.emit('activate-tab', 'bank-send');
+
+
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
             $('#info-paie-hide-3').removeClass('info-paiement-hide');
@@ -4805,33 +2830,11 @@
 
             $('#update-interTransfers-modal').removeClass('hide');
             $('#update-interTransfers-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').addClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').addClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+
+            Livewire.emit('activate-tab', 'inter');
+
+
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
             $('#info-paie-hide-3').removeClass('info-paiement-hide');
@@ -4855,33 +2858,9 @@
         Livewire.on('modal-virements-show', () => {
             $('#create-virementBank-modal').removeClass('hide');
             $('#create-virementBank-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').addClass('active');
-            $('virement-nav').attr('aria-selected', true);
-            $('#virement').addClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+            Livewire.emit('activate-tab', 'virement');
+
 
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
@@ -4903,35 +2882,12 @@
 
 
         Livewire.on('update-virementBank-modal', () => {
+
             $('#update-virementBank-modal').removeClass('hide');
             $('#update-virementBank-modal').addClass('show');
-            $('#reload-nav').removeClass('active');
-            $('reload-nav').attr('aria-selected', false);
-            $('#reload').removeClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').addClass('active');
-            $('virement-nav').attr('aria-selected', true);
-            $('#virement').addClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
+            Livewire.emit('activate-tab', 'virement');
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+
 
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
