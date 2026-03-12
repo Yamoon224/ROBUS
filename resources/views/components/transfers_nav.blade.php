@@ -134,7 +134,7 @@
                 </li>
             @endif
 
-            {{-- @if ($showTransacInterButton && sabdy()->hasPermissionTo('rechargement-inters'))
+            @if ($showTransacInterButton && sabdy()->hasPermissionTo('rechargement-inters'))
                 <li id="inter-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
@@ -157,7 +157,7 @@
                         </span>
                     </a>
                 </li>
-            @endif --}}
+            @endif
 
             @if ($showXbetButton && sabdy()->hasPermissionTo('rechargement-xbets'))
                 <li id="xbet-tab" class="nav-item" role="presentation">
@@ -646,7 +646,7 @@
                 </li>
             @endif
 
-            {{-- @if ($showTransacInterButton && sabdy()->hasPermissionTo('rechargement-inters'))
+            @if ($showTransacInterButton && sabdy()->hasPermissionTo('rechargement-inters'))
                 <li id="inter-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
@@ -670,7 +670,7 @@
 
                     </a>
                 </li>
-            @endif --}}
+            @endif
         @else
             {{-- Admin autres pays --}}
             @if (sabdy()->hasPermissionTo('transfers-argent'))

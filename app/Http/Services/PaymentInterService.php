@@ -201,8 +201,9 @@ class PaymentInterService
             }
         } else {
 
-            $admin_valeur =  (float)  $percent_robus->amount_auther;
             $banque_valeur =  (float)  $percent_robus->bank_comission;
+            $admin_valeur =  (float)  $percent_robus->amount_auther -  $banque_valeur;
+
             $this->commissionServices->distributeAdminPaimentCommissions($admin_civ, 'wallet_inter_id', $walletPayment->id, $admin_valeur, $banque_valeur);
         }
 
@@ -273,9 +274,9 @@ class PaymentInterService
 
                     $walletPayment->increment('commission_companie', $amountCompConvert);
 
-                    $this->commissionServices->distributeAdminCommissionUnderBankAcceptedCompanies($admin_civ, 'wallet_inter_id', $walletPayment->id , $admin_compagnie_valeur, $compagnie_amount, $valuer_deposit_amount , $banque_valeur);
+                    $this->commissionServices->distributeAdminCommissionUnderBankAcceptedCompanies($admin_civ, 'wallet_inter_id', $walletPayment->id, $admin_compagnie_valeur, $compagnie_amount, $valuer_deposit_amount, $banque_valeur);
                 } else {
-                    $this->commissionServices->distributeAdminNoCompagniePaimentCommissions($admin_civ, 'wallet_inter_id', $walletPayment->id, $admin_no_compagnie, $valuer_deposit_amount , $banque_valeur);
+                    $this->commissionServices->distributeAdminNoCompagniePaimentCommissions($admin_civ, 'wallet_inter_id', $walletPayment->id, $admin_no_compagnie, $valuer_deposit_amount, $banque_valeur);
                 }
             } else {
 

@@ -43,7 +43,7 @@ class ReloadSingleCollection extends JsonResource
             'Reference'  => optional($this->paymentReload)->transaction_id ?? $this->reference,
             'name' =>  $this->name,
             'description'  =>  $this->description,
-            'payment_cost_percent' => number_format((float)$this->commissions, 2, '.', ''). ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA")  ?? null,
+            'payment_cost_percent' => number_format((float)$this->commissions, 2, '.', '') . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA")  ?? null,
             'number_decoder' => null,
             'num_wallet' =>  $this->account_wallet,
             'id_invoice' =>  null,
@@ -56,13 +56,16 @@ class ReloadSingleCollection extends JsonResource
             'number_phone' => null,
             'paiementChoix_phone' =>  null,
             'factureChoix_type' =>  null,
-                        'frais' => number_format((double)$this->costs_amount, 2, '.', ' ') ?? null,
-            'devise'  => optional($this->wallet->currencie)->code,
+            'frais' => number_format((float)$this->costs_amount, 2, '.', ' ') ?? null,
+            'devise' => $this->wallet && $this->wallet->currencie
+                ? $this->wallet->currencie->code
+                : "FCFA",
             // optional($this->currencie)->code
             'status'  =>  $this->status,
             'balance_before'  => $this->balance_before . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
-            'solde_account'  => $this->amount_solde .  ' ' . optional($this->wallet->currencie)->code ?? null,
-            'amount_solde_drawal' =>  $this->amount_solde_drawal .  ' ' . optional($this->wallet->currencie)->code ?? null
+            'solde_account' => ($this->amount_solde ?? '0') . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
+            'amount_solde_drawal' => ($this->amount_solde_drawal ?? '0') . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
+            'amount_solde_before_drawal' => ($this->amount_solde_before_drawal ?? '0') . ' ' . (optional(optional($wallet_send)->currencie)->code ?? "CFA"),
         ];
     }
 }

@@ -147,6 +147,8 @@ class LedgerFinance extends Component
                     $entry->created_at->format('d/m/Y H:i'),
                     $entry->is_comission ? 'Commission' : ($entry->is_admin ? 'Admin' : 'Standard'),
                     $entry->is_admin ? 'Admin' : ($entry->is_comission ? 'Commission' : '-'),
+                    $entry->is_uv ? 'Admin Achat UV' : ($entry->is_uv ? 'Commission Achat d\'UV' : '+'),
+                    $entry->is_wallet ? 'Achat UV' : ($entry->is_wallet ? 'Montant UV' : '-'),
                 ]);
             }
 
@@ -206,6 +208,10 @@ class LedgerFinance extends Component
             $query->where('is_comission', true);
         } elseif ($this->typeFilter === 'admin') {
             $query->where('is_admin', true);
+        } elseif ($this->typeFilter === 'commission UV') {
+            $query->where('is_uv', true);
+        } elseif ($this->typeFilter === 'Achat UV') {
+            $query->where('is_wallet', true);
         } elseif ($this->typeFilter === 'standard') {
             $query->where('is_comission', false)->where('is_admin', false);
         }
@@ -274,6 +280,10 @@ class LedgerFinance extends Component
         $totalCommissionsAdmin = LedgerEntry::where('is_admin', true)->sum('credit');
         $totalCommissionsBanque = LedgerEntry::where('is_comission', true)->sum('debit');
 
+        $totalCommissionsAdminUV = LedgerEntry::where('is_uv', true)->sum('credit');
+        $totalAchatUV = LedgerEntry::where('is_wallet', true)->sum('debit');
+
+
         $today = Carbon::today();
 
         $commissionsAdminToday = LedgerEntry::where('is_admin', true)
@@ -284,12 +294,29 @@ class LedgerFinance extends Component
             ->whereDate('created_at', $today)
             ->sum('debit');
 
+
+        $commissionsAdminUVToday = LedgerEntry::where('is_uv', true)
+            ->whereDate('created_at', $today)
+            ->sum('credit');
+
+        $ByUVToday = LedgerEntry::where('is_wallet', true)
+            ->whereDate('created_at', $today)
+            ->sum('debit');
+
+
         return view('livewire.ledger-finance', [
             'gains' => $gains,
             'totalCommissionsAdmin' => $totalCommissionsAdmin,
             'totalCommissionsBanque' => $totalCommissionsBanque,
             'commissionsAdminToday' => $commissionsAdminToday,
             'commissionsBanqueToday' => $commissionsBanqueToday,
+
+            'totalCommissionsAdminUV' => $totalCommissionsAdminUV,
+            'totalAchatUV' => $totalAchatUV,
+
+            'commissionsAdminUVToday' => $commissionsAdminUVToday,
+            'ByUVToday' => $ByUVToday,
+
         ]);
     }
 }

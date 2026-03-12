@@ -162,6 +162,44 @@
 
                         @include('components.walletBalanceInter')
 
+                        @if ($item->image)
+                            @php
+                                // Correction de l'URL de l'image si nécessaire
+                                $imageUrl = str_replace('/image_inters/', '/public/image_inters/', $item->image ?? asset_url('dist/images/profil.png'));
+
+                                $imageUrlBackend = str_replace(
+                                    '/image_inters/',
+                                    '/public/image_inters/',
+                                    $item->image_bakend ?? asset_url('dist/images/profil.png'),
+                                );
+                            @endphp
+
+                            <div class="mt-3 grid grid-cols-2 gap-4">
+
+                                <!-- Image 1 -->
+                                <div class="flex flex-col items-center">
+                                    <img src="{{ $imageUrl }}" alt="{{ $item->country->name ?? 'Image' }}"
+                                        class="w-24 h-24 object-cover rounded">
+
+                                    <a href="{{ $imageUrl }}" download
+                                        class="mt-2 text-sm text-blue-600 hover:underline btn-primary">
+                                        Télécharger
+                                    </a>
+                                </div>
+
+                                <!-- Image 2 -->
+                                <div class="flex flex-col items-center">
+                                    <img src="{{ $imageUrlBackend ?? "" }}" alt="{{ $item->country->name ?? 'Image' }}"
+                                        class="w-24 h-24 object-cover rounded">
+                                    <a href="{{ $imageUrlBackend }}" download
+                                        class="mt-2 text-sm text-blue-600 hover:underline btn-primary">
+                                        Télécharger
+                                    </a>
+                                </div>
+
+                            </div>
+                        @endif
+
                     </td>
 
                     <td class="w-40">
@@ -229,7 +267,7 @@
                             </p>
                             <p class="font-medium whitespace-nowrap">
                                 Date validité :
-                                {{ $item->validated_date ? date('d-M-y', strtotime($item->validated_date)) : null }}
+                                {{ $item->validated_date ?? null }}
                             </p>
                             @if ($item->provider_id == 99)
                                 <p class="font-medium whitespace-nowrap">
@@ -267,84 +305,71 @@
                         @endif
                     </td>
                     <td class="w-40">
-                         <div class="mb-3">
-                               @include('components.infoValidtedUser')
-                           </div>
+                        <div class="mb-3">
+                            @include('components.infoValidtedUser')
+                        </div>
 
                         @include('components.info_status')
 
                     </td>
                     <td class="w-56">
-                      <div class="flex justify-center items-center">
-                                                            @if ($item->status == 'PENDING')
-                                                                @if (Auth::guard('web')->user()->hasPermissionTo('modifier-cautions'))
-                                                                    <span
-                                                                        class="alert alert-pending  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                                        En attente
-                                                                    </span>
-                                                                @endif
-                                                            @elseif (
-                                                                $item->status == 'SUCCESS' &&
-                                                                    ($item->provider_id == 48 ||
-                                                                        $item->provider_id == 49 ||
-                                                                        $item->provider_id == 50 ||
-                                                                        $item->provider_id == 51 ||
-                                                                        $item->provider_id == 55 ||
-                                                                        $item->provider_id == 71 ||
-                                                                        $item->provider_id == 72 ||
-                                                                        $item->provider_id == 73 ||
-                                                                        $item->provider_id == 74 ||
-                                                                        $item->provider_id == 75 ||
-                                                                        $item->provider_id == 76 ||
-                                                                        $item->provider_id == 77 ||
-                                                                        $item->provider_id == 78 ||
-                                                                        $item->provider->id == 93 ||
-                                                                        $item->provider->id == 94 ||
-                                                                        $item->provider->id == 95 ||
-                                                                        $item->provider->id == 96 ||
-                                                                        $item->provider->id == 97 ||
-                                                                        $item->provider->id == 49 ||
-                                                                        $item->provider->id == 50 ||
-                                                                        $item->provider->id == 55 ||
-                                                                        $item->provider->id == 98 ||
-                                                                        $item->provider->id == 99 ||
-                                                                        $item->provider->id == 100 ||
-                                                                        $item->provider->id == 101 ||
-                                                                        $item->provider->id == 102
-                                                                        ))
-                                                                <a target="_bank"
-                                                                    href="{{ route('inters.invoice.print', $item->id) }}"
-                                                                    class="btn btn-primary mr-1 mb-2 btn-sm"
-                                                                    title="Facture">
-                                                                    Facture
-                                                                </a>
-                                                                {{-- @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                    <a wire:click="editTransactionHisto({{ $item->id }}, 'update-transfersInterHisto-modal')"
-                                                                        class="btn btn-danger mr-1 mb-2 btn-sm"
-                                                                        href="javascript:;" title="Remboursé">
-                                                                        Remboursé
-                                                                    </a>
-                                                                @endif --}}
-                                                            @else
-                                                                <a target="_bank"
-                                                                    href="{{ route('inters.invoice.print', $item->id) }}"
-                                                                    class="btn btn-primary mr-1 mb-2 btn-sm"
-                                                                    title="Facture">
-                                                                    Facture
-                                                                </a>
-                                                                <div
-                                                                    class="flex items-center justify-center text-pending">
-                                                                    <span
-                                                                        class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
+                        <div class="flex justify-center items-center">
+                            @if ($item->status == 'PENDING')
+                                @if (Auth::guard('web')->user()->hasPermissionTo('modifier-cautions'))
+                                    <span
+                                        class="alert alert-pending  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                        En attente
+                                    </span>
+                                @endif
+                            @elseif (
+                                $item->status == 'SUCCESS' &&
+                                    ($item->provider_id == 48 ||
+                                        $item->provider_id == 49 ||
+                                        $item->provider_id == 50 ||
+                                        $item->provider_id == 51 ||
+                                        $item->provider_id == 55 ||
+                                        $item->provider_id == 71 ||
+                                        $item->provider_id == 72 ||
+                                        $item->provider_id == 73 ||
+                                        $item->provider_id == 74 ||
+                                        $item->provider_id == 75 ||
+                                        $item->provider_id == 76 ||
+                                        $item->provider_id == 77 ||
+                                        $item->provider_id == 78 ||
+                                        $item->provider->id == 93 ||
+                                        $item->provider->id == 94 ||
+                                        $item->provider->id == 95 ||
+                                        $item->provider->id == 96 ||
+                                        $item->provider->id == 97 ||
+                                        $item->provider->id == 49 ||
+                                        $item->provider->id == 50 ||
+                                        $item->provider->id == 55 ||
+                                        $item->provider->id == 98 ||
+                                        $item->provider->id == 99 ||
+                                        $item->provider->id == 100 ||
+                                        $item->provider->id == 101 ||
+                                        $item->provider->id == 102))
+                                <a target="_bank" href="{{ route('inters.invoice.print', $item->id) }}"
+                                    class="btn btn-primary mr-1 mb-2 btn-sm" title="Facture">
+                                    Facture
+                                </a>
+                            @else
+                                <a target="_bank" href="{{ route('inters.invoice.print', $item->id) }}"
+                                    class="btn btn-primary mr-1 mb-2 btn-sm" title="Facture">
+                                    Facture
+                                </a>
+                                <div class="flex items-center justify-center text-pending">
+                                    <span
+                                        class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
                                                                       text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                                        style="color: white;">
-                                                                        Traiter
-                                                                    </span>
+                                        style="color: white;">
+                                        Traiter
+                                    </span>
 
-                                                                </div>
-                                                            @endif
+                                </div>
+                            @endif
 
-                                                        </div>
+                        </div>
                     </td>
                 </tr>
             @endforeach

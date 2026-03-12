@@ -27,9 +27,11 @@
                                         <div class="field-value flex items-center gap-4">
                                             @if ($image_frontend_inter_edit)
                                                 @php
-                                                    $img =
-                                                        asset_url($image_frontend_inter_edit) ??
-                                                        asset_url('image_inters/' . $image_frontend_inter_edit);
+                                                    $img = str_replace(
+                                                        '/image_inters/',
+                                                        '/public/image_inters/',
+                                                        $image_frontend_inter_edit,
+                                                    );
                                                 @endphp
                                                 <a href="{{ $img }}" download target="_blank"
                                                     class="relative group">
@@ -58,7 +60,15 @@
                                         </label>
                                         <div class="field-value">
                                             @if ($image_frontend_inter_edit)
-                                                @php $imgFront = asset_url($image_frontend_inter_edit) ?? asset_url('image_inters/' . $image_frontend_inter_edit); @endphp
+                                                @php
+
+                                                    $imgFront = str_replace(
+                                                        '/image_inters/',
+                                                        '/public/image_inters/',
+                                                        $image_frontend_inter_edit,
+                                                    );
+
+                                                @endphp
                                                 <a href="{{ $imgFront }}" download target="_blank"
                                                     class="relative group inline-block">
                                                     <img src="{{ $imgFront }}"
@@ -80,7 +90,15 @@
                                         </label>
                                         <div class="field-value">
                                             @if ($image_backend_inter_edit)
-                                                @php $imgBack = asset_url($image_backend_inter_edit) ?? asset_url('image_inters/' . $image_backend_inter_edit); @endphp
+                                                @php 
+
+                                                   $imgBack = str_replace(
+                                                        '/image_inters/',
+                                                        '/public/image_inters/',
+                                                        $image_backend_inter_edit,
+                                                    );
+                                                
+                                                @endphp
                                                 <a href="{{ $imgBack }}" download target="_blank"
                                                     class="relative group inline-block">
                                                     <img src="{{ $imgBack }}"
@@ -209,7 +227,8 @@
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
                                             class="text-xl font-bold text-primary">{{ number_format($amount_virement_inter_edit ?? 0, 0, ',', ' ') }}</span>
-                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
+                                        <span
+                                            class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -371,7 +390,7 @@
                                         <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
                                     </div>
                                 </div>
-                                 <div class="field">
+                                <div class="field">
                                     <label class="form-label required">
                                         <i class="fas fa-coins mr-2 text-primary"></i>
                                         Montant recu
@@ -380,10 +399,11 @@
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
                                             class="text-xl font-bold text-primary">{{ number_format($amount_virement_inter_edit ?? 0, 0, ',', ' ') }}</span>
-                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
+                                        <span
+                                            class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -448,7 +468,8 @@
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
                                             class="text-xl font-bold text-primary">{{ number_format($amount_phone_credit_inter_edit ?? 0, 0, ',', ' ') }}</span>
-                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
+                                        <span
+                                            class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -533,7 +554,7 @@
                                         <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
                                     </div>
                                 </div>
-                                 <div class="field">
+                                <div class="field">
                                     <label class="form-label required">
                                         <i class="fas fa-coins mr-2 text-primary"></i>
                                         Montant recu
@@ -542,10 +563,11 @@
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
                                             class="text-xl font-bold text-primary">{{ number_format($amount_virement_inter_edit ?? 0, 0, ',', ' ') }}</span>
-                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
+                                        <span
+                                            class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
                                     </div>
                                 </div>
-                               
+
                             </div>
                         </div>
                     </div>
@@ -614,7 +636,7 @@
                                         <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -710,7 +732,7 @@
                                         <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
                                     </div>
                                 </div>
-                                 <div class="field">
+                                <div class="field">
                                     <label class="form-label required">
                                         <i class="fas fa-coins mr-2 text-primary"></i>
                                         Montant recu
@@ -719,10 +741,11 @@
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
                                             class="text-xl font-bold text-primary">{{ number_format($versementAmount ?? 0, 0, ',', ' ') }}</span>
-                                        <span class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
+                                        <span
+                                            class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
                                     </div>
                                 </div>
-                               
+
                             </div>
                         </div>
                     </div>
@@ -749,8 +772,7 @@
                             </label>
                             <div class="field-value">
                                 <i class="fas fa-globe"></i>
-                                <span
-                                    class="font-medium">{{ $country_inter_robus_recevied ?? 'Non spécifié' }}</span>
+                                <span class="font-medium">{{ $country_inter_robus_recevied ?? 'Non spécifié' }}</span>
                             </div>
                         </div>
                     </div>

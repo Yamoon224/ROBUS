@@ -134,6 +134,7 @@ class Reloaduv extends Component
                         $amount_solde_drawal = (float)$walletAmountSend->amount +  (float)$valeur_receive;
 
                         $amount_drawal =      $amount_solde_drawal;
+                        $amount_before_drawal =  (float)$walletAmountSend->amount;
 
                         // Send in compte Client
                         $wallet_search->update([
@@ -154,7 +155,8 @@ class Reloaduv extends Component
                             $valeur_receive,
                             $this->number_reload_uv,
                             $amount_solde,
-                            $amount_drawal
+                            $amount_drawal,
+                            $amount_before_drawal
                         );
 
 

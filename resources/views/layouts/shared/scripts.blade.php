@@ -39,28 +39,28 @@
                 icon: 'error',
                 iconColor: '#ef4444',
                 background: '#fef2f2',
-                sound: 'sounds/soundError.mp3',
+                sound: '/public/sounds/soundError.mp3',
                 timer: 4000
             },
             warning: {
                 icon: 'warning',
                 iconColor: '#f59e0b',
                 background: '#fffbeb',
-                sound: 'sounds/soundWarning.mp3',
+                sound: '/public/sounds/notification.wav',
                 timer: 5000
             },
             info: {
                 icon: 'info',
                 iconColor: '#3b82f6',
                 background: '#eff6ff',
-                sound: 'sounds/soundInfo.mp3',
+                sound: '/public/sounds/notification.wav',
                 timer: 4000
             },
             success: {
                 icon: 'success',
                 iconColor: '#10b981',
                 background: '#f0fdf4',
-                sound: 'sounds/notification.wav',
+                sound: '/public/sounds/notification.wav',
                 timer: 3000
             }
         };

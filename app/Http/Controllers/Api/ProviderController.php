@@ -89,7 +89,7 @@ class ProviderController extends Controller
                     "Dépôts" => ProviderSingleCollection::collection($walletTransactionDepot),
                 ];
 
-                $dashboard_data['Retrait'] = ProviderSingleCollection::collection($walletTransactionDrawal);
+                (robus()->is_under_distributer || robus()->is_api) ?  $dashboard_data['Retrait'] =  ProviderSingleCollection::collection($walletTransactionDrawal) : [];
                 
                 return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
             }

@@ -510,7 +510,7 @@
                                                                 </p>
                                                                 <p class="font-medium whitespace-nowrap">
                                                                     Date validité :
-                                                                    {{ $item->validated_date ? date('d-M-y', strtotime($item->validated_date)) : null }}
+                                                                    {{ $item->validated_date ?? null }}
                                                                 </p>
                                                                 <p class="font-medium whitespace-nowrap">
                                                                     Nom du bénéficiaire :
@@ -616,7 +616,7 @@
                                                                 </p>
                                                                 <p class="font-medium whitespace-nowrap">
                                                                     Date validité :
-                                                                    {{ $item->validated_date ? date('d-M-y', strtotime($item->validated_date)) : null }}
+                                                                    {{ $item->validated_date ?? null }}
                                                                 </p>
                                                             @endif
                                                         @elseif ($item->provider_type == 6)

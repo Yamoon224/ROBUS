@@ -85,7 +85,7 @@ class Interhisto extends Component
             return view(
                 'livewire.historical.interhisto',
                 [
-                     'user' =>  app(HistoriqueService::class)->getTransactionsStatusProperty(WalletInter::class , 'wallet_inters.is_web', 'wallet_inters.status' , $this->statusTransferFilter , 'wallet_inters.created_by' , 'wallet_inters.updated_by'),
+                    'user' =>  app(HistoriqueService::class)->getTransactionsStatusProperty(WalletInter::class , 'wallet_inters.is_web', 'wallet_inters.status' , $this->statusTransferFilter , 'wallet_inters.created_by' , 'wallet_inters.updated_by'),
                     'inter_historicals' =>  $inters->where("wallet_inters.status", $this->statusInterFilter)->orderBy('wallet_inters.created_at', 'desc')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
 

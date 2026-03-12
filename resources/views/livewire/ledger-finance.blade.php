@@ -19,8 +19,8 @@
     <!-- Statistiques améliorées -->
     <div class="grid grid-cols-12 gap-4 mt-6">
         <!-- Solde net -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y">
-            <div class="bg-white rounded-lg shadow p-5 border-l-4 border-blue-500">
+        <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y style_facture_home">
+            <div class="rounded-lg shadow p-5 border-l-4 border-blue-500 style_facture_home">
                 <div class="flex justify-between items-center">
                     <div>
                         <p class="text-sm text-gray-500">Solde net</p>
@@ -54,8 +54,8 @@
         </div>
 
         <!-- Total Débits -->
-        <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y">
-            <div class="bg-white rounded-lg shadow p-5 border-l-4 border-red-500">
+        <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y style_facture_home2">
+            <div class="rounded-lg shadow p-5 border-l-4 border-red-500 style_facture_home2">
                 <div class="flex justify-between items-center">
                     <div>
                         <p class="text-sm text-gray-500">Total Débits</p>
@@ -117,6 +117,35 @@
             </div>
         </div>
 
+        <div class="col-span-12 sm:col-span-4 lg:col-span-3 intro-y style_table4">
+
+            <div class="report-box zoom-in style_table4">
+                <div class="box p-5 style_table4">
+
+                    <div class="text-base text-slate-500 mt-1">Commissions Admin achat UV Aujourd'hui </div>
+
+                    <div class="text-3xl font-medium leading-8 mt-6">
+                        {{ number_format($commissionsAdminUVToday, 2) }} FCFA
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-span-12 sm:col-span-4 lg:col-span-3 intro-y style_facture_home3">
+
+            <div class="report-box zoom-in style_facture_home3">
+                <div class="box p-5 style_facture_home3">
+
+                    <div class="text-base text-slate-500 mt-1">Total Achat UV Aujourd'hui </div>
+
+                    <div class="text-3xl font-medium leading-8 mt-6">
+                        {{ number_format($ByUVToday, 2) }} FCFA
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="col-span-12 sm:col-span-4 lg:col-span-3 intro-y">
             <div class="amount-balance p-4">
                 <div class="amount-label text-sm text-white">Total Commissions Banque</div>
@@ -138,6 +167,36 @@
                 </div>
             </div>
         </div>
+
+
+        <div class="col-span-12 sm:col-span-4 lg:col-span-3 intro-y style_table4">
+            <div class="report-box zoom-in style_table4">
+                <div class="box p-5 style_table4">
+
+                    <div class="text-base text-slate-500 mt-1">Total Commissions Admin Achat UV </div>
+
+                    <div class="text-3xl font-medium leading-8 mt-6">
+                        {{ number_format($totalCommissionsAdminUV, 2) }} FCFA
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-span-12 sm:col-span-4 lg:col-span-3 intro-y style_facture_home3">
+
+            <div class="report-box zoom-in style_facture_home3">
+                <div class="box p-5 style_facture_home3">
+
+                    <div class="text-base text-slate-500 mt-1">Total Achat UV </div>
+
+                    <div class="text-3xl font-medium leading-8 mt-6">
+                        {{ number_format($totalAchatUV, 2) }} FCFA
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Filtres avancés -->

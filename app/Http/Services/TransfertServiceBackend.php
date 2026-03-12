@@ -177,7 +177,7 @@ class TransfertServiceBackend
         ]);
     }
 
-    public function createWalletReload($walletUser, $relaod_uv_amout_robus, $provider, $account_reload_uv, $valeur_receive, $number_reload_uv, $amount_solde, $amount_drawal)
+    public function createWalletReload($walletUser, $relaod_uv_amout_robus, $provider, $account_reload_uv, $valeur_receive, $number_reload_uv, $amount_solde, $amount_drawal , $amount_before_drawal)
     {
 
         return  WalletReload::create([
@@ -194,7 +194,9 @@ class TransfertServiceBackend
             'phone'  => $number_reload_uv ?? null,
             'status'  => "SUCCESS",
             'amount_solde'  => $amount_solde ?? null,
-            'amount_solde_drawal' => $amount_drawal ?? null
+            'balance_before' => sabdy()->wallet->amount ?? null ,
+            'amount_solde_drawal' => $amount_drawal ?? null ,
+            'amount_solde_before_drawal'=> $amount_before_drawal ?? null ,
         ]);
     }
 

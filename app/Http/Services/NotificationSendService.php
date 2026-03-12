@@ -745,8 +745,15 @@ class NotificationSendService
 
 
 
-        if ($walletWith->choose_transaction == 2) {
+        if ($walletWith->choose_transaction == 2 && $walletWith->provider_id == 91 || $walletWith->provider_id == 143) {
             event(new CreateWalletDrawalEvent($walletWith));
+            event(new CreateWalletPushEvent($walletWith));
+        } else if ($walletWith->choose_transaction == 2 && $walletWith->provider_id == 122 || $walletWith->provider_id == 144) {
+            event(new CreateWalletDrawalEvent($walletWith));
+            event(new CreateWalletTresortEvent($walletWith));
+        } else if ($walletWith->choose_transaction == 2 && $walletWith->provider_id == 121 || $walletWith->provider_id == 142) {
+            event(new CreateWalletDrawalEvent($walletWith));
+            event(new CreateWalletDjamoEvent($walletWith));
         } else {
             if ($walletWith->provider_id == 91 || $walletWith->provider_id == 143) {
                 event(new CreateWalletPushEvent($walletWith));

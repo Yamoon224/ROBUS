@@ -201,8 +201,8 @@ class PaymentService
                 $admin_valeur =   $percent_robus->amount_canal;
                 $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $admin_valeur);
             } else {
-                $admin_valeur =  (float)  $percent_robus->amount_auther;
                 $banque_valeur =  (float)  $percent_robus->bank_comission;
+                $admin_valeur =  (float)  $percent_robus->amount_auther -  $banque_valeur;
                 $this->commissionServices->distributeAdminPaimentCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $admin_valeur, $banque_valeur);
             }
         }

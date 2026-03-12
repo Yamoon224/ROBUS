@@ -303,6 +303,8 @@ class PaystackWebhookController extends Controller
             $country_civ = Country::find(107);
             $robus_currency =  $wallet->country->currencie->value;
 
+            $walletAdmin = WalletAdmin::find(1);
+            $wallet_commission = Wallet::where('wallet_id', "CI44RTZU")->first();
 
             $transaction->update([
                 'status' => 'success',
@@ -314,6 +316,10 @@ class PaystackWebhookController extends Controller
                 'amount_solde' => (float) $wallet->amount + (float) $amountReceived,
                 'amount_received' => $amountReceived,
                 'ip_address' => $data['ip_address'] ?? null,
+                'amount_solde_drawal' => $wallet_commission->amount ?? null,
+                'account_wallet' => 'CI44RTZU',
+                'type_transaction' => 'Achat UV',
+                'type_received' => 'UV',
                 'fees' => $total_commission ?? 0,
                 'costs_amount' => $total_commission ?? 0,
                 'authorization' => json_encode($data['authorization'] ?? []),
@@ -357,8 +363,6 @@ class PaystackWebhookController extends Controller
                     ->where('country_id', 107)
                     ->first();
 
-                $walletAdmin = WalletAdmin::find(1);
-                $wallet_commission = Wallet::where('wallet_id', "CI44RTZU")->first();
 
                 if (!$commission_robus) {
                     throw new \Exception('Coût Robus introuvable');
@@ -389,7 +393,7 @@ class PaystackWebhookController extends Controller
                     throw new \Exception('Montant final invalide');
                 }
 
-                if ($walletAdmin && $walletAdmin->amount >= $amount_total_conversion) {
+                if ($wallet_commission && $wallet_commission->amount >= $amount_total_conversion) {
                     $wallet_commission->decrement('amount', $amount_total_conversion);
                     LedgerEntry::create([
                         'transaction_id' => (string) Str::uuid(),
@@ -397,7 +401,7 @@ class PaystackWebhookController extends Controller
                         'debit' => 0,
                         'credit' => $amount_commission_conversion,
                         'description' => "Commission adminstrateur",
-                        'is_admin' => true,
+                        'is_uv' => true,
                     ]);
                     $walletAdmin->increment('amount', $amount_commission_conversion);
                     LedgerEntry::create([
@@ -405,11 +409,28 @@ class PaystackWebhookController extends Controller
                         'admin_com_id' => null,
                         'debit' => $amount_total_conversion,
                         'credit' => 0,
-                        'description' => "Commission banque",
-                        'is_comission' => true,
+                        'description' => "Wallet retrait",
+                        'is_wallet' => true,
                     ]);
                 } else {
                     $admin_single->wallet->decrement('amount', $amount_total_conversion);
+                    LedgerEntry::create([
+                        'transaction_id' => (string) Str::uuid(),
+                        'admin_com_id' => null,
+                        'debit' => 0,
+                        'credit' => $amount_commission_conversion,
+                        'description' => "Commission adminstrateur",
+                        'is_uv' => true,
+                    ]);
+
+                    LedgerEntry::create([
+                        'transaction_id' => (string) Str::uuid(),
+                        'admin_com_id' => null,
+                        'debit' => $amount_total_conversion,
+                        'credit' => 0,
+                        'description' => "Wallet retrait",
+                        'is_wallet' => true,
+                    ]);
                 }
                 // Update wallet Transactions
                 $transaction->wallet->update([
@@ -440,7 +461,6 @@ class PaystackWebhookController extends Controller
                 'wallet' => $wallet->fresh(),
                 'paystack_data' => $data
             ], 200);
-            
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -498,6 +518,8 @@ class PaystackWebhookController extends Controller
             $total_percent = (float) $commission_robus->percent + (float) $commission_robus->percent_admin;
             $total_commission = $total_percent * $transaction->amount;
             $amountReceived = (float) $transaction->amount - (float)$total_commission;
+            $walletAdmin = WalletAdmin::find(1);
+            $wallet_commission = Wallet::where('wallet_id', "CI44RTZU")->first();
             // Mettre à jour la transaction
             $transaction->update([
                 'status' => 'success',
@@ -509,6 +531,10 @@ class PaystackWebhookController extends Controller
                 'amount_solde' => (float) $wallet->amount + (float) $amountReceived,
                 'amount_received' => $amountReceived,
                 'ip_address' => $data['ip_address'] ?? null,
+                'account_wallet' => 'CI44RTZU',
+                'amount_solde_drawal' => $wallet_commission->amount ?? null,
+                'type_transaction' => 'Achat UV',
+                'type_received' => 'UV',
                 'fees' => $total_commission ?? 0,
                 'costs_amount' => $total_commission ?? 0,
                 'authorization' => json_encode($data['authorization'] ?? []),
@@ -551,8 +577,7 @@ class PaystackWebhookController extends Controller
                     ->where('country_id', 107)
                     ->first();
 
-                $walletAdmin = WalletAdmin::find(1);
-                $wallet_commission = Wallet::where('wallet_id', "CI44RTZU")->first();
+
 
                 if (!$commission_robus) {
                     throw new \Exception('Coût Robus introuvable');
@@ -583,7 +608,7 @@ class PaystackWebhookController extends Controller
                     throw new \Exception('Montant final invalide');
                 }
 
-                if ($walletAdmin && $walletAdmin->amount >= $amount_total_conversion) {
+                if ($wallet_commission && $wallet_commission->amount >= $amount_total_conversion) {
                     $wallet_commission->decrement('amount', $amount_total_conversion);
                     LedgerEntry::create([
                         'transaction_id' => (string) Str::uuid(),
@@ -591,7 +616,7 @@ class PaystackWebhookController extends Controller
                         'debit' => 0,
                         'credit' => $amount_commission_conversion,
                         'description' => "Commission adminstrateur",
-                        'is_admin' => true,
+                        'is_uv' => true,
                     ]);
                     $walletAdmin->increment('amount', $amount_commission_conversion);
                     LedgerEntry::create([
@@ -599,11 +624,29 @@ class PaystackWebhookController extends Controller
                         'admin_com_id' => null,
                         'debit' => $amount_commission_conversion,
                         'credit' => 0,
-                        'description' => "Commission banque",
-                        'is_comission' => true,
+                        'description' => "Wallet retrait",
+                        'is_wallet' => true,
                     ]);
                 } else {
                     $admin_single->wallet->decrement('amount', $amount_total_conversion);
+
+                    LedgerEntry::create([
+                        'transaction_id' => (string) Str::uuid(),
+                        'admin_com_id' => null,
+                        'debit' => 0,
+                        'credit' => $amount_commission_conversion,
+                        'description' => "Commission adminstrateur",
+                        'is_uv' => true,
+                    ]);
+
+                    LedgerEntry::create([
+                        'transaction_id' => (string) Str::uuid(),
+                        'admin_com_id' => null,
+                        'debit' => $amount_total_conversion,
+                        'credit' => 0,
+                        'description' => "Wallet retrait",
+                        'is_wallet' => true,
+                    ]);
                 }
                 // Update wallet Transactions
                 $transaction->wallet->update([

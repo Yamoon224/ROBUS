@@ -93,7 +93,7 @@ export default {
     methods: {
         // Initialiser le son de notification
         initNotificationSound() {
-            this.notificationSound = new Audio('/sounds/notification.wav');
+            this.notificationSound = new Audio('public/sounds/notification.wav');
         },
         
         // Jouer le son

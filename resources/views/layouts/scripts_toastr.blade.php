@@ -5,7 +5,7 @@
             icon: 'success',
             iconColor: '#10b981',
             background: '#eff3f7 url("/robus/public/dist/images/transaction.gif") center/cover',
-           sound: '/transactions/sounds/notification.wav',
+            sound: '',
             timer: 3000,
             animation: 'slideInRight'
         },
@@ -13,7 +13,7 @@
             icon: 'error',
             iconColor: '#ef4444',
             background: '#eff3f7 url("/robus/public/dist/images/payment-error.gif") center/cover',
-            sound: '/transactions/sounds/soundError.mp3',
+            sound: '/public/sounds/soundError.mp3',
             timer: 4000,
             animation: 'shake'
         },
@@ -21,7 +21,7 @@
             icon: 'warning',
             iconColor: '#f59e0b',
             background: '#eff3f7 url("/robus/public/dist/images/payment-error.gif") center/cover',
-            sound: '/transactions/sounds/soundError.mp3',
+            sound: '/public/sounds/soundError.mp3',
             timer: 5000,
             animation: 'pulse'
         },
@@ -29,7 +29,7 @@
             icon: 'info',
             iconColor: '#3b82f6',
             background: '#eff3f7',
-           sound: '/transactions/sounds/notification.wav',
+           sound: '',
             timer: 4000,
             animation: 'slideInRight'
         },
@@ -37,7 +37,7 @@
             icon: 'question',
             iconColor: '#8b5cf6',
             background: '#eff3f7',
-           sound: '/transactions/sounds/notification.wav',
+           sound: '',
             timer: 4000,
             animation: 'slideInRight'
         }
