@@ -241,37 +241,11 @@ class LedgerFinance extends Component
     {
         $query = $this->getFilteredQuery();
 
-
-        // IMPORTANT: Charger la relation adminCom
-        $query->with('adminCom');
-
-        // Ou mieux, charger toutes les relations nécessaires
-        $query->with([
-            'adminCom',
-            'adminCom.walletBank',
-            'adminCom.walletVersement',
-            'adminCom.walletDeposit',
-            'adminCom.walletBankSend',
-            'adminCom.orderCard',
-            'adminCom.walletInter',
-            'adminCom.walletReload',
-            'adminCom.walletPayment',
-            'adminCom.walletTransaction',
-            'adminCom.walletPhoneCredit',
-            'adminCom.walletXbet',
-            'adminCom.walletPush',
-            'adminCom.walletAdmin',
-            'adminCom.walletCommission',
-            'adminCom.walletDjamo',
-            'adminCom.walletTresort',
-            'adminCom.walletWave'
-        ]);
-
-
         // Trier
         $query->orderBy($this->sortField, $this->sortDirection);
 
         $gains = $query->paginate($this->perPage);
+
 
         // Calculer les statistiques
         $this->calculateStats();

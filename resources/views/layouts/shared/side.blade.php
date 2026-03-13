@@ -98,24 +98,11 @@
 </div>
 <!-- END: Search -->
 <!-- BEGIN: Notifications -->
-<div id="app" class="intro-x dropdown mr-auto sm:mr-6">
-    <div class="notification-content pt-2 dropdown-menu">
-        <div class="notification-content__box dropdown-content">
-            @if (sabdy()->is_distributer)
-                <div class="notification-content__title">Notifications</div>
-                <under-distributer :userid="{{ auth()->guard('web')->user()->id }}"
-                    :unreads="{{ Auth::guard('web')->user()->unreadNotifications()->latest()->get() ?? '' }}">
-                </under-distributer>
-            @else
-                <div class="notification-content__title">Notifications</div>
-                <admin-notification :userid="{{ auth()->guard('web')->user()->id }}"
-                    :unreads="{{ Auth::guard('web')->user()->unreadNotifications()->latest()->get() ?? '' }}">
-                </admin-notification>
-            @endif
+<div id="vue-notifications-app" class="intro-x dropdown mr-auto sm:mr-6">
 
-
-        </div>
-    </div>
+    @if (sabdy()->is_under_distributer || sabdy()->is_master || sabdy()->is_supervisor || sabdy()->is_admin)
+        <admin-notification :userid="{{ sabdy()->id }}" :unreads='@json(sabdy()->unreadNotifications)'></admin-notification>
+    @endif
 </div>
 <!-- END: Notifications -->
 <!-- BEGIN: Account Menu -->
@@ -129,8 +116,8 @@
             <li class="p-2">
                 </span>
 
-                <div class="font-medium"> {{ Auth::guard('web')->user()->firstname }}
-                    {{ Auth::guard('web')->user()->lastname }}</div>
+                <div class="font-medium"> {{ sabdy()->firstname }}
+                    {{ sabdy()->lastname }}</div>
             </li>
             <li>
                 <hr class="dropdown-divider border-white/[0.08]">
@@ -146,8 +133,8 @@
             <li class="p-2">
                 </span>
                 <div class="font-medium"> Solde :
-                    {{ number_format(Auth::guard('web')->user()->wallet->amount, 2, ',', ' ') ?? null }}
-                    {{ Auth::guard('web')->user()->country->currencie->code ?? null }}</div>
+                    {{ number_format(sabdy()->wallet->amount, 2, ',', ' ') ?? null }}
+                    {{ sabdy()->country->currencie->code ?? null }}</div>
             </li>
             <li>
                 <hr class="dropdown-divider border-white/[0.08]">

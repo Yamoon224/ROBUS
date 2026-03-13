@@ -177,9 +177,9 @@ class PercentRobusAuthService
 
         switch ($countryNameGroup) {
             case 'CIV':
-                return $isSpecialProfile ?  Onexbet::whereId(1)->first() :  Onexbet::whereId(4)->first() ;
+                return $isSpecialProfile ?  Onexbet::whereId(1)->first() :  Onexbet::whereId(4)->first();
             default:
-                return $isSpecialProfile ?  Onexbet::whereId(2)->first() :  Onexbet::whereId(5)->first() ;
+                return $isSpecialProfile ?  Onexbet::whereId(2)->first() :  Onexbet::whereId(5)->first();
         }
     }
 
@@ -462,7 +462,7 @@ class PercentRobusAuthService
             return $query->whereId(22);
         })->first();
     }
-    
+
     public function getRobusPercentagePayment()
     {
         return PaymentCost::whereId(2)->first();
@@ -4708,7 +4708,6 @@ class PercentRobusAuthService
             ];
         } elseif (sabdy()->country->name_groupe == 'CIV') {
 
-
             $countriesLevels = [
                 // Is CIV
                 107 => [
@@ -6412,6 +6411,8 @@ class PercentRobusAuthService
 
         $robusId = sabdy()->country->id;
 
+     
+        
         if (isset($countriesLevels[$robusId])) {
 
             $specificCountry = $countriesLevels[$robusId][$countrie->id];
@@ -6424,6 +6425,7 @@ class PercentRobusAuthService
         } else {
             return null;
         }
+
 
         return  LevelCountry::whereId($levelValeur)->first();
     }

@@ -64,8 +64,10 @@ class ReloadSingleCollection extends JsonResource
             'status'  =>  $this->status,
             'balance_before'  => $this->balance_before . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
             'solde_account' => ($this->amount_solde ?? '0') . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
-            'amount_solde_drawal' => ($this->amount_solde_drawal ?? '0') . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
+            'amount_solde_drawal' => ($this->amount_solde_drawal ?? '0') . ' ' .(optional(optional($wallet_send)->currencie)->code ?? "CFA"),
             'amount_solde_before_drawal' => ($this->amount_solde_before_drawal ?? '0') . ' ' . (optional(optional($wallet_send)->currencie)->code ?? "CFA"),
+            'cost_conversion' => ($this->cost_conversion ?? '0') . ' ' . (optional(optional($wallet_send)->currencie)->code ?? "CFA"),
+            'amount_conversion' => ($this->amount_conversion ?? '0') . ' ' . (optional(optional($wallet_send)->currencie)->code ?? "CFA"),
         ];
     }
 }

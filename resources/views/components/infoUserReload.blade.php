@@ -8,7 +8,7 @@
   <span class="bg-success w-60 text-white fs-5 px-1 py-1 rounded">
       Bénéficiaire du rechargement
    </span>
-   <div class="user-badges-container mt-3">
+   <div class="user-badges-container mt-6">
        @if ($user && $user->is_under_distributer == 1)
            <div class="user-badge user-badge--distributor">
                Sous-distributeur

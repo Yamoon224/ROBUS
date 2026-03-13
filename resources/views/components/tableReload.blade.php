@@ -151,6 +151,8 @@
                           @endif
                       </td>
                       <td class="w-56">
+                          @include('components.infoUserSoldeUnder')
+
                           <div class="flex justify-center items-center">
 
                               @if ($item->status == 'PENDING')

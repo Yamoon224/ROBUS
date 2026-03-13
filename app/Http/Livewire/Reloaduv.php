@@ -60,6 +60,9 @@ class Reloaduv extends Component
     public $account_reload_uv_edit;
     public $number_reload_uv_edit;
 
+    public $dateRange = '';
+    public $startDate = '';
+    public $endDate = '';
 
     // valeur wallet id
     protected $listeners = [
@@ -72,6 +75,292 @@ class Reloaduv extends Component
     ];
 
 
+    public function mount()
+    {
+        $this->startDate = Carbon::today()->format('Y-m-d');
+        $this->endDate = Carbon::today()->format('Y-m-d');
+    }
+
+    public function updatedDateRange()
+    {
+        $this->applyDateRange();
+    }
+
+    public function updatedStartDate()
+    {
+        $this->applyDateRange();
+    }
+
+    public function updatedEndDate()
+    {
+        $this->applyDateRange();
+    }
+
+    private function applyDateRange()
+    {
+        if ($this->dateRange) {
+            $dates = explode(' - ', $this->dateRange);
+            if (count($dates) == 2) {
+                $this->startDate = Carbon::createFromFormat('d/m/Y', trim($dates[0]))->format('Y-m-d');
+                $this->endDate = Carbon::createFromFormat('d/m/Y', trim($dates[1]))->format('Y-m-d');
+            }
+        }
+    }
+
+    public function getDailyStatsProperty()
+    {
+
+
+        $query = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+            ->whereDate('wallet_reloads.created_at', Carbon::today());
+
+        $stats = [
+            'today' => [
+                'total' => (clone $query)->count(),
+                'total_amount' => (clone $query)->sum('wallet_reloads.amount_received'),
+                'success' => (clone $query)->where('wallet_reloads.status', 'SUCCESS')->count(),
+                'success_amount' => (clone $query)->where('wallet_reloads.status', 'SUCCESS')->sum('wallet_reloads.amount_received'),
+                'pending' => (clone $query)->where('wallet_reloads.status', 'PENDING')->count(),
+                'pending_amount' => (clone $query)->where('wallet_reloads.status', 'PENDING')->sum('wallet_reloads.amount_received'),
+                'error' => (clone $query)->where('wallet_reloads.status', 'ERROR')->count(),
+                'error_amount' => (clone $query)->where('wallet_reloads.status', 'ERROR')->sum('wallet_reloads.amount_received'),
+            ]
+        ];
+
+        // Statistiques des 7 derniers jours
+        for ($i = 1; $i <= 7; $i++) {
+            $date = Carbon::today()->subDays($i);
+            $dailyQuery = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+                ->whereDate('wallet_reloads.created_at', $date);
+
+            $stats['week'][$date->format('Y-m-d')] = [
+                'date' => $date->format('d/m'),
+                'total' => (clone $dailyQuery)->count(),
+                'total_amount' => (clone $dailyQuery)->sum('wallet_reloads.amount_received'),
+                'success' => (clone $dailyQuery)->where('wallet_reloads.status', 'SUCCESS')->count(),
+            ];
+        }
+
+        // Statistiques du mois
+        $stats['month'] = [
+            'total' => WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+                ->whereMonth('wallet_reloads.created_at', Carbon::now()->month)
+                ->count(),
+            'total_amount' => WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+                ->whereMonth('wallet_reloads.created_at', Carbon::now()->month)
+                ->sum('wallet_reloads.amount_received'),
+        ];
+
+        // Montant moyen des rechargements
+        $stats['average'] = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+            ->where('wallet_reloads.status', 'SUCCESS')
+            ->avg('wallet_reloads.amount_received');
+
+        // Heure de pointe
+        $stats['peak_hour'] = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+            ->where('wallet_reloads.status', 'SUCCESS')
+            ->whereDate('wallet_reloads.created_at', Carbon::today())
+            ->select(DB::raw('HOUR(wallet_reloads.created_at) as hour'), DB::raw('count(*) as count'))
+            ->groupBy('hour')
+            ->orderBy('count', 'desc')
+            ->first();
+
+        return $stats;
+    }
+
+    public function getDailySuperVisorRecevedStatsProperty()
+    {
+
+        // CORRECTION: Utilisation correcte des jointures et conditions
+        $query = WalletReload::join('wallets', 'wallet_reloads.wallet_id', '=', 'wallets.id')
+            ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
+            ->where('sid_users.is_supervisor', true)
+            ->whereColumn('wallet_reloads.account_wallet', 'sid_users.wallet_id') // CORRECTION: whereColumn au lieu de andWhere
+            ->whereDate('wallet_reloads.created_at', Carbon::today());
+
+        $stats = [
+            'today' => [
+                'total' => (clone $query)->count(),
+                'total_amount' => (clone $query)->sum('wallet_reloads.amount_received'),
+                'success' => (clone $query)->where('wallet_reloads.status', 'SUCCESS')->count(),
+                'success_amount' => (clone $query)->where('wallet_reloads.status', 'SUCCESS')->sum('wallet_reloads.amount_received'),
+                'pending' => (clone $query)->where('wallet_reloads.status', 'PENDING')->count(),
+                'pending_amount' => (clone $query)->where('wallet_reloads.status', 'PENDING')->sum('wallet_reloads.amount_received'),
+                'error' => (clone $query)->where('wallet_reloads.status', 'ERROR')->count(),
+                'error_amount' => (clone $query)->where('wallet_reloads.status', 'ERROR')->sum('wallet_reloads.amount_received'),
+            ]
+        ];
+
+        // Statistiques des 7 derniers jours
+        for ($i = 1; $i <= 7; $i++) {
+            $date = Carbon::today()->subDays($i);
+            $dailyQuery = WalletReload::join('wallets', 'wallet_reloads.wallet_id', '=', 'wallets.id')
+                ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
+                ->where('sid_users.is_supervisor', true)
+                ->whereColumn('wallet_reloads.account_wallet', 'sid_users.wallet_id') // CORRECTION: whereColumn
+                ->whereDate('wallet_reloads.created_at', $date);
+
+            $stats['week'][$date->format('Y-m-d')] = [
+                'date' => $date->format('d/m'),
+                'total' => (clone $dailyQuery)->count(),
+                'total_amount' => (clone $dailyQuery)->sum('wallet_reloads.amount_received'),
+                'success' => (clone $dailyQuery)->where('wallet_reloads.status', 'SUCCESS')->count(),
+            ];
+        }
+
+        // Statistiques du mois
+        $stats['month'] = [
+            'total' => WalletReload::join('wallets', 'wallet_reloads.wallet_id', '=', 'wallets.id')
+                ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
+                ->where('sid_users.is_supervisor', true)
+                ->whereColumn('wallet_reloads.account_wallet', 'sid_users.wallet_id') // CORRECTION: whereColumn
+                ->whereMonth('wallet_reloads.created_at', Carbon::now()->month)
+                ->count(),
+            'total_amount' => WalletReload::join('wallets', 'wallet_reloads.wallet_id', '=', 'wallets.id')
+                ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
+                ->where('sid_users.is_supervisor', true)
+                ->whereColumn('wallet_reloads.account_wallet', 'sid_users.wallet_id') // CORRECTION: whereColumn
+                ->whereMonth('wallet_reloads.created_at', Carbon::now()->month)
+                ->sum('wallet_reloads.amount_received'),
+        ];
+
+        // Montant moyen des rechargements
+        $stats['average'] = WalletReload::join('wallets', 'wallet_reloads.wallet_id', '=', 'wallets.id')
+            ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
+            ->where('sid_users.is_supervisor', true)
+            ->whereColumn('wallet_reloads.account_wallet', 'sid_users.wallet_id') // CORRECTION: whereColumn
+            ->where('wallet_reloads.status', 'SUCCESS')
+            ->avg('wallet_reloads.amount_received') ?? 0;
+
+        // Heure de pointe - CORRECTION: Ajouter les jointures manquantes
+        $peakHour = WalletReload::join('wallets', 'wallet_reloads.wallet_id', '=', 'wallets.id')
+            ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
+            ->where('sid_users.is_supervisor', true)
+            ->whereColumn('wallet_reloads.account_wallet', 'sid_users.wallet_id') // CORRECTION: whereColumn
+            ->where('wallet_reloads.status', 'SUCCESS')
+            ->whereDate('wallet_reloads.created_at', Carbon::today())
+            ->select(DB::raw('HOUR(wallet_reloads.created_at) as hour'), DB::raw('count(*) as count'))
+            ->groupBy('hour')
+            ->orderBy('count', 'desc')
+            ->first();
+
+        $stats['peak_hour'] = $peakHour ? [
+            'hour' => $peakHour->hour,
+            'count' => $peakHour->count,
+            'display' => $peakHour->hour . ':00 - ' . ($peakHour->hour + 1) . ':00'
+        ] : [
+            'hour' => null,
+            'count' => 0,
+            'display' => 'Aucune activité'
+        ];
+
+        return $stats;
+    }
+
+    public function getDailySuperVisorStatsProperty()
+    {
+
+        // CORRECTION: Syntaxe de jointure correcte
+        $query = WalletReload::join('wallets', 'wallet_reloads.wallet_id', '=', 'wallets.id')
+            ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
+            ->where('sid_users.is_supervisor', true)
+            ->whereDate('wallet_reloads.created_at', Carbon::today());
+
+        $stats = [
+            'today' => [
+                'total' => (clone $query)->count(),
+                'total_amount' => (clone $query)->sum('wallet_reloads.amount_received'),
+                'success' => (clone $query)->where('wallet_reloads.status', 'SUCCESS')->count(),
+                'success_amount' => (clone $query)->where('wallet_reloads.status', 'SUCCESS')->sum('wallet_reloads.amount_received'),
+                'pending' => (clone $query)->where('wallet_reloads.status', 'PENDING')->count(),
+                'pending_amount' => (clone $query)->where('wallet_reloads.status', 'PENDING')->sum('wallet_reloads.amount_received'),
+                'error' => (clone $query)->where('wallet_reloads.status', 'ERROR')->count(),
+                'error_amount' => (clone $query)->where('wallet_reloads.status', 'ERROR')->sum('wallet_reloads.amount_received'),
+            ]
+        ];
+
+        // Statistiques des 7 derniers jours
+        for ($i = 1; $i <= 7; $i++) {
+            $date = Carbon::today()->subDays($i);
+            $dailyQuery = WalletReload::join('wallets', 'wallet_reloads.wallet_id', '=', 'wallets.id')
+                ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
+                ->where('sid_users.is_supervisor', true)
+                ->whereDate('wallet_reloads.created_at', $date);
+
+            $stats['week'][$date->format('Y-m-d')] = [
+                'date' => $date->format('d/m'),
+                'total' => (clone $dailyQuery)->count(),
+                'total_amount' => (clone $dailyQuery)->sum('wallet_reloads.amount_received'),
+                'success' => (clone $dailyQuery)->where('wallet_reloads.status', 'SUCCESS')->count(),
+            ];
+        }
+
+        // Statistiques du mois
+        $stats['month'] = [
+            'total' => WalletReload::join('wallets', 'wallet_reloads.wallet_id', '=', 'wallets.id')
+                ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
+                ->where('sid_users.is_supervisor', true)
+                ->whereMonth('wallet_reloads.created_at', Carbon::now()->month)
+                ->count(),
+            'total_amount' => WalletReload::join('wallets', 'wallet_reloads.wallet_id', '=', 'wallets.id')
+                ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
+                ->where('sid_users.is_supervisor', true)
+                ->whereMonth('wallet_reloads.created_at', Carbon::now()->month)
+                ->sum('wallet_reloads.amount_received'),
+        ];
+
+        // Montant moyen des rechargements
+        $stats['average'] = WalletReload::join('wallets', 'wallet_reloads.wallet_id', '=', 'wallets.id')
+            ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
+            ->where('sid_users.is_supervisor', true)
+            ->where('wallet_reloads.status', 'SUCCESS')
+            ->avg('wallet_reloads.amount_received') ?? 0;
+
+        // Heure de pointe - CORRECTION: Ajouter les jointures manquantes
+        $peakHour = WalletReload::join('wallets', 'wallet_reloads.wallet_id', '=', 'wallets.id')
+            ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
+            ->where('sid_users.is_supervisor', true)
+            ->where('wallet_reloads.status', 'SUCCESS')
+            ->whereDate('wallet_reloads.created_at', Carbon::today())
+            ->select(DB::raw('HOUR(wallet_reloads.created_at) as hour'), DB::raw('count(*) as count'))
+            ->groupBy('hour')
+            ->orderBy('count', 'desc')
+            ->first();
+
+        $stats['peak_hour'] = $peakHour ? [
+            'hour' => $peakHour->hour,
+            'count' => $peakHour->count,
+            'display' => $peakHour->hour . ':00 - ' . ($peakHour->hour + 1) . ':00'
+        ] : [
+            'hour' => null,
+            'count' => 0,
+            'display' => 'Aucune activité'
+        ];
+
+        return $stats;
+    }
+    public function getChartDataProperty()
+    {
+        $data = [];
+        $labels = [];
+
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::today()->subDays($i);
+            $labels[] = $date->format('d/m');
+
+            $count = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+                ->whereDate('wallet_reloads.created_at', $date)
+                ->where('wallet_reloads.status', 'SUCCESS')
+                ->count();
+
+            $data[] = $count;
+        }
+
+        return [
+            'labels' => $labels,
+            'data' => $data
+        ];
+    }
 
     public function notifyNewReload()
     {
@@ -84,14 +373,14 @@ class Reloaduv extends Component
     {
 
         $check = WalletReload::whereId($this->relaod_uv_id)->first();
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = sabdy();
         $provider = Provider::whereId($this->provider_reload_uv)->first();
         $rt = rand(40, 5000) * time();
         $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
         $transactionCode = sprintf("%0.9s", str_shuffle($rt . $tr));
         $transactionCompiCode = sprintf("%0.8s", str_shuffle($rt . $tr));
         // if(!$check) {
-        $admins = SidUser::where('status', true)->where('is_admin', true)->where('country_id', Auth::guard('web')->user()->country->id)->get();
+        $admins = SidUser::where('status', true)->where('is_admin', true)->where('country_id', sabdy()->country->id)->get();
         // Verifier plafond days with piece
 
         if ($this->provider_reload_uv == 9) {
@@ -133,13 +422,14 @@ class Reloaduv extends Component
 
                         $amount_solde_drawal = (float)$walletAmountSend->amount +  (float)$valeur_receive;
 
-                        $amount_drawal =      $amount_solde_drawal;
+                        $amount_drawal =     $amount_solde_drawal;
+
                         $amount_before_drawal =  (float)$walletAmountSend->amount;
 
                         // Send in compte Client
                         $wallet_search->update([
-                            'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                            'sid_user_relod' => Auth::guard('web')->user()->id,
+                            'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                            'sid_user_relod' => sabdy()->id,
                             'amount' => DB::raw('amount+'  . $valeur_receive),
                         ]);
 
@@ -163,8 +453,8 @@ class Reloaduv extends Component
                         $commission =  ($reload_unders->amount);
 
                         $walletUser->wallet->update([
-                            'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                            'sid_user_relod' => Auth::guard('web')->user()->id,
+                            'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                            'sid_user_relod' => sabdy()->id,
                             'amount' => DB::raw('amount-'  .  $commission),
                         ]);
 
@@ -182,26 +472,31 @@ class Reloaduv extends Component
                                 $paymentRealod
                             );
 
-
-                        if ($walletUser->country->code == "CI") {
-
-                            $message = 'Vous avez effectué un transafers de ' . $reload_unders->amount .  $walletUser->wallet->currencie->code .  'par '
-                                . $reload_unders->provider->name  .  ' a '
-                                . $reload_unders->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
-
-                            $encode = substr(Auth::guard('web')->user()->phone,  -10);
-
-                            // Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                        }
-
-                        $msg_title = 'Achat d\'UV';
-                        $msg = 'Votre demande de rechargement d\'UV ';
-                        $wallet_search->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                        $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                        $notifs = $walletUser->unreadNotifications;
-                        $notifs = $wallet_search->sidUser->unreadNotifications;
                         event(new CreateReloadEvent($reload_unders));
-                        Notification::send($admins, new AdminNotification('Demande de rechargement UV de ' . ' ' . $reload_unders->wallet->sidUser->firstname));
+                        $msg = 'Demande de rechargement UV de ' . ' ' . $reload_unders->wallet->sidUser->firstname;
+                        $msg_title = 'Achat d\'UV';
+
+                        safeNotify(
+                            sabdy(),
+                            new UserNotification([
+                                'title' => $msg_title,
+                                'message' => $msg
+                            ])
+                        );
+
+                        safeNotify(
+                            $wallet_search->sidUser,
+                            new UserNotification([
+                                'title' => $msg_title,
+                                'message' => $msg
+                            ])
+                        );
+
+                        safeNotifyMany(
+                            $admins,
+                            new AdminNotification('Demande de rechargement UV de ' . ' ' . $reload_unders->wallet->sidUser->firstname)
+                        );
+
                         if ($admins->count() > 0) {
                             app(NotificationServiceBackend::class)->notifyAdmins($admins);
                         }
@@ -237,10 +532,12 @@ class Reloaduv extends Component
 
                     $amount_drawal =      $amount_solde_drawal;
 
+                    $amount_before_drawal =  (float)$walletAmountSend->amount;
+
                     // Send in compte Client
                     $wallet_search->update([
-                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                        'sid_user_relod' => Auth::guard('web')->user()->id,
+                        'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                        'sid_user_relod' => sabdy()->id,
                         'amount' => DB::raw('amount+'  . $valeur_receive),
                     ]);
 
@@ -255,15 +552,16 @@ class Reloaduv extends Component
                         $this->account_reload_uv,
                         $valeur_receive,
                         $amount_solde,
-                        $amount_drawal
+                        $amount_drawal,
+                        $amount_before_drawal
                     );
 
 
                     $commission =  ($walletTransaction->amount);
 
                     $walletUser->wallet->update([
-                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                        'sid_user_relod' => Auth::guard('web')->user()->id,
+                        'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                        'sid_user_relod' => sabdy()->id,
                         'amount' => DB::raw('amount-'  .  $commission),
                     ]);
 
@@ -278,23 +576,44 @@ class Reloaduv extends Component
                         $walletTransaction,
                         $transaction
                     );
-                    // if ($walletUser->country->code == "CI") {
 
-                    //     $message = 'Vous avez effectué un transafers de ' . $reload_unders->amount .  $walletUser->wallet->currencie->code .  'par '
-                    //         . $reload_unders->provider->name  .  ' a '
-                    //         . $reload_unders->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
+                    if ($walletUser->country->code == "CI") {
 
-                    //     $encode = substr(Auth::guard('web')->user()->phone,  -10);
+                        $message = 'Vous avez effectué un transafers de ' . $walletTransaction->amount .  $walletUser->wallet->currencie->code .  'par '
+                            . $walletTransaction->provider->name  .  ' a '
+                            . $walletTransaction->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
 
-                    //     Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                    // }
+
+                        sendTryCashMessage(robus()->phone, $message);
+                    }
+
 
                     $msg_title = 'Achat d\'UV';
                     $msg = 'Votre demande de rechargement d\'UV ';
-                    $wallet_search->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                    $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+
+                    safeNotify(
+                        sabdy(),
+                        new UserNotification([
+                            'title' => $msg_title,
+                            'message' => $msg
+                        ])
+                    );
+
+                    safeNotify(
+                        $wallet_search->sidUser,
+                        new UserNotification([
+                            'title' => $msg_title,
+                            'message' => $msg
+                        ])
+                    );
+
                     event(new CreateReloadEvent($walletTransaction));
-                    Notification::send($admins, new AdminNotification('Demande de rechargement UV de ' . ' ' . $walletTransaction->wallet->sidUser->firstname));
+
+                    safeNotifyMany(
+                        $admins,
+                        new AdminNotification('Demande de rechargement UV de ' . ' ' . $walletTransaction->wallet->sidUser->firstname)
+                    );
+
                     if ($admins->count() > 0) {
                         app(NotificationServiceBackend::class)->notifyAdmins($admins);
                     }
@@ -322,11 +641,11 @@ class Reloaduv extends Component
     public function addTransactionCommission()
     {
 
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = sabdy();
         $rt = rand(40, 5000) * time();
         $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
         $transactionCode = sprintf("%0.9s", str_shuffle($rt . $tr));
-        $admins = SidUser::where('status', true)->where('is_admin', true)->where('country_id', Auth::guard('web')->user()->country->id)->get();
+        $admins = SidUser::where('status', true)->where('is_admin', true)->where('country_id', sabdy()->country->id)->get();
 
         try {
 
@@ -368,7 +687,7 @@ class Reloaduv extends Component
                         $walletTransaction = TransactionCommission::create(
                             [
                                 'pay_amount' => $val_amount,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
+                                'sid_user_id' => sabdy()->id,
                                 'description' => 'Transfert de commission par ' . sabdy()->firstname,
                                 'amount_received'  => $valeur_receive,
                                 'type_transaction' =>  "Transferts",
@@ -390,10 +709,28 @@ class Reloaduv extends Component
 
                         $msg_title = 'Transfert de commission';
                         $msg = 'Le transfert de commission a été effectué avec succès ';
-                        $wallet_search->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                        $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                        // event(new CreateReloadEvent($walletTransaction));
-                        Notification::send($admins, new AdminNotification('Transaction de commission par ' . ' ' . sabdy()->firstname));
+
+                        safeNotify(
+                            sabdy(),
+                            new UserNotification([
+                                'title' => $msg_title,
+                                'message' => $msg
+                            ])
+                        );
+
+                        safeNotify(
+                            $wallet_search->sidUser,
+                            new UserNotification([
+                                'title' => $msg_title,
+                                'message' => $msg
+                            ])
+                        );
+
+                        safeNotifyMany(
+                            $admins,
+                            new AdminNotification('Transaction de commission par ' . ' ' . sabdy()->firstname)
+                        );
+
                         if ($admins->count() > 0) {
                             app(NotificationServiceBackend::class)->notifyAdmins($admins);
                         }
@@ -416,11 +753,11 @@ class Reloaduv extends Component
     public function addReloadCommission()
     {
 
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = sabdy();
         $rt = rand(40, 5000) * time();
         $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
         $transactionCode = sprintf("%0.9s", str_shuffle($rt . $tr));
-        $admins = SidUser::where('status', true)->where('is_admin', true)->where('country_id', Auth::guard('web')->user()->country->id)->get();
+        $admins = SidUser::where('status', true)->where('is_admin', true)->where('country_id', sabdy()->country->id)->get();
 
         if ($this->providerAllCommission) {
 
@@ -468,7 +805,7 @@ class Reloaduv extends Component
                 $walletTransaction = TransactionCommission::create(
                     [
                         'pay_amount' => $val_amount,
-                        'sid_user_id' => Auth::guard('web')->user()->id,
+                        'sid_user_id' => sabdy()->id,
                         'description' => $this->providerAllCommission == 1
                             ? 'Rechargement compte commission par ' . sabdy()->firstname
                             : 'Rechargement compte admin ' . sabdy()->firstname,
@@ -484,15 +821,28 @@ class Reloaduv extends Component
                 );
 
                 $walletUser->wallet->update([
-                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                    'sid_user_relod' => Auth::guard('web')->user()->id,
+                    'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                    'sid_user_relod' => sabdy()->id,
                     'amount' => DB::raw('amount-'  .  $val_amount),
                 ]);
 
                 $msg_title = 'Rechargement de compte';
                 $msg = 'Votre demande de réchargement de compte ';
-                $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                Notification::send($admins, new AdminNotification('Demande de réchargement de ' . ' ' . $walletTransaction->sidUser->firstname));
+
+                safeNotify(
+                    sabdy(),
+                    new UserNotification([
+                        'title' => $msg_title,
+                        'message' => $msg
+                    ])
+                );
+
+
+                safeNotifyMany(
+                    $admins,
+                    new AdminNotification('Demande de réchargement de ' . ' ' . $walletTransaction->sidUser->firstname)
+                );
+
                 if ($admins->count() > 0) {
                     app(NotificationServiceBackend::class)->notifyAdmins($admins);
                 }
@@ -543,7 +893,7 @@ class Reloaduv extends Component
     {
         $walletUpdate = WalletReload::findOrFail($id);
         $walletUpdate->update([
-            'updated_by' => Auth::guard('web')->user()->id,
+            'updated_by' => sabdy()->id,
         ]);
         event(new ChooseReloadEvent($walletUpdate));
         $this->emit('info', 'Vous avez choisir');
@@ -607,7 +957,7 @@ class Reloaduv extends Component
         $this->number_reload_uv = '';
         $this->relaod_uv_amout_robus = '';
         $this->emit('modal-hide', 'hide');
-        $this->emit('warning', 'Montant min 2000 !' . Auth::guard('web')->user()->country->currencie->name);
+        $this->emit('warning', 'Montant min 2000 !' . sabdy()->country->currencie->name);
     }
 
     public function errorWalletAccount()
@@ -652,13 +1002,16 @@ class Reloaduv extends Component
         $this->emit('warning', 'Le numero doit corespondre a la selection !');
     }
 
+
+
+
     public function render()
     {
 
         $realod_search =  WalletReload::query();
         $realod_acoumpte_search =  TransactionCommission::query();
 
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = sabdy();
 
         $wallet = Wallet::query();
 
@@ -748,10 +1101,10 @@ class Reloaduv extends Component
                         ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'PENDING')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->count(),
                     'reload_historicals' => $realod_search->join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)
-                        ->where('wallet_reloads.created_by', Auth::guard('web')->user()->id)
+                        ->where('wallet_reloads.created_by', sabdy()->id)
                         ->select('wallet_reloads.*')
                         ->orderBy('wallet_reloads.created_at', 'desc')->paginate(20),
-                    'countrie_number_local' => Auth::guard('web')->user()->country->indecative,
+                    'countrie_number_local' => sabdy()->country->indecative,
                     'wallet_search' => $wallet->where("wallet_id", "like",  "%" . $this->account_reload_uv . "%")
                         ->where('country_id',  $walletUser->country->id)->where('status', true)->get(),
                     'number_search' => $sid_search->where("phone", "like",  "%" . $this->number_reload_uv . "%")
@@ -765,7 +1118,11 @@ class Reloaduv extends Component
                         ->get(),
                     'wallet_info_searchs' => $wallet_info_user,
                     'reaload_acomptes' => $realod_acoumpte_search->orderBy('transaction_commissions.created_at', 'desc')->paginate(20),
-                    'usersCountry' => Auth::guard('web')->user()->country->currencie->name,
+                    'usersCountry' => sabdy()->country->currencie->name,
+                    'dailyStats' => $this->dailyStats,
+                    'dailyStatsSuperVisorSender' => $this->DailySuperVisorStats,
+                    'dailyStatsSuperVisorReceved' => $this->DailySuperVisorRecevedStats,
+                    'chartData' => $this->chartData,
 
                 ]
             );
@@ -842,7 +1199,7 @@ class Reloaduv extends Component
                         ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'PENDING')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->count(),
                     'reload_historicals' => $realod_search->join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->select('wallet_reloads.*')->orderBy('wallet_reloads.created_at', 'desc')->paginate(20),
-                    'countrie_number_local' => Auth::guard('web')->user()->country->indecative,
+                    'countrie_number_local' => sabdy()->country->indecative,
                     'wallet_search' => $wallet->where("wallet_id", "like",  "%" . $this->account_reload_uv . "%")
                         ->where('country_id',  $walletUser->country->id)->where('status', true)->get(),
                     'number_search' => $sid_search->where("phone", "like",  "%" . $this->number_reload_uv . "%")
@@ -856,7 +1213,11 @@ class Reloaduv extends Component
                     'walletCommissions' => WalletCommission::where('status', 1)->sum('amount'),
                     'walletAdmin' => WalletAdmin::where('status', 1)->sum('amount'),
                     'wallet_info_searchs' => $wallet_info_user,
-                    'usersCountry' => Auth::guard('web')->user()->country->currencie->name,
+                    'usersCountry' => sabdy()->country->currencie->name,
+                    'dailyStats' => $this->dailyStats,
+                    'chartData' => $this->chartData,
+                    'dailyStatsSuperVisorSender' => $this->DailySuperVisorStats,
+                    'dailyStatsSuperVisorReceved' => $this->DailySuperVisorRecevedStats,
 
                 ]
             );
@@ -866,7 +1227,7 @@ class Reloaduv extends Component
 
     public function getReloadUvTransactionProperty()
     {
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = sabdy();
 
         $payments = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $walletUser->country->id)
@@ -886,7 +1247,7 @@ class Reloaduv extends Component
 
         foreach (
             WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_reloads.status', 'SUCCESS')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->get() as $reload
+                ->where('wallets.country_id', sabdy()->country->id)->where('wallet_reloads.status', 'SUCCESS')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->get() as $reload
         ) {
             $data[] = $reload->amount;
         }
@@ -901,7 +1262,7 @@ class Reloaduv extends Component
 
         foreach (
             WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_reloads.created_by', Auth::guard('web')->user()->id)->where('wallet_reloads.status', 'SUCCESS')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->get() as $reload
+                ->where('wallets.country_id', sabdy()->country->id)->where('wallet_reloads.created_by', sabdy()->id)->where('wallet_reloads.status', 'SUCCESS')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->get() as $reload
         ) {
             $data[] = $reload->amount;
         }

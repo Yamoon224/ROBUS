@@ -122,7 +122,7 @@ class TransfertServiceBackend
     }
 
 
-    public function createWalletTransactionReloadReload($walletUser, $relaod_uv_amout_robus, $provider, $account_reload_uv, $valeur_receive, $amount_solde, $amount_drawal)
+    public function createWalletTransactionReloadReload($walletUser, $relaod_uv_amout_robus, $provider, $account_reload_uv, $valeur_receive, $amount_solde, $amount_drawal , $amount_before_drawal)
     {
 
         return  WalletTransaction::create(
@@ -142,7 +142,8 @@ class TransfertServiceBackend
                 'type_received' => 'Transfert',
                 'status'  => "SUCCESS",
                 'amount_solde'  => $amount_solde ?? null,
-                'amount_solde_drawal' => $amount_drawal ?? null
+                'amount_solde_drawal' => $amount_drawal ?? null,
+                'amount_solde_before_drawal' => $amount_before_drawal ?? null,
             ]
         );
     }
@@ -1106,8 +1107,12 @@ class TransfertServiceBackend
         $commission_send,
         $choose_type_transaction,
         $amount_solde,
-        $amount_drawal
+        $amount_drawal,
+        $amount_before_drawal
     ) {
+
+        $wallet = sabdy()->wallet->first();
+
         return WalletTransaction::create(
             [
                 'wallet_id' => $walletUser->wallet->id,
@@ -1119,14 +1124,15 @@ class TransfertServiceBackend
                 'created_by' => Auth::guard('web')->user()->id,
                 'provider_id' => $provider->id,
                 'code_validated' => null,
-                'balance_before' => sabdy()->wallet->amount,
+                'balance_before' => $wallet->amount,
                 'amount_received'  => $commission_send,
                 'choose_type_transaction' => $choose_type_transaction,
                 'type_transaction' => 'Compense',
                 'type_received' => 'Transfert',
                 'status' => 'SUCCESS',
                 'amount_solde' => $amount_solde ?? null,
-                'amount_solde_drawal' => $amount_drawal ?? null
+                'amount_solde_drawal' => $amount_drawal ?? null,
+                'amount_solde_before_drawal' => $amount_before_drawal ?? null,
             ]
         );
     }

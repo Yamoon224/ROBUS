@@ -11,8 +11,10 @@
     <title>@yield('title') - ROBUS</title>
 
     @include('layouts.shared.styles')
-    {{-- <script type="module"  src="{{ asset('build/assets/app.13c293c6.js') }}"></script>
-    <script type="module" crossorigin src="/boostrap/assets/app2.mjs"></script> --}}
+    @vite(['resources/css/app.css'])
+    {{-- <script type="module"  src="{{ asset('build/assets/app.64f91620.js') }}"></script> --}}
+    {{-- <script type="module" crossorigin src="/boostrap/assets/app2.mjs"></script> --}}
+    {{-- @vite(['resources/js/app.js']) --}}
     {{-- <script src="https://js.pusher.com/4.1/pusher.min.js"></script> --}}
     {{-- <script type="module" src="{{ asset('build/assets/app.c57777cd.js') }}"></script> --}}
     {{-- <script type="module" crossorigin src="{{ asset('boostrap/ssr/app2.mjs') }}"></script> --}}
@@ -24,7 +26,11 @@
         }
     </style> --}}
 
-
+    <link href="{{ asset('build/assets/app.d4a9276a.js') }}" rel="stylesheet">
+    <!-- JavaScript Libraries dans le bon ordre -->
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pusher-js@8.0.1/dist/web/pusher.min.js"></script>
     @stack('styles')
 
     @livewireStyles
@@ -32,7 +38,11 @@
     {{-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <link rel="stylesheet" type="text/css"
         href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css"> --}}
-
+    <script>
+        // Votre code existant ici
+        window._ = window._ || {};
+        // ... le reste de votre code
+    </script>
 </head>
 
 
@@ -59,8 +69,27 @@
     @livewireScripts
 
     @include('layouts.scripts_toastr')
+    @vite(['resources/js/app.js'])
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Vérifier que Lodash est disponible
+            if (typeof _ === 'undefined') {
+                console.error('Lodash (_) is not defined!');
+                return;
+            }
+
+            // Configuration Axios
+            window.axios = axios;
+            window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            if (csrfToken) {
+                window.axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken.content;
+            }
+
+        });
         Livewire.on('activate-tab', (tabId) => {
 
             // Fonction pour activer l'onglet

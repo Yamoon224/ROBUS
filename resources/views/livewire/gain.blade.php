@@ -113,8 +113,7 @@
             <table class="table table-bordered table-hover -mt-2 -intro-x ">
                 <thead class="table-dark">
                     <tr>
-                        <th class="whitespace-nowrap">Date</th>
-                        <th class="text-center whitespace-nowrap">Montant</th>
+                        <th class="text-center whitespace-nowrap">Date && Montant</th>
                         <th class="text-center whitespace-nowrap">Type </th>
                         <th class="text-center whitespace-nowrap">Statut </th>
                     </tr>
@@ -192,19 +191,18 @@
                                     if (!is_null($item->{$column})) {
                                         $current = $config;
                                         $relationData = $item->{$config['relation']};
+
                                         break;
                                     }
                                 }
                             @endphp
                             <tr class="intro-x">
 
-                                <td class="w-40">
+
+                                <td class="w-56">
                                     <div class="mb-3">
                                         @include('components.info')
                                     </div>
-                                </td>
-                                <td class="w-56">
-
                                     <div class="amount-section">
                                         <div class="amount-label">Montant reçu</div>
                                         <div class="amount-received">
@@ -228,6 +226,12 @@
 
 
                                     @if ($current && $relationData)
+                                        <div class="transaction-badges-container">
+                                            <div
+                                                class="transaction-badge transaction-badge--distributor text-white text-center">
+                                                {{ $current['label'] }}
+                                            </div>
+                                        </div>
                                         <div class="user-badges-container">
                                             @if ($relationData->wallet->sidUser->is_under_distributer == 1)
                                                 <div class="user-badge user-badge--distributor">
@@ -252,12 +256,7 @@
                                             @endif
                                         </div>
 
-                                        <div class="transaction-badges-container">
-                                            <div
-                                                class="transaction-badge transaction-badge--distributor text-white text-center">
-                                                {{ $current['label'] }}
-                                            </div>
-                                        </div>
+
 
                                         <div class="mb-3">
                                             <div class="px-3 py-2 bg-blue-900 text-white rounded font-medium">
@@ -266,11 +265,11 @@
                                         </div>
 
                                         <div class="amount-section">
-                                            <div class="amount-label">Montant</div>
+                                            <div class="amount-label">Montant transaction</div>
                                             <div class="amount-balance">
                                                 <div class="flex items-baseline justify-between">
                                                     <span class="amount-balance-value">
-                                                        {{ number_format($relationData->costs_amount ?? 0, 2, ',', ' ') }}
+                                                        {{ number_format($relationData->amount ?? 0, 2, ',', ' ') }}
                                                     </span>
                                                     <span class="amount-balance-currency">
                                                         {{ $relationData->wallet->currencie->code ?? '' }}

@@ -278,62 +278,65 @@
                             @endif
                         </div>
 
-                        <div class="{{ $currentStep != 2 ? 'displayNone' : '' }}" id="step-2">
-                            <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
-                                <div class="col-span-6 mt-space-padding">
-                                    <label class="form-label">Wallet de retrait<span class="text-danger">
-                                            *</span></label>
+                        @if ($currentStep == 2)
+                            <div class="{{ $currentStep != 2 ? 'displayNone' : '' }}" id="step-2">
+                                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                                    <div class="col-span-6 mt-space-padding">
+                                        <label class="form-label">Wallet de retrait<span class="text-danger">
+                                                *</span></label>
 
-                                    <div class="flex">
+                                        <div class="flex">
 
-                                        <div
-                                            class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                            {{ $compte_number_robus ?? null }}
+                                            <div
+                                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                                {{ $compte_number_robus ?? null }}
+                                            </div>
                                         </div>
+
                                     </div>
+                                    <div class="col-span-6 mt-space-padding">
+                                        <label class="form-label">Montant <span class="text-danger">
+                                                *</span></label>
 
-                                </div>
-                                <div class="col-span-6 mt-space-padding">
-                                    <label class="form-label">Montant <span class="text-danger">
-                                            *</span></label>
+                                        <div class="flex">
 
-                                    <div class="flex">
-
-                                        <div
-                                            class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                            {{ $transaction_amount_robus ?? null }}
-                                            {{ $user_send->wallet->currencie->code ?? null }}
+                                            <div
+                                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                                {{ $transaction_amount_robus ?? null }}
+                                                {{ $user_send->wallet->currencie->code ?? null }}
+                                            </div>
                                         </div>
-                                    </div>
 
+                                    </div>
+                                    <div class="col-span-12" wire:loading.class="hidden"
+                                        wire:target="addTransactionWithdrawal">
+                                        <label for="code_validated" class="form-label">Code OTP <span
+                                                class="text-danger">*</span></label>
+                                        <input wire:model.defer="code_validated" id="code_validated" type="text"
+                                            class="form-control" placeholder="Entrez votre code OTP">
+                                        @error('code_validated')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
                                 </div>
-                                <div class="col-span-12" wire:loading.class="hidden"
-                                    wire:target="addTransactionWithdrawal">
-                                    <label for="code_validated" class="form-label">Code OTP <span
-                                            class="text-danger">*</span></label>
-                                    <input wire:model.defer="code_validated" id="code_validated" type="text"
-                                        class="form-control" placeholder="Entrez votre code OTP">
-                                    @error('code_validated')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
+
+                                <div class="modal-footer">
+                                    <button wire:click="addTransactionWithdrawal" type="button"
+                                        wire:loading.attr="disabled" class="btn btn-primary w-50"
+                                        wire:loading.class="hidden opacity-50 cursor-not-allowed">
+                                        Validez code
+                                    </button>
+
+
+                                    <div wire:loading.flex wire:target="addTransactionWithdrawal"
+                                        class="flex items-center justify-center">
+                                        <div class="loader"></div>
+                                        <p>Traitement en cours...</p>
+                                    </div>
                                 </div>
                             </div>
+                        @endif
 
-                            <div class="modal-footer">
-                                <button wire:click="addTransactionWithdrawal" type="button"
-                                    wire:loading.attr="disabled" class="btn btn-primary w-50"
-                                    wire:loading.class="hidden opacity-50 cursor-not-allowed">
-                                    Validez code
-                                </button>
-
-
-                                <div wire:loading.flex wire:target="addTransactionWithdrawal"
-                                    class="flex items-center justify-center">
-                                    <div class="loader"></div>
-                                    <p>Traitement en cours...</p>
-                                </div>
-                            </div>
-                        </div>
                     @endif
                 @endif
             @endif

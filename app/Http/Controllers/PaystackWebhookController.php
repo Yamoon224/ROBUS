@@ -306,22 +306,44 @@ class PaystackWebhookController extends Controller
             $walletAdmin = WalletAdmin::find(1);
             $wallet_commission = Wallet::where('wallet_id', "CI44RTZU")->first();
 
+            $totalAmount = $transaction->amount;
+            $total_admin_commission = $transaction->costs_amount;
+
+            $country_civ = Country::find(107);
+            $robus_currency =  $wallet->country->currencie->value;
+
+            if ($country_civ->currencie->value > $wallet->country->currencie->value) {
+                $amount_total_conversion = $totalAmount * $robus_currency;
+                $amount_commission_conversion = $total_admin_commission * $robus_currency;
+            } elseif ($country_civ->currencie->value == $wallet->country->currencie->value) {
+                $amount_total_conversion = $totalAmount;
+                $amount_commission_conversion = $total_admin_commission;
+            } else {
+                $amount_total_conversion = $totalAmount * $robus_currency;
+                $amount_commission_conversion = $total_admin_commission * $robus_currency;
+            }
+
             $transaction->update([
                 'status' => 'success',
                 'gateway_response' => $data['gateway_response'],
                 'paid_at' => Carbon::parse($data['paid_at']),
                 'payment_method' => 'ACHAT D\'UV',
+                'description' => 'ACHAT D\'UV',
                 'currency' =>  $data['currency'] ?? 'XOF',
                 'balance_before' =>  $wallet->amount,
                 'amount_solde' => (float) $wallet->amount + (float) $amountReceived,
                 'amount_received' => $amountReceived,
                 'ip_address' => $data['ip_address'] ?? null,
+                'reload_cost_id' => $commission_robus->id,
                 'amount_solde_drawal' => $wallet_commission->amount ?? null,
+                'amount_solde_before_drawal' => (float) $wallet_commission->amount -  (float) ($amount_total_conversion ?? 0),
                 'account_wallet' => 'CI44RTZU',
                 'type_transaction' => 'Achat UV',
                 'type_received' => 'UV',
                 'fees' => $total_commission ?? 0,
                 'costs_amount' => $total_commission ?? 0,
+                'cost_conversion' => $amount_commission_conversion ?? 0,
+                'amount_conversion' => $amount_total_conversion ?? 0,
                 'authorization' => json_encode($data['authorization'] ?? []),
                 'customer' => json_encode($data['customer'] ?? []),
                 'metadata' => json_encode(array_merge(
@@ -372,22 +394,7 @@ class PaystackWebhookController extends Controller
                     throw new \Exception("Wallet commission introuvable");
                 }
 
-                $totalAmount = $transaction->amount;
-                $total_admin_commission = $transaction->costs_amount;
 
-                $country_civ = Country::find(107);
-                $robus_currency =  $wallet->country->currencie->value;
-
-                if ($country_civ->currencie->value > $wallet->country->currencie->value) {
-                    $amount_total_conversion = $totalAmount * $robus_currency;
-                    $amount_commission_conversion = $total_admin_commission * $robus_currency;
-                } elseif ($country_civ->currencie->value == $wallet->country->currencie->value) {
-                    $amount_total_conversion = $totalAmount;
-                    $amount_commission_conversion = $total_admin_commission;
-                } else {
-                    $amount_total_conversion = $totalAmount * $robus_currency;
-                    $amount_commission_conversion = $total_admin_commission * $robus_currency;
-                }
 
                 if ($amount_total_conversion <= 0) {
                     throw new \Exception('Montant final invalide');
@@ -520,23 +527,46 @@ class PaystackWebhookController extends Controller
             $amountReceived = (float) $transaction->amount - (float)$total_commission;
             $walletAdmin = WalletAdmin::find(1);
             $wallet_commission = Wallet::where('wallet_id', "CI44RTZU")->first();
+
+            $totalAmount = $transaction->amount;
+
+            $total_admin_commission = $transaction->costs_amount;
+            $country_civ = Country::find(107);
+            $robus_currency =  $wallet->country->currencie->value;
+
+            if ($country_civ->currencie->value > $wallet->country->currencie->value) {
+                $amount_total_conversion = $totalAmount * $robus_currency;
+                $amount_commission_conversion = $total_admin_commission * $robus_currency;
+            } elseif ($country_civ->currencie->value == $wallet->country->currencie->value) {
+                $amount_total_conversion = $totalAmount;
+                $amount_commission_conversion = $total_admin_commission;
+            } else {
+                $amount_total_conversion = $totalAmount * $robus_currency;
+                $amount_commission_conversion = $total_admin_commission * $robus_currency;
+            }
+
             // Mettre à jour la transaction
             $transaction->update([
                 'status' => 'success',
                 'gateway_response' => $data['gateway_response'],
                 'paid_at' => Carbon::parse($data['paid_at']),
                 'payment_method' => 'ACHAT D\'UV',
+                'description' => 'ACHAT D\'UV',
                 'currency' =>  $data['currency'] ?? 'XOF',
                 'balance_before' =>  $wallet->amount,
                 'amount_solde' => (float) $wallet->amount + (float) $amountReceived,
                 'amount_received' => $amountReceived,
                 'ip_address' => $data['ip_address'] ?? null,
                 'account_wallet' => 'CI44RTZU',
+                'reload_cost_id' => $commission_robus->id,
                 'amount_solde_drawal' => $wallet_commission->amount ?? null,
+                'amount_solde_before_drawal' => (float) $wallet_commission->amount -  (float) ($amount_total_conversion ?? 0),
                 'type_transaction' => 'Achat UV',
                 'type_received' => 'UV',
                 'fees' => $total_commission ?? 0,
                 'costs_amount' => $total_commission ?? 0,
+                'cost_conversion' => $amount_commission_conversion ?? 0,
+                'amount_conversion' => $amount_total_conversion ?? 0,
                 'authorization' => json_encode($data['authorization'] ?? []),
                 'customer' => json_encode($data['customer'] ?? []),
                 'metadata' => json_encode(array_merge(
@@ -587,22 +617,6 @@ class PaystackWebhookController extends Controller
                     throw new \Exception("Wallet commission introuvable");
                 }
 
-                $totalAmount = $transaction->amount;
-
-                $total_admin_commission = $transaction->costs_amount;
-                $country_civ = Country::find(107);
-                $robus_currency =  $wallet->country->currencie->value;
-
-                if ($country_civ->currencie->value > $wallet->country->currencie->value) {
-                    $amount_total_conversion = $totalAmount * $robus_currency;
-                    $amount_commission_conversion = $total_admin_commission * $robus_currency;
-                } elseif ($country_civ->currencie->value == $wallet->country->currencie->value) {
-                    $amount_total_conversion = $totalAmount;
-                    $amount_commission_conversion = $total_admin_commission;
-                } else {
-                    $amount_total_conversion = $totalAmount * $robus_currency;
-                    $amount_commission_conversion = $total_admin_commission * $robus_currency;
-                }
 
                 if ($amount_total_conversion <= 0) {
                     throw new \Exception('Montant final invalide');

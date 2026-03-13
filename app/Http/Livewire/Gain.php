@@ -6,14 +6,7 @@ use Livewire\Component;
 use App\Models\AdminsCom;
 use Livewire\WithPagination;
 use Illuminate\Support\Carbon;
-use App\Models\Costs\TransactionCost;
-use App\Models\Costs\PhoneCreditCost;
-use App\Models\Costs\PaymentCost;
-use App\Models\Costs\DepositCost;
-use App\Models\Costs\BankCost;
-use App\Models\LevelCountry;
-use App\Models\Custumers\Country;
-use App\Http\Services\PercentRobusAuthService;
+use Illuminate\Support\Facades\DB;
 
 class Gain extends Component
 {
@@ -36,7 +29,6 @@ class Gain extends Component
 
         if ($this->startDate && $this->endDate) {
 
-            // $gains->where('description', '!=', 'Validation distributeur')->whereBetween('created_at', [$this->startDate, $this->endDate]);
 
             $banqueSum_percent =  $this->WalletIntersDays;
 
@@ -96,139 +88,45 @@ class Gain extends Component
 
 
         $todays = Carbon::now();
+
         $convertions = $todays->toDateString();
 
-        $walletBanks = AdminsCom::join('wallet_inters', 'admins_coms.wallet_inter_id', '=', 'wallet_inters.id')
+        return AdminsCom::whereIsWeb(false)
             ->whereDate('admins_coms.created_at', $convertions)
-            ->where('admins_coms.status', 'SUCCESS')
-            ->where('admins_coms.is_web', false)
-            ->select('admins_coms.*')
-            ->get();
-
-
-        $percent_amount = $walletBanks->map(function ($wallet) {
-
-            $amount_send = $wallet->walletInter->amount;
-
-            $country_user = $wallet->walletInter->wallet;
-
-            $percent_robus = $this->getRobusPercentageForWalletInter($wallet);
-
-            $amount_banque = $this->getConvertAdminCommission($amount_send, $country_user);
-
-            return optional($percent_robus)->percent_banque * $amount_banque;
-        });
-
-        return $percent_amount->sum();
+            ->sum(DB::raw('amount_cie + amount_bank'));
     }
 
     public function getWalletIntersDaysProperty()
     {
-        $walletBanks = AdminsCom::join('wallet_inters', 'admins_coms.wallet_inter_id', '=', 'wallet_inters.id')
-            ->whereBetween('admins_coms.created_at', [$this->startDate, $this->endDate])
-            ->where('admins_coms.status', 'SUCCESS')
-            ->where('admins_coms.is_web', false)
-            ->select('admins_coms.*')
-            ->get();
 
-
-        $percent_amount = $walletBanks->map(function ($wallet) {
-
-            $amount_send = $wallet->walletInter->amount;
-
-            $country_user = $wallet->walletInter->wallet;
-
-            $percent_robus = $this->getRobusPercentageForWalletInter($wallet);
-
-            $amount_banque = $this->getConvertAdminCommission($amount_send, $country_user);
-
-            return optional($percent_robus)->percent_banque * $amount_banque;
-        });
-
-        return $percent_amount->sum();
+        return AdminsCom::whereIsWeb(false)
+            ->whereBetween('created_at', [$this->startDate, $this->endDate])
+            ->sum(DB::raw('amount_cie + amount_bank'));
     }
 
 
     public function getWalletIntersStatutsProperty()
     {
-        $walletBanks = AdminsCom::join('wallet_inters', 'admins_coms.wallet_inter_id', '=', 'wallet_inters.id')
-            ->where("admins_coms.status", $this->statusTransferFilter)
-            ->where('admins_coms.is_web', false)
-            ->select('admins_coms.*')
-            ->get();
 
 
-        $percent_amount = $walletBanks->map(function ($wallet) {
-
-            $amount_send = $wallet->walletInter->amount;
-
-            $country_user = $wallet->walletInter->wallet;
-
-            $percent_robus = $this->getRobusPercentageForWalletInter($wallet);
-
-            $amount_banque = $this->getConvertAdminCommission($amount_send, $country_user);
-
-            return optional($percent_robus)->percent_banque * $amount_banque;
-        });
-
-        return $percent_amount->sum();
-    }
-
-    protected function getRobusPercentageForWalletInter($wallet)
-    {
-        $sidUser = $wallet->walletInter->wallet->sidUser;
-        $countrieGroupe = $sidUser->country->name_groupe;
-        $countrieUserId = $wallet->walletInter->country;
-        $countrieUserSend = $wallet->walletInter->wallet->country->id;
-        $providerSendUser = $wallet->walletInter->provider_id;
-        $typeProviderSendUser = $wallet->walletInter->provider_type;
-
-        if ($typeProviderSendUser == 1 && $providerSendUser != 51) {
-            return app(PercentRobusAuthService::class)->getRobusPercentageBackendInter($countrieGroupe, $countrieUserId, $providerSendUser, $countrieUserSend);
-            
-        }
-
-        return null;
-    }
-
-    // amount inters
-    public function getConvertAdminCommission($amount, $countrie_send)
-    {
-        $country_civ = Country::find(107);
-
-        $robus_currency = $countrie_send->country->currencie->value;
-        if ($country_civ->currencie->value > $countrie_send->country->currencie->value) {
-            return $amount * $robus_currency;
-        } elseif ($country_civ->currencie->value == $countrie_send->country->currencie->value) {
-            return $amount;
-        } else {
-            return $amount * $robus_currency;
-        }
+        return AdminsCom::whereIsWeb(false)
+            ->whereDate('admins_coms.status', $this->statusTransferFilter)
+            ->sum(DB::raw('amount_cie + amount_bank'));
     }
 
 
     public function getGainAdminsProperty()
     {
-        $data = [];
-        foreach (AdminsCom::whereIsWeb(false)->get() as $bank) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        return AdminsCom::whereIsWeb(false)->sum('amount');
     }
 
     public function getGainAdminsDaysProperty()
     {
-        $data = [];
 
-        // Exécutez la requête pour obtenir une collection d'objets
-        $admins = AdminsCom::whereIsWeb(false)->whereBetween('created_at', [$this->startDate, $this->endDate])->get();
 
-        foreach ($admins as $bank) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        return AdminsCom::whereIsWeb(false)
+            ->whereBetween('created_at', [$this->startDate, $this->endDate])
+            ->sum(DB::raw('amount_cie + amount_bank'));
     }
 
     public function getGainAdminTodaysProperty()
@@ -237,47 +135,28 @@ class Gain extends Component
         $todays = Carbon::now();
         $convertions = $todays->toDateString();
 
-        $data = [];
-
-        foreach (AdminsCom::whereIsWeb(false)->where('description', 'Commission administrateur')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)->get() as $bank) {
-
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        return AdminsCom::whereIsWeb(false)
+            ->where('description', 'Commission administrateur')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)
+            ->sum(DB::raw('amount'));
     }
 
     public function getGainAdminDateProperty()
     {
 
-        $data = [];
 
-
-        $admins = AdminsCom::whereIsWeb(false)->whereBetween('created_at', [$this->startDate, $this->endDate])->where('description', 'Commission administrateur')->whereStatus('SUCCESS')->get();
-
-        foreach ($admins as $bank) {
-            // Accédez à la propriété amount sur chaque objet
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        return AdminsCom::whereIsWeb(false)
+            ->where('description', 'Commission administrateur')->whereStatus('SUCCESS')->whereBetween('created_at', [$this->startDate, $this->endDate])
+            ->sum(DB::raw('amount'));
     }
 
 
     public function getGainAdminStatutProperty()
     {
 
-        $data = [];
 
-
-        $admins = AdminsCom::where('is_web',false)->where("status", $this->statusTransferFilter)->where('description', 'Commission administrateur')->get();
-
-        foreach ($admins as $bank) {
-            // Accédez à la propriété amount sur chaque objet
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        return AdminsCom::whereIsWeb(false)
+            ->where('description', 'Commission administrateur')->where("status", $this->statusTransferFilter)
+            ->sum(DB::raw('amount'));
     }
 
     public function getGainAdminDrawalTodaysProperty()
@@ -286,14 +165,10 @@ class Gain extends Component
         $todays = Carbon::now();
         $convertions = $todays->toDateString();
 
-        $data = [];
 
-        foreach (AdminsCom::whereIsWeb(false)->where('description', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)->get() as $bank) {
-
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        return AdminsCom::whereIsWeb(false)
+            ->where('description', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)
+            ->sum(DB::raw('amount'));
     }
 
     public function getGainAdminTransactionsTodaysProperty()
@@ -302,26 +177,18 @@ class Gain extends Component
         $todays = Carbon::now();
         $convertions = $todays->toDateString();
 
-        $data = [];
 
-        foreach (AdminsCom::whereIsWeb(false)->where('description_underdistributer', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)->get() as $bank) {
-
-            $data[] = $bank->amount_under;
-        }
-
-        return array_sum($data);
+        return AdminsCom::whereIsWeb(false)
+            ->where('description_underdistributer', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)
+            ->sum(DB::raw('amount'));
     }
 
     public function getGainAdminTransactionsDaysProperty()
     {
 
-        $data = [];
-        $admins = AdminsCom::whereIsWeb(false)->whereBetween('created_at', [$this->startDate, $this->endDate])->where('description_underdistributer', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->get();
-        foreach ($admins as $bank) {
-            $data[] = $bank->amount_under;
-        }
 
-
-        return array_sum($data);
+        return AdminsCom::whereIsWeb(false)
+            ->whereBetween('created_at', [$this->startDate, $this->endDate])->where('description_underdistributer', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')
+            ->sum(DB::raw('amount'));
     }
 }

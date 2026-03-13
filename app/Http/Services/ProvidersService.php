@@ -303,6 +303,21 @@ class ProvidersService
             ->get();
     }
 
+      public static function getProvidersDrawalByType($query, $countryId, $providerType)
+    {
+
+
+        return $query
+            ->join('country_services', 'country_services.provider_id', 'providers.id')
+            ->where('country_services.country_id', $countryId)
+            ->where('providers.status', true)
+            ->where('providers.id', 128)
+            ->where('providers.provider_type_id', $providerType)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+    }
+
     public static function getProvidersByTypes($query, $countryId, array $providerTypes, $additionalConditions = [])
     {
         $query = $query

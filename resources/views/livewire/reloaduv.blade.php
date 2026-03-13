@@ -1,7 +1,5 @@
 <div>
 
-
-
     <div class="intro-y box px-5 pt-1 mt-1 ">
         <div class="grid grid-cols-12 gap-4 mt-6">
             <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
@@ -17,6 +15,9 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Rechargements aujourd'hui -->
+
 
             @if (Auth::guard('web')->user()->hasPermissionTo('voir-commission-admin'))
                 <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
@@ -50,37 +51,14 @@
 
         </div>
 
+
         <div class="grid grid-cols-12 gap-6 mt-6">
+
+
             <div class="col-span-12 sm:col-span-6 lg:col-span-6 intro-y info-paiement-show" id="info-paie-show-1">
                 <div class="report-box zoom-in">
                     <div class="box p-wallet style_table_cartes">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success
-                                    {{ $reload_success }}
 
-                                </div>
-                            </div>
-                            <div class="ml-auto">
-
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente
-                                    {{ $reload_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec
-                                    {{ $reload_error }}
-
-                                </div>
-
-                            </div>
-
-                        </div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
@@ -99,33 +77,7 @@
             <div class="col-span-12 sm:col-span-6 xl:col-span-6 intro-y info-paiement-show" id="info-paie-show-2">
                 <div class="report-box zoom-in">
                     <div class="box p-wallet style_table_factures">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success
-                                    {{ $reload_success }}
 
-                                </div>
-                            </div>
-                            <div class="ml-auto">
-
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente
-                                    {{ $reload_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec
-                                    {{ $reload_error }}
-
-                                </div>
-
-                            </div>
-
-                        </div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
@@ -140,6 +92,207 @@
                     </div>
                 </div>
             </div>
+            <div class="col-span-12 sm:col-span-4 lg:col-span-4 intro-y style_facture_home3">
+                <div class="report-box zoom-in">
+                    <div class="box p-wallet style_facture_home3">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ number_format($dailyStats['today']['total_amount'] ?? 0, 0, ',', ' ') }}
+                        </div>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-sm  rounded">
+                                {{ $dailyStats['today']['success'] ?? 0 }} succès
+                            </span>
+                            <span class="text-sm  px-2 py-1 rounded">
+                                {{ $dailyStats['today']['total'] ?? 0 }} total
+                            </span>
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">Aujourd'hui</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-12 sm:col-span-4 lg:col-span-4 intro-y style_facture_home2">
+                <div class="report-box zoom-in style_facture_home2">
+                    <div class="box p-wallet style_facture_home2">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ number_format($dailyStats['average'] ?? 0, 0, ',', ' ') }}
+                        </div>
+                        <div class="text-sm opacity-75 mt-1">{{ $usersCountry }}</div>
+
+                        <div class="text-base text-slate-500 mt-1">Montant moyen</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-12 sm:col-span-4 lg:col-span-4 intro-y style_facture_home">
+                <div class="report-box zoom-in style_facture_home">
+                    <div class="box p-wallet style_facture_home">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ number_format($dailyStats['month']['total_amount'] ?? 0, 0, ',', ' ') }}
+                        </div>
+                        <div class="text-sm opacity-75 mt-1">{{ $dailyStats['month']['total'] ?? 0 }}
+                            opérations</div>
+                        <div class="text-sm opacity-75 mt-1">{{ $usersCountry }}</div>
+
+                        <div class="text-base text-slate-500 mt-1">Total mois</div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="col-span-12 sm:col-span-4 lg:col-span-4 intro-y style_user2">
+                <div class="report-box zoom-in">
+                    <div class="box p-wallet style_user2">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ number_format($dailyStatsSuperVisorSender['today']['total_amount'] ?? 0, 0, ',', ' ') }}
+                        </div>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-sm  rounded">
+                                {{ $dailyStatsSuperVisorSender['today']['success'] ?? 0 }} succès
+                            </span>
+                            <span class="text-sm  px-2 py-1 rounded">
+                                {{ $dailyStatsSuperVisorSender['today']['total'] ?? 0 }} total
+                            </span>
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">Total des montants envoyés Aujourd'hui</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-12 sm:col-span-4 lg:col-span-4 intro-y style_table_credits">
+                <div class="report-box zoom-in style_table_credits">
+                    <div class="box p-wallet style_table_credits">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ number_format($dailyStatsSuperVisorSender['average'] ?? 0, 0, ',', ' ') }}
+                        </div>
+                        <div class="text-sm opacity-75 mt-1">{{ $usersCountry }}</div>
+
+                        <div class="text-base text-slate-500 mt-1">Total des montants envoyés moyen</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-12 sm:col-span-4 lg:col-span-4 intro-y style_user3">
+                <div class="report-box zoom-in style_user3">
+                    <div class="box p-wallet style_user3">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ number_format($dailyStatsSuperVisorSender['month']['total_amount'] ?? 0, 0, ',', ' ') }}
+                        </div>
+                        <div class="text-sm opacity-75 mt-1">{{ $dailyStatsSuperVisorSender['month']['total'] ?? 0 }}
+                            opérations</div>
+                        <div class="text-sm opacity-75 mt-1">{{ $usersCountry }}</div>
+
+                        <div class="text-base text-slate-500 mt-1">Total des montants envoyés ce mois</div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="col-span-12 sm:col-span-4 lg:col-span-4 intro-y style_user1">
+                <div class="report-box zoom-in">
+
+                    <div class="box p-wallet style_user1">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ number_format($dailyStatsSuperVisorReceved['today']['total_amount'] ?? 0, 0, ',', ' ') }}
+                        </div>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-sm  rounded">
+                                {{ $dailyStatsSuperVisorReceved['today']['success'] ?? 0 }} succès
+                            </span>
+                            <span class="text-sm  px-2 py-1 rounded">
+                                {{ $dailyStatsSuperVisorReceved['today']['total'] ?? 0 }} total
+                            </span>
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">Total montants reçus Aujourd'hui</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-12 sm:col-span-4 lg:col-span-4 intro-y style_table1">
+                <div class="report-box zoom-in style_table1">
+                    <div class="box p-wallet style_table1">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ number_format($dailyStatsSuperVisorReceved['average'] ?? 0, 0, ',', ' ') }}
+                        </div>
+                        <div class="text-sm opacity-75 mt-1">{{ $usersCountry }}</div>
+
+                        <div class="text-base text-slate-500 mt-1">Montant reçus moyen</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-12 sm:col-span-4 lg:col-span-4 intro-y style_table3">
+                <div class="report-box zoom-in style_table3">
+                    <div class="box p-wallet style_table3">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ number_format($dailyStatsSuperVisorReceved['month']['total_amount'] ?? 0, 0, ',', ' ') }}
+                        </div>
+                        <div class="text-sm opacity-75 mt-1">{{ $dailyStatsSuperVisorReceved['month']['total'] ?? 0 }}
+                            opérations</div>
+                        <div class="text-sm opacity-75 mt-1">{{ $usersCountry }}</div>
+
+                        <div class="text-base text-slate-500 mt-1">Total montant reçus du mois</div>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <div class="intro-y block sm:flex items-center h-10 mt-6">
             <h2 class="text-lg font-medium truncate mr-5"> Les Activites des rechargements</h2>
@@ -184,7 +337,7 @@
 
         </div>
 
-       
+
         <ul class="nav nav-link-tabs flex-col sm:flex-row justify-center lg:justify-start text-center mt-3"
             role="tablist">
             <li id="reload-tab" class="nav-item" role="presentation">
@@ -227,8 +380,6 @@
                             <input type="text" name="table_search" wire:model.debounce.250ms="searchRealod"
                                 class="form-control  w-56 box pr-10" style="height: 3rem; background-color: #eff3f7;"
                                 placeholder="Rechercher">
-                            {{-- <i class="w-4 h-4 absolute my-auto inset-y-0 mr-6 " style="margin-left: 12rem;"
-                                data-feather="searchTransaction"></i> --}}
                         </div>
                     </div>
                 </div>
@@ -259,6 +410,7 @@
                     <!-- END: Pagination -->
 
                 </div>
+
             </div>
 
             <div id="commission" class="tab-pane" role="tabpanel" aria-labelledby="commission-tab">
@@ -562,6 +714,7 @@
                 </div>
             </div>
 
+
         </div>
         <script>
             window.addEventListener('DOMContentLoaded', function() {
@@ -582,3 +735,49 @@
 </div>
 
 </div>
+
+<script>
+    document.addEventListener('livewire:load', function() {
+        // Configuration du graphique
+        const ctx = document.getElementById('activityChart')?.getContext('2d');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: @json($chartData['labels']),
+                    datasets: [{
+                        label: 'Rechargements',
+                        data: @json($chartData['data']),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>

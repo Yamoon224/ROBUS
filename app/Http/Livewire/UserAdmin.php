@@ -24,6 +24,7 @@ class UserAdmin extends Component
     public $sortAsc = true;
     public $sidUserId;
     public $sidUserStatus;
+    public $sidUserInfos;
     public $user_id;
     public $master_id;
     public $user_country;
@@ -38,6 +39,7 @@ class UserAdmin extends Component
         $check = SidUser::whereId($id)->first();
         $this->sidUserId = $id;
         $this->sidUserStatus = $check->status;
+        $this->sidUserInfos = $check->firstname . ' ' .  $check->lastname;
         $this->emit($state);
     }
 

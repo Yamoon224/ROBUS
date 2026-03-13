@@ -458,6 +458,9 @@ class Transfers extends Component
         'echo:wallet-drawal-choose-created,.Created_wallet_drawal_choose' =>
         'notifyNewDjamo',
 
+        'echo:wallet-drawal-created,.Created_wallet_drawal' =>
+        'notifyNewDrawal',
+
         'cancelTransactionInTransfers' => 'cancelTransactionField',
         'modal-opened' => 'setModalActive',
         'modal-closed' => 'setModalInactive',
@@ -847,17 +850,7 @@ class Transfers extends Component
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-phoneCredit');
         // $this->emit('menu-phoneCredit-active');
-        if (!$this->modalActive) {
-            $this->emit('menu-phoneCredit-active');
-        } else {
-            $this->pendingMenu = 'Crédit télephonique';
-        }
 
-        $this->emit('show-toast-notification', [
-            'type' => 'info',
-            'message' => 'Nouveau télephonique disponible',
-            'menu' => 'credit'
-        ]);
     }
 
     public function notifyNewXbet()
@@ -894,6 +887,13 @@ class Transfers extends Component
 
 
     public function notifyNewDjamo()
+    {
+        $this->showNTransfersNotification = true;
+        // $this->emit('modal-hide-phoneCredit');
+        // $this->emit('menu-djamo-active');
+    }
+
+    public function notifyNewDrawal()
     {
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-phoneCredit');
@@ -1028,6 +1028,8 @@ class Transfers extends Component
 
                                 $walletAmountSend = DB::table('wallets')->select(DB::raw('SUM(amount) as total_amount'))->where('wallet_id',  $this->compte_number_robus)->first();
 
+                                $amount_solde_drawal = (float)$walletAmountSend->amount - (float)$commission_receiveid;
+
                                 // Verify amount
                                 if ($amountDrawal > $wallet_search->amount) {
                                     $this->resetTransactionField();
@@ -1036,7 +1038,7 @@ class Transfers extends Component
                                     return;
                                 }
 
-                                $walletTransaction = app(TransfertServiceBackend::class)->createRobusWalletWithDrawalTransaction($this->transaction_amount_robus, $this->provider_transaction, $this->compte_number_robus,  $wallet_search, $amount_drawal_percent);
+                                $walletTransaction = app(TransfertServiceBackend::class)->createRobusWalletWithDrawalTransaction($this->transaction_amount_robus, $this->provider_transaction, $this->compte_number_robus,  $wallet_search, $amount_drawal_percent, $walletAmountSend, $amount_solde_drawal);
 
                                 if ($walletTransaction != null) {
 
@@ -1127,11 +1129,14 @@ class Transfers extends Component
             ->first();
 
         $amount_drawal = (float)$walletAmountSend->total_amount - (float)$commission_send;
+        $amount_before_drawal = (float)$walletAmountSend->total_amount;
 
         // Mise à jour des wallets
         app(TransfertServiceBackend::class)->updatePaiementWithdrawalWallet($wallet_search, $commission_send);
         app(TransfertServiceBackend::class)->updatePaiementDrawalWallet($walletUser, $this->transaction_amount_robus);
-        $amount_solde = (float)sabdy()->wallet->amount +  (float) $this->transaction_amount_robus;
+
+        $wallet = sabdy()->wallet->first();
+        $amount_solde = (float) $wallet->amount + (float) $this->transaction_amount_robus;
 
         // Création transaction
         $walletTransaction = app(TransfertServiceBackend::class)->createDrawalTransaction(
@@ -1144,7 +1149,8 @@ class Transfers extends Component
             $commission_send,
             $this->choose_type_transaction,
             $amount_solde,
-            $amount_drawal
+            $amount_drawal,
+            $amount_before_drawal
         );
 
         $transaction = app(TransfertServiceBackend::class)->createNewInvoiceTransaction(
@@ -1298,10 +1304,11 @@ class Transfers extends Component
 
                             $verify_code->update([
                                 'amount_received'  => $amount_payment_receved ?? null,
+                                'type_transaction' => 'Retrait',
+                                'type_received' => 'Depot',
                             ]);
 
-                            $this->updateVerifyCodeWallet($verify_code, $amount_solde, $amount_solde_drawal);
-
+                            $this->updateVerifyCodeWallet($verify_code, $amount_solde, $amount_solde_drawal, $walletAmountSend->amount);
 
                             $validated_transaction =   app(TransfertServiceBackend::class)->updatePaiementWithdrawalWallet($wallet_user, $amount_payment_drawal);
 
@@ -1341,7 +1348,6 @@ class Transfers extends Component
                                                     }
                                                 }
                                             } else {
-
 
                                                 if ($admin_civ->count() > 0) {
                                                     $nmbre_admin = $admin_civ->count();
@@ -5546,7 +5552,7 @@ class Transfers extends Component
     }
 
 
-    protected function updateVerifyCodeWallet($verify_code, $amount_solde, $amount_solde_drawal)
+    protected function updateVerifyCodeWallet($verify_code, $amount_solde, $amount_solde_drawal, $amount_solde_before_drawal)
     {
 
         return  $verify_code->update([
@@ -5557,6 +5563,7 @@ class Transfers extends Component
             'amount_received' => null,
             'amount_solde'  => $amount_solde ?? null,
             'amount_solde_drawal' => $amount_solde_drawal ?? null,
+            'amount_solde_before_drawal' => $amount_solde_before_drawal ?? null,
             'created_by' => sabdy()->id,
         ]);
     }

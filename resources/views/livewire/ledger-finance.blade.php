@@ -59,13 +59,13 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <p class="text-sm text-gray-500">Total Débits</p>
-                        <p class="text-2xl font-bold text-red-600">
+                        <p class="text-2xl font-bold text-white">
                             {{ number_format($totalDebits, 2) }} FCFA
                         </p>
                         <p class="text-xs text-gray-400">{{ $debitCount }} opérations</p>
                     </div>
                     <div class="p-3 bg-red-100 rounded-full">
-                        <i class="fas fa-arrow-down text-red-600 text-xl"></i>
+                        <i class="fas fa-arrow-down text-white text-xl"></i>
                     </div>
                 </div>
             </div>
@@ -265,7 +265,8 @@
                 <option value="all">Toutes</option>
                 <option value="commission">Commissions Banque</option>
                 <option value="admin">Commissions Admin</option>
-                <option value="standard">Transactions standard</option>
+                <option value="commission UV">Commission achat UV</option>
+                <option value="Achat UV">Montant achat UV</option>
             </select>
         </div>
 
@@ -369,6 +370,8 @@
                                                 $type = $item->adminCom->type ?? 'UNKNOWN';
                                                 $isCommission = $item->is_comission;
                                                 $isAdmin = $item->is_admin;
+                                                $isComUv = $item->is_uv;
+                                                $isAmountUV = $item->is_wallet;
                                             @endphp
                                             <tr class="intro-x hover:bg-gray-100">
                                                 <td class="text-center">
@@ -384,7 +387,11 @@
                                                         <br>
                                                         <small class="text-gray-500">
                                                             ({{ $isCommission ? 'Commission' : '' }}
-                                                            {{ $isAdmin ? 'Admin' : '' }})
+                                                            {{ $isAdmin ? 'Admin' : '' }}
+                                                            {{ $isComUv ? 'Commission achat UV' : '' }}
+                                                            {{ $isAmountUV ? 'Montant achat UV' : '' }}
+                                                            
+                                                            )
                                                         </small>
                                                     @endif
                                                 </td>
@@ -427,6 +434,16 @@
                                                         <span
                                                             class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs">
                                                             Admin
+                                                        </span>
+                                                    @elseif($isComUv)
+                                                        <span
+                                                            class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs">
+                                                            Commission achat UV
+                                                        </span>
+                                                    @elseif($isAmountUV)
+                                                        <span
+                                                            class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs">
+                                                            Montant achat UV
                                                         </span>
                                                     @else
                                                         <span
