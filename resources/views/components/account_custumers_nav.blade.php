@@ -4,6 +4,11 @@
                  aria-controls="doc" aria-selected="true" role="tab"> <i class="w-4 h-4 mr-2"
                      data-feather="shield"></i> Docs </a>
          </li>
+            <li id="reload-tab" class="nav-item" role="presentation">
+             <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#reload"
+                 aria-controls="reload" aria-selected="true" role="tab"> <i class="w-4 h-4 mr-2"
+                     data-feather="shield"></i>UV </a>
+         </li>
          <li id="transfers-tab" class="nav-item" role="presentation">
              <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#transfers"
                  aria-controls="transfers" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
@@ -50,4 +55,25 @@
                 aria-controls="wave" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
                     data-feather="shield"></i> Wave </a>
         </li>
+         <li id="push-tab" class="nav-item" role="presentation">
+             <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#push"
+                 aria-controls="push" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
+                     data-feather="shield"></i> Push </a>
+         </li>
+         <li id="tresort-tab" class="nav-item" role="presentation">
+             <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#tresort"
+                 aria-controls="tresort" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
+                     data-feather="shield"></i> Tresort Money </a>
+         </li>
+
+         <li id="djamo-tab" class="nav-item" role="presentation">
+             <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#djamo"
+                 aria-controls="djamo" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
+                     data-feather="shield"></i> Djamo </a>
+         </li>
+          <li id="versments-tab" class="nav-item" role="presentation">
+             <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#versments"
+                 aria-controls="versments" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
+                     data-feather="shield"></i> Versements </a>
+         </li>
      </ul>

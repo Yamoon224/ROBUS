@@ -286,6 +286,9 @@
 
             </div>
         </div>
+         <div id="reload" class="tab-pane" role="tabpanel" aria-labelledby="reload-tab">
+            @livewire('transaction-details.reload-transactions', ['walletAllReloads' => $user->id])
+        </div>
           <div id="transfers" class="tab-pane " role="tabpanel" aria-labelledby="transfers-tab">
 
             @livewire('transaction-details.transactions-users', ['walletAllTransactions' => $user->id])
@@ -324,6 +327,21 @@
         <div id="wave" class="tab-pane" role="tabpanel" aria-labelledby="wave-tab">
             @livewire('transaction-details.waves-users', ['walletWave' => $user->id])
 
+        </div>
+
+         <div id="push" class="tab-pane" role="tabpanel" aria-labelledby="push-tab">
+            @livewire('transaction-details.pushs', ['walletPushs' => $user->id])
+
+        </div>
+        <div id="tresort" class="tab-pane" role="tabpanel" aria-labelledby="tresort-tab">
+            @livewire('transaction-details.tresort-moneys', ['walletTresorts' => $user->id])
+
+        </div>
+        <div id="djamo" class="tab-pane" role="tabpanel" aria-labelledby="djamo-tab">
+            @livewire('transaction-details.djamos', ['walletDjamos' => $user->id])
+        </div>
+        <div id="versments" class="tab-pane" role="tabpanel" aria-labelledby="versments-tab">
+            @livewire('transaction-details.versments', ['walletVersements' => $user->id])
         </div>
 
     </div>

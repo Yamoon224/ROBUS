@@ -24,7 +24,7 @@
     <div class="amount-cfa">
         <div class="amount-cfa-label">Solde avant operation</div>
         <div class="amount-cfa-value">
-            {{ number_format($amount_solde_before_drawal ?? 0, 2, ',', ' ') }} CFA
+            {{ number_format($item->amount_solde_before_drawal ?? 0, 2, ',', ' ') }} CFA
         </div>
     </div>
 </div>

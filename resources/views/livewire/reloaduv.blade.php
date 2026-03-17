@@ -179,7 +179,7 @@
                                 {{ $dailyStatsSuperVisorSender['today']['total'] ?? 0 }} total
                             </span>
                         </div>
-                        <div class="text-base text-slate-500 mt-1">Total des montants envoyés Aujourd'hui</div>
+                        <div class="text-base text-slate-500 mt-1">Total des montants envoyés Aujourd'hui du superviseur</div>
                     </div>
                 </div>
             </div>
@@ -198,7 +198,7 @@
                         </div>
                         <div class="text-sm opacity-75 mt-1">{{ $usersCountry }}</div>
 
-                        <div class="text-base text-slate-500 mt-1">Total des montants envoyés moyen</div>
+                        <div class="text-base text-slate-500 mt-1">Total des montants envoyés moyen du superviseur</div>
                     </div>
                 </div>
             </div>
@@ -219,7 +219,7 @@
                             opérations</div>
                         <div class="text-sm opacity-75 mt-1">{{ $usersCountry }}</div>
 
-                        <div class="text-base text-slate-500 mt-1">Total des montants envoyés ce mois</div>
+                        <div class="text-base text-slate-500 mt-1">Total des montants envoyés ce mois  du superviseur</div>
                     </div>
                 </div>
             </div>
@@ -248,7 +248,7 @@
                                 {{ $dailyStatsSuperVisorReceved['today']['total'] ?? 0 }} total
                             </span>
                         </div>
-                        <div class="text-base text-slate-500 mt-1">Total montants reçus Aujourd'hui</div>
+                        <div class="text-base text-slate-500 mt-1">Total montants reçus Aujourd'hui du superviseur</div>
                     </div>
                 </div>
             </div>
@@ -267,7 +267,7 @@
                         </div>
                         <div class="text-sm opacity-75 mt-1">{{ $usersCountry }}</div>
 
-                        <div class="text-base text-slate-500 mt-1">Montant reçus moyen</div>
+                        <div class="text-base text-slate-500 mt-1">Montant reçus moyen  du superviseur</div>
                     </div>
                 </div>
             </div>
@@ -288,7 +288,7 @@
                             opérations</div>
                         <div class="text-sm opacity-75 mt-1">{{ $usersCountry }}</div>
 
-                        <div class="text-base text-slate-500 mt-1">Total montant reçus du mois</div>
+                        <div class="text-base text-slate-500 mt-1">Total montant reçus du mois du superviseur</div>
                     </div>
                 </div>
             </div>
