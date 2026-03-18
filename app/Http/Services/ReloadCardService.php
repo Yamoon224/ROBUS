@@ -97,6 +97,8 @@ class ReloadCardService
             $valuer_deposit =  $percent_merchands;
 
             $admin_valeur =  $valuer_deposit  + $commissionCompanie;
+            
+            $amount_percent_no_under = 0;
 
             if (!empty($activeButtons['showRemonterRechargementButton'])) {
 
@@ -113,6 +115,8 @@ class ReloadCardService
                 } else {
                     $this->commissionServices->distributeAdminUnderCommissions($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $valuer_deposit);
                 }
+            }else {
+                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $amount_percent_no_under);
             }
         } else {
 

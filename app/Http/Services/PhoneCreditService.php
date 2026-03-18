@@ -32,7 +32,7 @@ class PhoneCreditService
     public function createRobusWalletTransactionPhone($amount_valeur, $provider, $percent_robus, $phone, $amountReceved)
     {
 
-        
+
         $amount_solde = robus()->wallet->amount - $amount_valeur;
 
         return $this->phoneCreditRepository->create([
@@ -72,7 +72,7 @@ class PhoneCreditService
             $activeCButtons = [];
         }
 
-        $amount_commission =  $amount ;
+        $amount_commission =  $amount;
         $amount_solde = robus()->wallet->amount - $amount_commission;
 
         $walletPhone->update([
@@ -87,6 +87,8 @@ class PhoneCreditService
 
         $valuer_deposit = (float) $percent_robus->percent_merchands * $amount;
 
+        $admin_no_amount = 0;
+        
         if (robus()->is_under_distributer || robus()->is_api) {
 
             if (!empty($activeButtons['showRemonterCreditButton'])) {
@@ -103,6 +105,8 @@ class PhoneCreditService
                 } else {
                     $this->commissionServices->distributeAdminNoCommissionCompagnies($admin_civ,  'wallet_phone_credit_id',  $walletPhone->id, $valuer_deposit);
                 }
+            } else {
+                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_phone_credit_id',  $walletPhone->id, $admin_no_amount);
             }
         } else {
 

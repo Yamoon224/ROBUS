@@ -1858,7 +1858,7 @@ class Transfers extends Component
 
                             if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                if ($valeur_amount_com !== null && $check->commissions !== null) {
+                                if (!is_null($valeur_amount_com) && !is_null($check->commissions)) {
 
                                     app(CommissionServiceBackend::class)->handleUnderDistributorPhoneCreditCommission($check, $admin_civ, "Paiment commission Credit telephonique");
                                 } else {
@@ -2040,7 +2040,7 @@ class Transfers extends Component
 
                             if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                if ($valeur_amount_com !== null && $check->commissions !== null) {
+                                if (!is_null($valeur_amount_com) && !is_null($check->commissions)) {
 
                                     app(CommissionServiceBackend::class)->handleAdminBankSendUnderCommission($check, $admin_civ, "Tranfert Bank Send");
                                 } else {
@@ -2239,11 +2239,11 @@ class Transfers extends Component
                                 $this->updateAdminCom($check, $commission_transaction);
                             }
 
-                            $valeur_amount_com = $check->adminCom->amount;
+                            $valeur_amount_com = $check->adminCom?->amount;
 
                             if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                if ($valeur_amount_com !== null && $check->commissions !== null) {
+                                if (!is_null($valeur_amount_com) && !is_null($check->commissions)) {
 
                                     app(CommissionServiceBackend::class)->handleUnderDistributorXbetCommission($check, $admin_civ, "Paiment commission Transaction 1Xbet");
                                 } else {
@@ -2536,11 +2536,11 @@ class Transfers extends Component
                                 $this->updateAdminCom($check, $commission_transaction);
                             }
 
-                            $valeur_amount_com = $check->adminCom->amount;
+                            $valeur_amount_com = $check->adminCom?->amount;
 
                             if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                if ($valeur_amount_com !== null && $check->commissions !== null) {
+                                if (!is_null($valeur_amount_com) && !is_null($check->commissions)) {
 
                                     app(CommissionServiceBackend::class)->handleUnderBankDistributorCommission($check, $admin_civ, "Paiment commission Transaction Versement Bancaires");
                                 } else {
@@ -2740,11 +2740,11 @@ class Transfers extends Component
                                 $this->updateAdminCom($check, $commission_transaction);
                             }
 
-                            $valeur_amount_com = $check->adminCom->amount;
+                            $valeur_amount_com = $check->adminCom?->amount;
 
                             if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                if ($valeur_amount_com !== null && $check->commissions !== null) {
+                                if (!is_null($valeur_amount_com) && !is_null($check->commissions)) {
 
                                     app(CommissionServiceBackend::class)->handleUnderDistributorAndCompanieCommission($check, $admin_civ, "Paiment commission Transaction Push");
                                 } else {
@@ -2948,11 +2948,11 @@ class Transfers extends Component
                                 $this->updateAdminCom($check, $commission_transaction);
                             }
 
-                            $valeur_amount_com = $check->adminCom->amount;
+                            $valeur_amount_com = $check->adminCom?->amount;
 
                             if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                if ($valeur_amount_com !== null && $check->commissions !== null) {
+                                if (!is_null($valeur_amount_com) && !is_null($check->commissions)) {
 
                                     app(CommissionServiceBackend::class)->handleUnderDistributorAndCompanieCommission($check, $admin_civ, "Paiment commission Transaction Djamo");
                                 } else {
@@ -3160,12 +3160,11 @@ class Transfers extends Component
                                 $this->updateAdminCom($check, $commission_transaction);
                             }
 
-                            $valeur_amount_com = $check->adminCom->amount;
+                            $valeur_amount_com = $check->adminCom?->amount;
 
                             if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                if ($valeur_amount_com !== null && $check->commissions !== null) {
-
+                                if (!is_null($valeur_amount_com) && !is_null($check->commissions)) {
                                     app(CommissionServiceBackend::class)->handleUnderDistributorAndCompanieCommission($check, $admin_civ, "Paiment commission Transaction Push");
                                 } else {
                                     $this->cancelTresortField();
@@ -3374,11 +3373,11 @@ class Transfers extends Component
                                 $this->sendSuccessMessageNotification($check, $message);
                             }
 
-                            $valeur_amount_com = $check->adminCom->amount;
+                            $valeur_amount_com = $check->adminCom?->amount;
 
                             if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                if ($valeur_amount_com !== null && $check->commissions !== null) {
+                                if (!is_null($valeur_amount_com) && !is_null($check->commissions)) {
 
                                     app(CommissionServiceBackend::class)->handleUnderDistributorAndCompanieCommission($check, $admin_civ, "Paiment commission Rechargement de carte");
                                 } else {
@@ -3749,11 +3748,11 @@ class Transfers extends Component
                                 $this->sendSuccessMessageNotification($check, $message);
                             }
 
-                            $valeur_amount_com = $check->adminCom->amount;
+                            $valeur_amount_com = $check->adminCom?->amount;
 
                             if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                if ($valeur_amount_com !== null && $check->commissions !== null) {
+                                if (!is_null($valeur_amount_com) && !is_null($check->commissions)) {
 
                                     app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Virement");
                                 } else {
@@ -4004,7 +4003,7 @@ class Transfers extends Component
 
                                 if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+                                    if (!is_null($valeur_amount_com) && !is_null($check->commissions)) {
                                         app(CommissionServiceBackend::class)->handleUnderDistributorVirementInterCompanieCommission($check, $admin_civ, "Paiment commission Paiement international");
                                     } else {
                                         $this->cancelInterField();
@@ -4019,7 +4018,7 @@ class Transfers extends Component
                             } else if ($check->provider_type == 8) {
                                 if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+                                    if (!is_null($valeur_amount_com) && !is_null($check->commissions)) {
 
                                         app(CommissionServiceBackend::class)->handleUnderDistributorXbetCommission($check, $admin_civ, "Paiment commission Transfert d'argent a international");
                                     } else {
@@ -4036,7 +4035,7 @@ class Transfers extends Component
 
                                 if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+                                    if (!is_null($valeur_amount_com) && !is_null($check->commissions)) {
 
                                         app(CommissionServiceBackend::class)->handleUnderDistributorInterPaiementCommission($check, $admin_civ, "Paiment commission Paiement de facture a international");
                                     } else {
@@ -4057,7 +4056,7 @@ class Transfers extends Component
 
                                 if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+                                    if (!is_null($valeur_amount_com) && !is_null($check->commissions)) {
 
                                         app(CommissionServiceBackend::class)->handleUnderDistributorInterPhoneCreditCommission($check, $admin_civ, "Paiment commission Credit telephonique a international");
                                     } else {
@@ -4074,7 +4073,7 @@ class Transfers extends Component
 
                                 if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+                                    if (!is_null($valeur_amount_com) && !is_null($check->commissions)) {
 
                                         app(CommissionServiceBackend::class)->handleUnderDistributorVirementInterCompanieCommission($check, $admin_civ, "Paiment commission Rechargement de carte");
                                     } else {
@@ -4092,7 +4091,7 @@ class Transfers extends Component
 
                                 if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+                                    if (!is_null($valeur_amount_com) && !is_null($check->commissions)) {
 
                                         app(CommissionServiceBackend::class)->handleUnderBankDistributorCommission($check, $admin_civ, "Paiment commission Virement");
                                     } else {
@@ -4276,11 +4275,11 @@ class Transfers extends Component
                                 $this->sendSuccessMessageNotification($check, $message);
                             }
 
-                            $valeur_amount_com = $check->adminCom->amount;
+                            $valeur_amount_com = $check->adminCom?->amount;
 
                             if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                if ($valeur_amount_com !== null && $check->commissions !== null) {
+                                if (!is_null($valeur_amount_com) && !is_null($check->commissions)) {
 
                                     app(CommissionServiceBackend::class)->handleUnderDistributorPaiementCommission($check, $admin_civ, "Paiment commission Paiement de facture");
                                 } else {
@@ -5624,11 +5623,15 @@ class Transfers extends Component
 
     protected function updateAdminCom($check, $commission_transaction)
     {
-        $check->adminCom->update([
-            'amount_distributer' => $commission_transaction,
-            'sid_user_id' => sabdy()->id,
-            'description_distributer' => 'Validation distributeur',
-        ]);
+
+        if ($check->adminCom) {
+            $check->adminCom->update([
+                'amount_distributer' => $commission_transaction,
+                'sid_user_id' => sabdy()->id,
+                'description_distributer' => 'Validation distributeur',
+            ]);
+        }
+
     }
 
 

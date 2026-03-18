@@ -149,11 +149,10 @@ class PaystackWebhookController extends Controller
                     $amount_send = $request->amount / $robus_currency;
                 }
 
-                // Créer la recharge en attente
                 WalletReload::create([
                     'wallet_id' => $wallet->id,
                     'provider_id' => $provider->id,
-                    'amount' => $amount_send,
+                    'amount' => $request->metadata['amount_normal'] ?? 0,
                     'balance_before' =>  $wallet->amount,
                     'amount_solde' => $wallet->amount,
                     'fees' => 0,
@@ -275,17 +274,6 @@ class PaystackWebhookController extends Controller
                 return response()->json(['status' => 'already_processed'], 200);
             }
 
-            // Valider le montant
-            // $expectedAmount = $transaction->amount * 100; 
-            // if ($data['amount'] != $expectedAmount) {
-            //     Log::error('Montant incorrect', [
-            //         'expected' => $expectedAmount,
-            //         'received' => $data['amount'],
-            //         'reference' => $data['reference']
-            //     ]);
-            //     DB::rollBack();
-            //     return response()->json(['error' => 'Montant incorrect'], 400);
-            // }
 
             $wallet = $transaction->wallet;
             $wallet_details = Wallet::whereId($transaction->wallet_id)->first();
@@ -307,20 +295,19 @@ class PaystackWebhookController extends Controller
             $wallet_commission = Wallet::where('wallet_id', "CI44RTZU")->first();
 
             $totalAmount = $transaction->amount;
-            $total_admin_commission = $transaction->costs_amount;
 
             $country_civ = Country::find(107);
             $robus_currency =  $wallet->country->currencie->value;
 
             if ($country_civ->currencie->value > $wallet->country->currencie->value) {
                 $amount_total_conversion = $totalAmount * $robus_currency;
-                $amount_commission_conversion = $total_admin_commission * $robus_currency;
+                $amount_commission_conversion = $total_commission * $robus_currency;
             } elseif ($country_civ->currencie->value == $wallet->country->currencie->value) {
                 $amount_total_conversion = $totalAmount;
-                $amount_commission_conversion = $total_admin_commission;
+                $amount_commission_conversion = $total_commission;
             } else {
                 $amount_total_conversion = $totalAmount * $robus_currency;
-                $amount_commission_conversion = $total_admin_commission * $robus_currency;
+                $amount_commission_conversion = $total_commission * $robus_currency;
             }
 
             $transaction->update([
@@ -502,16 +489,7 @@ class PaystackWebhookController extends Controller
                 return redirect()->route('payment.failed', ['reference' => $data['reference']]);
             }
 
-            // Valider le montant
-            // $expectedAmount = $transaction->amount * 100;
-            // if ($data['amount'] != $expectedAmount) {
-            //     Log::error('Montant incorrect', [
-            //         'expected' => $expectedAmount,
-            //         'received' => $data['amount'],
-            //         'reference' => $data['reference']
-            //     ]);
-            //     DB::rollBack();
-            // }
+
 
             $wallet = $transaction->wallet;
             $wallet_details = Wallet::whereId($transaction->wallet_id)->first();
@@ -529,20 +507,18 @@ class PaystackWebhookController extends Controller
             $wallet_commission = Wallet::where('wallet_id', "CI44RTZU")->first();
 
             $totalAmount = $transaction->amount;
-
-            $total_admin_commission = $transaction->costs_amount;
             $country_civ = Country::find(107);
             $robus_currency =  $wallet->country->currencie->value;
 
             if ($country_civ->currencie->value > $wallet->country->currencie->value) {
                 $amount_total_conversion = $totalAmount * $robus_currency;
-                $amount_commission_conversion = $total_admin_commission * $robus_currency;
+                $amount_commission_conversion = $total_commission * $robus_currency;
             } elseif ($country_civ->currencie->value == $wallet->country->currencie->value) {
                 $amount_total_conversion = $totalAmount;
-                $amount_commission_conversion = $total_admin_commission;
+                $amount_commission_conversion = $total_commission;
             } else {
                 $amount_total_conversion = $totalAmount * $robus_currency;
-                $amount_commission_conversion = $total_admin_commission * $robus_currency;
+                $amount_commission_conversion = $total_commission * $robus_currency;
             }
 
             // Mettre à jour la transaction
@@ -551,7 +527,7 @@ class PaystackWebhookController extends Controller
                 'gateway_response' => $data['gateway_response'],
                 'paid_at' => Carbon::parse($data['paid_at']),
                 'payment_method' => 'ACHAT D\'UV',
-                'description' => 'ACHAT D\'UV',
+                'description' => 'Achat D\'UV',
                 'currency' =>  $data['currency'] ?? 'XOF',
                 'balance_before' =>  $wallet->amount,
                 'amount_solde' => (float) $wallet->amount + (float) $amountReceived,

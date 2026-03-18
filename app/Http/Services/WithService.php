@@ -278,6 +278,7 @@ class WithService
         $valuer_deposit = $percent_commission *  $amount;
         $percent_valeur_compagnie = $percent_compagnie *  $amount;
         $valeur_percent_no_under  = $percent * $amount;
+        $amount_percent_no_under  = 0;
 
         // Commissions Inters 
         if ($user && $user->is_under_distributer || $user->is_api == 1) {
@@ -297,6 +298,8 @@ class WithService
                 } else {
                     $this->commissionServices->distributeAdminCommissionNoAccepteds($admin_civ,  'wallet_push_id',  $walletWith->id, $valuer_deposit);
                 }
+            } else {
+                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_push_id', $walletWith->id, $amount_percent_no_under);
             }
         } else {
 
@@ -492,6 +495,7 @@ class WithService
         $valuer_deposit = $percent_commission *  $amount;
         $percent_valeur_compagnie = $percent_compagnie *  $amount;
         $valeur_percent_no_under  = $percent * $amount;
+        $amount_percent_no_under = 0;
 
         // Commissions Inters 
         if ($user && $user->is_under_distributer || $user->is_api == 1) {
@@ -510,6 +514,8 @@ class WithService
                 } else {
                     $this->commissionServices->distributeAdminCommissionUnders($admin_civ, 'wallet_djamo_id', $walletWith->id, $valuer_deposit);
                 }
+            } else {
+                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_djamo_id', $walletWith->id, $amount_percent_no_under);
             }
         } else {
 
@@ -597,6 +603,7 @@ class WithService
         $percent_valeur_compagnie = $percent_compagnie *  $amount;
         $valeur_percent_no_under  = $percent * $amount;
 
+        $amount_percent_no_under = 0;
         // Commissions Inters 
         if ($user && $user->is_under_distributer || $user->is_api == 1) {
 
@@ -616,6 +623,8 @@ class WithService
                 } else {
                     $this->commissionServices->distributeAdminCommissionUnders($admin_civ, 'wallet_tresort_money_id', $walletWith->id, $valuer_deposit);
                 }
+            } else {
+                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_tresort_money_id', $walletWith->id, $amount_percent_no_under);
             }
         } else {
 

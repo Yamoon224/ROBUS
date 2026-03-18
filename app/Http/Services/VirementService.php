@@ -62,7 +62,7 @@ class VirementService
     public function updateamountVirementReceveid($admin_civ, $amount_user, $walletBank, $amount_valeur)
     {
 
-       $userAuth = auth_user();
+        $userAuth = auth_user();
         $userId = $userAuth->id;
 
         $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
@@ -75,11 +75,11 @@ class VirementService
             $compagnie = null;
             $sidUserId = null;
         }
-        
+
         if ($sidUserId) {
             $activeCButtons = $this->operatorRestrictionService->getActiveCButtons($sidUserId);
         } else {
-            $activeCButtons = []; 
+            $activeCButtons = [];
         }
 
         $amount_commission = $amount_valeur;
@@ -90,6 +90,8 @@ class VirementService
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
+        $amountNoDeposit = 0;
+
         if ($userAuth->is_under_distributer || $userAuth->is_api) {
 
             if (!empty($activeButtons['showRemonterVirementButton'])) {
@@ -97,7 +99,6 @@ class VirementService
                 $amountDeposit =  $amount_user->comission_distributer;
                 $amountCompanie =  $amount_user->percent_companie;
                 $amountDepositUnder = (float) $amountDeposit;
-              
                 $walletBank->update([
                     'commissions' => DB::raw('commissions+'  .  $amountDepositUnder),
                 ]);
@@ -106,19 +107,20 @@ class VirementService
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterVirementCButton'])) {
                     $walletBank->increment('commission_companie', $amountCompanie);
-                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_bank_id' ,$walletBank->id, $amountCompanie, $amountDepositUnder);
-                }else {
-                 $this->commissionServices->distributeAdminVirementCommissionAccepteds($admin_civ , 'wallet_bank_id', $walletBank->id , $amountDeposit);
+                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_bank_id', $walletBank->id, $amountCompanie, $amountDepositUnder);
+                } else {
+                    $this->commissionServices->distributeAdminVirementCommissionAccepteds($admin_civ, 'wallet_bank_id', $walletBank->id, $amountDeposit);
                 }
+            } else {
+                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_bank_id', $walletBank->id, $amountNoDeposit);
             }
         } else {
 
             $amountDeposit = (float) $amount_user->amount;
 
-            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_bank_id' ,$walletBank->id, $amountDeposit);
+            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_bank_id', $walletBank->id, $amountDeposit);
         }
 
         return true;
     }
-
 }
