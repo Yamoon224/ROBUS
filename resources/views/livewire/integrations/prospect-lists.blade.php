@@ -98,25 +98,11 @@
                                 @endforeach
                             </td>
                             <td>
-                                @if (Auth::guard('web')->user()->hasPermissionTo('voir-couleurs'))
-                                    @php
-                                        $solde = $item->wallet->amount ?? 0.0;
-                                    @endphp
-                                    <div class="barre"
-                                        style="height: 20px; 
-                                            background-color: 
-                                                @if ($solde >= 100000) yellow;
-                                                @elseif ($solde >= 50000 && $solde < 100000)
-                                                    blue;
-                                                @elseif ($solde > 0)
-                                                    red;
-                                                @else
-                                                    gray; @endif;">
-                                    </div>
-                                @endif
+                                @include('components.solde_color')
+
 
                                 @if ($item->is_api)
-                                    <div class="user-name">
+                                    <div class="user-name mt-6">
                                         {{ $item->wallet->wallet_id ?? null }}
                                     </div>
 
@@ -136,7 +122,7 @@
                                         @endif
                                     @endforeach
                                 @else
-                                    <div class="font-medium whitespace-nowrap">Admin</div>
+                                    <div class="font-medium whitespace-nowrap mt-6">Admin</div>
                                     <div class="text-slate-500  mt-0.5">
                                         <span
                                             class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
@@ -217,8 +203,8 @@
                                 @endif
                             </td>
                             <td class="w-50">
-                                
-                              
+
+
                                 @if ($item->integrator?->status === 'Validé')
                                     <span
                                         class="inline-flex status-badge bg-success items-center px-4 py-2 text-base font-semibold text-white bg-green-600 rounded-lg shadow-sm">
@@ -240,7 +226,7 @@
                                 @endif
                             </td>
 
-                           
+
                             <td class="w-60">
                                 <div class="flex mt-4 lg:mt-0">
                                     @if ($item->is_api)
@@ -293,13 +279,13 @@
                                             <a class="mr-1 mb-2"
                                                 href="{{ route('users.prospects.details', ['id' => $item->id]) }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                icon-name="eye" data-lucide="eye"
-                                                class="lucide lucide-eye block mx-auto h-15 mr-1">
-                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                                <circle cx="12" cy="12" r="3"></circle>
-                                            </svg>
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    icon-name="eye" data-lucide="eye"
+                                                    class="lucide lucide-eye block mx-auto h-15 mr-1">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>
                                             </a>
                                         @endif
 

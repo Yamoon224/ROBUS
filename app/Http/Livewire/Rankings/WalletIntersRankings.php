@@ -24,7 +24,7 @@ class WalletIntersRankings extends Component
             'country_id' => $this->country ?? null,
         ];
 
-       $providers = Provider::whereIn('provider_type_id', [7, 8, 9,10,11])->get();
+        $providers = Provider::whereIn('provider_type_id', [7, 8, 9, 10, 11])->get();
         $countries = Country::whereNotNull('indecative')
             ->where('indecative', '!=', '')
             ->get();

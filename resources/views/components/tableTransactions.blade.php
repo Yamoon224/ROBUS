@@ -43,31 +43,18 @@
                        </td>
                        @php
 
-                           if (sabdy()->country->id == 107) {
-                               //  Convertion of amount valeur
-                               if (
-                                   sabdy()->country->currencie->value >
-                                   $item->wallet->sidUser->country->currencie->value
-                               ) {
-                                   //   Convertion  in CFA
-                                   $valeur_amount_receveid =
-                                       (float) $item->amount_received * (float) sabdy()->country->currencie->value;
-                               } elseif (
-                                   sabdy()->country->currencie->value ==
-                                   $item->wallet->sidUser->country->currencie->value
-                               ) {
+                           $senderCurrency = sabdy()->country?->currencie?->value;
+                           $receiverCurrency = $item->wallet?->sidUser?->country?->currencie?->value;
+
+                           if (sabdy()->country?->id == 107 && $receiverCurrency !== null) {
+                               if ($senderCurrency > $receiverCurrency) {
+                                   $valeur_amount_receveid = (float) $item->amount_received * (float) $senderCurrency;
+                               } elseif ($senderCurrency == $receiverCurrency) {
                                    $valeur_amount_receveid = $item->amount_received;
-                               } elseif (
-                                   sabdy()->country->currencie->value <
-                                   $item->wallet->sidUser->country->currencie->value
-                               ) {
-                                   //   Convertion in Country send
-                                   $valeur_amount_receveid =
-                                       (float) $item->amount_received *
-                                       (float) $item->wallet->sidUser->country->currencie->value;
+                               } elseif ($senderCurrency < $receiverCurrency) {
+                                   $valeur_amount_receveid = (float) $item->amount_received * (float) $receiverCurrency;
                                }
                            } else {
-                               //  Convertion of amount valeur
                                $valeur_amount_receveid = (float) $item->amount_received;
                            }
                        @endphp
@@ -143,8 +130,8 @@
 
                                    </div>
                                @elseif ($item->status == 'SUCCESS')
-                                   <a target="_bank" href=""
-                                       class="btn btn-primary mr-1 mb-2 btn-sm" title="Facture">
+                                   <a target="_bank" href="" class="btn btn-primary mr-1 mb-2 btn-sm"
+                                       title="Facture">
                                        Facture
                                    </a>
                                @else

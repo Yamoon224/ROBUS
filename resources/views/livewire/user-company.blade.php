@@ -98,22 +98,8 @@
 
                             </td>
                             <td class="w-50">
-                                @if (Auth::guard('web')->user()->hasPermissionTo('voir-couleurs'))
-                                    @php
-                                        $solde = $item->wallet->amount ?? 0.0;
-                                    @endphp
-                                    <div class="barre"
-                                        style="height: 20px; 
-                                        background-color: 
-                                            @if ($solde >= 100000) yellow;
-                                            @elseif ($solde >= 50000 && $solde < 100000)
-                                                blue;
-                                            @elseif ($solde > 0)
-                                                red;
-                                            @else
-                                                gray; @endif;">
-                                    </div>
-                                @endif
+                                @include('components.solde_color')
+
 
                                 <div class="text-slate-300 text-xs w-60  mt-0.5 mb-2 mt-3">
                                     <span

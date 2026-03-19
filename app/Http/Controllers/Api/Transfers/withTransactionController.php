@@ -316,7 +316,6 @@ class withTransactionController extends Controller
                         /** ===============================
                          *  2️⃣ Conversion en CFA (banque)
                          * =============================== */
-                        // $amountCfa = $amountUser * ($userRate / $bankRate);
                         $amountCfa    = $this->convertionservice->convertAdminCommission($amountUser);
 
                         /** ===============================

@@ -10,7 +10,7 @@
 
             <div class="hidden md:block mx-auto text-slate-500"></div>
 
-            @include('components.searchRankings')
+            @include('components.searchInterRankings')
 
 
         </div>

@@ -62,9 +62,7 @@
 
                             </td>
                             <td class="w-50">
-                                <div class="user-phone mt-6">
-                                    {{ $item->email ?? 'Non renseigné' }}
-                                </div>
+                                                               @include('components.solde_color')
 
                             </td>
                             <td>

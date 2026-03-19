@@ -6480,11 +6480,7 @@ class PercentRobusAuthService
 
     public function getRobusPercentageBankSend(int $countryId): ?BankCommission
     {
-        // On ne traite que la CIV
-        // if (robus()->country->name_groupe == 'CIV') {
-        //     return null;
-        // }
-
+    
         // Mapping des pays par commission
         $groups = [
             // Europe
@@ -6501,6 +6497,24 @@ class PercentRobusAuthService
 
             // Afrique de l’Ouest
             5 => [36, 133, 188, 25, 214, 92, 191, 40, 91],
+        ];
+
+        foreach ($groups as $commissionId => $countries) {
+            if (in_array($countryId, $countries, true)) {
+                return BankCommission::find($commissionId);
+            }
+        }
+
+        return null;
+    }
+
+
+    public function getRobusPercentageInterMoney(int $countryId): ?BankCommission
+    {
+    
+        // Mapping des pays par commission
+        $groups = [
+            3 => [45, 157],
         ];
 
         foreach ($groups as $commissionId => $countries) {

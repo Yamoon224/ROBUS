@@ -114,23 +114,8 @@
                                 @endforeach
                             </td>
                             <td>
-                                @if (Auth::guard('web')->user()->hasPermissionTo('voir-couleurs'))
-                                    @php
-                                        $solde = $item->wallet->amount ?? 0.0;
-                                    @endphp
-                                    <div class="barre"
-                                        style="height: 20px; 
-                                            background-color: 
-                                                @if ($solde >= 100000) yellow;
-                                                @elseif ($solde >= 50000 && $solde < 100000)
-                                                    blue;
-                                                @elseif ($solde > 0)
-                                                    red;
-                                                @else
-                                                    gray; @endif;">
-                                                    
-                                    </div>
-                                @endif
+                                @include('components.solde_color')
+
 
                                 @if ($item->is_under_distributer)
                                     <div class="user-name">
@@ -370,8 +355,9 @@
                                                 </svg>
                                             </a>
 
-                                            <div class="dropdown-menu dropdown-large" >
-                                                <div  class="dropdown-content grid grid-cols-2 gap-2 p-3 max-h-72 overflow-y-auto">
+                                            <div class="dropdown-menu dropdown-large">
+                                                <div
+                                                    class="dropdown-content grid grid-cols-2 gap-2 p-3 max-h-72 overflow-y-auto">
 
                                                     @php
                                                         $limitedOperators = $operatorsCommissions->take(50);
@@ -457,7 +443,7 @@
 
                                                 </a>
 
-                                                <div class="dropdown-menu dropdown-xlarge" >
+                                                <div class="dropdown-menu dropdown-xlarge">
                                                     <div class="dropdown-content grid grid-cols-3 gap-2 p-3">
                                                         @foreach ($operators as $operator)
                                                             <label

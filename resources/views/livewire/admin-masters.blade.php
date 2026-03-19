@@ -65,26 +65,8 @@
                             </td>
                             <td class="w-60">
 
-                                @if (Auth::guard('web')->user()->hasPermissionTo('voir-couleurs'))
-                                    @php
-                                        $solde = $item->wallet->amount ?? 0.0;
-                                    @endphp
-                                    <div class="barre"
-                                        style="height: 20px; 
-                                        background-color: 
-                                            @if ($solde >= 100000) yellow;
-                                            @elseif ($solde >= 50000 && $solde < 100000)
-                                                blue;
-                                            @elseif ($solde > 0)
-                                                red;
-                                            @else
-                                                gray; @endif;">
-                                    </div>
-                                @endif
+                                @include('components.solde_color')
 
-                                <div class="user-phone mt-6">
-                                    {{ $item->email ?? 'Non renseigné' }}
-                                </div>
 
                             </td>
                             <td class="w-35">
@@ -141,7 +123,7 @@
 
                                             <div class="absolute right-0 top-0 mr-5 mt-3 dropdown">
                                                 <h2 class="intro-y text-lg font-medium ">
-                                                  <i class="fas fa-lock w-3 h-4 mr-2"></i>  Assigner
+                                                    <i class="fas fa-lock w-3 h-4 mr-2"></i> Assigner
                                                 </h2>
                                                 <a class="dropdown-toggle w-5 h-5 block" href="javascript:;"
                                                     aria-expanded="false" data-tw-toggle="dropdown"> <svg
@@ -163,20 +145,18 @@
                                                     style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px);">
                                                     <div class="dropdown-content">
                                                         @foreach ($operators as $operator)
-
-                                                         <label
-                                                            class="flex items-center px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
-                                                            <input
-                                                                 wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
-                                                                value="{{ $operator->id }}" type="checkbox"
-                                                                class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 transition-colors"
-                                                                @if (in_array($operator->id, $old_operators)) checked @endif>
-                                                            <span class="ml-3 text-sm text-slate-700 truncate flex-1">
-                                                                {{ $operator->name ?? 'Non renseigné' }}
-                                                            </span>
-                                                        </label>
-
-                                                     
+                                                            <label
+                                                                class="flex items-center px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
+                                                                <input
+                                                                    wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
+                                                                    value="{{ $operator->id }}" type="checkbox"
+                                                                    class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 transition-colors"
+                                                                    @if (in_array($operator->id, $old_operators)) checked @endif>
+                                                                <span
+                                                                    class="ml-3 text-sm text-slate-700 truncate flex-1">
+                                                                    {{ $operator->name ?? 'Non renseigné' }}
+                                                                </span>
+                                                            </label>
                                                         @endforeach
                                                     </div>
                                                 </div>

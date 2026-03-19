@@ -64,9 +64,7 @@
 
                             </td>
                             <td class="w-50">
-                                <div class="user-phone mt-6">
-                                    {{ $item->email ?? 'Non renseigné' }}
-                                </div>
+                                @include('components.solde_color')
 
                             </td>
                             <td>
@@ -142,13 +140,12 @@
                                                 </a>
 
 
-                                                <div class="dropdown-menu dropdown-large" 
+                                                <div class="dropdown-menu dropdown-large"
                                                     data-popper-placement="bottom-end"
                                                     style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px);">
                                                     <div class="dropdown-content">
                                                         @foreach ($operators as $operator)
-
-                                                        <label
+                                                            <label
                                                                 class="flex items-center px-3 py-2 hover:bg-slate-50 rounded-md cursor-pointer transition-colors">
                                                                 <input
                                                                     wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
@@ -169,7 +166,7 @@
                                     @if (Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur'))
                                         <a class="mr-1 mb-2 btn-sm mr-5 ml-5"
                                             href="{{ route('comzone.show_comzone', ['id' => $item->id]) }}">
-                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                                 icon-name="eye" data-lucide="eye"

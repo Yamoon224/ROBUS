@@ -83,14 +83,19 @@ class ProviderController extends Controller
             $cacheKey = "dashboard_data_user_" . robus()->id . "_country_" . $countrieId;
             // 1️⃣ Cas où l'app est indisponible
             if (!$appStatusResult['success']) {
+
                 $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
                 $walletTransactionDrawal = $this->percentRobus->getProvidersDrawalByType(new Provider, $countrieId, 29);
+                $walletTransactionReload = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 30);
+                
                 $dashboard_data['Transfert national'] = [
                     "Dépôts" => ProviderSingleCollection::collection($walletTransactionDepot),
                 ];
 
                 (robus()->is_under_distributer || robus()->is_api) ?  $dashboard_data['Retrait'] =  ProviderSingleCollection::collection($walletTransactionDrawal) : [];
-                
+
+                (robus()->is_custumers) ? $dashboard_data['Achat UV'] = ProviderSingleCollection::collection($walletTransactionReload) : [];
+
                 return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
             }
 

@@ -156,8 +156,81 @@ class Comzones extends Component
             $users->where("country_id", $this->countriesFilter);
         }
 
+
+        $users = $users->where('is_com_zone', true)
+            ->with(['wallet.sidUser.country.currencie']) // Charge les relations nécessaires pour la conversion
+            ->withSum('wallet as wallet_balance', 'amount')
+            ->orderByDesc('wallet_balance')
+            ->paginate($this->perPage ?? 30);
+
+        foreach ($users as $user) {
+            $solde = $user->wallet_balance ?? 0;
+            $currencyUser = $user->wallet?->sidUser?->country?->currencie?->value;
+            $senderCurrency = sabdy()->country?->currencie?->value;
+
+            // Logique de conversion
+            if ($senderCurrency > $currencyUser) {
+                $amount_solde = (float) $solde * (float) $senderCurrency;
+            } elseif ($senderCurrency == $currencyUser) {
+                $amount_solde = (float) $solde;
+            } elseif ($senderCurrency < $currencyUser) {
+                $amount_solde = (float) $solde * (float) $currencyUser;
+            } else {
+                $amount_solde = (float) $solde;
+            }
+
+            // Déterminer le niveau basé sur le montant en FCFA
+            if ($amount_solde >= 100000) {
+                $user->level_data = [
+                    'name' => 'Diamant',
+                    'color' => '#fbbf24',
+                    'bg' => '#fef3c7',
+                    'text' => '#92400e',
+                    'icon' => '💎',
+                    'next_level' => null,
+                    'next_target' => null,
+                    'percentage' => 100
+                ];
+            } elseif ($amount_solde >= 50000) {
+                $user->level_data = [
+                    'name' => 'Or',
+                    'color' => '#3b82f6',
+                    'bg' => '#dbeafe',
+                    'text' => '#1e40af',
+                    'icon' => '🥇',
+                    'next_level' => 'Diamant',
+                    'next_target' => 100000 - $amount_solde,
+                    'percentage' => ($amount_solde / 100000) * 100
+                ];
+            } elseif ($amount_solde > 0) {
+                $user->level_data = [
+                    'name' => 'Argent',
+                    'color' => '#10b981',
+                    'bg' => '#d1fae5',
+                    'text' => '#065f46',
+                    'icon' => '🥈',
+                    'next_level' => 'Or',
+                    'next_target' => 50000 - $amount_solde,
+                    'percentage' => ($amount_solde / 100000) * 100
+                ];
+            } else {
+                $user->level_data = [
+                    'name' => 'Bronze',
+                    'color' => '#9ca3af',
+                    'bg' => '#f3f4f6',
+                    'text' => '#4b5563',
+                    'icon' => '🥉',
+                    'next_level' => 'Argent',
+                    'next_target' => null,
+                    'percentage' => 0
+                ];
+            }
+
+            // Stocker le montant converti
+            $user->amount_fcfa = $amount_solde;
+        }
         return view('livewire.comzones', [
-            "users" => $users->where('is_com_zone', true)->orderBy('created_at', 'desc')->latest()->paginate(30),
+            "users" => $users,
             "countries" => Country::where('robus', true)->orderBy("name", 'desc')->get(),
             "operators" => Operator::whereStatus(true)->whereIsCom(true)->orderBy("name", 'desc')->get(),
 

@@ -83,28 +83,11 @@
                                     @include('components.infoUserDetails')
                                 </div>
                                 @include('components.infoDetailsUser')
-
+                               
                             </td>
                             <td class="w-60">
-                                @if (Auth::guard('web')->user()->hasPermissionTo('voir-couleurs'))
-                                    @php
-                                        $solde = $item->wallet->amount ?? 0.0;
-                                    @endphp
-                                    <div class="barre mb-3"
-                                        style="height: 20px; 
-                                        background-color: 
-                                            @if ($solde >= 100000) yellow;
-                                            @elseif ($solde >= 50000 && $solde < 100000)
-                                                blue;
-                                            @elseif ($solde > 0)
-                                                red;
-                                            @else
-                                                gray; @endif;">
-                                    </div>
-                                @endif
-                                <div class="user-phone mt-6 mb-3">
-                                    {{ $item->email ?? 'Non renseigné' }}
-                                </div>
+
+                                @include('components.solde_color')
 
                             </td>
 
