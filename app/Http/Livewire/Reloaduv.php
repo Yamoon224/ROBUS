@@ -584,7 +584,7 @@ class Reloaduv extends Component
                             . $walletTransaction->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
 
 
-                        sendTryCashMessage(robus()->phone, $message);
+                        sendTryCashMessage($wallet_search->sidUser->phone, $message);
                     }
 
 
