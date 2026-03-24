@@ -50,41 +50,52 @@
                           <div class="mb-3">
                               @include('components.info')
                           </div>
-                          <div class="p-4  rounded-lg shadow-sm">
+                          <div class="user-name">
+                              <div class="p-4  rounded-lg shadow-sm">
 
-                              <dl class="space-y-2 text-sm text-gray-700 mr-2">
-                                  <div class="flex justify-between">
-                                      <dt class="font-medium text-gray-900">Num :</dt>
-                                      <dd>{{ $item->num_accompte ?? '—' }}</dd>
-                                  </div>
+                                  <dl class="space-y-2 text-sm text-gray-700 mr-2">
+                                      <div class="flex justify-between">
+                                          <dt class="font-medium text-gray-900">Num :</dt>
+                                          <dd>{{ $item->num_accompte ?? '—' }}</dd>
+                                      </div>
 
-                                  <div class="flex justify-between mt-3">
-                                      <dt class="font-medium text-gray-900">Code Guichet :
-                                      </dt>
-                                      <dd>{{ $item->guichet_code ?? '—' }}</dd>
-                                  </div>
+                                      <div class="flex justify-between mt-3">
+                                          <dt class="font-medium text-gray-900">Code Guichet
+                                              :
+                                          </dt>
+                                          <dd>{{ $item->guichet_code ?? '—' }}</dd>
+                                      </div>
 
-                                  <div class="flex justify-between mt-3">
-                                      <dt class="font-medium text-gray-900">Code Banque :
-                                      </dt>
-                                      <dd>{{ $item->bank_code ?? '—' }}</dd>
-                                  </div>
+                                      <div class="flex justify-between mt-3">
+                                          <dt class="font-medium text-gray-900">Code Banque
+                                              :
+                                          </dt>
+                                          <dd>{{ $item->bank_code ?? '—' }}</dd>
+                                      </div>
 
-                                  <div class="flex justify-between mt-3">
-                                      <dt class="font-medium text-gray-900">Clé RIB :</dt>
-                                      <dd>{{ $item->num_authers ?? '—' }}</dd>
-                                  </div>
-                              </dl>
+                                      <div class="flex justify-between mt-3">
+                                          <dt class="font-medium text-gray-900">Clé RIB :
+                                          </dt>
+                                          <dd>{{ $item->num_authers ?? '—' }}</dd>
+                                      </div>
+                                      <div class="flex justify-between mt-3">
+                                          <dt class="font-medium text-gray-900">Nom & Prénom
+                                              :
+                                          </dt>
+                                          <dd>{{ $item->full_name ?? '—' }}</dd>
+                                      </div>
+                                  </dl>
 
 
+                              </div>
                           </div>
 
                       </td>
 
                       <td class="w-40">
-                         <div class="mb-3">
-                               @include('components.infoValidtedUser')
-                           </div>
+                          <div class="mb-3">
+                              @include('components.infoValidtedUser')
+                          </div>
 
                           @include('components.info_status')
 
@@ -101,7 +112,8 @@
                                   </div>
                               @elseif ($item->status == 'SUCCESS')
                                   @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                      <a target="_bank" href="{{ route('versment_transactions.invoice.print', $item->id) }}"
+                                      <a target="_bank"
+                                          href="{{ route('versment_transactions.invoice.print', $item->id) }}"
                                           class="btn btn-primary mr-1 mb-2 btn-sm" title="Facture">
                                           Facture
                                       </a>

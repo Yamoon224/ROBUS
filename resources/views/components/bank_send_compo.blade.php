@@ -159,36 +159,36 @@
 
                                                       </div>
                                                   @else
-                                                  <div class="user-name">
-                                                      {{ $item->phone ?? null }}
-                                                      <p class="font-medium whitespace-nowrap">
-                                                          Nom& Prenom(S) :
-                                                          {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
-
-                                                      </p>
-                                                      <p class="font-medium whitespace-nowrap mt-1">
-                                                          N0 : {{ $item->num_piece ?? null }}
-                                                      </p>
-                                                      <p class="font-medium whitespace-nowrap">
-                                                          Date validité :
-                                                          {{ $item->validated_date ? date('d-M-y', strtotime($item->validated_date)) : null }}
-                                                      </p>
-                                                      @if ($item->provider_id == 99)
+                                                      <div class="user-name">
+                                                          {{ $item->phone ?? null }}
                                                           <p class="font-medium whitespace-nowrap">
-                                                              Nom du bénéficiaire : {{ $item->name_benef ?? null }}
+                                                              Nom& Prenom(S) :
+                                                              {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
 
                                                           </p>
-                                                          <p class="font-medium whitespace-nowrap">
-                                                              Numero Compte banque :
-                                                              {{ $item->number_compte ?? null }}
-
+                                                          <p class="font-medium whitespace-nowrap mt-1">
+                                                              N0 : {{ $item->num_piece ?? null }}
                                                           </p>
                                                           <p class="font-medium whitespace-nowrap">
-                                                              Nom banque : {{ $item->name ?? null }}
-
+                                                              Date validité :
+                                                              {{ $item->validated_date ? date('d-M-y', strtotime($item->validated_date)) : null }}
                                                           </p>
-                                                      @endif
-                                                        </div>
+                                                          @if ($item->provider_id == 99)
+                                                              <p class="font-medium whitespace-nowrap">
+                                                                  Nom du bénéficiaire : {{ $item->name_benef ?? null }}
+
+                                                              </p>
+                                                              <p class="font-medium whitespace-nowrap">
+                                                                  Numero Compte banque :
+                                                                  {{ $item->number_compte ?? null }}
+
+                                                              </p>
+                                                              <p class="font-medium whitespace-nowrap">
+                                                                  Nom banque : {{ $item->name ?? null }}
+
+                                                              </p>
+                                                          @endif
+                                                      </div>
                                                   @endif
 
                                               </td>

@@ -1,9 +1,10 @@
 [
   {
-    "city": "Luanda", 
+    "name": "Luanda", 
     "lat": "-8.8383", 
     "lng": "13.2344", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Luanda", 
      
@@ -11,21 +12,23 @@
     "population_proper": "2165867"
   }, 
   {
-    "city": "Cacuaco", 
+    "name": "Cacuaco", 
     "lat": "-8.8053", 
     "lng": "13.2444", 
     "country_id":8, 
-    
+    "status" : true, 
+        
     "admin_name": "Luanda", 
      
     "population": "1279488", 
     "population_proper": "1279488"
   }, 
   {
-    "city": "Cazenga", 
+    "name": "Cazenga", 
     "lat": "-8.8214", 
     "lng": "13.2911", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Luanda", 
      
@@ -33,10 +36,11 @@
     "population_proper": "1045722"
   }, 
   {
-    "city": "Lubango", 
+    "name": "Lubango", 
     "lat": "-14.9167", 
     "lng": "13.5000", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Huíla", 
      
@@ -44,10 +48,11 @@
     "population_proper": "776249"
   }, 
   {
-    "city": "Cabinda", 
+    "name": "Cabinda", 
     "lat": "-5.5600", 
     "lng": "12.1900", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Cabinda", 
      
@@ -55,10 +60,11 @@
     "population_proper": "739182"
   }, 
   {
-    "city": "Huambo", 
+    "name": "Huambo", 
     "lat": "-12.7767", 
     "lng": "15.7347", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Huambo", 
      
@@ -66,10 +72,11 @@
     "population_proper": "665564"
   }, 
   {
-    "city": "Malanje", 
+    "name": "Malanje", 
     "lat": "-9.5333", 
     "lng": "16.3500", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Malanje", 
      
@@ -77,10 +84,11 @@
     "population_proper": "604215"
   }, 
   {
-    "city": "Benguela", 
+    "name": "Benguela", 
     "lat": "-12.5500", 
     "lng": "13.4167", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Benguela", 
      
@@ -88,10 +96,11 @@
     "population_proper": "512886"
   }, 
   {
-    "city": "Belas", 
+    "name": "Belas", 
     "lat": "-8.9983", 
     "lng": "13.2650", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Luanda", 
      
@@ -99,10 +108,11 @@
     "population_proper": "500000"
   }, 
   {
-    "city": "Talatona", 
+    "name": "Talatona", 
     "lat": "-8.9167", 
     "lng": "13.1833", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Luanda", 
      
@@ -110,10 +120,11 @@
     "population_proper": "500000"
   }, 
   {
-    "city": "Lobito", 
+    "name": "Lobito", 
     "lat": "-12.3667", 
     "lng": "13.5333", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Benguela", 
      
@@ -121,10 +132,11 @@
     "population_proper": "393079"
   }, 
   {
-    "city": "Saurimo", 
+    "name": "Saurimo", 
     "lat": "-9.6500", 
     "lng": "20.4000", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Lunda-Sul", 
      
@@ -132,10 +144,11 @@
     "population_proper": "393000"
   }, 
   {
-    "city": "Cubal", 
+    "name": "Cubal", 
     "lat": "-13.0333", 
     "lng": "14.2500", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Benguela", 
      
@@ -143,10 +156,11 @@
     "population_proper": "357618"
   }, 
   {
-    "city": "Luena", 
+    "name": "Luena", 
     "lat": "-11.7918", 
     "lng": "19.9062", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Moxico", 
      
@@ -154,10 +168,11 @@
     "population_proper": "357413"
   }, 
   {
-    "city": "Cuito", 
+    "name": "Cuito", 
     "lat": "-12.3833", 
     "lng": "16.9333", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Bié", 
      
@@ -165,10 +180,11 @@
     "population_proper": "114000"
   }, 
   {
-    "city": "Uíge", 
+    "name": "Uíge", 
     "lat": "-7.6167", 
     "lng": "15.0500", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Uíge", 
      
@@ -176,10 +192,11 @@
     "population_proper": "322531"
   }, 
   {
-    "city": "Menongue", 
+    "name": "Menongue", 
     "lat": "-14.6556", 
     "lng": "17.6842", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Cuando Cubango", 
      
@@ -187,10 +204,11 @@
     "population_proper": "320914"
   }, 
   {
-    "city": "Vila Teixeira da Silva", 
+    "name": "Vila Teixeira da Silva", 
     "lat": "-12.1958", 
     "lng": "15.8556", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Huambo", 
      
@@ -198,10 +216,11 @@
     "population_proper": "294494"
   }, 
   {
-    "city": "Sumbe", 
+    "name": "Sumbe", 
     "lat": "-11.2053", 
     "lng": "13.8417", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Cuanza-Sul", 
      
@@ -209,10 +228,11 @@
     "population_proper": "279968"
   }, 
   {
-    "city": "Gabela", 
+    "name": "Gabela", 
     "lat": "-10.8500", 
     "lng": "14.3667", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Cuanza-Sul", 
      
@@ -220,10 +240,11 @@
     "population_proper": "271843"
   }, 
   {
-    "city": "Ndulo", 
+    "name": "Ndulo", 
     "lat": "-11.4833", 
     "lng": "15.8333", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Huambo", 
      
@@ -231,10 +252,11 @@
     "population_proper": "258161"
   }, 
   {
-    "city": "Moçâmedes", 
+    "name": "Moçâmedes", 
     "lat": "-15.1953", 
     "lng": "12.1508", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Namibe", 
      
@@ -242,10 +264,11 @@
     "population_proper": "255000"
   }, 
   {
-    "city": "Ganda", 
+    "name": "Ganda", 
     "lat": "-13.0167", 
     "lng": "14.6333", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Benguela", 
      
@@ -253,10 +276,11 @@
     "population_proper": "235486"
   }, 
   {
-    "city": "Uacu Cungo", 
+    "name": "Uacu Cungo", 
     "lat": "-11.3583", 
     "lng": "15.1194", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Cuanza-Sul", 
      
@@ -264,10 +288,11 @@
     "population_proper": "225520"
   }, 
   {
-    "city": "Mbanza Kongo", 
+    "name": "Mbanza Kongo", 
     "lat": "-6.2678", 
     "lng": "14.2481", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Zaire", 
      
@@ -275,10 +300,11 @@
     "population_proper": "180329"
   }, 
   {
-    "city": "Dundo", 
+    "name": "Dundo", 
     "lat": "-7.3801", 
     "lng": "20.8351", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Lunda-Norte", 
      
@@ -286,10 +312,11 @@
     "population_proper": "177604"
   }, 
   {
-    "city": "Ndalatando", 
+    "name": "Ndalatando", 
     "lat": "-9.3000", 
     "lng": "14.9167", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Cuanza-Norte", 
      
@@ -297,10 +324,11 @@
     "population_proper": "161584"
   }, 
   {
-    "city": "Ondjiva", 
+    "name": "Ondjiva", 
     "lat": "-17.0667", 
     "lng": "15.7333", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Cunene", 
      
@@ -308,10 +336,11 @@
     "population_proper": "121537"
   }, 
   {
-    "city": "Caxito", 
+    "name": "Caxito", 
     "lat": "-8.5800", 
     "lng": "13.6642", 
-    "country_id":8, 
+      "country_id":8, 
+    "status" : true, 
     
     "admin_name": "Bengo", 
      

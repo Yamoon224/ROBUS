@@ -137,7 +137,31 @@ class TransfertServiceBackend
                 'choose_type_transaction' => 1,
                 'amount_received'  => $valeur_receive,
                 'balance_before' => sabdy()->wallet->amount,
+                'type_transaction' => 'Réequilibrage',
+                'type_received' => 'Transfert',
+                'status'  => "SUCCESS",
+                'amount_solde'  => $amount_solde ?? null,
+                'amount_solde_drawal' => $amount_drawal ?? null,
+                'amount_solde_before_drawal' => $amount_before_drawal ?? null,
+            ]
+        );
+    }
 
+     public function createWalletTransactionCommissionReload($walletUser, $relaod_uv_amout_robus, $provider, $account_reload_uv, $valeur_receive, $amount_solde , $balance_before, $amount_drawal , $amount_before_drawal)
+    {
+
+        return  WalletTransaction::create(
+            [
+                'wallet_id' =>   $walletUser->wallet->id,
+                'amount' => $relaod_uv_amout_robus,
+                'description'  => "remboursement",
+                'created_by' => Auth::guard('web')->user()->id,
+                'provider_id'  =>  $provider->id,
+                'num_wallet'  => $account_reload_uv,
+                'costs_amount' => 0,
+                'choose_type_transaction' => 1,
+                'amount_received'  => $valeur_receive,
+                'balance_before' => $balance_before,
                 'type_transaction' => 'Réequilibrage',
                 'type_received' => 'Transfert',
                 'status'  => "SUCCESS",

@@ -21,8 +21,32 @@
           </tr>
       </thead>
       <tbody>
-          @if ($verment_historicals->count() > 0)
-              @foreach ($verment_historicals as $key => $item)
+          @if ($bankSend_historicals->count() > 0)
+              @foreach ($bankSend_historicals as $key => $item)
+                  @php
+                      $userCurrencyValue = (float) sabdy()->country->currencie->value;
+                      $itemCurrencyValue = (float) $item->country->currencie->value;
+                      $amountReceived = (float) $item->amount_received;
+
+                      /**
+                       * Cas 1 : le pays de la transaction est CFA (107)
+                       * → montant stocké en CFA → convertir vers devise utilisateur
+                       */
+                      if ($item->country->id == 107) {
+                          $valeur_amount_receveid =
+                              $userCurrencyValue > 0 ? $amountReceived / $userCurrencyValue : null;
+                      } /**
+                       * Cas 2 : le pays de la transaction n'est PAS CFA
+                       * → convertir vers CFA puis vers devise utilisateur
+                       */ else {
+                          // Étape 1 : montant → CFA
+                          $amountInCfa = $amountReceived * $itemCurrencyValue;
+
+                          // Étape 2 : CFA → devise utilisateur
+                          $valeur_amount_receveid = $userCurrencyValue > 0 ? $amountInCfa / $userCurrencyValue : null;
+                      }
+                  @endphp
+
                   <tr class="intro-x">
                       <td class="text-center w-40">
                           <div
@@ -42,7 +66,18 @@
                       </td>
                       <td>
 
-                          @include('components.walletBalance')
+                          <div class="mb-3">
+                              <div
+                                  class="px-3 py-2 text-dark bg-blue-900 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                  <div class="fc-event-title-container" style="color: white;">
+                                      <div class="fc-event-title fc-sticky">
+                                          {{ $item->country->name ?? null }}
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+
+                          @include('components.walletBalanceInter')
 
                       </td>
 
@@ -50,41 +85,43 @@
                           <div class="mb-3">
                               @include('components.info')
                           </div>
-                          <div class="p-4  rounded-lg shadow-sm">
+                          <div class="user-name">
+                              {{ $item->phone ?? null }}
+                              <p class="font-medium whitespace-nowrap">
+                                  Nom& Prenom(S) :
+                                  {{ $item->name_complet ?? $item->wallet->sidUser->firstname }}
 
-                              <dl class="space-y-2 text-sm text-gray-700 mr-2">
-                                  <div class="flex justify-between">
-                                      <dt class="font-medium text-gray-900">Num :</dt>
-                                      <dd>{{ $item->num_accompte ?? '—' }}</dd>
-                                  </div>
+                              </p>
+                              <p class="font-medium whitespace-nowrap mt-1">
+                                  N0 : {{ $item->num_piece ?? null }}
+                              </p>
+                              <p class="font-medium whitespace-nowrap">
+                                  Date validité :
+                                  {{ $item->validated_date ? date('d-M-y', strtotime($item->validated_date)) : null }}
+                              </p>
+                              @if ($item->provider_id == 99)
+                                  <p class="font-medium whitespace-nowrap">
+                                      Nom du bénéficiaire : {{ $item->name_benef ?? null }}
 
-                                  <div class="flex justify-between mt-3">
-                                      <dt class="font-medium text-gray-900">Code Guichet :
-                                      </dt>
-                                      <dd>{{ $item->guichet_code ?? '—' }}</dd>
-                                  </div>
+                                  </p>
+                                  <p class="font-medium whitespace-nowrap">
+                                      Numero Compte banque :
+                                      {{ $item->number_compte ?? null }}
 
-                                  <div class="flex justify-between mt-3">
-                                      <dt class="font-medium text-gray-900">Code Banque :
-                                      </dt>
-                                      <dd>{{ $item->bank_code ?? '—' }}</dd>
-                                  </div>
+                                  </p>
+                                  <p class="font-medium whitespace-nowrap">
+                                      Nom banque : {{ $item->name ?? null }}
 
-                                  <div class="flex justify-between mt-3">
-                                      <dt class="font-medium text-gray-900">Clé RIB :</dt>
-                                      <dd>{{ $item->num_authers ?? '—' }}</dd>
-                                  </div>
-                              </dl>
-
-
+                                  </p>
+                              @endif
                           </div>
 
                       </td>
 
                       <td class="w-40">
-                         <div class="mb-3">
-                               @include('components.infoValidtedUser')
-                           </div>
+                          <div class="mb-3">
+                              @include('components.infoValidtedUser')
+                          </div>
 
                           @include('components.info_status')
 
@@ -101,7 +138,8 @@
                                   </div>
                               @elseif ($item->status == 'SUCCESS')
                                   @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                      <a target="_bank" href="{{ route('versment_transactions.invoice.print', $item->id) }}"
+                                      <a target="_bank"
+                                          href="{{ route('versment_transactions.invoice.print', $item->id) }}"
                                           class="btn btn-primary mr-1 mb-2 btn-sm" title="Facture">
                                           Facture
                                       </a>

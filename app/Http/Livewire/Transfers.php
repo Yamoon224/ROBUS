@@ -759,23 +759,33 @@ class Transfers extends Component
         }
 
         try {
+
             // 3. UNE SEULE REQUÊTE ATOMIQUE ⚡
-            $updated = $config['model']::where('id', $id)
-                ->where('status', 'PENDING')
-                ->whereNull('updated_by')
-                ->lockForUpdate()
-                ->update([
+  
+            DB::transaction(function () use ($config, $id) {
+                // Récupérer la transaction
+                $transaction = $config['model']::where('id', $id)
+                    ->where('status', 'PENDING')
+                    ->whereNull('updated_by')
+                    ->lockForUpdate()
+                    ->first();
+
+                // Vérifier si la transaction existe
+                if (!$transaction) {
+                    throw new \Exception('Transaction déjà traitée ou inexistante');
+                }
+
+                // Mettre à jour la transaction
+                $transaction->update([
                     'updated_by' => sabdy()->id,
                     'status' => 'PROCESSING',
                     'updated_at' => now()
                 ]);
 
-            // 4. SI DÉJÀ TRAITÉ
-            if ($updated === 0) {
-                $this->emit($config['menu']);
-                $this->emit('info', 'Cette transaction a déjà été traitée.');
-                return;
-            }
+                // Dispatcher l'événement (dans la transaction)
+                event(new $config['event']($transaction));
+
+            });
 
             // 5. SUCCÈS - UN SEUL EMIT ! 
             $this->emit('transaction-taken', [
@@ -790,12 +800,6 @@ class Transfers extends Component
 
             // 7. NOTIFICATION SUCCÈS
             $this->emit('success', $config['successMessage']);
-
-            // 8. ÉVÉNEMENT ASYNCHRONE (NE BLOQUE PAS)
-            dispatch(function () use ($config, $id) {
-                $wallet = $config['model']::find($id);
-                event(new $config['event']($wallet));
-            })->afterResponse();
         } catch (\Throwable $e) {
             // 9. GESTION ERREUR
             report($e);
@@ -5035,7 +5039,6 @@ class Transfers extends Component
                 $q->where('wallet_transactions.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_transactions.status', 'PROCESSING')
-                            ->where('wallet_transactions.updated_by', $walletUser->id)
                             ->where('wallet_transactions.provider_id', '!=', 9);
                         if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
                             $q2->where('wallet_transactions.updated_by', $walletUser->id);
@@ -5631,7 +5634,6 @@ class Transfers extends Component
                 'description_distributer' => 'Validation distributeur',
             ]);
         }
-
     }
 
 

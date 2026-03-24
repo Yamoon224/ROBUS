@@ -97,6 +97,36 @@ class UserController extends Controller
     }
 
 
+
+    public function resetAccoumpte($userId, Request $request)
+    {
+
+        $user = SidUser::findOrFail($userId);
+
+        if (!$user->account_xbet) {
+            return back()->with('status', 'Le numero de compte Xbet inexistant.');
+        }
+
+        $wallets = WalletXbet::where('wallet_id', $user->wallet->id)
+            ->whereNotNull('num_acompte')
+            ->get();
+
+        foreach ($wallets as $wallet) {
+            // Modifier seulement si différent
+            if ($wallet->num_acompte != $request->account_xbet) {
+                $wallet->num_acompte = $request->account_xbet;
+                $wallet->save();
+            }
+        }
+
+        $user->update([
+            'account_xbet' => $request->account_xbet
+        ]);
+
+        return back()->with('status', 'Comptes réinitialisés avec succès.');
+    }
+
+
     public function browse_propects(Request $request)
     {
         if (Auth::guard('web')->user()->hasPermissionTo('integrateurs')) {

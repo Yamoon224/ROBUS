@@ -88,7 +88,7 @@
                     <button wire:click="addTransactionCommission" type="button" wire:loading.attr="disabled"
                         wire:target="addTransactionCommission" class="btn btn-primary w-50">
 
-                        <!-- Texte normal -->
+                        <!--985995.8 986095.8 Texte normal -->
                         <span wire:loading.remove wire:target="addTransactionCommission" class="flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
                                 fill="currentColor">

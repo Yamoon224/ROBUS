@@ -191,6 +191,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('prospects/details/{id}', [AdminController::class, 'show_propects'])->name('users.prospects.details');
 
             Route::post('/logout-user/{id}', [UserController::class, 'forceLogoutUser'])->name('logoutUsers.browse');
+            Route::post('/reset_accompte_xbet/{id}', [UserController::class, 'resetAccoumpte'])->name('reset_accompte_xbet.browse');
             Route::get('/browse_company', [UserController::class, 'browse_company'])->name('company.browse');
             // Route::get('/browse_comzone', [UserController::class, 'browse_comzone'])->name('comzone.browse');
             Route::get('/browse_invalidated', [UserController::class, 'browse_invalidated'])->name('custumers.browse_invalidated');

@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Custumers\Country;
 use App\Http\Services\ConvertionService;
+use App\Models\Sid\SidUser;
 
 class OnexbetTransactionController extends Controller
 {
@@ -216,7 +217,6 @@ class OnexbetTransactionController extends Controller
 
                         $percent_robus =  $this->percentRobus->getRobusPercentageOnexbet();
 
-
                         if ($percent_robus != null) {
 
                                 if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
@@ -246,6 +246,7 @@ class OnexbetTransactionController extends Controller
                                                         return json_message_response(false, "Vérifiez votre solde !!", 341);
                                                 }
                                         } else {
+
                                                 if ($this->validatedamountDays->validateAmount($val_amount_send)) {
 
                                                         if ($request->choose_type_transaction == 1) {
@@ -299,9 +300,15 @@ class OnexbetTransactionController extends Controller
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
 
-                // Mettre à jour le montant reçu dans le service OneXbet
                 if (!$this->oneXbetService->updateamountOneBetReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletXbet, $request->amount, $val_amount_send)) {
                         return ['success' => false, 'message' => 'Erreur lors de la mise à jour du montant reçu!'];
+                }
+
+                if (robus()->is_custumers) {
+                        SidUser::whereId(robus()->id)->update(
+                                'account_xbet',
+                                $request->id_xbet
+                        );
                 }
 
                 return ['success' => true, 'walletXbet' => $walletXbet];
@@ -440,7 +447,7 @@ class OnexbetTransactionController extends Controller
                                 }
                                 $commission_wave_val_nat_receive = $reel_amount - $commission_wave_val_nat_pay;
 
-                               $commission_conversion_val_nat_receive =   $this->convertionservice->convertAdminCommission($commission_wave_val_nat_receive);
+                                $commission_conversion_val_nat_receive =   $this->convertionservice->convertAdminCommission($commission_wave_val_nat_receive);
                         } else {
                                 return response()->json([
                                         'success' => false,
@@ -517,6 +524,7 @@ class OnexbetTransactionController extends Controller
 
                         $is_drawal = filter_var($is_drawal, FILTER_VALIDATE_BOOLEAN);
 
+
                         // 🔎 Récupération du wallet
                         $wallet = Wallet::where('wallet_id', $wallet_id)->first();
 
@@ -527,6 +535,19 @@ class OnexbetTransactionController extends Controller
                                 ], 404);
                         }
 
+                        $account_xbet =  $wallet->sidUser->account_xbet;
+
+                        if ($account_xbet) {
+                                // Le compte existe sur le profil, on le retourne immédiatement
+                                return response()->json([
+                                        'success' => true,
+                                        'num_acompte' => $account_xbet,
+                                        'data' => "Dépôt",
+                                        'message' => 'Compte XBET trouvé sur le profil utilisateur.',
+                                        'city_robus' => $walletXbet->city_robus ?? null,
+                                        'street_robus' => $walletXbet->street_robus ?? null,
+                                ], 200);
+                        }
                         // 🔁 Recherche XBET
                         $query = WalletXbet::where('wallet_id', $wallet->id);
 
@@ -547,7 +568,7 @@ class OnexbetTransactionController extends Controller
                                 return response()->json([
                                         'success' => true,
                                         'data' => $walletXbet->choose_type_transaction == 1 ? "Dépôt" : "Retrait",
-                                        'num_acompte' => $walletXbet->num_acompte ?? null,
+                                        'num_acompte' =>  $walletXbet->num_acompte ?? null,
                                         'city_robus' => $walletXbet->city_robus ?? null,
                                         'street_robus' => $walletXbet->street_robus ?? null,
                                 ], 200);

@@ -57,13 +57,9 @@
 
 
                                   @if ($item->image)
-                                      @if ($item->is_livewire === true)
-                                          <img src="{{ asset('storage/' . $item->image) }}" alt="QR Code Djamo"
-                                              class="w-24 h-24 object-contain rounded-lg border border-gray-300 shadow-sm">
-                                      @else
-                                          <img src="{{ $item->image }}" alt="QR Code Djamo"
-                                              class="w-24 h-24 object-contain rounded-lg border border-gray-300 shadow-sm">
-                                      @endif
+                                      <img src="{{ asset_url($item->image) ?? asset_url('image_inters/' . $item->image) }}"
+                                          alt="QR Code Djamo"
+                                          class="w-24 h-24 object-contain rounded-lg border border-gray-300 shadow-sm">
                                   @else
                                       <span class="text-gray-400 italic">Aucune image
                                           disponible</span>

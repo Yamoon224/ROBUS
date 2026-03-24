@@ -73,8 +73,7 @@
 
                                         </td>
                                         <td class="w-60">
-                                            @include('components.walletBalanceConvertion')
-
+                                            @include('components.infoUserSoldeUnder')
 
                                         </td>
 
