@@ -2,760 +2,489 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ 'FACTURE' }}</title>
+    <title>FACTURE - {{ $walletInters->transactionInter->transaction_id ?? 'N/A' }}</title>
+
+    <link rel="stylesheet" href="{{ asset_url('css/invoice.css') }}?v={{ filemtime(public_path('css/invoice.css')) }}" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="UTF-8">
-    <style media="all">
-        @page {
-            padding: 0;
-            margin: 20px;
-        }
 
-        body {
-            font-size: 0.75rem;
-            font-family: '<?php echo $font_family; ?>';
-            font-weight: normal;
-            direction: <?php echo $direction; ?>;
-            text-align: <?php echo $default_text_align; ?>;
-            padding: 0;
-            margin: 0;
-            color: #232323;
-        }
-
-        table {
-            width: 100%;
-        }
-
-        table th {
-            font-weight: normal;
-        }
-
-        table.padding th {
-            padding: 0 .8rem;
-        }
-
-        table.padding td {
-            padding: .8rem;
-        }
-
-        table.sm-padding td {
-            padding: .5rem .7rem;
-        }
-
-        table.lg-padding td {
-            padding: 1rem 1.2rem;
-        }
-
-        .border-bottom td,
-        .border-bottom th {
-            border-bottom: 1px solid #eceff4;
-        }
-
-        .text-left {
-            text-align: <?php echo $default_text_align; ?>;
-        }
-
-        .text-right {
-            text-align: <?php echo $reverse_text_align; ?>;
-        }
-
-        .bold {
-            font-weight: bold
-        }
-    </style>
 </head>
 
 <body>
-    <div>
-        <div style="padding:0px 19px;">
-            <table>
-                <thead>
-                    <tr>
-                        <th width="50%"></th>
-                        <th width="50%"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <img src="{{ asset_url('dist/images/logo_robus.png') }}" height="30"
-                                                style="display:inline-block;margin-bottom:10px">
 
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="" class="bold">{{ env('APP_NAME') }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="">{{ 'Adresse de la facture' }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="">{{ 'Email' }}:
-                                            {{ env('EMAIL_USER') }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="">{{ 'Telephone' }}:
-                                            {{ env('PHONE_USE') }}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </td>
-                        <td>
-                            <table class="text-right">
-                                <tbody>
-                                    <tr>
-                                        <td style="font-size: 2rem;" class="bold">{{ 'Facture' }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="">
-                                            <span class=" ">{{ 'Code du  wallet' }}:</span>
-                                            <span class="bold"
-                                                style="color: #ED2939">{{ $walletInters->wallet->wallet_id ?? null }}</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="">
-                                            <span class=" ">{{ 'Date de la demande' }}:</span>
-                                            <span
-                                                class="bold">{{ $walletInters->created_at->format('d.m.Y') ?? null }}</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span class=" ">{{ 'Date traitement' }}:</span>
-                                            <span class="bold"
-                                                style="text-transform: capitalize">{{ $walletInters->transactionInter->created_at ?? null }}</span>
-                                        </td>
-
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span class=" ">{{ 'Reference' }}:</span>
-                                            <span class="bold"
-                                                style="text-transform: capitalize">{{ $walletInters->transactionInter->transaction_id ?? null }}</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div style="margin:15px 8px;clear:both ; text-center;font-size: 20px;">
-            {{ 'Statut' }} :
-            @if ($walletInters->status == 'SUCCESS')
-                <div style="color: green;font-size: 20px;">
-                    {{ 'Accepté' }}
+    <div class="invoice">
+        <!-- Header compact -->
+        <div class="header">
+            <div class="logo-area">
+                @if (isset($logo) && $logo)
+                    <img src="{{ $logo }}" height="35" alt="Logo">
+                @else
+                    <strong style="font-size: 14pt; color: #3498db;">{{ env('APP_NAME', 'Application') }}</strong>
+                @endif
+                <div style="font-size: 7pt; color: #7f8c8d; margin-top: 2px;">
+                    {{ env('APP_ADDRESS', 'Adresse') }}<br>
+                    Tél: {{ env('PHONE_USE', 'N/A') }} | Email: {{ env('EMAIL_USER', 'N/A') }}
                 </div>
-            @elseif ($walletInters->status == 'REFUND')
-                <div style="color:#ED2939;font-size: 20px;">
-                    {{ 'Remboursé' }}
+            </div>
+            <div class="title-area">
+                <h1>FACTURE</h1>
+                <p>N° {{ $walletInters->transactionInter->transaction_id ?? 'N/A' }}</p>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <!-- Infos transaction -->
+        <div class="row">
+            <div class="col-left">
+                <table class="info-table">
+                    <tr>
+                        <td class="label">Code wallet:</td>
+                        <td class="value bold">{{ $walletInters->wallet->wallet_id ?? 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Date demande:</td>
+                        <td class="value">
+                            {{ $walletInters->created_at ? date('d/m/Y H:i', strtotime($walletInters->created_at)) : 'N/A' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">Date traitement:</td>
+                        <td class="value">
+                            {{ isset($walletInters->transactionInter->created_at) ? date('d/m/Y H:i', strtotime($walletInters->transactionInter->created_at)) : 'N/A' }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-right">
+                <table class="info-table">
+                    <tr>
+                        <td class="label">Statut:</td>
+                        <td class="value">
+                            @if ($walletInters->status == 'SUCCESS')
+                                <span class="status-badge status-success">✓ ACCEPTÉ</span>
+                            @elseif($walletInters->status == 'REFUND')
+                                <span class="status-badge status-refund">↺ REMBOURSÉ</span>
+                            @else
+                                <span class="status-badge status-pending">⏳ EN ATTENTE</span>
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">Référence:</td>
+                        <td class="value bold">{{ $walletInters->transactionInter->transaction_id ?? 'N/A' }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Description (si présente) -->
+        @if ($walletInters->description)
+            <div class="description">
+                « {{ $walletInters->description }} »
+            </div>
+        @endif
+
+        <!-- Client - Version compacte -->
+        <div class="section">
+            <div class="section-title">CLIENT</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Nom complet</div>
+                    <div class="info-value bold">
+                        {{ $walletInters->wallet->sidUser->firstname ?? ($walletInters->wallet->user->firstname ?? 'N/A') }}
+                        {{ $walletInters->wallet->sidUser->lastname ?? ($walletInters->wallet->user->lastname ?? '') }}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Téléphone</div>
+                    <div class="info-value">
+                        {{ $walletInters->wallet->sidUser->phone ?? ($walletInters->wallet->user->phone ?? 'N/A') }}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Pays / Ville</div>
+                    <div class="info-value">
+                        {{ $walletInters->wallet->sidUser->country->name ?? ($walletInters->wallet->user->country->name ?? 'N/A') }}
+                        /
+                        {{ $walletInters->wallet->sidUser->city->name ?? ($walletInters->wallet->user->city->name ?? 'N/A') }}
+                    </div>
+                </div>
+                @if (isset($walletInters->wallet->sidUser->is_under_distributer) &&
+                        $walletInters->wallet->sidUser->is_under_distributer == 1)
+                    <div class="info-item">
+                        <div class="info-label">Distributeur</div>
+                        <div class="info-value" style="color:#e74c3c;">{{ $walletInters->wallet->wallet_id ?? 'N/A' }}
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- Détails transaction -->
+        <div class="section">
+            <div class="section-title">DÉTAILS</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Opérateur</div>
+                    <div class="info-value bold">{{ $walletInters->provider->name ?? 'N/A' }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Devise</div>
+                    <div class="info-value">{{ $walletInters->wallet->currencie->code ?? 'FCFA' }}</div>
+                </div>
+                @if (isset($walletInters->phone))
+                    <div class="info-item">
+                        <div class="info-label">Numéro</div>
+                        <div class="info-value">{{ $walletInters->phone }}</div>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Tableau des montants -->
+            <table class="amount-table">
+                <tr>
+                    <td class="label">Montant demandé</td>
+                    <td class="value">{{ number_format($walletInters->amount ?? 0, 0, ',', ' ') }}
+                        {{ $walletInters->wallet->currencie->code ?? 'FCFA' }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Montant reçu</td>
+                    <td class="value bold">{{ number_format($walletInters->amount_received ?? 0, 0, ',', ' ') }}
+                        {{ $walletTransfers->wallet->currencie->name ?? null }}</td>
+                </tr>
+                <tr>
+                    <td class="label">Frais</td>
+                    <td class="value">{{ number_format($walletInters->costs_amount ?? 0, 0, ',', ' ') }}
+                        {{ $walletInters->wallet->currencie->code ?? 'FCFA' }}</td>
+                </tr>
+                <tr class="total-row">
+                    <td class="label bold">TOTAL À PAYER</td>
+                    <td class="value bold">{{ number_format($walletInters->amount ?? 0, 0, ',', ' ') }}
+                        {{ $walletInters->wallet->currencie->code ?? 'FCFA' }}</td>
+                </tr>
+            </table>
+
+            @if ($walletInters->provider_type == 1)
+                @if ($walletInters->provider->name == 'ROBUS')
+                    <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #ecf0f1;">
+                        @php
+                            $wallet_info = \App\Models\Wallets\Wallet::where(
+                                'wallet_id',
+                                $walletInters->number_compte,
+                            )->first();
+
+                        @endphp
+                        <div class="info-label" style="margin-bottom: 4px;">DETAILS DESTINATAIRE</div>
+
+                        <div class="section">
+                            <div class="section-title">Details destinataire</div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">Nom complet</div>
+                                    <div class="info-value bold">
+                                        {{ $wallet_info->sidUser->firstname ?? ($wallet_info->user->firstname ?? 'N/A') }}
+                                        {{ $wallet_info->sidUser->lastname ?? ($wallet_info->user->lastname ?? '') }}
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Téléphone</div>
+                                    <div class="info-value">
+                                        {{ $wallet_info->sidUser->phone ?? ($wallet_info->user->phone ?? 'N/A') }}
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Pays / Ville</div>
+                                    <div class="info-value">
+                                        {{ $wallet_info->sidUser->country->name ?? ($wallet_info->user->country->name ?? 'N/A') }}
+                                        /
+                                        {{ $wallet_info->sidUser->city->name ?? ($wallet_info->user->city->name ?? 'N/A') }}
+                                    </div>
+                                </div>
+                                @if (isset($wallet_info->sidUser->is_under_distributer) && $wallet_info->sidUser->is_under_distributer == 1)
+                                    <div class="info-item">
+                                        <div class="info-label">Distributeur</div>
+                                        <div class="info-value" style="color:#e74c3c;">
+                                            {{ $wallet_info->wallet_id ?? 'N/A' }}</div>
+                                    </div>
+                                @endif
+                            </div>
+
+                        </div>
+                    </div>
+                @else
+                    <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #ecf0f1;">
+
+                        <div class="info-label" style="margin-bottom: 4px;">DETAILS DESTINATAIRE</div>
+
+                        <div class="section">
+                            <div class="section-title">Details destinataire</div>
+                            <div class="info-grid">
+
+                                <div class="info-item">
+                                    <div class="info-label">Téléphone</div>
+                                    <div class="info-value">
+                                        {{ $walletInters->phone ?? $walletInters->number_compte }}
+                                    </div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Pays</div>
+                                    <div class="info-value">
+                                        {{ $walletInters->country->name ?? null }}
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                @endif
+            @elseif($walletInters->provider_type == 5)
+                @if ($walletInters->provider->name == 'CANAL')
+                    <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #ecf0f1;">
+                        <div class="info-label" style="margin-bottom: 4px;">Paiement de facture CANAL+</div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">
+                                    @if ($walletInters->number_phone != null)
+                                        Numero de telephone(10 chiffres)
+                                    @else
+                                        Numero du decodeur(14 chiffres)
+                                    @endif
+                                </div>
+                                <div class="info-value">
+                                    {{ $walletInters->number_phone ?? $walletInters->number_decoder }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">
+                                    Offre
+                                </div>
+                                <div class="info-value">
+                                    {{ $walletInters->offer->name ?? null }}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                @elseif ($walletInters->provider->name == 'CIE')
+                    <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #ecf0f1;">
+                        <div class="info-label" style="margin-bottom: 4px;">Paiement de facture CANAL+</div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">
+                                    Nom de de facture
+                                </div>
+                                <div class="info-value">
+                                    {{ $walletInters->name ?? $walletInters->number_decoder }}</div>
+                            </div>
+
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">
+                                    Identifiant facture(09 chiffres)
+                                </div>
+                                <div class="info-value">
+                                    {{ $walletInters->id_invoice ?? $walletInters->number_decoder }}</div>
+                            </div>
+
+                        </div>
+                        @if ($walletInters->paiementChoix_type == 1)
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">
+                                        Paiement total
+                                    </div>
+                                </div>
+
+                            </div>
+                        @else
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">
+                                        Paiement partiel
+                                    </div>
+                                </div>
+
+                            </div>
+                        @endif
+                    </div>
+                @elseif ($walletInters->provider->name == 'SODECI')
+                    <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #ecf0f1;">
+                        <div class="info-label" style="margin-bottom: 4px;">Paiement de facture CANAL+</div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">
+                                    Nom de de facture
+                                </div>
+                                <div class="info-value">
+                                    {{ $walletInters->name ?? null }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">
+                                    Numero du contrat (09 chiffres)
+                                </div>
+                                <div class="info-value">
+                                    {{ $walletInters->number_contract ?? null }}</div>
+                            </div>
+
+                            <div class="info-item">
+                                <div class="info-label">
+                                    Nom de de facture
+                                </div>
+                                <div class="info-value">
+                                    {{ $walletInters->name ?? null }}</div>
+                            </div>
+                            @if ($walletInters->paiementChoix_type == 1)
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            Paiement total
+                                        </div>
+                                    </div>
+
+                                </div>
+                            @else
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            Paiement partiel
+                                        </div>
+                                    </div>
+
+                                </div>
+                            @endif
+
+                        </div>
+                    </div>
+
+                @endif
+            @elseif($walletInters->provider_type == 6)
+                <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #ecf0f1;">
+
+                    <div class="info-label" style="margin-bottom: 4px;">DETAILS DESTINATAIRE</div>
+
+                    <div class="section">
+                        <div class="section-title">Details destinataire</div>
+                        <div class="info-grid">
+
+                            <div class="info-item">
+                                <div class="info-label">Téléphone</div>
+                                <div class="info-value">
+                                    {{ $walletInters->phone ?? $walletInters->number_phone }}
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Pays</div>
+                                <div class="info-value">
+                                    {{ $walletInters->country->name ?? null }}
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            @elseif ($walletInters->provider_type == 7)
+                <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #ecf0f1;">
+
+                    <div class="info-label" style="margin-bottom: 4px;">DETAILS DESTINATAIRE</div>
+
+                    <div class="section">
+                        <div class="section-title">Details destinataire</div>
+                        <div class="info-grid">
+
+                            <div class="info-item">
+                                <div class="info-label">Téléphone</div>
+                                <div class="info-value">
+                                    {{ $walletInters->phone ?? $walletInters->number_phone }}
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Pays</div>
+                                <div class="info-value">
+                                    {{ $walletInters->country->name ?? null }}
+
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Nom & Prénom</div>
+                                <div class="info-value">
+                                    {{ $walletInters->firstname ?? null }} {{ $walletInters->lastname ?? null }}
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            @elseif($walletInters->provider_type == 8)
+                <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #ecf0f1;">
+
+                    <div class="info-label" style="margin-bottom: 4px;">DETAILS DESTINATAIRE</div>
+
+                    <div class="section">
+                        <div class="section-title">Details destinataire</div>
+                        <div class="info-grid">
+
+                            <div class="info-item">
+                                <div class="info-label">Téléphone</div>
+                                <div class="info-value">
+                                    {{ $walletInters->phone ?? $walletInters->number_phone }}
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Pays</div>
+                                <div class="info-value">
+                                    {{ $walletInters->country->name ?? null }}
+
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Nom & Prénom</div>
+                                <div class="info-value">
+                                    {{ $walletInters->firstname ?? null }} {{ $walletInters->lastname ?? null }}
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            @elseif ($walletInters->provider_type == 9)
+                <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #ecf0f1;">
+                    <div class="info-label" style="margin-bottom: 4px;">COORDONNÉES BANCAIRES</div>
+                    <div class="info-grid">
+                          <div class="info-item">
+                            <div class="info-label">Nom & Prénom</div>
+                            <div class="info-value">{{ $walletInters->name_complet ?? 'N/A' }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Compte</div>
+                            <div class="info-value">{{ $walletInters->num_accompte ?? 'N/A' }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Guichet/Banque</div>
+                            <div class="info-value">
+                                {{ $walletInters->guichet_code ?? 'N/A' }}/{{ $walletInters->bank_code ?? 'N/A' }}
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Titulaire</div>
+                            <div class="info-value">{{ $walletInters->full_name ?? 'N/A' }}</div>
+                        </div>
+                    </div>
                 </div>
             @endif
         </div>
-        <div style="margin:15px 8px;clear:both ; text-center;font-size: 20px;">
-            {{ 'Information client' }}
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Facture générée automatiquement - {{ now()->format('d/m/Y H:i') }}</p>
+            <p>Merci de votre confiance</p>
         </div>
-        <div style="margin:15px 8px;clear:both">
-            <div style="float: center;width:80%;padding: 17px 0%;">
-                <table class="text-center sm-padding" style="border-collapse:collapse">
-                    <tbody>
-                        <tr>
-                            <td class="text-left">
-                                {{ 'Nom et prenom' }}</td>
-                            <td class="bold">
-                                {{ $walletInters->wallet->sidUser->firstname ?? $order->wallet->user->firstname }}
-                                {{ $walletInters->wallet->sidUser->lastname ?? $order->wallet->user->lastname }}
-                            </td>
-                        </tr>
-                        @if ($walletInters->wallet->sidUser->is_under_distributer == 1)
-                            <tr>
-                                <td class="text-left">
-                                    {{ 'Wallet sous distributeur' }}</td>
-                                <td class="bold" style="color: #ED2939">
-                                    {{ $walletInters->wallet->wallet_id ?? null }}
-
-                                </td>
-                            </tr>
-                        @endif
-                        <tr>
-                            <td class="text-left">
-                                {{ 'Pays' }}</td>
-                            <td class="bold">
-                                {{ $walletInters->wallet->sidUser->country->name ?? $walletInters->wallet->user->country->name }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-left">
-                                {{ 'Ville' }}</td>
-                            <td class="bold">
-                                {{ $walletInters->wallet->sidUser->city->name ?? $walletInters->wallet->user->city->name }}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td class="text-left">
-                                {{ 'Telephone' }}</td>
-                            <td class="bold">
-                                {{ $walletInters->wallet->sidUser->phone ?? $walletInters->wallet->user->phone }}
-                            </td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div style="margin:15px 8px;clear:both ; text-center;font-size: 2rem;">
-            {{ $walletInters->description }}
-        </div>
-        <div style="margin:15px 8px;clear:both">
-            <div style="float: center; width:90%;padding:14px 20px; border:1px solid #DEDEDE;border-radius:3px;">
-                <table class="text-center sm-padding" style="border-collapse:collapse">
-                    <tbody>
-                        @if ($walletInters->provider_type == 1)
-
-                            @if ($walletInters->provider->name == 'ROBUS')
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Fournisseur' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->provider->name ?? null }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Numero du compte' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->wallet->wallet_id ?? null }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Montant demandé' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->amount ?? null }}
-                                        {{ $walletInters->wallet->currencie->name }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Montant recu' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->amount_received ?? null }}
-                                        {{ $walletInters->country->currencie->name ?? null }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Pays' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->country->name ?? null }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Numero du compte' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->number_compte ?? null }}</td>
-                                </tr>
-                            @else
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Fournisseur' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->provider->name ?? null }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Montant demandé' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->amount ?? null }}
-                                        {{ $walletInters->wallet->currencie->name ?? null }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Montant recu' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->amount_received ?? null }}
-                                        {{ $walletInters->country->currencie->name ?? null }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Pays' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->country->name ?? null }}
-                                    </td>
-                                </tr>
-                                @if ($walletInters->provider->id == 99)
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Numero bénéficiaire' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->phone ?? null }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Numero du compte' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->number_compte ?? null }}</td>
-                                    </tr>
-                                @else
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Numero de téléphone' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->phone ?? null }}</td>
-                                    </tr>
-                                @endif
-
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'frais' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->transactionInter->fee_amount ?? null }}</td>
-                                </tr>
-                            @endif
-                        @elseif($walletInters->provider_type == 5)
-                            @if ($walletInters->provider->id == 7)
-                                @if ($walletInters->paiementChoix_phone == 1)
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Fournisseur' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->provider->name ?? null }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Numero du compte' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->wallet->wallet_id ?? null }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Montant demandé' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->amount ?? null }}
-                                            {{ $walletInters->wallet->currencie->name ?? null }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Montant recu' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->amount_received ?? null }}
-                                            {{ $walletInters->country->currencie->name ?? null }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Pays' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->country->name ?? null }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Numero du telephone(10 chiffres)' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->number_phone ?? null }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Offre' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->offer->name ?? null }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'frais' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->transactionInter->fee_amount ?? null }}</td>
-                                    </tr>
-                                @else
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Fournisseur' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->provider->name ?? null }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Numero du compte' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->wallet->wallet_id ?? null }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Montant demandé' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->amount ?? null }}
-                                            {{ $walletInters->wallet->currencie->name ?? null }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Montant recu' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->amount_received ?? null }}
-                                            {{ $walletInters->country->currencie->name ?? null }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Pays' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->country->name ?? null }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Numero du decodeur(14 chiffres)' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->number_decoder ?? null }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Offre' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->offer->name ?? null }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'frais' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->transactionInter->fee_amount ?? null }}</td>
-                                    </tr>
-                                @endif
-                            @elseif ($walletInters->provider->id == 8)
-                                @if ($walletInters->factureChoix_type == 1)
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Fournisseur' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->provider->name ?? null }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Numero du compte' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->wallet->wallet_id ?? null }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Montant demandé' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->amount ?? null }}
-                                            {{ $walletInters->wallet->currencie->name ?? null }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Montant recu' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->amount_received ?? null }}
-                                            {{ $walletInters->country->currencie->name ?? null }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Pays' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->country->name ?? null }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Numero du facture(11 chiffres)' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->id_invoice ?? null }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'frais' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->transactionInter->fee_amount ?? null }}</td>
-                                    </tr>
-                                @else
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Fournisseur' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->provider->name ?? null }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Numero du compte' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->wallet->wallet_id ?? null }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Montant demandé' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->amount ?? null }}
-                                            {{ $walletInters->wallet->currencie->name ?? null }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Montant recu' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->amount_received ?? null }}
-                                            {{ $walletInters->country->currencie->name ?? null }}</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Pays' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->country->name ?? null }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'Numero du facture(09 chiffres)' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->id_invoice ?? null }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ 'frais' }}</td>
-                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->transactionInter->fee_amount ?? null }}</td>
-                                    </tr>
-                                @endif
-                            @elseif ($walletInters->provider->id == 10)
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Fournisseur' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->provider->name ?? null }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Numero du compte' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->wallet->wallet_id ?? null }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Montant demandé' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->amount ?? null }}
-                                        {{ $walletInters->wallet->currencie->name ?? null }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Montant recu' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->amount_received ?? null }}
-                                        {{ $walletInters->country->currencie->name ?? null }}</td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Pays' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->country->name ?? null }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Numero du contrat(09 chiffres)' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->number_contract ?? null }}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'frais' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->transactionInter->fee_amount ?? null }}</td>
-                                </tr>
-                            @endif
-                        @elseif($walletInters->provider_type == 6)
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Fournisseur' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->provider->name ?? null }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Numero du compte' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->wallet->wallet_id ?? null }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Montant demandé' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->amount ?? null }}
-                                    {{ $walletInters->wallet->currencie->name ?? null }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Montant recu' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->amount_received ?? null }}
-                                    {{ $walletInters->country->currencie->name ?? null }}</td>
-                            </tr>
-
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Pays' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->country->name ?? null }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Numero du telephone(10 chiffres)' }}
-                                </td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->number_phone ?? null }}
-                                    {{ $walletInters->phone ?? null }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'frais' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->transactionInter->fee_amount ?? null }}</td>
-                            </tr>
-                        @elseif($walletInters->provider_type == 7)
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Fournisseur' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->provider->name ?? null }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Numero du compte' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->wallet->wallet_id ?? null }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Montant demandé' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->amount ?? null }}
-                                    {{ $walletInters->wallet->currencie->name ?? null }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Montant recu' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->amount_received ?? null }}
-                                    {{ $walletInters->country->currencie->name ?? null }}</td>
-                            </tr>
-
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Pays' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->country->name ?? null }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Numero du telephone(10 chiffres)' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->number_phone ?? ($walletInters->phone ?? null) }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Nom & prenom' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->firstname ?? null }} {{ $walletInters->lastname ?? null }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'frais' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->transactionInter->fee_amount ?? null }}</td>
-                            </tr>
-                        @elseif ($walletInters->provider_type == 8)
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Fournisseur' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->provider->name ?? null }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Numero du compte' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->wallet->wallet_id ?? null }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Montant demandé' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->amount ?? null }}
-                                    {{ $walletInters->wallet->currencie->name ?? null }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Montant recu' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->amount_received ?? null }}
-                                    {{ $walletInters->country->currencie->name ?? null }}</td>
-                            </tr>
-
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Pays' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->country->name ?? null }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'Numero du compte' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->number_contract ?? ($walletInters->id_invoice_pre ?? ($walletInters->number_contract ?? null)) }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ 'frais' }}</td>
-                                <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->transactionInter->fee_amount ?? null }}</td>
-                            </tr>
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
     </div>
+
+
     <script type="text/javascript">
         try {
             this.print();

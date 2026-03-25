@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\CodeValidated;
 use Illuminate\Support\Facades\Log;
 use App\constants\NotificationMessages;
+use App\Mail\WalletReload;
 
 class NotificationServiceBackend
 {
@@ -305,15 +306,18 @@ class NotificationServiceBackend
 
     public function sendMailReloadUVNotification($check)
     {
+
         $notify = new MailController;
         $notify->newReloadUV($check);
     }
+
 
     public function sendMailReloadAcompteCommissionNotification($check)
     {
         $notify = new MailController;
         $notify->newReloadAcompteCommission($check);
     }
+    
     public function sendSuccessMessageCreateNotification($walletUser, $message)
     {
 

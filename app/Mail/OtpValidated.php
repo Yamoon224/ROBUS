@@ -21,6 +21,7 @@ class OtpValidated extends Mailable implements ShouldQueue
     public function __construct($message)
     {
         $this->message = $message;
+        $this->onQueue('emails');
     }
 
     /**

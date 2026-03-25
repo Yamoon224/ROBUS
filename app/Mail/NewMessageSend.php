@@ -26,6 +26,8 @@ class NewMessageSend extends Mailable implements ShouldQueue
         $this->phone = $phone;
         $this->sector = $sector;
         $this->description = $description;
+        $this->onQueue('emails');
+
     }
     /**
      * Build the message.

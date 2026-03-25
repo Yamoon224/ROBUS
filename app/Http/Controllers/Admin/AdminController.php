@@ -2062,7 +2062,7 @@ class AdminController extends Controller
             "Retrait Versement" => WalletVersement::class,
             "Retrait Tresort" => WalletTresortMoney::class,
             "Retrait Djamo" => WalletDjamo::class,
-                "Retrait Bank Sends" => WalletBankSend::class,
+            "Retrait Bank Sends" => WalletBankSend::class,
 
         ];
 
@@ -2121,13 +2121,13 @@ class AdminController extends Controller
         $resetClass = $resetMappings[$typeRemonte];
 
         $amount_solde = (float)$user->wallet->amount + (float)$amount;
-        $amount_before_solde = (float)$user->wallet->amount ;
+        $amount_before_solde = (float)$user->wallet->amount;
 
         $amountDrawa = $this->withdrawCommission($resetClass, $user, $request->amountDrawal);
 
         if ($amountDrawa === true) {
 
-            $withRemonte = $this->createWithCommission($amount_solde, $request->amountDrawal, $user->id, $typeRemonte, $amount_old_solde , $amount_before_solde);
+            $withRemonte = $this->createWithCommission($amount_solde, $request->amountDrawal, $user->id, $typeRemonte, $amount_old_solde, $amount_before_solde);
 
             if (isset($resetMappings[$typeRemonte])) {
                 if ($admin_civ->count() > 0) {
@@ -2273,7 +2273,7 @@ class AdminController extends Controller
 
             $walletFreshAmount = (float) $user->wallet()->value('amount');
 
-            $withRemonte = $this->createWithCommission($amount_solde, $request->amountDrawal, $user->id, $typeRemonte, $walletFreshAmount , $amount_before_solde);
+            $withRemonte = $this->createWithCommission($amount_solde, $request->amountDrawal, $user->id, $typeRemonte, $walletFreshAmount, $amount_before_solde);
 
             if (isset($resetMappings[$typeRemonte])) {
                 if ($admin_civ->count() > 0) {
@@ -2345,7 +2345,7 @@ class AdminController extends Controller
             $gain_pushs = $this->getTodayTransactionCommissionAmountTotal(WalletPush::class, $user->wallet->id);
             $gain_djamos = $this->getTodayTransactionCommissionAmountTotal(WalletDjamo::class, $user->wallet->id);
             $gain_tresorts = $this->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class, $user->wallet->id);
-                $gain_bank_sends = $this->getTodayTransactionCommissionAmountTotal(WalletBankSend::class, $user->wallet->id);
+            $gain_bank_sends = $this->getTodayTransactionCommissionAmountTotal(WalletBankSend::class, $user->wallet->id);
         } elseif ($user->is_company == true) {
             $gain_deposits = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletDeposit::class, $user->company_id, $user->id);
             $gain_payments = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletPayment::class, $user->company_id, $user->id);
@@ -2359,7 +2359,6 @@ class AdminController extends Controller
             $gain_djamos = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletDjamo::class, $user->company_id, $user->id);
             $gain_tresorts = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletTresortMoney::class, $user->company_id, $user->id);
             $gain_bank_sends = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletBankSend::class, $user->company_id, $user->id);
-
         } else {
             return back()
                 ->with('color', 'danger')
@@ -2489,7 +2488,7 @@ class AdminController extends Controller
                 $walletFreshAmount = (float) $user->wallet()->value('amount');
 
                 $amount_solde = $walletFreshAmount + (float) $commission;
-                $amount_before_solde = $walletFreshAmount ;
+                $amount_before_solde = $walletFreshAmount;
 
                 $withRemonte = $this->createWithCommission(
                     $amount_solde,
@@ -2560,12 +2559,7 @@ class AdminController extends Controller
             if (!$company->wallet) {
                 continue;
             }
-
-            $usersCompanieToRemonte = SidUser::where('company_id', $company->id)
-                ->where('is_under_distributer', true)
-                ->get();
-
-
+            
 
             $commissionModels = [
                 "Commission sur Rechargements"         => WalletDeposit::class,
@@ -2582,63 +2576,59 @@ class AdminController extends Controller
                 "Commission sur BankSend"            => WalletBankSend::class,
             ];
 
-            foreach ($usersCompanieToRemonte as $user) {
+            // 1. Parcours de tous les modèles pour cet utilisateur
+            foreach ($commissionModels as $type => $model) {
+
+                $commission = $model::where('status', 'SUCCESS')
+                    ->sum('commission_companie');
 
 
-                // 1. Parcours de tous les modèles pour cet utilisateur
-                foreach ($commissionModels as $type => $model) {
+                if ($commission <= 0) {
+                    continue;
+                }
 
-                    $commission = $model::where('wallet_id', $user->wallet->id)
-                        ->where('status', 'SUCCESS')
-                        ->sum('commission_companie');
+                $model::where('status', 'SUCCESS')
+                    ->update(['commission_companie' => 0]);
 
-                    if ($commission <= 0) {
-                        continue;
-                    }
+                // Nouveau solde
+                $walletFreshAmount = (float) $company->wallet()->value('amount');
 
-                    $model::where('wallet_id', $user->wallet->id)
-                        ->where('status', 'SUCCESS')
-                        ->update(['commission_companie' => 0]);
+                $amount_solde = $walletFreshAmount + (float) $commission;
 
-                    // Nouveau solde
-                    $walletFreshAmount = (float) $company->wallet()->value('amount');
+                $amount_before_solde = $walletFreshAmount;
 
-                    $amount_solde = $walletFreshAmount + (float) $commission;
+                $withRemonte = $this->createWithCommission(
+                    $amount_solde,
+                    $commission,
+                    $company->id,
+                    $type,
+                    $walletFreshAmount,
+                    $amount_before_solde
 
-                    $amount_before_solde = $walletFreshAmount;
+                );
 
-                    $withRemonte = $this->createWithCommission(
-                        $amount_solde,
-                        $commission,
-                        $company->id,
-                        $type,
-                        $walletFreshAmount,
-                        $amount_before_solde
-                        
-                    );
+                if ($withRemonte) {
 
-                    if ($withRemonte) {
+                    // Mise à jour du wallet
+                    $company->wallet->update([
+                        'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                        'sid_user_relod' => sabdy()->id,
+                        'amount'         => DB::raw('amount + ' . ((float)$withRemonte->amount_with_draw)),
+                    ]);
 
-                        // Mise à jour du wallet
-                        $company->wallet->update([
-                            'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
-                            'sid_user_relod' => sabdy()->id,
-                            'amount'         => DB::raw('amount + ' . ((float)$withRemonte->amount_with_draw)),
-                        ]);
+                    $msg = "Votre commission ($type) a été transférée sur votre compte.";
+                    $msg_title = 'Transfert de commission par ' . sabdy()->firstname . ' ' . sabdy()->lastname;
 
-                        $msg = "Votre commission ($type) a été transférée sur votre compte.";
-                        $msg_title = 'Transfert de commission par ' . sabdy()->firstname . ' ' . sabdy()->lastname;
+                    $company->notify(new UserNotification([
+                        'title' => $msg_title,
+                        'message' => $msg
+                    ]));
 
-                        $company->notify(new UserNotification([
-                            'title' => $msg_title,
-                            'message' => $msg
-                        ]));
-
-                        $successCount++;
-                    }
+                    $successCount++;
                 }
             }
         }
+
 
         if ($successCount > 0) {
             return back()
@@ -2798,7 +2788,7 @@ class AdminController extends Controller
 
 
 
-    private function createWithCommission($amount_solde, $gain_amount, $userId, $typeRemonte, $oldSolde , $amount_before_solde = null)
+    private function createWithCommission($amount_solde, $gain_amount, $userId, $typeRemonte, $oldSolde, $amount_before_solde = null)
     {
         $rt = rand(40, 5000) * time();
         $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');

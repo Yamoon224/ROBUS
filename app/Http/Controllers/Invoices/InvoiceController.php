@@ -64,7 +64,7 @@ class InvoiceController extends Controller
             return redirect()->back()->with('error', 'Transaction de portefeuille introuvable.');
         }
 
-   
+
         if ($walletTransfers->is_web == 0) {
             return view('pages.invoices.invoice_transfers_print', compact('walletTransfers', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
         } else {
@@ -249,7 +249,7 @@ class InvoiceController extends Controller
         }
     }
 
-      public function push_transaction_invoice($id)
+    public function push_transaction_invoice($id)
     {
 
         $direction = 'ltr';
@@ -274,7 +274,7 @@ class InvoiceController extends Controller
         }
     }
 
-       public function djamo_transaction_invoice($id)
+    public function djamo_transaction_invoice($id)
     {
 
         $direction = 'ltr';
@@ -324,7 +324,7 @@ class InvoiceController extends Controller
         }
     }
 
-       public function versment_transaction_invoice($id)
+    public function versment_transaction_invoice($id)
     {
 
         $direction = 'ltr';
@@ -348,6 +348,4 @@ class InvoiceController extends Controller
             return view('pages.invoices.visitors.invoice_auther_print', compact('walletTransaction', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
         }
     }
-
-    
 }

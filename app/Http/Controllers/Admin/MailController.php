@@ -37,7 +37,7 @@ class MailController extends Controller
     public function newWithdrawal($data)
     {
         try {
-            Mail::to($data->wallet->sidUser->email)->send(new CodeValidated($data));
+            Mail::to($data->wallet->sidUser->email)->queue(new CodeValidated($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -49,7 +49,7 @@ class MailController extends Controller
     public function updateWithdrawal($data)
     {
         try {
-            Mail::to($data->wallet->sidUser->email)->send(new CodeValidated($data));
+            Mail::to($data->wallet->sidUser->email)->queue(new CodeValidated($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -61,7 +61,7 @@ class MailController extends Controller
     public function newAdmin($data)
     {
         try {
-            Mail::to($data->email)->send(new NewAdmin($data));
+            Mail::to($data->email)->queue(new NewAdmin($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -73,7 +73,7 @@ class MailController extends Controller
     public function activeAccount($data)
     {
         try {
-            Mail::to($data->email)->send(new ValdatedAccount($data));
+            Mail::to($data->email)->queue(new ValdatedAccount($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -85,7 +85,7 @@ class MailController extends Controller
     public function newOtp($data)
     {
         try {
-            Mail::to($data->email)->send(new OtpSend($data));
+            Mail::to($data->email)->queue(new OtpSend($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -97,7 +97,7 @@ class MailController extends Controller
     public function newOtpAgent($data)
     {
         try {
-            Mail::to($data)->send(new OtpSend($data));
+            Mail::to($data)->queue(new OtpSend($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -109,7 +109,7 @@ class MailController extends Controller
     public function newVirement($data)
     {
         try {
-            Mail::to($data->wallet->sidUser->email)->send(new WalletBank($data));
+            Mail::to($data->wallet->sidUser->email)->queue(new WalletBank($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -120,7 +120,7 @@ class MailController extends Controller
     public function newXbet($data)
     {
         try {
-            Mail::to($data->wallet->sidUser->email)->send(new WalletXbet($data));
+            Mail::to($data->wallet->sidUser->email)->queue(new WalletXbet($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -132,7 +132,7 @@ class MailController extends Controller
     public function newPush($data)
     {
         try {
-            Mail::to($data->wallet->sidUser->email)->send(new WalletPush($data));
+            Mail::to($data->wallet->sidUser->email)->queue(new WalletPush($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -144,7 +144,7 @@ class MailController extends Controller
     public function newVersementBanque($data)
     {
         try {
-            Mail::to($data->wallet->sidUser->email)->send(new WalletVersement($data));
+            Mail::to($data->wallet->sidUser->email)->queue(new WalletVersement($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -157,7 +157,7 @@ class MailController extends Controller
     public function newDjamo($data)
     {
         try {
-            Mail::to($data->wallet->sidUser->email)->send(new WalletDjamo($data));
+            Mail::to($data->wallet->sidUser->email)->queue(new WalletDjamo($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -172,7 +172,7 @@ class MailController extends Controller
 
             $email = optional($data->wallet->sidUser)->email;
             if ($email) {
-                Mail::to($data->wallet->sidUser->email)->send(new WalletTresort($data));
+                Mail::to($data->wallet->sidUser->email)->queue(new WalletTresort($data));
             } else {
                 Log::warning('Impossible d’envoyer le mail Tresort : email introuvable', [
                     'transaction_id' => $data->id
@@ -189,7 +189,7 @@ class MailController extends Controller
     public function newTransaction($data)
     {
         try {
-            Mail::to($data->wallet->sidUser->email)->send(new WalletTransaction($data));
+            Mail::to($data->wallet->sidUser->email)->queue(new WalletTransaction($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -201,7 +201,7 @@ class MailController extends Controller
     public function newPaiement($data)
     {
         try {
-            Mail::to($data->wallet->sidUser->email)->send(new WalletPaiement($data));
+            Mail::to($data->wallet->sidUser->email)->queue(new WalletPaiement($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -213,7 +213,7 @@ class MailController extends Controller
     public function newPaiementInter($data)
     {
         try {
-            Mail::to($data->wallet->sidUser->email)->send(new WalletInter($data));
+            Mail::to($data->wallet->sidUser->email)->queue(new WalletInter($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -225,7 +225,7 @@ class MailController extends Controller
     public function newReload($data)
     {
         try {
-            Mail::to($data->wallet->sidUser->email)->send(new WalletReloadCard($data));
+            Mail::to($data->wallet->sidUser->email)->queue(new WalletReloadCard($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -236,12 +236,23 @@ class MailController extends Controller
 
     public function newReloadUV($data)
     {
-        try {
-            Mail::to($data->wallet->sidUser->email)->send(new WalletReload($data));
-        } catch (\Throwable $e) {
 
-            Log::error('Erreur mail send Users', [
-                'error' => $e->getMessage(),
+        try {
+            $email = $data->wallet->sidUser->email;
+
+            if ($email) {
+                $mailable = new WalletReload($email);
+                $mailable->onQueue('emails'); 
+
+                Mail::to($email)->queue($mailable);
+
+                Log::info('Email dispatché vers queue emails', [
+                    'transaction_id' => $data->id
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Erreur dispatch email', [
+                'error' => $e->getMessage()
             ]);
         }
     }
@@ -249,7 +260,7 @@ class MailController extends Controller
     public function newReloadAcompteCommission($data)
     {
         try {
-            Mail::to($data->sidUser->email)->send(new WalletReloadAcompte($data));
+            Mail::to($data->sidUser->email)->queue(new WalletReloadAcompte($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -261,7 +272,7 @@ class MailController extends Controller
     public function newPhoneCredit($data)
     {
         try {
-            Mail::to($data->wallet->sidUser->email)->send(new WalletPhoneCredit($data));
+            Mail::to($data->wallet->sidUser->email)->queue(new WalletPhoneCredit($data));
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -270,7 +281,7 @@ class MailController extends Controller
     public function newWithTransaction($data)
     {
         try {
-            Mail::to($data->wallet->sidUser->email)->send(new WalletPush($data));
+            Mail::to($data->wallet->sidUser->email)->queue(new WalletPush($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -282,7 +293,7 @@ class MailController extends Controller
     public function newBankSend($data)
     {
         try {
-            Mail::to($data->wallet->sidUser->email)->send(new WalletBankSendEmail($data));
+            Mail::to($data->wallet->sidUser->email)->queue(new WalletBankSendEmail($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -294,7 +305,7 @@ class MailController extends Controller
     public function newCardOrder($data)
     {
         try {
-            Mail::to($data->wallet->sidUser->email)->send(new WalletCard($data));
+            Mail::to($data->wallet->sidUser->email)->queue(new WalletCard($data));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -307,7 +318,7 @@ class MailController extends Controller
     public function modifyPassword($dt)
     {
         try {
-            Mail::to($dt->email)->send(new modifyPassword($dt));
+            Mail::to($dt->email)->queue(new modifyPassword($dt));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
@@ -319,7 +330,7 @@ class MailController extends Controller
     public function emailSend($dt)
     {
         try {
-            Mail::to($dt->email)->send(new modifyPassword($dt));
+            Mail::to($dt->email)->queue(new modifyPassword($dt));
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [

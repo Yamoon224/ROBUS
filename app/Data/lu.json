@@ -1,0 +1,110 @@
+[
+  {
+    "name": "Luxembourg",
+    "lat": "49.6116",
+    "lng": "6.1319",
+    "country_id": 126,
+    "admin_name": "Luxembourg",
+    "population": "128514",
+    "population_proper": "128514"
+  },
+  {
+    "name": "Esch-sur-Alzette",
+    "lat": "49.4958",
+    "lng": "5.9806",
+    "country_id": 126,
+    "admin_name": "Esch-sur-Alzette",
+    "population": "35853",
+    "population_proper": "35853"
+  },
+  {
+    "name": "Differdange",
+    "lat": "49.5242",
+    "lng": "5.8914",
+    "country_id": 126,
+    "admin_name": "Differdange",
+    "population": "28100",
+    "population_proper": "28100"
+  },
+  {
+    "name": "Dudelange",
+    "lat": "49.4806",
+    "lng": "6.0875",
+    "country_id": 126,
+    "admin_name": "Dudelange",
+    "population": "21300",
+    "population_proper": "21300"
+  },
+  {
+    "name": "Ettelbruck",
+    "lat": "49.8475",
+    "lng": "6.1042",
+    "country_id": 126,
+    "admin_name": "Diekirch",
+    "population": "9300",
+    "population_proper": "9300"
+  },
+  {
+    "name": "Diekirch",
+    "lat": "49.8678",
+    "lng": "6.1596",
+    "country_id": 126,
+    "admin_name": "Diekirch",
+    "population": "6800",
+    "population_proper": "6800"
+  },
+  {
+    "name": "Wiltz",
+    "lat": "49.9653",
+    "lng": "5.9339",
+    "country_id": 126,
+    "admin_name": "Wiltz",
+    "population": "7000",
+    "population_proper": "7000"
+  },
+  {
+    "name": "Rumelange",
+    "lat": "49.4597",
+    "lng": "6.0314",
+    "country_id": 126,
+    "admin_name": "Esch-sur-Alzette",
+    "population": "5400",
+    "population_proper": "5400"
+  },
+  {
+    "name": "Grevenmacher",
+    "lat": "49.6775",
+    "lng": "6.4419",
+    "country_id": 126,
+    "admin_name": "Grevenmacher",
+    "population": "4800",
+    "population_proper": "4800"
+  },
+  {
+    "name": "Remich",
+    "lat": "49.5450",
+    "lng": "6.3670",
+    "country_id": 126,
+    "admin_name": "Remich",
+    "population": "3800",
+    "population_proper": "3800"
+  },
+  {
+    "name": "Mersch",
+    "lat": "49.7486",
+    "lng": "6.1067",
+    "country_id": 126,
+    "admin_name": "Mersch",
+    "population": "9200",
+    "population_proper": "9200"
+  },
+  {
+    "name": "Clervaux",
+    "lat": "50.0547",
+    "lng": "6.0314",
+    "country_id": 126,
+    "admin_name": "Clervaux",
+    "population": "5100",
+    "population_proper": "5100"
+  }
+]

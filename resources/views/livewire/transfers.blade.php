@@ -1378,8 +1378,6 @@
             // NE RIEN FAIRE
         });
 
-
-        // ... et ainsi de suite pour tous les autres menus
     });
 
     // Gestionnaire de notifications toast

@@ -662,6 +662,7 @@ class CountrieController extends Controller
         $versment_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletVersement::class, 'wallet_versements.wallet_id', $countrie->id,  'wallet_versements.status',  'wallet_versements.commissions');
         $bank_send_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletBankSend::class, 'wallet_bank_sends.wallet_id', $countrie->id,  'wallet_bank_sends.status',  'wallet_bank_sends.commissions');
 
+        
         $push_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletPush::class, 'wallet_pushes.wallet_id', $countrie->id,  'wallet_pushes.status',  'wallet_pushes.commission_companie');
         $payment_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletPayment::class, 'wallet_payments.wallet_id', $countrie->id,  'wallet_payments.status',  'wallet_payments.commission_companie');
         $transaction_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletTransaction::class, 'wallet_transactions.wallet_id', $countrie->id,  'wallet_transactions.status',  'wallet_transactions.commission_companie');

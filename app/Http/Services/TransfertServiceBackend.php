@@ -154,7 +154,7 @@ class TransfertServiceBackend
             [
                 'wallet_id' =>   $walletUser->wallet->id,
                 'amount' => $relaod_uv_amout_robus,
-                'description'  => "remboursement",
+                'description'  => "Transfert du montant commission admin",
                 'created_by' => Auth::guard('web')->user()->id,
                 'provider_id'  =>  $provider->id,
                 'num_wallet'  => $account_reload_uv,

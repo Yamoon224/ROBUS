@@ -130,8 +130,8 @@
 
                                    </div>
                                @elseif ($item->status == 'SUCCESS')
-                                   <a target="_bank" href="" class="btn btn-primary mr-1 mb-2 btn-sm"
-                                       title="Facture">
+                                   <a target="_bank" href="{{ route('transfers.invoice.print', $item->id) }}"
+                                       class="btn btn-primary mr-1 mb-2 btn-sm" title="Facture">
                                        Facture
                                    </a>
                                @else

@@ -21,6 +21,7 @@ class modifyPassword extends Mailable
     public function __construct($content)
     {
         $this->content = $content;
+        $this->onQueue('emails');
     }
 
     /**

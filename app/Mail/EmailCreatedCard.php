@@ -23,6 +23,8 @@ class EmailCreatedCard extends Mailable implements ShouldQueue
     {
         $this->user = $user;
         $this->message = $message;
+        $this->onQueue('emails');
+
     }
     /**
      * Build the message.

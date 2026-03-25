@@ -761,7 +761,7 @@ class Transfers extends Component
         try {
 
             // 3. UNE SEULE REQUÊTE ATOMIQUE ⚡
-  
+
             DB::transaction(function () use ($config, $id) {
                 // Récupérer la transaction
                 $transaction = $config['model']::where('id', $id)
@@ -784,7 +784,6 @@ class Transfers extends Component
 
                 // Dispatcher l'événement (dans la transaction)
                 event(new $config['event']($transaction));
-
             });
 
             // 5. SUCCÈS - UN SEUL EMIT ! 
@@ -5034,13 +5033,12 @@ class Transfers extends Component
         // Transactions
         $transactions = $transaction
             ->join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_transactions.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_transactions.status', 'PROCESSING')
                             ->where('wallet_transactions.provider_id', '!=', 9);
-                        if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                        if (!$walletUser->is_admin  && !$walletUser->is_supervisor) {
                             $q2->where('wallet_transactions.updated_by', $walletUser->id);
                         }
                     });
@@ -5055,12 +5053,11 @@ class Transfers extends Component
 
         $paiements = $paiement
             ->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_payments.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_payments.status', 'PROCESSING');
-                        if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                        if (!$walletUser->is_admin && !$walletUser->is_supervisor) {
                             $q2->where('wallet_payments.updated_by', $walletUser->id);
                         }
                     });
@@ -5075,12 +5072,11 @@ class Transfers extends Component
 
         $tresortMoneys = $tresortMoney
             ->join('wallets', 'wallet_tresort_money.wallet_id', 'wallets.id')
-            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_tresort_money.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_tresort_money.status', 'PROCESSING');
-                        if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                        if (!$walletUser->is_admin && !$walletUser->is_supervisor) {
                             $q2->where('wallet_tresort_money.updated_by', $walletUser->id);
                         }
                     });
@@ -5095,12 +5091,11 @@ class Transfers extends Component
         // Virements
         $virements = $virement_bank
             ->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_banks.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_banks.status', 'PROCESSING');
-                        if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                        if (!$walletUser->is_admin && !$walletUser->is_supervisor) {
                             $q2->where('wallet_banks.updated_by', $walletUser->id);
                         }
                     });
@@ -5116,12 +5111,11 @@ class Transfers extends Component
 
         $internationals = $inter_search
             ->join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_inters.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_inters.status', 'PROCESSING');
-                        if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                        if (!$walletUser->is_admin  && !$walletUser->is_supervisor) {
                             $q2->where('wallet_inters.updated_by', $walletUser->id);
                         }
                     });
@@ -5136,12 +5130,11 @@ class Transfers extends Component
 
         $reloadCards = $reload_card
             ->join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_deposits.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_deposits.status', 'PROCESSING');
-                        if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                        if (!$walletUser->is_admin  && !$walletUser->is_supervisor) {
                             $q2->where('wallet_deposits.updated_by', $walletUser->id);
                         }
                     });
@@ -5156,12 +5149,11 @@ class Transfers extends Component
 
         $phoneCredits = $phone_credit
             ->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_phone_credits.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_phone_credits.status', 'PROCESSING');
-                        if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                        if (!$walletUser->is_admin  && !$walletUser->is_supervisor) {
                             $q2->where('wallet_phone_credits.updated_by', $walletUser->id);
                         }
                     });
@@ -5173,15 +5165,15 @@ class Transfers extends Component
             ->orderBy('wallet_phone_credits.created_at', 'desc')
             ->paginate(15);
 
+   
 
         $xbets = $xbet
             ->join('wallets', 'wallet_xbets.wallet_id', 'wallets.id')
-            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_xbets.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_xbets.status', 'PROCESSING');
-                        if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                        if (!$walletUser->is_admin  && !$walletUser->is_supervisor) {
                             $q2->where('wallet_xbets.updated_by', $walletUser->id);
                         }
                     });
@@ -5196,12 +5188,11 @@ class Transfers extends Component
 
         $djamos = $djamo
             ->join('wallets', 'wallet_djamos.wallet_id', 'wallets.id')
-            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_djamos.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_djamos.status', 'PROCESSING');
-                        if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                        if (!$walletUser->is_admin && !$walletUser->is_supervisor) {
                             $q2->where('wallet_djamos.updated_by', $walletUser->id);
                         }
                     });
@@ -5216,12 +5207,11 @@ class Transfers extends Component
 
         $bankSends = $bankSend
             ->join('wallets', 'wallet_bank_sends.wallet_id', 'wallets.id')
-            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_bank_sends.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_bank_sends.status', 'PROCESSING');
-                        if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                        if (!$walletUser->is_admin  && !$walletUser->is_supervisor) {
                             $q2->where('wallet_bank_sends.updated_by', $walletUser->id);
                         }
                     });
@@ -5236,12 +5226,11 @@ class Transfers extends Component
 
         $pushs = $push
             ->join('wallets', 'wallet_pushes.wallet_id', 'wallets.id')
-            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_pushes.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_pushes.status', 'PROCESSING');
-                        if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                        if (!$walletUser->is_admin  && !$walletUser->is_supervisor) {
                             $q2->where('wallet_pushes.updated_by', $walletUser->id);
                         }
                     });
@@ -5255,12 +5244,11 @@ class Transfers extends Component
 
         $versements = $versement
             ->join('wallets', 'wallet_versements.wallet_id', 'wallets.id')
-            // ->where('wallets.country_id', $walletUser->country->id)
             ->where(function ($q) use ($walletUser) {
                 $q->where('wallet_versements.status', 'PENDING')
                     ->orWhere(function ($q2) use ($walletUser) {
                         $q2->where('wallet_versements.status', 'PROCESSING');
-                        if (!$walletUser->is_admin  || !$walletUser->is_supervisor) {
+                        if (!$walletUser->is_admin  && !$walletUser->is_supervisor) {
                             $q2->where('wallet_versements.updated_by', $walletUser->id);
                         }
                     });

@@ -11,28 +11,28 @@ class WalletReload extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public $content = null;
-
+    public $content;
     /**
      * Create a new message instance.
-     *
-     * @return void
      */
     public function __construct($content)
     {
         $this->content = $content;
+        $this->onQueue('emails');
     }
 
     /**
      * Build the message.
-     *
-     * @return $this
      */
     public function build()
     {
-        $email = $this->from(env('MAIL_FROM_ADDRESS'))
-            ->subject('Demande de paiement ' . env('APP_NAME') . '  ' . $this->content->provider->name)
+        return $this->from(config('mail.from.address'), config('mail.from.name'))
+            ->subject('Demande de paiement ' . config('app.name') . ' - ' . $this->content->provider->name)
             ->markdown('pages.emails.walletReloadUV');
-        return $email;
     }
+
+    /**
+     * Gérer les échecs d'envoi
+     */
+    public function failed(\Throwable $exception) {}
 }

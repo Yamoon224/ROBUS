@@ -49,8 +49,13 @@ return [
             'client_options' => [
                 // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
             ],
+            'queue' => 'broadcasts'
         ],
 
+        'sync' => [
+            'driver' => 'sync',  // ← Pas de queue
+        ],
+        
         'ably' => [
             'driver' => 'ably',
             'key' => env('ABLY_KEY'),

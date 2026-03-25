@@ -1,0 +1,137 @@
+[
+  {
+    "name": "Toronto",
+    "lat": "43.65107",
+    "lng": "-79.347015",
+    "country_id": 2,
+    "admin_name": "Ontario",
+    "population": "2731571",
+    "population_proper": "2731571"
+  },
+  {
+    "name": "Montreal",
+    "lat": "45.501689",
+    "lng": "-73.567256",
+    "country_id": 2,
+    "admin_name": "Quebec",
+    "population": "1762949",
+    "population_proper": "1762949"
+  },
+  {
+    "name": "Calgary",
+    "lat": "51.044733",
+    "lng": "-114.071883",
+    "country_id": 2,
+    "admin_name": "Alberta",
+    "population": "1239220",
+    "population_proper": "1239220"
+  },
+  {
+    "name": "Ottawa",
+    "lat": "45.42153",
+    "lng": "-75.697193",
+    "country_id": 2,
+    "admin_name": "Ontario",
+    "population": "994837",
+    "population_proper": "994837"
+  },
+  {
+    "name": "Edmonton",
+    "lat": "53.546124",
+    "lng": "-113.493823",
+    "country_id": 2,
+    "admin_name": "Alberta",
+    "population": "981280",
+    "population_proper": "981280"
+  },
+  {
+    "name": "Winnipeg",
+    "lat": "49.895077",
+    "lng": "-97.138451",
+    "country_id": 2,
+    "admin_name": "Manitoba",
+    "population": "749607",
+    "population_proper": "749607"
+  },
+  {
+    "name": "Vancouver",
+    "lat": "49.282729",
+    "lng": "-123.120738",
+    "country_id": 2,
+    "admin_name": "British Columbia",
+    "population": "662248",
+    "population_proper": "662248"
+  },
+  {
+    "name": "Quebec City",
+    "lat": "46.813878",
+    "lng": "-71.207981",
+    "country_id": 2,
+    "admin_name": "Quebec",
+    "population": "542298",
+    "population_proper": "542298"
+  },
+  {
+    "name": "Hamilton",
+    "lat": "43.255721",
+    "lng": "-79.871102",
+    "country_id": 2,
+    "admin_name": "Ontario",
+    "population": "579200",
+    "population_proper": "579200"
+  },
+  {
+    "name": "Kitchener",
+    "lat": "43.451639",
+    "lng": "-80.492533",
+    "country_id": 2,
+    "admin_name": "Ontario",
+    "population": "256885",
+    "population_proper": "256885"
+  },
+  {
+    "name": "London",
+    "lat": "42.984923",
+    "lng": "-81.245277",
+    "country_id": 2,
+    "admin_name": "Ontario",
+    "population": "422324",
+    "population_proper": "422324"
+  },
+  {
+    "name": "Victoria",
+    "lat": "48.428421",
+    "lng": "-123.365644",
+    "country_id": 2,
+    "admin_name": "British Columbia",
+    "population": "85792",
+    "population_proper": "85792"
+  },
+  {
+    "name": "Halifax",
+    "lat": "44.648618",
+    "lng": "-63.585948",
+    "country_id": 2,
+    "admin_name": "Nova Scotia",
+    "population": "439819",
+    "population_proper": "439819"
+  },
+  {
+    "name": "Oshawa",
+    "lat": "43.897555",
+    "lng": "-78.865791",
+    "country_id": 2,
+    "admin_name": "Ontario",
+    "population": "175383",
+    "population_proper": "175383"
+  },
+  {
+    "name": "Windsor",
+    "lat": "42.314937",
+    "lng": "-83.036363",
+    "country_id": 2,
+    "admin_name": "Ontario",
+    "population": "229660",
+    "population_proper": "229660"
+  }
+]

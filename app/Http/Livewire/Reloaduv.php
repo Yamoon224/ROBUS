@@ -689,6 +689,8 @@ class Reloaduv extends Component
                         $amount_drawal =      $amount_solde_drawal;
                         $amount_before_drawal =  (float)$walletAmountSend->amount;
 
+                        $balance_before_receved =  (float)$walletAmountSend->amount;
+
                         $walletTransaction = TransactionCommission::create(
                             [
                                 'pay_amount' => $val_amount,
@@ -709,16 +711,14 @@ class Reloaduv extends Component
 
                         $valeur_receive =  $this->convertAdminCommission($this->relaod_uv_amout_robus, $wallet_search);
 
-                        $amount_solde = (float)$wallet->amount - (float)$this->relaod_uv_amout_robus;
-
                         $walletTransaction = app(TransfertServiceBackend::class)->createWalletTransactionCommissionReload(
                             $walletUser,
                             $this->relaod_uv_amout_robus,
                             $provider,
                             $this->account_reload_uv,
                             $valeur_receive,
-                            $amount_solde,
-                            $balance_before,
+                            $amount_solde_drawal,
+                            $balance_before_receved,
                             $amount_drawal,
                             $amount_before_drawal
                         );
@@ -792,8 +792,9 @@ class Reloaduv extends Component
                         if ($walletUser->email) {
                             app(NotificationServiceBackend::class)->sendMailReloadUVNotification($walletTransaction);
                         }
+
                         if ($wallet_search->sidUser->email != null) {
-                            Mail::to($wallet_search->sidUser->email)->send(new UvSend('Votre demande de transaction de la commission de ' . $walletTransaction->amount_received . ' ' . $wallet_search->currencie->code  . ' chez  : '  . $walletUser->firstname . $walletUser->lastname . ' ' . ' Le ' .  $walletTransaction->created_at  . ' Validé avec succes'));
+                            Mail::to($wallet_search->sidUser->email)->queue(new UvSend('Votre demande de transaction de la commission de ' . $walletTransaction->amount_received . ' ' . $wallet_search->currencie->code  . ' chez  : '  . $walletUser->firstname . $walletUser->lastname . ' ' . ' Le ' .  $walletTransaction->created_at  . ' Validé avec succes'));
                         }
 
                         $this->resetField();

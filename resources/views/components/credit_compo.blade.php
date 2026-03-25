@@ -139,7 +139,9 @@
                                               <td class="w-60">
                                                   <div class="flex justify-center items-center">
                                                       @if ($item->updated_by != null)
-                                                          @if ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id)
+                                                          @if  (
+                                                              ($item->status == 'PENDING' && $item->updated_by == sabdy()->id) ||
+                                                                  ($item->status === 'PROCESSING' && $item->updated_by == sabdy()->id))
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                   <a wire:click="editPhoneCredit({{ $item->id }}, 'update-phoneCredit-modal')"
                                                                       class="btn btn-primary mr-1 mb-2 btn-sm"
@@ -154,7 +156,7 @@
                                                                       Traité maintenant
                                                                   </a>
                                                               @endif
-                                                          @elseif ($item->status == 'SUCCESS' && $item->updated_by == Auth::guard('web')->user()->id)
+                                                          @elseif ($item->status == 'SUCCESS' && $item->updated_by == sabdy()->id)
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                   <a target="_bank"
                                                                       href="{{ route('phone.invoice.print', $item->id) }}"
@@ -163,36 +165,6 @@
                                                                       Facture
                                                                   </a>
                                                               @endif
-                                                          @elseif($item->status === 'PROCESSING')
-                                                              <div
-                                                                  class="flex flex-col items-center justify-center space-y-2">
-                                                                  {{-- Message en haut --}}
-                                                                  <div
-                                                                      class="transaction-progress-alert w-full text-center text-blue-500">
-                                                                      @if ($item->updated_by)
-                                                                          Choisi par
-                                                                          {{ sidUserInfo($item->updated_by) }}
-                                                                      @endif
-                                                                  </div>
-
-
-                                                                  {{-- Bouton en dessous --}}
-                                                                  @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                   
-                                                                      <a wire:click="editPhoneCredit({{ $item->id }}, 'update-phoneCredit-modal')"
-                                                                          class="btn btn-primary btn-sm"
-                                                                          href="javascript:;" title="Modifier">
-                                                                          <svg class="w-4 h-4 mr-1" fill="none"
-                                                                              stroke="currentColor" viewBox="0 0 24 24">
-                                                                              <path stroke-linecap="round"
-                                                                                  stroke-linejoin="round"
-                                                                                  stroke-width="2"
-                                                                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                                          </svg>
-                                                                          Traité maintenant
-                                                                      </a>
-                                                                  @endif
-                                                              </div>
                                                           @else
                                                               <div class="flex items-center justify-center text-dark">
                                                                   <div

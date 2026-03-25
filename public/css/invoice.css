@@ -1,0 +1,233 @@
+/* resources/css/invoice.css */
+
+@page {
+    size: A4;
+    margin: 15mm 12mm;
+    padding: 0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'DejaVu Sans', Arial, sans-serif;
+    font-size: 10pt;
+    line-height: 1.4;
+    color: #2c3e50;
+    background: #fff;
+}
+
+.invoice {
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* Header */
+.header {
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.logo-area {
+    float: left;
+    width: 50%;
+}
+
+.title-area {
+    float: right;
+    width: 50%;
+    text-align: right;
+}
+
+.title-area h1 {
+    font-size: 18pt;
+    color: #3498db;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.title-area p {
+    font-size: 9pt;
+    color: #7f8c8d;
+    margin: 2px 0 0;
+}
+
+/* Grille */
+.row {
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.col-left {
+    float: left;
+    width: 48%;
+}
+
+.col-right {
+    float: right;
+    width: 48%;
+}
+
+/* Tables */
+.info-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt;
+}
+
+.info-table td {
+    padding: 4px 0;
+    vertical-align: top;
+}
+
+.info-table .label {
+    width: 40%;
+    color: #7f8c8d;
+    font-weight: normal;
+}
+
+.info-table .value {
+    width: 60%;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+/* Badges de statut */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 9pt;
+    font-weight: bold;
+    text-align: center;
+    margin: 5px 0;
+}
+
+.status-success {
+    background: #d5f5e3;
+    color: #27ae60;
+    border: 1px solid #2ecc71;
+}
+
+.status-refund {
+    background: #fadbd8;
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+}
+
+.status-pending {
+    background: #fef9e7;
+    color: #f39c12;
+    border: 1px solid #f39c12;
+}
+
+/* Sections */
+.section {
+    margin-bottom: 12px;
+}
+
+.section-title {
+    font-size: 10pt;
+    font-weight: bold;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #bdc3c7;
+    margin-bottom: 8px;
+    color: #2c3e50;
+}
+
+/* Grille d'informations */
+.info-grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -5px;
+}
+
+.info-item {
+    flex: 1;
+    min-width: 120px;
+    padding: 0 5px;
+    margin-bottom: 6px;
+}
+
+.info-label {
+    font-size: 7pt;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-size: 9pt;
+    font-weight: 500;
+    color: #2c3e50;
+    word-break: break-word;
+}
+
+/* Tableaux des montants */
+.amount-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0;
+}
+
+.amount-table td {
+    padding: 5px 0;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.amount-table .label {
+    color: #7f8c8d;
+}
+
+.amount-table .value {
+    text-align: right;
+    font-weight: 500;
+}
+
+.total-row {
+    border-top: 2px solid #3498db;
+    font-weight: bold;
+    font-size: 11pt;
+}
+
+.total-row td {
+    padding-top: 8px;
+}
+
+/* Description */
+.description {
+    background: #f8f9fa;
+    padding: 8px;
+    border-left: 3px solid #3498db;
+    font-style: italic;
+    font-size: 9pt;
+    margin: 8px 0;
+}
+
+/* Footer */
+.footer {
+    margin-top: 15px;
+    padding-top: 8px;
+    text-align: center;
+    border-top: 1px solid #ecf0f1;
+    font-size: 7pt;
+    color: #95a5a6;
+}
+
+/* Utilitaires */
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+.bold { font-weight: bold; }
+.clearfix { clear: both; }
+
+/* Impression */
+@media print {
+    body { margin: 0; padding: 0; }
+    .status-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .no-break { page-break-inside: avoid; }
+}

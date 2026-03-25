@@ -42,12 +42,6 @@ class TransferHisto extends Component
 
         if ($walletUser->is_under_distributer || $walletUser->is_api ) {
             $transfers->where('wallet_transactions.created_by', $walletUser->id); 
-        }elseif($walletUser->is_distributer)
-        {
-            $transfers->where('wallet_transactions.updated_by', $walletUser->id); 
-
-        }else {
-            $transfers->where('wallet_transactions.created_by' , '!=', $walletUser->id); 
         }
 
         if ($this->startDate && $this->endDate) {
@@ -95,6 +89,7 @@ class TransferHisto extends Component
                 ]
             );
         }
+
 
         return view(
             'livewire.historical.transfer-histo',

@@ -229,7 +229,7 @@ Template Name: Rubick - HTML Admin Dashboard Template
                                             <thead>
                                                 <tr>
 
-                                                    <th >Date</th>
+                                                    <th>Date</th>
                                                     <th>Montant</th>
                                                     <th>Nom et prenom </th>
                                                     <th>Statut</th>

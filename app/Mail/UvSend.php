@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class UvSend extends Mailable
+class UvSend  extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -21,6 +21,7 @@ class UvSend extends Mailable
     public function __construct($message)
     {
         $this->message = $message;
+        $this->onQueue('emails');
     }
 
     /**
