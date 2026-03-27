@@ -505,7 +505,7 @@ class Reloaduv extends Component
                             app(NotificationServiceBackend::class)->sendMailReloadUVNotification($reload_unders);
                         }
                         if ($wallet_search->sidUser->email != null) {
-                            Mail::to($wallet_search->sidUser->email)->send(new UvSend('Votre demande d\'achat d\'UV de ' . $reload_unders->amount_received . ' ' . $wallet_search->currencie->code  . ' chez  : '  . $walletUser->firstname . $walletUser->lastname . ' ' . ' Le ' .  $reload_unders->created_at  . ' Validé avec succes'));
+                            Mail::to($wallet_search->sidUser->email)->queue(new UvSend('Votre demande d\'achat d\'UV de ' . $reload_unders->amount_received . ' ' . $wallet_search->currencie->code  . ' chez  : '  . $walletUser->firstname . $walletUser->lastname . ' ' . ' Le ' .  $reload_unders->created_at  . ' Validé avec succes'));
                         }
 
                         $this->resetField();
@@ -622,7 +622,7 @@ class Reloaduv extends Component
                         app(NotificationServiceBackend::class)->sendMailReloadUVNotification($walletTransaction);
                     }
                     if ($wallet_search->sidUser->email != null) {
-                        Mail::to($wallet_search->sidUser->email)->send(new UvSend('Votre demande d\'achat d\'UV de ' . $walletTransaction->amount_received . ' ' . $wallet_search->currencie->code  . ' chez  : '  . $walletUser->firstname . $walletUser->lastname . ' ' . ' Le ' .  $walletTransaction->created_at  . ' Validé avec succes'));
+                        Mail::to($wallet_search->sidUser->email)->queue(new UvSend('Votre demande d\'achat d\'UV de ' . $walletTransaction->amount_received . ' ' . $wallet_search->currencie->code  . ' chez  : '  . $walletUser->firstname . $walletUser->lastname . ' ' . ' Le ' .  $walletTransaction->created_at  . ' Validé avec succes'));
                     }
 
                     $this->resetField();

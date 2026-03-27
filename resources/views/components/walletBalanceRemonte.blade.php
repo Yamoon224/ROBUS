@@ -19,7 +19,7 @@
     <div class="amount-received">
         <div class="flex items-baseline justify-between">
             <span class="amount-received-value">
-                {{ number_format($item->old_balance, 2, ',', ' ') ?? '0,00' }}
+                {{ number_format($item->balance_before, 2, ',', ' ') ?? '0,00' }}
             </span>
             <span class="amount-received-currency">
                 {{ $item->sidUser->wallet->currencie->code ?? 'EUR' }}

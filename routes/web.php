@@ -571,6 +571,10 @@ Route::group(['prefix' => 'under_distributers'], function () {
 Route::get('/payment/callback', [PaystackWebhookController::class, 'paymentCallback'])
     ->name('payment.callback');
 
+Route::post('/payment/callbackWebhook', [PaystackWebhookController::class, 'paymentCallbackWebHook'])
+    ->name('payment.callbackWebhook');
+
+
 Route::get('/payment_pixelInnov/callback', [PixelPaymentController::class, 'paymentCallback'])
     ->name('paymentInnov.callback');
 

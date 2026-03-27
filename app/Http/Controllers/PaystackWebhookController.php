@@ -679,6 +679,218 @@ class PaystackWebhookController extends Controller
         }
     }
 
+    private function handleSuccessWebfulChargeHook(array $data)
+    {
+        DB::beginTransaction();
+
+
+        try {
+            // Récupérer la transaction
+            $transaction = WalletReload::where('reference', $data['reference'])->first();
+
+            if (!$transaction) {
+                Log::error('Transaction non trouvée', ['reference' => $data['reference']]);
+                DB::rollBack();
+            }
+
+            // Vérifier si la transaction a déjà été traitée
+            if ($transaction->status === 'success') {
+                Log::info('Transaction déjà traitée', ['reference' => $data['reference']]);
+
+                return response()->json(['status' => 'Transaction déjà traitée'], 200);
+            }
+
+
+
+            $wallet = $transaction->wallet;
+            $wallet_details = Wallet::whereId($transaction->wallet_id)->first();
+            $countryNameGroup = $wallet_details->country->name_groupe;
+            if ($countryNameGroup == 'CIV' || $countryNameGroup == 'AFL' || $countryNameGroup == 'AFC' || $countryNameGroup == 'AFE') {
+                $commission_robus = ReloadCost::whereId(8)->first();
+            } elseif ($countryNameGroup == 'URP' || $countryNameGroup == 'USA' || $countryNameGroup == 'MAG' || $countryNameGroup == 'ASIE') {
+                $commission_robus = ReloadCost::whereId(9)->first();
+            }
+
+            $total_percent = (float) $commission_robus->percent + (float) $commission_robus->percent_admin;
+            $total_commission = $total_percent * $transaction->amount;
+            $amountReceived = (float) $transaction->amount - (float)$total_commission;
+            $walletAdmin = WalletAdmin::find(1);
+            $wallet_commission = Wallet::where('wallet_id', "CI44RTZU")->first();
+
+            $totalAmount = $transaction->amount;
+            $country_civ = Country::find(107);
+            $robus_currency =  $wallet->country->currencie->value;
+
+            if ($country_civ->currencie->value > $wallet->country->currencie->value) {
+                $amount_total_conversion = $totalAmount * $robus_currency;
+                $amount_commission_conversion = $total_commission * $robus_currency;
+            } elseif ($country_civ->currencie->value == $wallet->country->currencie->value) {
+                $amount_total_conversion = $totalAmount;
+                $amount_commission_conversion = $total_commission;
+            } else {
+                $amount_total_conversion = $totalAmount * $robus_currency;
+                $amount_commission_conversion = $total_commission * $robus_currency;
+            }
+
+            // Mettre à jour la transaction
+            $transaction->update([
+                'status' => 'success',
+                'gateway_response' => $data['gateway_response'],
+                'paid_at' => Carbon::parse($data['paid_at']),
+                'payment_method' => 'ACHAT D\'UV',
+                'description' => 'Achat D\'UV',
+                'currency' =>  $data['currency'] ?? 'XOF',
+                'balance_before' =>  $wallet->amount,
+                'amount_solde' => (float) $wallet->amount + (float) $amountReceived,
+                'amount_received' => $amountReceived,
+                'ip_address' => $data['ip_address'] ?? null,
+                'account_wallet' => 'CI44RTZU',
+                'reload_cost_id' => $commission_robus->id,
+                'amount_solde_drawal' => $wallet_commission->amount ?? null,
+                'amount_solde_before_drawal' => (float) $wallet_commission->amount -  (float) ($amount_total_conversion ?? 0),
+                'type_transaction' => 'Achat UV',
+                'type_received' => 'UV',
+                'fees' => $total_commission ?? 0,
+                'costs_amount' => $total_commission ?? 0,
+                'cost_conversion' => $amount_commission_conversion ?? 0,
+                'amount_conversion' => $amount_total_conversion ?? 0,
+                'authorization' => json_encode($data['authorization'] ?? []),
+                'customer' => json_encode($data['customer'] ?? []),
+                'metadata' => json_encode(array_merge(
+                    json_decode($transaction->metadata, true) ?? [],
+                    $data['metadata'] ?? []
+                )),
+                'verified' => true,
+                'verified_at' => now(),
+                'raw_response' => json_encode($data),
+            ]);
+
+            // Mettre à jour le solde du portefeuille
+            if ($wallet) {
+                $oldBalance = $wallet->amount;
+                $newBalance = $oldBalance + $transaction->amount_received;
+
+                // Créer une transaction dans l'historique du portefeuille
+                PaymentReload::create([
+                    'wallet_reload_id' => $transaction->id,
+                    'sid_user_id' => $wallet->sid_user_id,
+                    'type' => 'credit',
+                    'transaction_id' => $data['reference'],
+                    'pay_amount' => $transaction->amount,
+                    'fee_amount' => $total_commission ?? 0,
+                    'received_amount' => $transaction->amount_received,
+                    'balance_before' => $oldBalance,
+                    'balance_after' => $newBalance,
+                    'description' => 'Recharge via achat UV - ' . $data['reference'],
+                    'reference' => $data['reference'],
+                    'operator_transaction_name' =>  "Achat D'UV",
+                    'status' => 'completed',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+
+                $admin_single =  SidUser::whereIsAdmin(true)
+                    ->where('country_id', 107)
+                    ->first();
+
+
+
+                if (!$commission_robus) {
+                    throw new \Exception('Coût Robus introuvable');
+                }
+
+                if (!$wallet_commission) {
+                    throw new \Exception("Wallet commission introuvable");
+                }
+
+
+                if ($amount_total_conversion <= 0) {
+                    throw new \Exception('Montant final invalide');
+                }
+
+                if ($wallet_commission && $wallet_commission->amount >= $amount_total_conversion) {
+                    $wallet_commission->decrement('amount', $amount_total_conversion);
+                    LedgerEntry::create([
+                        'transaction_id' => (string) Str::uuid(),
+                        'admin_com_id' => null,
+                        'debit' => 0,
+                        'credit' => $amount_commission_conversion,
+                        'description' => "Commission adminstrateur",
+                        'is_uv' => true,
+                    ]);
+                    $walletAdmin->increment('amount', $amount_commission_conversion);
+                    LedgerEntry::create([
+                        'transaction_id' => (string) Str::uuid(),
+                        'admin_com_id' => null,
+                        'debit' => $amount_commission_conversion,
+                        'credit' => 0,
+                        'description' => "Wallet retrait",
+                        'is_wallet' => true,
+                    ]);
+                } else {
+                    $admin_single->wallet->decrement('amount', $amount_total_conversion);
+
+                    LedgerEntry::create([
+                        'transaction_id' => (string) Str::uuid(),
+                        'admin_com_id' => null,
+                        'debit' => 0,
+                        'credit' => $amount_commission_conversion,
+                        'description' => "Commission adminstrateur",
+                        'is_uv' => true,
+                    ]);
+
+                    LedgerEntry::create([
+                        'transaction_id' => (string) Str::uuid(),
+                        'admin_com_id' => null,
+                        'debit' => $amount_total_conversion,
+                        'credit' => 0,
+                        'description' => "Wallet retrait",
+                        'is_wallet' => true,
+                    ]);
+                }
+                // Update wallet Transactions
+                $transaction->wallet->update([
+                    'reload_by' => $transaction->user_id,
+                    'sid_user_relod' => $transaction->user_id,
+                    'amount' => DB::raw('amount+' . $amountReceived),
+                ]);
+            }
+
+
+            // Déclencher l'événement de paiement réussi
+            event(new PaymentSuccessful($transaction, $data));
+
+            // Envoyer une notification
+            $this->sendSuccessNotification($transaction);
+
+            DB::commit();
+
+            Log::info('Paiement traité avec succès', [
+                'reference' => $data['reference'],
+                'user_id' => $transaction->user_id,
+                'amount' => $transaction->amount
+            ]);
+
+            if ($transaction->status === 'success') {
+                return response()->json(['status' => 'success', 'message' =>  $data['reference']], 200);
+            } else {
+                return response()->json(['status' => 'failed', 'message' =>  $data['reference']], 200);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erreur lors du traitement du paiement', [
+                'reference' => $data['reference'],
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json(['status' => 'error', 'message' =>  $data['reference']], 200);
+        }
+    }
+
+
     private function handleCancelledWebCharge(array $data)
     {
         DB::beginTransaction();
@@ -773,6 +985,102 @@ class PaystackWebhookController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Erreur interne'], 500);
         }
     }
+
+    private function handleCancelledWebChargeHook(array $data)
+    {
+        DB::beginTransaction();
+
+        try {
+            $transaction = WalletReload::where('reference', $data['reference'])->first();
+
+            if (!$transaction) {
+                DB::rollBack();
+                Log::error('Transaction non trouvée', ['reference' => $data['reference']]);
+                return response()->json(['status' => 'error', 'message' => 'Transaction non trouvée'], 404);
+            }
+
+            if ($transaction->status === 'success') {
+                DB::rollBack();
+                Log::info('Transaction déjà traitée', ['reference' => $data['reference']]);
+                return response()->json(['status' => 'already_processed'], 200);
+            }
+
+            $wallet = $transaction->wallet;
+
+            if (!$wallet) {
+                DB::rollBack();
+                Log::error('Wallet introuvable', ['reference' => $data['reference']]);
+                return response()->json(['status' => 'error', 'message' => 'Wallet introuvable'], 400);
+            }
+
+            $statusMap = [
+                'success' => 'success',
+                'failed' => 'failed',
+                'abandoned' => 'cancelled',
+                'cancelled' => 'cancelled'
+            ];
+
+            $paymentStatus = $statusMap[$data['status']] ?? 'failed';
+
+            // Mettre à jour la transaction
+            $transaction->update([
+                'status' => $paymentStatus,
+                'gateway_response' => $data['gateway_response'] ?? null,
+                'paid_at' => isset($data['paid_at']) ? Carbon::parse($data['paid_at']) : null,
+                'payment_method' => 'ACHAT D\'UV',
+                'currency' => $data['currency'] ?? 'XOF',
+                'balance_before' => $wallet->amount,
+                'amount_solde' => $wallet->amount,
+                'fees' => isset($data['fees']) ? $data['fees'] / 100 : 0,
+                'authorization' => json_encode($data['authorization'] ?? []),
+                'customer' => json_encode($data['customer'] ?? []),
+                'metadata' => json_encode(array_merge(
+                    json_decode($transaction->metadata, true) ?? [],
+                    $data['metadata'] ?? []
+                )),
+                'verified' => $paymentStatus === 'success',
+                'verified_at' => $paymentStatus === 'success' ? now() : null,
+                'raw_response' => json_encode($data),
+            ]);
+
+            // Créditer wallet seulement si succès
+            $oldBalance = $wallet->amount;
+            $newBalance = $oldBalance + $transaction->amount;
+
+            PaymentReload::create([
+                'wallet_reload_id' => $transaction->id,
+                'sid_user_id' => $wallet->sid_user_id,
+                'type' => 'credit',
+                'transaction_id' => $transaction->reference,
+                'pay_amount' => $transaction->amount,
+                'fee_amount' => isset($data['fees']) ? $data['fees'] / 100 : 0,
+                'received_amount' => $transaction->amount,
+                'balance_before' => $oldBalance,
+                'balance_after' => $newBalance,
+                'description' => 'Recharge via achat UV - ' . $transaction->reference,
+                'reference' => $transaction->reference,
+                'operator_transaction_name' => 'achat d\'UV',
+                'status' => 'completed',
+            ]);
+            // Déclencher l'événement succès et notification
+            event(new PaymentSuccessful($transaction, $data));
+            $this->sendSuccessNotification($transaction);
+
+            DB::commit();
+
+            return response()->json(['status' => 'error', 'message' =>  $data['reference']], 500);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Erreur traitement paiement', [
+                'reference' => $data['reference'],
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json(['status' => 'error', 'message' => 'Erreur interne'], 500);
+        }
+    }
+
 
     private function handleCancelledCharge(array $data)
     {
@@ -1143,6 +1451,64 @@ class PaystackWebhookController extends Controller
         }
     }
 
+    public function paymentCallbackWebHook(Request $request)
+    {
+        $data = $request->all();
+        $reference = $data['reference'] ?? $data['trxref'] ?? null;
+        $reference = $reference ?: $reference;
+        if (!$reference) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Référence invalide'
+            ], 400);
+        }
+
+        $paystackService = new PaystackService();
+        $verification = $paystackService->verifyTransaction($reference);
+
+
+        if (!$verification || !$verification['status']) {
+            return response()->json(['message' => 'Verification failed'], 200);
+        }
+
+        if ($verification['status']) {
+
+            $transaction = WalletReload::where('reference', $reference)->first();
+
+            if ($transaction) {
+                $data = $verification['data'];
+
+                // Mettre à jour la transaction selon le statut
+                if ($data['status'] === 'success' && $transaction->status !== 'success') {
+                    return $this->handleSuccessWebfulChargeHook($data);
+                } elseif (in_array($data['status'], ['failed', 'abandoned']) && $transaction->status === 'pending') {
+
+                    $amountPaid = $data['amount'] / 100;
+                    $paystackFees = ($data['fees'] ?? 0) / 100;
+                    $amountReceived = $amountPaid - $paystackFees;
+                    $wallet = $transaction->wallet;
+
+                    $transaction->update([
+                        'status' => 'failed',
+                        'gateway_response' => $data['gateway_response'],
+                        'verified' => true,
+                        'verified_at' => now(),
+                        'balance_before' =>  $wallet->amount,
+                        'amount_solde' => $wallet->amount,
+                        'fees' => $paystackFees,
+                        'amount_received' => $amountReceived,
+                        'raw_response' => json_encode($data),
+                    ]);
+
+                    return $this->handleCancelledWebChargeHook($data);
+                } else {
+                    return response()->json(['message' => 'Je crois que vous avez deja utiliser ce retour de paiement '], 200);
+                }
+            }
+        } else {
+            return response()->json(['message' => 'Paiment impossible '], 401);
+        }
+    }
     /**
      * Page de succès de paiement
      */

@@ -77,8 +77,11 @@ if (! function_exists('sendTryCashMessage')) {
     {
         $encode = substr($phone, -10);
 
+
         try {
-            Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=Bonjour%20doc&message=$message&api_token=21|cDXu8PK2lD3MaANrDc8qzeyMoG9ZohPVmSwphAQwe7e6eaac");
+
+            Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+
         } catch (\Exception $e) {
             // Ici tu peux logger l'erreur pour analyse
             Log::error("Erreur TryCash: " . $e->getMessage());
@@ -220,13 +223,13 @@ function cumulOrderCard()
 
     // Récupérer tous les counts
     $counts = [
-        'bankCard' =>  $interHomeService->getCountByStatus(BankCard::class , 'wallet_payments' ,0),
+        'bankCard' =>  $interHomeService->getCountByStatus(BankCard::class, 'wallet_payments', 0),
     ];
 
     // Calculer le cumul total
     $total = array_sum($counts);
 
-    return $total; 
+    return $total;
 }
 
 function cumulTransaction()
@@ -263,12 +266,12 @@ if (!function_exists('asset_link_url')) {
         if (strpos($path, 'public/') === 0) {
             return asset($path);
         }
-        
+
         // Si le chemin contient 'image_inters', ajoute 'public/' devant
         if (strpos($path, 'image_inters') !== false) {
             return asset('public/' . $path);
         }
-        
+
         // Sinon retourne le chemin normal
         return asset($path);
     }

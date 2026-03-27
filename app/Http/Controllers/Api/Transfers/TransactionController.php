@@ -257,7 +257,7 @@ class TransactionController extends Controller
 
                                         if ($wallet_search->sidUser->email != null) {
 
-                                            Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message dépot : '  . $message));
+                                            Mail::to($wallet_search->sidUser->email)->queue(new CodeValidated('Message dépot : '  . $message));
                                         }
 
                                         if ($this->robusTransactionService->updateAmountRobusReceived($request->num_wallet, $walletTransaction, $valeur_received)) {
@@ -311,7 +311,7 @@ class TransactionController extends Controller
 
                                     if ($wallet_search->sidUser->email != null) {
 
-                                        Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message dépot : '  . $message));
+                                        Mail::to($wallet_search->sidUser->email)->queue(new CodeValidated('Message dépot : '  . $message));
                                     }
 
                                     if ($this->robusTransactionService->updateAmountRobusReceivedDistributer($request->num_wallet, $walletTransaction, $valeur_received)) {
@@ -388,7 +388,7 @@ class TransactionController extends Controller
 
                                         if ($wallet_search->sidUser->email != null) {
 
-                                            Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message dépot : '  . $message));
+                                            Mail::to($wallet_search->sidUser->email)->queue(new CodeValidated('Message dépot : '  . $message));
                                         }
 
                                         if ($this->robusTransactionService->updateAmountRobusReceived($request->num_wallet, $walletTransaction, $valeur_received)) {
@@ -704,7 +704,7 @@ class TransactionController extends Controller
 
                                         if ($wallet_search->sidUser->email != null) {
 
-                                            Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message rétrait : '  . $message));
+                                            Mail::to($wallet_search->sidUser->email)->queue(new CodeValidated('Message rétrait : '  . $message));
                                         }
 
                                         return $this->transactionWalletDrawal->sendNotificationWithDrawal($walletTransaction, $walletUserSearch, $admins);
@@ -1166,7 +1166,7 @@ class TransactionController extends Controller
 
                                     if ($wallet_search->sidUser->email != null) {
 
-                                        Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message rétrait : '  . $message));
+                                        Mail::to($wallet_search->sidUser->email)->queue(new CodeValidated('Message rétrait : '  . $message));
                                     }
 
                                     return $this->transactionWalletDrawal->sendNotificationWithDrawal($verify_code, $walletUserSearch, $admins);

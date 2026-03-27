@@ -29,6 +29,9 @@
        <div class="user-phone">
            {{ $item->sidUser->phone ?? 'Non renseigné' }}
        </div>
+        <div class="user-name">
+           {{ $item->sidUser->email ?? 'Non renseigné' }}
+       </div>
    </div>
 
    <!-- Nom complet -->

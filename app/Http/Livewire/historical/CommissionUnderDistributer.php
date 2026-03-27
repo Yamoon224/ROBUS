@@ -23,7 +23,7 @@ class CommissionUnderDistributer extends Component
     {
         $drawers =  WithMerchant::query();
 
-       $walletUser = Auth::guard('web')->check()
+        $walletUser = Auth::guard('web')->check()
             ? Auth::guard('web')->user()
             : (Auth::guard('integration')->check()
                 ? Auth::guard('integration')->user()
@@ -47,17 +47,14 @@ class CommissionUnderDistributer extends Component
         }
 
         if ($this->searchDrawersHistorical != "") {
-
-            $this->resetPage();
-
-            $drawers->orwhereHas(
-                'sidUser',
-                function ($query) {
-                    $query->where('firstname', 'like', '%' . $this->searchDrawersHistorical . '%')
-                        ->orWhere('lastname', 'like', '%' .  $this->searchDrawersHistorical   . '%');
-                }
-            )
-                ->Where("with_merchants.amount", "like",  "%" . $this->searchDrawersHistorical . "%");
+            $drawers->where(function ($query) {
+                $query->whereHas('sidUser', function ($q) {
+                    $q->where('firstname', 'like', '%' . $this->searchDrawersHistorical . '%')
+                        ->orWhere('lastname', 'like', '%' . $this->searchDrawersHistorical . '%')
+                        ->orWhere('email', 'like', '%' . $this->searchDrawersHistorical . '%');
+                })
+                    ->orWhere("with_merchants.amount_with_draw", "like", "%" . $this->searchDrawersHistorical . "%");
+            });
         }
 
         return view(
