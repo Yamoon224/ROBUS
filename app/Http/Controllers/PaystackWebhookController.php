@@ -164,6 +164,7 @@ class PaystackWebhookController extends Controller
                         ['user_id' => $user->id, 'wallet_id' => $wallet->id]
                     )),
                     'payment_method' => 'ACHAT d\'UV',
+                    'type_transaction' => 'Achat UV',
                     'created_at' => now(),
                     'updated_at' => now(),
                     'payment_link' => $response['data']['authorization_url'] ?? null

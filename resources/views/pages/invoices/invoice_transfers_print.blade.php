@@ -140,6 +140,9 @@
                 @endif
             </div>
 
+            @php
+                $wallet_info = \App\Models\Wallets\Wallet::where('wallet_id', $walletTransfers->num_wallet)->first();
+            @endphp
             <!-- Tableau des montants -->
             <table class="amount-table">
                 <tr>
@@ -149,8 +152,14 @@
                 </tr>
                 <tr>
                     <td class="label">Montant reçu</td>
-                    <td class="value bold">{{ number_format($walletTransfers->amount_received ?? 0, 0, ',', ' ') }}
-                        {{ $walletTransfers->wallet->currencie->code ?? 'FCFA' }}</td>
+                    @if ($walletTransfers->provider->name == 'ROBUS')
+                        <td class="value bold">{{ number_format($walletTransfers->amount_received ?? 0, 0, ',', ' ') }}
+                            {{ $wallet_info->currencie->code ?? 'FCFA' }}</td>
+                    @else
+                        <td class="value bold">{{ number_format($walletTransfers->amount_received ?? 0, 0, ',', ' ') }}
+                            {{ $walletTransfers->wallet->currencie->code ?? 'FCFA' }}</td>
+                    @endif
+
                 </tr>
                 <tr>
                     <td class="label">Frais</td>
@@ -168,13 +177,7 @@
 
             @if ($walletTransfers->provider->name == 'ROBUS')
                 <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #ecf0f1;">
-                    @php
-                        $wallet_info = \App\Models\Wallets\Wallet::where(
-                            'wallet_id',
-                            $walletTransfers->num_wallet,
-                        )->first();
 
-                    @endphp
                     <div class="info-label" style="margin-bottom: 4px;">DETAILS DESTINATAIRE</div>
 
                     <div class="section">

@@ -917,7 +917,7 @@ class InterPaymentService
             return false;
         }
     }
-    public function createRobusWalletInter($val_amount, $percent_robus, $country_robus, $provider_payment, $number_compte, $provider_type, $amount_drawal)
+    public function createRobusWalletInter($val_amount, $percent_robus, $country_robus, $provider_payment, $number_compte, $provider_type, $amount_drawal , $amount_solde_drawal)
     {
         $amount_solde = robus()->wallet->amount - $val_amount;
 
@@ -940,7 +940,9 @@ class InterPaymentService
             'country_id' => $country_robus->id,
             'choose_type_transaction' => $provider_type,
             'amount_solde' => $amount_solde ?? null,
-            'amount_solde_drawal' => $amount_drawal ?? null
+            'amount_solde_drawal' => $amount_drawal ?? null,
+            'amount_solde_before_drawal' => $amount_solde_drawal ?? null
+            
         ]);
     }
 

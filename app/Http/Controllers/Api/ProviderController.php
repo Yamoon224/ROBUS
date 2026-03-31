@@ -289,7 +289,7 @@ class ProviderController extends Controller
                         $dashboard_data['Xbets'] = ProviderSingleCollection::collection($providers['xbet']);
                         $dashboard_data['Transfert international'] = [
                             "Transfert" => ProviderSingleCollection::collection($providers['inter']),
-                            "Bank Send" => !empty($activeButtons['showFacBankSendInterButton']) ? ProviderSingleCollection::collection($providers['interBankSend']) : [],
+                            "Bank Send" =>  ProviderSingleCollection::collection($providers['interBankSend']) ,
                         ];
                     } else {
                         $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($providers['transaction']);
@@ -301,8 +301,8 @@ class ProviderController extends Controller
                             "Crédit téléphonique" => ProviderSingleCollection::collection($providers['phoneInter']),
                             "Versement bancaire" => ProviderSingleCollection::collection($providers['virementBank']),
                             "Rechargement de carte" => ProviderSingleCollection::collection($providers['reloadCardInter']),
-                            "Rechargement de carte" => !empty($activeButtons['showCarteInterButton']) ? ProviderSingleCollection::collection($providers['reloadCardInter']) : [],
-                            "Bank Send" => !empty($activeButtons['showFacBankSendInterButton']) ? ProviderSingleCollection::collection($providers['interBankSend']) : [],
+                            "Rechargement de carte" =>  ProviderSingleCollection::collection($providers['reloadCardInter']),
+                            "Bank Send" =>  ProviderSingleCollection::collection($providers['interBankSend']),
                         ];
                     }
                 }

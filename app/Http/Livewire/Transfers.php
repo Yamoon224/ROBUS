@@ -1131,7 +1131,7 @@ class Transfers extends Component
             ->where('wallet_id', $this->compte_number_robus)
             ->first();
 
-        $amount_drawal = (float)$walletAmountSend->total_amount - (float)$commission_send;
+        $amount_drawal = (float)$walletAmountSend->total_amount + (float)$commission_send;
         $amount_before_drawal = (float)$walletAmountSend->total_amount;
 
         // Mise à jour des wallets
@@ -1139,7 +1139,7 @@ class Transfers extends Component
         app(TransfertServiceBackend::class)->updatePaiementDrawalWallet($walletUser, $this->transaction_amount_robus);
 
         $wallet = sabdy()->wallet->first();
-        $amount_solde = (float) $wallet->amount + (float) $this->transaction_amount_robus;
+        $amount_solde = (float) $wallet->amount - (float) $this->transaction_amount_robus;
 
         // Création transaction
         $walletTransaction = app(TransfertServiceBackend::class)->createDrawalTransaction(

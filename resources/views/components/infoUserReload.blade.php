@@ -1,23 +1,23 @@
-   <!-- Badges de statut -->
 @php
     use App\Models\Wallets\Wallet;
     $wallet = Wallet::where('wallet_id', $item->account_wallet)->first();
     $user = $wallet ? $wallet->sidUser : null;
+    $wallet_info = \App\Models\Wallets\Wallet::where('wallet_id', $item->account_wallet)->first();
 @endphp
 
   <span class="bg-success w-60 text-white fs-5 px-1 py-1 rounded">
       Bénéficiaire du rechargement
    </span>
    <div class="user-badges-container mt-6">
-       @if ($user && $user->is_under_distributer == 1)
+       @if ($wallet_info->sidUser && $wallet_info->sidUser->is_under_distributer == 1)
            <div class="user-badge user-badge--distributor">
                Sous-distributeur
            </div>
-       @elseif ($user && $user->is_custumers == 1)
+       @elseif ($wallet_info->sidUser && $wallet_info->sidUser->is_custumers == 1)
            <div class="user-badge user-badge--customer">
                Client
            </div>
-       @elseif ($user && $user->is_company == 1)
+       @elseif ($wallet_info->sidUser && $wallet_info->sidUser->is_company == 1)
            <div class="user-badge user-badge--compagnie">
                Société
            </div>

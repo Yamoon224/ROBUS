@@ -123,7 +123,6 @@
             <div class="section-title">Destinataire</div>
             @php
                 $wallet_info = \App\Models\Wallets\Wallet::where('wallet_id', $walletReload->account_wallet)->first();
-
             @endphp
             <div class="info-grid">
                 <div class="info-item">
@@ -188,7 +187,7 @@
                 <tr>
                     <td class="label">Montant reçu</td>
                     <td class="value bold">{{ number_format($walletReload->amount_received ?? 0, 0, ',', ' ') }}
-                        {{ $walletReload->wallet->currencie->code ?? 'FCFA' }}</td>
+                        {{ $wallet_info->currencie->code ?? 'FCFA' }}</td>
                 </tr>
                 <tr>
                     <td class="label">Frais</td>

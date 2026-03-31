@@ -14,7 +14,6 @@
 
             <div class="hidden md:block mx-auto text-slate-500"></div>
 
-
             <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                     <label for="countriesFilter" class="block text-gray-700 text-sm font-bold mb-2">Filtrer par
@@ -52,16 +51,46 @@
                 </div>
             </div>
             <div class="hidden md:block ml-8 text-slate-500"></div>
+
+            <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+                <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+                    <label for="statusFilter_active" class="text-gray-700 text-sm font-bold mb-2">Filtrer par
+                        status</label>
+                    <select id="statusFilter_active" wire:model="statusFilter_active"
+                        class="form-select py-3 px-4 box w-100 mt-3" aria-placeholder="Rechercher par status">
+                        <option value="1">Actif</option>
+                        <option value="0">Inactif</option>
+
+                    </select>
+                </div>
+            </div>
+            <div class="hidden md:block ml-8 text-slate-500"></div>
+
+            <div class="w-full sm:w-auto mt-3 sm:mt-0">
+                <label for="startDate" class="text-gray-700 text-sm font-bold mb-2">Date de début</label>
+                <input type="date" id="startDate" wire:model="startDate"
+                    class="form-input py-3 px-4 box w-full mt-3">
+            </div>
+            <div class="hidden md:block ml-8 text-slate-500"></div>
+
+            <div class="w-full sm:w-auto mt-3 sm:mt-0">
+                <label for="endDate" class="text-gray-700 text-sm font-bold mb-2">Date de fin</label>
+                <input type="date" id="endDate" wire:model="endDate" class="form-input py-3 px-4 box w-full mt-3">
+            </div>
+            <div class="hidden md:block ml-8 text-slate-500"></div>
             <div class="input-group input-group-md" style="margin-top: 13px;width: 250px;">
                 <div class="w-56 relative text-slate-500">
+                    <label for="citiesFilter" class="text-gray-700 text-sm font-bold mb-2">Rechercher</label>
 
-                    <input type="text" name="table_search" wire:model="search" class="form-control  w-56 box pr-10"
-                        style="height: 3rem;" placeholder="Rechercher">
+                    <input type="text" name="table_search" wire:model="search"
+                        class="form-control  w-56 box pr-10 mt-3" style="height: 3rem;" placeholder="Rechercher">
                     <i class="w-4 h-4 absolute my-auto inset-y-0 mr-6 " style="margin-left: 12rem;"
                         data-feather="search"></i>
                 </div>
             </div>
+
         </div>
+        
         <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
             <table class="table table-bordered table-hover -mt-2 -intro-x ">
                 <thead class="table-dark">
@@ -83,7 +112,7 @@
                                     @include('components.infoUserDetails')
                                 </div>
                                 @include('components.infoDetailsUser')
-                               
+
                             </td>
                             <td class="w-60">
 

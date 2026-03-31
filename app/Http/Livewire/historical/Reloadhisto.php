@@ -62,7 +62,7 @@ class Reloadhisto extends Component
         $reloadHistoricals = $realodQuery->orderBy('created_at', 'desc')->paginate(15);
 
         return view('livewire.historical.reloadhisto', [
-            'user' => $this->ReloadsAllDays, // Propriété calculée
+            'user' => $this->ReloadsAllDays,
             'reload_historicals' => $reloadHistoricals,
             'usersCountry' => $walletUser->country->currencie->name,
         ]);

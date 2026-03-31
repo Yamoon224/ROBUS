@@ -37,6 +37,8 @@ class custumers extends Component
     public $cities = [];
     public $citiesFilter;
     public $cityNameSearch = '';
+    public $startDate = null;
+    public $endDate = null;
 
     public function mount()
     {
@@ -260,10 +262,13 @@ class custumers extends Component
 
             $this->resetPage();
 
-            $users->where('is_custumers', true)->where("firstname", "LIKE",  "%" . $this->search . "%")
-                ->orWhere("lastname", "LIKE",  "%" . $this->search . "%")
-                ->orWhere("email", "LIKE",  "%" . $this->search . "%")
-                ->orWhere("phone", "LIKE",  "%" . $this->search . "%");
+            $users->where('is_custumers', true)
+                ->where(function ($query) {
+                    $query->where('firstname', 'LIKE', "%{$this->search}%")
+                        ->orWhere('lastname', 'LIKE', "%{$this->search}%")
+                        ->orWhere('email', 'LIKE', "%{$this->search}%")
+                        ->orWhere('phone', 'LIKE', "%{$this->search}%");
+                });
         }
 
         if ($this->statusFilter_piece != "") {
@@ -271,7 +276,7 @@ class custumers extends Component
         }
 
         if ($this->statusFilter_active != "") {
-            $users->where("is_active", $this->statusFilter_active);
+            $users->where("status", $this->statusFilter_active);
         }
 
 
@@ -285,6 +290,14 @@ class custumers extends Component
 
         if ($this->citiesFilter != "") {
             $users->where("city_id", $this->citiesFilter);
+        }
+
+        if ($this->startDate) {
+            $users->whereDate('created_at', '>=', $this->startDate);
+        }
+        
+        if ($this->endDate) {
+            $users->whereDate('created_at', '<=', $this->endDate);
         }
 
         if ($this->cityNameSearch != "") {

@@ -50,7 +50,33 @@
                         class="form-input py-3 px-4 box w-full rounded-md border border-gray-300 focus:ring focus:ring-blue-200 focus:border-blue-500">
                 </div>
             </div>
+            <div class="hidden md:block ml-8 text-slate-500"></div>
 
+            <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+                <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+                    <label for="statusFilter_active" class="text-gray-700 text-sm font-bold mb-2">Filtrer par
+                        status</label>
+                    <select id="statusFilter_active" wire:model="statusFilter_active"
+                        class="form-select py-3 px-4 box w-100 mt-3" aria-placeholder="Rechercher par status">
+                        <option value="1">Actif</option>
+                        <option value="0">Inactif</option>
+
+                    </select>
+                </div>
+            </div>
+            <div class="hidden md:block ml-8 text-slate-500"></div>
+
+            <div class="w-full sm:w-auto mt-3 sm:mt-0">
+                <label for="startDate" class="text-gray-700 text-sm font-bold mb-2">Date de début</label>
+                <input type="date" id="startDate" wire:model="startDate"
+                    class="form-input py-3 px-4 box w-full mt-3">
+            </div>
+            <div class="hidden md:block ml-8 text-slate-500"></div>
+
+            <div class="w-full sm:w-auto mt-3 sm:mt-0">
+                <label for="endDate" class="text-gray-700 text-sm font-bold mb-2">Date de fin</label>
+                <input type="date" id="endDate" wire:model="endDate" class="form-input py-3 px-4 box w-full mt-3">
+            </div>
             <div class="hidden md:block ml-8 text-slate-500"></div>
             <div class="mt-3 input-group input-group-md" style="margin-top: 13px;width: 250px;">
                 <div class="w-56 relative text-slate-500">

@@ -78,6 +78,8 @@ class InterTransactionSingleCollection extends JsonResource
             'balance_before'  => $this->balance_before . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
             'solde_account'  => $this->amount_solde . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
             'amount_solde_drawal' =>  $this->amount_solde_drawal .  ' ' . (optional(optional($this->country->currencie))->code ?? "CFA"),
+            'amount_solde_before_drawal' => $this->amount_solde_before_drawal . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
+
         ];
     }
 }

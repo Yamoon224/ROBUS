@@ -58,7 +58,7 @@ class TransfertServiceBackend
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
 
-    public function createRobusWalletTransaction($transaction_amount_robus, $percent_robus, $provider, $compte_number_robus, $amount_drawal, $choose_transaction)
+    public function createRobusWalletTransaction($transaction_amount_robus, $percent_robus, $provider, $compte_number_robus, $amount_drawal, $choose_transaction , $amount_before_drawal)
     {
 
         $amount_solde = (float)sabdy()->wallet->amount - (float)$transaction_amount_robus;
@@ -85,6 +85,7 @@ class TransfertServiceBackend
                 'status' => 'SUCCESS',
                 'amount_solde' => $amount_solde ?? null,
                 'amount_solde_drawal' => $amount_drawal ?? null,
+                'amount_solde_before_drawal' => $amount_before_drawal ?? null,
                 'choose_transaction' => $choose_transaction ?? 1
             ]
         );

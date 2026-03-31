@@ -80,7 +80,7 @@
                           }
                       @endphp
                       <td>
-                          @include('components.walletBalanceConvertion')
+                          @include('components.walletBalanceReloadConvertion')
 
 
                       </td>
