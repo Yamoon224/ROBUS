@@ -157,6 +157,7 @@ class PaystackWebhookController extends Controller
                     'amount_solde' => $wallet->amount,
                     'fees' => 0,
                     'currency' => 'XOF',
+                    'account_wallet' => 'CI44RTZU',
                     'reference' => $request->reference,
                     'status' => 'pending',
                     'metadata' => json_encode(array_merge(

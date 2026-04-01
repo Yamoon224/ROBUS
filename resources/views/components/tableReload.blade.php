@@ -97,7 +97,7 @@
                       <td class="w-60">
                           @include('components.infoUserReload')
 
-                          @if ($item->status == 'PENDING')
+                          @if ($item->status == 'PENDING' || $item->status == 'pending')
                               <div class="flex items-center justify-center text-pending mt-3">
                                   <span
                                       class="alert alert-pending  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
@@ -105,7 +105,7 @@
                                   </span>
 
                               </div>
-                          @elseif ($item->status == 'ERROR')
+                          @elseif ($item->status == 'ERROR' || $item->status == 'cancelled'  || $item->status == 'refused' || $item->status == 'failed')
                               <div class="flex items-center justify-center text-danger  mt-3">
                                   <div class="flex items-center justify-center text-pending">
                                       <span
