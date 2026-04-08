@@ -236,7 +236,7 @@ class ProvidersService
             if ($countryNameGroup == "CIV") {
                 $providerMap = ['AFL', 'AFC', 'MAG', 'ASIE', 'AFE', 'URP'];
             } else {
-                $providerMap = ['AFL', 'CIV', 'MAG', 'AFC', 'ASIE', 'AFE'];
+                $providerMap = ['AFL', 'CIV', 'MAG', 'AFC', 'ASIE', 'AFE', 'URP' , 'USA'];
             }
         } else {
             $providerMaps = [

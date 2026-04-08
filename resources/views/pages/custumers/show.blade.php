@@ -196,7 +196,6 @@
                                             @foreach ($kycs as $item)
                                                 <tr class="intro-x">
                                                     <td class="w-40 text-center">
-
                                                         <p class="font-medium whitespace-nowrap">
                                                             {{ $item->created_at ?? null }}</p>
                                                     </td>

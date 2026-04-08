@@ -276,7 +276,7 @@ class custumers extends Component
         }
 
         if ($this->statusFilter_active != "") {
-            $users->where("status", $this->statusFilter_active);
+            $users->where("is_active", $this->statusFilter_active);
         }
 
 

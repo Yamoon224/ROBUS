@@ -11,7 +11,6 @@
         </div>
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
 
-
             <div class="hidden md:block mx-auto text-slate-500"></div>
 
             <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
@@ -58,6 +57,7 @@
                         status</label>
                     <select id="statusFilter_active" wire:model="statusFilter_active"
                         class="form-select py-3 px-4 box w-100 mt-3" aria-placeholder="Rechercher par status">
+                        <option value="">Tout</option>
                         <option value="1">Actif</option>
                         <option value="0">Inactif</option>
 
@@ -90,15 +90,16 @@
             </div>
 
         </div>
-        
+
         <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
             <table class="table table-bordered table-hover -mt-2 -intro-x ">
                 <thead class="table-dark">
                     <tr>
                         <th class="text-center whitespace-nowrap">Prénom(s) & nom</th>
                         <th class="text-center whitespace-nowrap">Email & Solde</th>
-                        <th class="text-center whitespace-nowrap">Status compte</th>
-                        <th class="text-center whitespace-nowrap">Statut</th>
+                        <th class="text-center whitespace-nowrap">Status compte & doc </th>
+                        <th class="text-center whitespace-nowrap">Status Wallet </th>
+                        <th class="text-center whitespace-nowrap">Statut utilisateur</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
                 </thead>
@@ -120,14 +121,46 @@
 
                             </td>
 
+                            <td class="w-48 px-4 py-3">
+                                <div class="flex flex-col space-y-3">
+                                    {{-- Badge Statut du compte --}}
+                                    @if ($item->is_active == '1')
+                                        <div
+                                            class="inline-flex items-center px-3 py-1.5 rounded-full bg-success border border-green-200 text-green-700 text-sm font-medium shadow-sm mt-6">
+                                            <i class="fas fa-check-circle text-green-500 mr-2 text-success"></i>
+                                            <span class="text-white">Compte activé</span>
+                                        </div>
+                                    @else
+                                        <div
+                                            class="inline-flex items-center px-3 py-1.5 rounded-full bg-pending border border-red-200 text-red-700 text-sm font-medium shadow-sm mt-6">
+                                            <i class="fas fa-ban text-red-500 mr-2 text-base"></i>
+                                            <span class="text-white">Compte désactivé</span>
+                                        </div>
+                                    @endif
 
+                                    {{-- Badge Statut KYC --}}
+                                    @if ($item->kyc && $item->kyc->status == '1')
+                                        <div
+                                            class="inline-flex items-center px-3 py-1.5 rounded-full bg-success border border-emerald-200 text-emerald-700 text-sm font-medium shadow-sm mt-6">
+                                            <i class="fas fa-shield-check text-success mr-2 text-base"></i>
+                                            <span class="text-white">Documents validés</span>
+                                        </div>
+                                    @else
+                                        <div
+                                            class="inline-flex items-center px-3 py-1.5 rounded-full bg-pending border border-amber-200 text-amber-700 text-sm font-medium shadow-sm mt-6">
+                                            <i class="fas fa-clock text-amber-500 mr-2 text-white"></i>
+                                            <span class="text-white">Documents en attente</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            </td>
                             <td class="w-40">
 
                                 @if ($item->wallet != null)
                                     @if ($item->wallet->status == '1' ?? null)
                                         <div class="flex items-center justify-center text-success">
 
-                                            <a class="flex items-center mr-3"
+                                            <a class="inline-flex items-center px-3 py-1.5 rounded-full bg-success text-white border border-emerald-200 text-emerald-700 text-sm font-medium shadow-sm mt-6"
                                                 href="{{ route('custumers.activate_wallet', ['id' => $item->id]) }}">
                                                 <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i> Activé
                                             </a>
@@ -149,10 +182,9 @@
 
                             <td class="w-40">
                                 {{-- Desactiver --}}
-                                @if ($item->is_active == '1')
+                                @if ($item->status == '1')
                                     @if (Auth::guard('web')->user()->hasPermissionTo('active-clients'))
                                         <div class="flex items-center justify-center text-success">
-
                                             <a class="flex items-center mr-3"
                                                 href="{{ route('custumers.activate', ['id' => $item->id]) }}"
                                                 data-message="Etes vous sûr de vouloir effectuer cette action ?"

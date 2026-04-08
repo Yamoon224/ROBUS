@@ -69,8 +69,6 @@ class ProviderController extends Controller
     }
 
 
-
-
     public function index()
     {
         $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
@@ -87,7 +85,7 @@ class ProviderController extends Controller
                 $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
                 $walletTransactionDrawal = $this->percentRobus->getProvidersDrawalByType(new Provider, $countrieId, 29);
                 $walletTransactionReload = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 30);
-                
+
                 $dashboard_data['Transfert national'] = [
                     "Dépôts" => ProviderSingleCollection::collection($walletTransactionDepot),
                 ];
@@ -174,10 +172,12 @@ class ProviderController extends Controller
 
                 $providers = [];
 
-                if (!$providers) {
-                    // Cache vide : on charge tout
-                    $providers = [];
+                $providerCacheKey = "providers_country_{$countrieId}";
+                $providers        = Cache::get($providerCacheKey, []);
 
+
+                if (empty($providers)) {
+                    // Cache vide → charger tous les providers depuis la BDD
                     foreach ($providerTypes as $key => [$type, $alias]) {
                         if (is_array($type)) {
                             $providers[$alias] = $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, $type);
@@ -190,13 +190,12 @@ class ProviderController extends Controller
                         }
                     }
 
-                    // Sauvegarde en cache pour 30 minutes
                     Cache::put($providerCacheKey, $providers, 1800);
                 } else {
                     // Cache existant, mais vérifier qu'on a tous les alias nécessaires
+                    $updated = false;
                     foreach ($providerTypes as $key => [$type, $alias]) {
                         if (!isset($providers[$alias])) {
-                            // Charger seulement l'alias manquant
                             if (is_array($type)) {
                                 $providers[$alias] = $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, $type);
                             } elseif ($alias === 'depot') {
@@ -206,10 +205,12 @@ class ProviderController extends Controller
                             } else {
                                 $providers[$alias] = $this->percentRobus->getProvidersByType(new Provider, $countrieId, $type);
                             }
-
-                            // Mettre à jour le cache avec le nouvel alias
-                            Cache::put($providerCacheKey, $providers, 1800);
+                            $updated = true;
                         }
+                    }
+
+                    if ($updated) {
+                        Cache::put($providerCacheKey, $providers, 1800);
                     }
                 }
 
@@ -227,7 +228,16 @@ class ProviderController extends Controller
                         if (!empty($activeButtons['showPaiementButton'])) {
                             $dashboard_data['Factures'] = ProviderSingleCollection::collection($providers['payment']);
                         }
+
+
                         if (!empty($activeButtons['showXbetsButton'])) {
+                            $xbets = ProviderSingleCollection::collection($providers['xbet']);
+                            if ($xbets->count() > 0) {
+                                $dashboard_data['Xbets'] = $xbets;
+                            }
+                        }
+                        
+                        if (!empty($activeButtons['showXbetsButton']) && !empty($providers['xbet'])) {
                             $dashboard_data['Xbets'] = ProviderSingleCollection::collection($providers['xbet']);
                         }
 
@@ -289,7 +299,7 @@ class ProviderController extends Controller
                         $dashboard_data['Xbets'] = ProviderSingleCollection::collection($providers['xbet']);
                         $dashboard_data['Transfert international'] = [
                             "Transfert" => ProviderSingleCollection::collection($providers['inter']),
-                            "Bank Send" =>  ProviderSingleCollection::collection($providers['interBankSend']) ,
+                            "Bank Send" =>  ProviderSingleCollection::collection($providers['interBankSend']),
                         ];
                     } else {
                         $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($providers['transaction']);

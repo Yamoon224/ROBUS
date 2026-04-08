@@ -96,7 +96,6 @@ class AuthenticationService
                 }
         }
 
-
         private function attemptActiveCodeLogin($user, $email, $password, $device_meta_data, $code_active)
         {
                 if (Auth::attempt(['email' => $email, 'password' => $password])) {
@@ -181,7 +180,6 @@ class AuthenticationService
                         return ['success' => false, 'message' => 'L\'ecriture du Email ou mot de passe incorrect.', 'catch' => true];
                 }
         }
-
 
         public function custumerLogin($phone, $password)
         {
@@ -277,7 +275,6 @@ class AuthenticationService
                 }
         }
 
-
         public function shouldCheckAppStatus()
         {
                 $lastCheck = Cache::get('last_app_status_check');
@@ -309,7 +306,6 @@ class AuthenticationService
 
                 return $response;
         }
-
 
         public function appDispoWebRobus($model)
         {
@@ -509,4 +505,5 @@ class AuthenticationService
 
                 return ['success' => true];
         }
+        
 }
