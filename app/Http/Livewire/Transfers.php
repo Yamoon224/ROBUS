@@ -817,84 +817,84 @@ class Transfers extends Component
     {
         // Au lieu de $this->showNBankNotification = true;
         $this->dispatchBrowserEvent('update-bank-count', [
-            'count' => WalletBank::whereStatus('PENDING')->count()
+            'count' => WalletBank::whereIn('status', ['PENDING', 'PROCESSING'])->count()
         ]);
     }
 
     public function notifyNewTransfers()
     {
         $this->dispatchBrowserEvent('update-transfers-count', [
-            'count' => WalletTransaction::whereStatus('PENDING')->count()
+            'count' => WalletTransaction::whereIn('status', ['PENDING', 'PROCESSING'])->count()
         ]);
     }
 
     public function notifyNewPaiement()
     {
         $this->dispatchBrowserEvent('update-paiement-count', [
-            'count' => WalletPayment::whereStatus('PENDING')->count()
+            'count' => WalletPayment::whereIn('status', ['PENDING', 'PROCESSING'])->count()
         ]);
     }
 
     public function notifyNewInter()
     {
         $this->dispatchBrowserEvent('update-inter-count', [
-            'count' => WalletInter::whereStatus('PENDING')->count()
+            'count' => WalletInter::whereIn('status', ['PENDING', 'PROCESSING'])->count()
         ]);
     }
 
     public function notifyNewCard()
     {
         $this->dispatchBrowserEvent('update-reload-count', [
-            'count' => WalletDeposit::whereStatus('PENDING')->count()
+            'count' => WalletDeposit::whereIn('status', ['PENDING', 'PROCESSING'])->count()
         ]);
     }
 
     public function notifyNewPhone()
     {
         $this->dispatchBrowserEvent('update-phone-count', [
-            'count' => WalletPhoneCredit::whereStatus('PENDING')->count()
+            'count' => WalletPhoneCredit::whereIn('status', ['PENDING', 'PROCESSING'])->count()
         ]);
     }
 
     public function notifyNewXbet()
     {
         $this->dispatchBrowserEvent('update-xbet-count', [
-            'count' => WalletXbet::whereStatus('PENDING')->count()
+            'count' => WalletXbet::whereIn('status', ['PENDING', 'PROCESSING'])->count()
         ]);
     }
 
     public function notifyNewVersement()
     {
         $this->dispatchBrowserEvent('update-versement-count', [
-            'count' => WalletVersement::whereStatus('PENDING')->count()
+            'count' => WalletVersement::whereIn('status', ['PENDING', 'PROCESSING'])->count()
         ]);
     }
 
     public function notifyNewBankSend()
     {
         $this->dispatchBrowserEvent('update-banksend-count', [
-            'count' => WalletBankSend::whereStatus('PENDING')->count()
+            'count' => WalletBankSend::whereIn('status', ['PENDING', 'PROCESSING'])->count()
         ]);
     }
 
     public function notifyNewPush()
     {
         $this->dispatchBrowserEvent('update-push-count', [
-            'count' => WalletPush::whereStatus('PENDING')->count()
+            'count' => WalletPush::whereIn('status', ['PENDING', 'PROCESSING'])->count()
         ]);
     }
 
     public function notifyNewDjamo()
     {
         $this->dispatchBrowserEvent('update-djamo-count', [
-            'count' => WalletDjamo::whereStatus('PENDING')->count()
+            'count' => WalletDjamo::whereIn('status', ['PENDING', 'PROCESSING'])->count()
         ]);
     }
 
     public function notifyNewDrawal()
     {
         $this->dispatchBrowserEvent('update-djamo-count', [
-            'count' => WalletDjamo::whereStatus('PENDING')->count()
+            'count' => WalletDjamo::whereIn('status', ['PENDING', 'PROCESSING'])->count()
         ]);
     }
 
@@ -902,7 +902,7 @@ class Transfers extends Component
     public function notifyNewTresort()
     {
         $this->dispatchBrowserEvent('update-tresort-count', [
-            'count' => WalletTresortMoney::whereStatus('PENDING')->count()
+            'count' => WalletTresortMoney::whereIn('status', ['PENDING', 'PROCESSING'])->count()
         ]);
     }
 

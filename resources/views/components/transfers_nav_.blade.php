@@ -14,6 +14,7 @@
             @if ($showDepotButton && sabdy()->hasPermissionTo('transfers-argent'))
                 <li wire:key="nav-transfers-admin" id="transfers-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('transfers')"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-400 bg-white text-gray-600 
               hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-500 hover:border-3 
               transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center"
@@ -38,6 +39,7 @@
             @if ($showPaiementButton && sabdy()->hasPermissionTo('paiement-factures'))
                 <li wire:key="nav-paiement-admin" id="paiement-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('paiement')"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2  border-gray-400 bg-white text-gray-600 
                       hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-500 hover:border-3 
                        transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-green py-4 items-center"
@@ -63,6 +65,7 @@
             @if ($showVirementButton && sabdy()->hasPermissionTo('virement-compte'))
                 <li wire:key="nav-virement-admin" id="virement-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('virement')"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -89,6 +92,7 @@
             @if ($showRechargementButton && sabdy()->hasPermissionTo('rechargement-carte'))
                 <li wire:key="nav-carte-admin" id="carte-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('carte')"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -115,6 +119,7 @@
             @if ($showCreditButton && sabdy()->hasPermissionTo('rechargement-credit'))
                 <li  wire:key="nav-phone-admin" id="phone-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('phone')"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -143,6 +148,7 @@
             @if ($showTransacInterButton && sabdy()->hasPermissionTo('rechargement-inters'))
                 <li wire:key="nav-inter-admin" id="inter-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('inter')"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -170,6 +176,8 @@
             @if ($showXbetButton && sabdy()->hasPermissionTo('rechargement-xbets'))
                 <li wire:key="nav-xbet-admin" id="xbet-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('xbet')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -196,6 +204,8 @@
             @if ($showVersementButton && sabdy()->hasPermissionTo('rechargement-versements'))
                 <li wire:key="nav-verment-admin" id="versment-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('versment')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -222,6 +232,8 @@
             @if ($showBankSendButton && sabdy()->hasPermissionTo('rechargement-bank-sends'))
                 <li wire:key="nav-bank-send-admin" id="bank-send-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('bank-send')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -248,6 +260,7 @@
             @if ($showPushButton && sabdy()->hasPermissionTo('rechargement-push'))
                 <li wire:key="nav-push-admin" id="push-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('push')"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -274,6 +287,8 @@
             @if ($showDjamoButton && sabdy()->hasPermissionTo('rechargement-tresort'))
                 <li  wire:key="nav-tresort-admin" id="tresort-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('tresort')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -301,6 +316,8 @@
             @if ($showDjamoButton && sabdy()->hasPermissionTo('rechargement-djamo'))
                 <li wire:key="nav-djamo-admin" id="djamo-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('djamo')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -330,6 +347,8 @@
             @if (sabdy()->hasPermissionTo('transfers-argent'))
                 <li wire:key="nav-transfers-admin" id="transfers-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('transfers')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -357,6 +376,8 @@
             @if (sabdy()->hasPermissionTo('paiement-factures'))
                 <li  wire:key="nav-paiement-admin" id="paiement-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('paiement')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -384,6 +405,8 @@
             @if (sabdy()->hasPermissionTo('virement-compte'))
                 <li wire:key="nav-virement-admin" id="virement-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('virement')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -411,6 +434,8 @@
             @if (sabdy()->hasPermissionTo('rechargement-carte'))
                 <li  wire:key="nav-carte-admin" id="carte-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('carte')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -439,6 +464,8 @@
             @if (sabdy()->hasPermissionTo('rechargement-credit'))
                 <li  wire:key="nav-phone-admin" id="phone-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('phone')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -467,6 +494,8 @@
             @if (sabdy()->hasPermissionTo('rechargement-inters'))
                 <li wire:key="nav-inter-admin" id="inter-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('inter')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -494,6 +523,8 @@
             @if (sabdy()->hasPermissionTo('rechargement-xbets'))
                 <li wire:key="nav-xbet-admin" id="xbet-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('xbet')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -520,6 +551,8 @@
             @if (sabdy()->hasPermissionTo('rechargement-versements'))
                 <li wire:key="nav-versment-admin" id="versment-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('versment')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -547,6 +580,8 @@
             @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
                 <li wire:key="nav-bank-send-admin" id="bank-send-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('bank-send')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -575,6 +610,7 @@
             @if (sabdy()->hasPermissionTo('rechargement-push'))
                 <li wire:key="nav-push-admin" id="push-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('push')"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -601,6 +637,8 @@
             @if (sabdy()->hasPermissionTo('rechargement-tresort'))
                 <li wire:key="nav-tresort-admin" id="tresort-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('tresort')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -628,6 +666,8 @@
             @if (sabdy()->hasPermissionTo('rechargement-djamo'))
                 <li wire:key="nav-djamo-admin"  id="djamo-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('djamo')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -658,6 +698,8 @@
             @if ($showDepotButton && sabdy()->hasPermissionTo('transfers-argent'))
                 <li wire:key="nav-transfers-admin" id="transfers-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('transfers')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -684,6 +726,8 @@
             @if ($showTransacInterButton && sabdy()->hasPermissionTo('rechargement-inters'))
                 <li wire:key="nav-inter-admin" id="inter-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('inter')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
@@ -713,6 +757,8 @@
             @if (sabdy()->hasPermissionTo('transfers-argent'))
                 <li wire:key="nav-transfers-admin" id="transfers-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
+                         wire:click="setActiveTab('transfers')"
+
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
                         active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200

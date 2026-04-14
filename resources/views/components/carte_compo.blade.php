@@ -1,4 +1,4 @@
-  <div id="carte" class="tab-pane" role="tabpanel" aria-labelledby="carte-tab">
+  <div id="carte" class="tab-pane {{ $activeTab === 'carte' ? 'active show' : '' }}" role="tabpanel" aria-labelledby="carte-tab">
       <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
           <div class="hidden md:block mx-auto text-slate-500"></div>
           <div class="hidden md:block mx-auto text-slate-500"></div>

@@ -1203,6 +1203,7 @@
 
         <div class="tab-content mt-6">
 
+            
             @if ($is_under || $is_distributer)
 
                 @if ($showDepotButton && sabdy()->hasPermissionTo('transfers-argent'))

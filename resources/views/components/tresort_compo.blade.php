@@ -1,4 +1,4 @@
-  <div id="tresort" class="tab-pane" role="tabpanel" aria-labelledby="tresort-tab">
+  <div id="tresort" class="tab-pane {{ $activeTab === 'tresort' ? 'active show' : '' }}" role="tabpanel" aria-labelledby="tresort-tab">
       <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
           <div class="hidden md:block mx-auto text-slate-500"></div>
           <div class="hidden md:block mx-auto text-slate-500"></div>
