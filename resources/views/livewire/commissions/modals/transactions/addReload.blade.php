@@ -16,79 +16,58 @@
                 </svg>
             </a>
 
-            <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+           
+            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 style_image_providers mt-6">
                 <div class="col-span-12">
-                    <label for="modal-form-1" class="form-label">Canal<span class="text-danger">
-                            *</span></label>
-                    <select wire:model="provider_reload_uv" id="modal-form-1" class="form-control">
-                        <option value="null" disabled>Selectionnez le canal</option>
-                        @foreach ($withdrawal_robus as $item)
-                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('provider_reload_uv')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-
+                    <img class="object-none object-center bg-yellow-300 w-logo"
+                        src="{{ asset('public/dist/providers/robus.png') }}" alt="image"wire:model="image">
                 </div>
             </div>
-            @if (!is_null($provider_reload_uv))
-                @if ($provider_reload_uv == 9)
-                    <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 style_image_providers">
-                        <div class="col-span-12">
-                            <img class="object-none object-center bg-yellow-300 w-logo"
-                                src="{{ asset('public/dist/providers/robus.png') }}" alt="image"wire:model="image">
-                        </div>
-                    </div>
 
-                    <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
-                        <div class="col-span-6">
-                            <label for="account_reload_uv" class="form-label">Numero wallet<span class="text-danger">
-                                    *</span></label>
-                            <input wire:model.debounce.10ms="account_reload_uv" id="account_reload_uv" type="text"
-                                class="form-control" placeholder="Numero wallet">
-                            @error('account_reload_uv')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                            <div wire:loading>Recherche numero...</div>
-                            <div wire:loading.remove></div>
-                            @if ($account_reload_uv == '')
-                                <div class="text-gray-500 text-sm">
-                                    Entrer le numero du wallet
-                                </div>
-                            @else
-                    
-                                <div class="text-lg text-gray-900 text-bold text-secondary ">
-                                    <span class="alert alert-secondary   inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        {{ $wallet_info_searchs ?? null }}
-                                    </span>
-
-                                </div>
-                                     
-                            @endif
+            <div class="modal-body grid grid-cols-12 gap-4 gap-y-3 mt-6">
+                <div class="col-span-6">
+                    <label for="account_reload_uv" class="form-label">Numero wallet<span class="text-danger">
+                            *</span></label>
+                    <input wire:model.debounce.10ms="account_reload_uv" id="account_reload_uv" type="text"
+                        class="form-control" placeholder="Numero wallet">
+                    @error('account_reload_uv')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                    <div wire:loading>Recherche numero...</div>
+                    <div wire:loading.remove></div>
+                    @if ($account_reload_uv == '')
+                        <div class="text-gray-500 text-sm">
+                            Entrer le numero du wallet
                         </div>
-                        <div class="col-span-6">
-                            <label for="relaod_uv_amout_robus" class="form-label">Montant<span class="text-danger">
-                                    *</span></label>
-                            <input wire:model.lazy="relaod_uv_amout_robus" id="relaod_uv_amout_robus"
-                            type="number" class="form-control" placeholder="Montant">
-                            @error('relaod_uv_amout_robus')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
+                    @else
+                        <div class="text-lg text-gray-900 text-bold text-secondary ">
+                            <span
+                                class="alert alert-secondary   inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                {{ $wallet_info_searchs ?? null }}
+                            </span>
 
-                    </div>             
-                  
-                @endif
-            @endif
+                        </div>
+                    @endif
+                </div>
+                <div class="col-span-6">
+                    <label for="relaod_uv_amout_robus" class="form-label">Montant<span class="text-danger">
+                            *</span></label>
+                    <input wire:model.lazy="relaod_uv_amout_robus" id="relaod_uv_amout_robus" type="number"
+                        class="form-control" placeholder="Montant">
+                    @error('relaod_uv_amout_robus')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+            </div>
             <div class="modal-footer style-foo">
                 <button wire:click="cancelReloadCardField" type="button"
                     class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
                 <button wire:click="addReload" type="button" wire:loading.remove=""
                     class="btn btn-primary w-50">Envoyer la demande</button>
-                    <div  wire:loading wire:target="addReload">
-                        Traitement en cours...
-                    </div>
+                <div wire:loading wire:target="addReload">
+                    Traitement en cours...
+                </div>
             </div>
         </div>
     </div>

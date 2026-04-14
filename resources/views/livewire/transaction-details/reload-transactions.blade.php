@@ -74,7 +74,6 @@
                                         </td>
                                         <td class="w-60">
                                             @include('components.infoUserSoldeUnder')
-
                                         </td>
 
 

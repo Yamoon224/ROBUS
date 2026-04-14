@@ -101,15 +101,14 @@
                                                       @include('components.info')
                                                   </div>
                                                   @if ($item->updated_by == null)
-                                                      <div
-                                                          class="flex flex-col md:flex-row items-center justify-center gap-4 mt-4 p-4 ">
+                                                      <div  wire:key="action-djamo-{{ $item->id }}" class="flex flex-col md:flex-row items-center justify-center gap-4 mt-4 p-4 ">
 
-                                                            <span 
-                                                        class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                        Indicatif :
-                                                        {{ $item->wallet->sidUser->country->indecative ?? null }}
+                                                          <span
+                                                              class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                              Indicatif :
+                                                              {{ $item->wallet->sidUser->country->indecative ?? null }}
 
-                                                    </span>
+                                                          </span>
                                                           <div class="user-name">
                                                               <p class="font-medium whitespace-nowrap mt-1">
                                                                   Numero : {{ $item->phone ?? null }}
@@ -147,12 +146,12 @@
                                                       </div>
                                                   @else
                                                       <div class="user-name">
-                                                          <span 
-                                                        class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                        Indicatif :
-                                                        {{ $item->wallet->sidUser->country->indecative ?? null }}
+                                                          <span
+                                                              class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                              Indicatif :
+                                                              {{ $item->wallet->sidUser->country->indecative ?? null }}
 
-                                                    </span>
+                                                          </span>
                                                           <p class="font-medium whitespace-nowrap mt-1">
                                                               Numero : {{ $item->phone ?? null }}
                                                           </p>
@@ -172,11 +171,11 @@
                                                       </div>
 
                                                       @if ($item->choose_transaction == 2)
-                                                          <div
+                                                          <div wire:key="action-djamo-{{ $item->id }}"
                                                               class="flex items-center justify-center text-success mt-3">
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                  <x-taked-action-button action="ChooseDrawalUpdateDjamo"
-                                                                      :itemId="$item->id"
+                                                                  <x-taked-action-button
+                                                                      action="ChooseDrawalUpdateDjamo" :itemId="$item->id"
                                                                       label="Je confirme pour le retrait"
                                                                       speed="ultra-fast" color="purple" />
                                                               @endif

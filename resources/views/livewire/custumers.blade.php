@@ -66,17 +66,7 @@
             </div>
             <div class="hidden md:block ml-8 text-slate-500"></div>
 
-            <div class="w-full sm:w-auto mt-3 sm:mt-0">
-                <label for="startDate" class="text-gray-700 text-sm font-bold mb-2">Date de début</label>
-                <input type="date" id="startDate" wire:model="startDate"
-                    class="form-input py-3 px-4 box w-full mt-3">
-            </div>
-            <div class="hidden md:block ml-8 text-slate-500"></div>
-
-            <div class="w-full sm:w-auto mt-3 sm:mt-0">
-                <label for="endDate" class="text-gray-700 text-sm font-bold mb-2">Date de fin</label>
-                <input type="date" id="endDate" wire:model="endDate" class="form-input py-3 px-4 box w-full mt-3">
-            </div>
+        
             <div class="hidden md:block ml-8 text-slate-500"></div>
             <div class="input-group input-group-md" style="margin-top: 13px;width: 250px;">
                 <div class="w-56 relative text-slate-500">

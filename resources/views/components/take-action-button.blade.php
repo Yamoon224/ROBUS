@@ -34,6 +34,7 @@
     error: false,
     errorMessage: ''
 }"
+{{-- wire:key="container-{{ $itemId }}" --}}
 @transaction-success.window="if($event.detail[0] === {{ $itemId }}) { 
     processing = false; 
     success = true; 

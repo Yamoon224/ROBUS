@@ -133,7 +133,7 @@
                                                           </p>
                                                       </div>
 
-                                                      <div class="flex items-center justify-center text-success mt-3">
+                                                      <div  wire:key="action-tresort-{{ $item->id }}" class="flex items-center justify-center text-success mt-3">
 
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                               @if ($item->choose_transaction == 1)
@@ -178,8 +178,7 @@
                                                       </div>
 
                                                       @if ($item->choose_transaction == 2)
-                                                          <div
-                                                              class="flex items-center justify-center text-success mt-3">
+                                                          <div wire:key="action-tresort-{{ $item->id }}" class="flex items-center justify-center text-success mt-3">
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                   <x-taked-action-button
                                                                       action="ChooseDrawalUpdateTresort"

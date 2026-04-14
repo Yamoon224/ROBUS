@@ -13,7 +13,7 @@
             {{-- New Updated  --}}
 
             @if ($showDepotButton && sabdy()->hasPermissionTo('transfers-argent'))
-                <li id="transfers-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-transfers-admin" id="transfers-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-400 bg-white text-gray-600 
               hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-500 hover:border-3 
@@ -27,16 +27,17 @@
                         </svg>
                         <span class="nav-label"> Transferts d'argent
                         </span>
-                        <span
+                        <span x-data="{ count: {{ $transactions->count() }} }" x-on:update-transfers-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $transactions->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
                     </a>
                 </li>
             @endif
 
             @if ($showPaiementButton && sabdy()->hasPermissionTo('paiement-factures'))
-                <li id="paiement-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-paiement-admin" id="paiement-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2  border-gray-400 bg-white text-gray-600 
                       hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-500 hover:border-3 
@@ -50,9 +51,10 @@
                         </svg>
                         <span class="nav-label"> Paiements
                         </span>
-                        <span
+                        <span x-data="{ count: {{ $paiements->count() }} }" x-on:update-paiement-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $paiements->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
 
                     </a>
@@ -60,7 +62,7 @@
             @endif
 
             @if ($showVirementButton && sabdy()->hasPermissionTo('virement-compte'))
-                <li id="virement-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-virement-admin" id="virement-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -76,16 +78,17 @@
                         </svg>
                         <span class="nav-label"> Virements
                         </span>
-                        <span
+                        <span x-data="{ count: {{ $virements->count() }} }" x-on:update-virement-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $virements->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
                     </a>
                 </li>
             @endif
 
             @if ($showRechargementButton && sabdy()->hasPermissionTo('rechargement-carte'))
-                <li id="carte-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-carte-admin" id="carte-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -101,16 +104,17 @@
                         </svg>
                         <span class="nav-label"> Réchargement carte
                         </span>
-                        <span
+                        <span x-data="{ count: {{ $reloadCards->count() }} }" x-on:update-reloadCard-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $reloadCards->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
                     </a>
                 </li>
             @endif
 
             @if ($showCreditButton && sabdy()->hasPermissionTo('rechargement-credit'))
-                <li id="phone-tab" class="nav-item" role="presentation">
+                <li  wire:key="nav-phone-admin" id="phone-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -126,16 +130,19 @@
                         </svg>
                         <span class="nav-label"> Crédit téléphonique
                         </span>
-                        <span
+                        <span x-data="{ count: {{ $phoneCredits->count() }} }"
+                            x-on:update-phoneCredit-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $phoneCredits->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
+
                     </a>
                 </li>
             @endif
 
             @if ($showTransacInterButton && sabdy()->hasPermissionTo('rechargement-inters'))
-                <li id="inter-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-inter-admin" id="inter-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -151,16 +158,18 @@
                         </svg>
                         <span class="nav-label"> International
                         </span>
-                        <span
+                        <span x-data="{ count: {{ $Internationals->count() }} }"
+                            x-on:update-international-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $Internationals->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
                     </a>
                 </li>
             @endif
 
             @if ($showXbetButton && sabdy()->hasPermissionTo('rechargement-xbets'))
-                <li id="xbet-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-xbet-admin" id="xbet-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -175,16 +184,18 @@
                         </svg>
                         <span class="nav-label"> 1Xbets
                         </span>
-                        <span
+                        <span x-data="{ count: {{ $xbets->count() }} }" x-on:update-xbets-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $xbets->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
+
                     </a>
                 </li>
             @endif
 
             @if ($showVersementButton && sabdy()->hasPermissionTo('rechargement-versements'))
-                <li id="versment-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-verment-admin" id="versment-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -200,16 +211,17 @@
                         </svg>
                         <span class="nav-label"> Versements
                         </span>
-                        <span
+                        <span x-data="{ count: {{ $versements->count() }} }" x-on:update-versment-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $versements->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
                     </a>
                 </li>
             @endif
 
             @if ($showBankSendButton && sabdy()->hasPermissionTo('rechargement-bank-sends'))
-                <li id="bank-send-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-bank-send-admin" id="bank-send-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -225,16 +237,17 @@
                         </svg>
                         <span class="nav-label"> Bank send
                         </span>
-                        <span
+                       <span x-data="{ count: {{ $bankSends->count() }} }" x-on:update-bankSend-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $bankSends->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
                     </a>
                 </li>
             @endif
 
             @if ($showPushButton && sabdy()->hasPermissionTo('rechargement-push'))
-                <li id="push-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-push-admin" id="push-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -250,16 +263,17 @@
                         </svg>
                         <span class="nav-label"> Push
                         </span>
-                        <span
+                         <span x-data="{ count: {{ $pushs->count() }} }" x-on:update-push-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $pushs->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
                     </a>
                 </li>
             @endif
 
             @if ($showDjamoButton && sabdy()->hasPermissionTo('rechargement-tresort'))
-                <li id="tresort-tab" class="nav-item" role="presentation">
+                <li  wire:key="nav-tresort-admin" id="tresort-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -276,16 +290,17 @@
                         <span class="nav-label">
                             Trésort Money
                         </span>
-                        <span
+                         <span x-data="{ count: {{ $tresortMoneys->count() }} }" x-on:update-tresort-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $tresortMoneys->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
                     </a>
                 </li>
             @endif
 
             @if ($showDjamoButton && sabdy()->hasPermissionTo('rechargement-djamo'))
-                <li id="djamo-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-djamo-admin" id="djamo-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -301,17 +316,20 @@
                         </svg>
                         <span class="nav-label"> Djamo
                         </span>
-                        <span
+                         <span x-data="{ count: {{ $djamos->count() }} }" x-on:update-djamo-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $djamos->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
+
+                       
                     </a>
                 </li>
             @endif
         @else
             {{-- Admin --}}
             @if (sabdy()->hasPermissionTo('transfers-argent'))
-                <li id="transfers-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-transfers-admin" id="transfers-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -327,16 +345,18 @@
                         </svg>
                         <span class="nav-label font-medium"> Transferts d'argent
                         </span>
-                        <span
+
+                        <span x-data="{ count: {{ $transactions->count() }} }" x-on:update-transfers-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $transactions->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
                     </a>
                 </li>
             @endif
 
             @if (sabdy()->hasPermissionTo('paiement-factures'))
-                <li id="paiement-tab" class="nav-item" role="presentation">
+                <li  wire:key="nav-paiement-admin" id="paiement-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -352,9 +372,10 @@
                         </svg>
                         <span class="nav-label"> Paiements
                         </span>
-                        <span
+                        <span x-data="{ count: {{ $paiements->count() }} }" x-on:update-paiement-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $paiements->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
 
                     </a>
@@ -362,7 +383,7 @@
             @endif
 
             @if (sabdy()->hasPermissionTo('virement-compte'))
-                <li id="virement-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-virement-admin" id="virement-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -378,9 +399,10 @@
                         </svg>
                         <span class="nav-label"> Virements
                         </span>
-                        <span
+                        <span x-data="{ count: {{ $virements->count() }} }" x-on:update-virement-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $virements->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
 
                     </a>
@@ -388,7 +410,7 @@
             @endif
 
             @if (sabdy()->hasPermissionTo('rechargement-carte'))
-                <li id="carte-tab" class="nav-item" role="presentation">
+                <li  wire:key="nav-carte-admin" id="carte-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -404,9 +426,11 @@
                         </svg>
                         <span class="nav-label"> Réchargement carte
                         </span>
-                        <span
+                        <span x-data="{ count: {{ $reloadCards->count() }} }"
+                            x-on:update-reloadCard-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $reloadCards->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
 
                     </a>
@@ -414,7 +438,7 @@
             @endif
 
             @if (sabdy()->hasPermissionTo('rechargement-credit'))
-                <li id="phone-tab" class="nav-item" role="presentation">
+                <li  wire:key="nav-phone-admin" id="phone-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -430,9 +454,11 @@
                         </svg>
                         <span class="nav-label"> Crédit téléphonique
                         </span>
-                        <span
+                        <span x-data="{ count: {{ $phoneCredits->count() }} }"
+                            x-on:update-phoneCredit-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $phoneCredits->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
 
                     </a>
@@ -440,7 +466,7 @@
             @endif
 
             @if (sabdy()->hasPermissionTo('rechargement-inters'))
-                <li id="inter-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-inter-admin" id="inter-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -456,17 +482,18 @@
                         </svg>
                         <span class="nav-label"> International
                         </span>
-                        <span
+                        <span x-data="{ count: {{ $Internationals->count() }} }"
+                            x-on:update-international-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $Internationals->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
-
                     </a>
                 </li>
             @endif
 
             @if (sabdy()->hasPermissionTo('rechargement-xbets'))
-                <li id="xbet-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-xbet-admin" id="xbet-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -481,9 +508,10 @@
                         </svg>
                         <span class="nav-label"> 1Xbets
                         </span>
-                        <span
+                        <span x-data="{ count: {{ $xbets->count() }} }" x-on:update-xbets-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $xbets->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
 
                     </a>
@@ -491,7 +519,7 @@
             @endif
 
             @if (sabdy()->hasPermissionTo('rechargement-versements'))
-                <li id="versment-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-versment-admin" id="versment-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -507,9 +535,10 @@
                         </svg>
                         <span class="nav-label"> Versements
                         </span>
-                        <span
+                       <span x-data="{ count: {{ $versements->count() }} }" x-on:update-versment-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $versements->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
 
                     </a>
@@ -517,7 +546,7 @@
             @endif
 
             @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
-                <li id="bank-send-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-bank-send-admin" id="bank-send-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -533,16 +562,19 @@
                         </svg>
                         <span class="nav-label"> Bank send
                         </span>
-                        <span
+
+                        <span x-data="{ count: {{ $bankSends->count() }} }" x-on:update-bankSend-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $bankSends->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
+
                     </a>
                 </li>
             @endif
 
             @if (sabdy()->hasPermissionTo('rechargement-push'))
-                <li id="push-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-push-admin" id="push-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -558,16 +590,17 @@
                         </svg>
                         <span class="nav-label"> Push
                         </span>
-                        <span
+                        <span x-data="{ count: {{ $pushs->count() }} }" x-on:update-push-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $pushs->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
                     </a>
                 </li>
             @endif
 
             @if (sabdy()->hasPermissionTo('rechargement-tresort'))
-                <li id="tresort-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-tresort-admin" id="tresort-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -584,16 +617,17 @@
                         <span class="nav-label">
                             Trésort Money
                         </span>
-                        <span
+                        <span x-data="{ count: {{ $tresortMoneys->count() }} }" x-on:update-tresort-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $tresortMoneys->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
                     </a>
                 </li>
             @endif
 
             @if (sabdy()->hasPermissionTo('rechargement-djamo'))
-                <li id="djamo-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-djamo-admin"  id="djamo-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -609,9 +643,10 @@
                         </svg>
                         <span class="nav-label"> Djamo
                         </span>
-                        <span
+                         <span x-data="{ count: {{ $djamos->count() }} }" x-on:update-djamo-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $djamos->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
                     </a>
                 </li>
@@ -622,7 +657,7 @@
         {{-- Autres pays $is_under --}}
         @if ($is_under || $is_distributer)
             @if ($showDepotButton && sabdy()->hasPermissionTo('transfers-argent'))
-                <li id="transfers-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-transfers-admin" id="transfers-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -638,16 +673,17 @@
                         </svg>
                         <span class="nav-label"> Transferts d'argent
                         </span>
-                          <span
+                        <span x-data="{ count: {{ $transactions->count() }} }" x-on:update-transfers-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $transactions->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
                     </a>
                 </li>
             @endif
 
             @if ($showTransacInterButton && sabdy()->hasPermissionTo('rechargement-inters'))
-                <li id="inter-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-inter-admin" id="inter-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -663,9 +699,11 @@
                         </svg>
                         <span class="nav-label"> International
                         </span>
-                         <span
+                        <span x-data="{ count: {{ $Internationals->count() }} }"
+                            x-on:update-international-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $Internationals->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
 
                     </a>
@@ -674,7 +712,7 @@
         @else
             {{-- Admin autres pays --}}
             @if (sabdy()->hasPermissionTo('transfers-argent'))
-                <li id="transfers-tab" class="nav-item" role="presentation">
+                <li wire:key="nav-transfers-admin" id="transfers-tab" class="nav-item" role="presentation" wire:ignore>
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
                         hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
@@ -690,9 +728,10 @@
                         </svg>
                         <span class="nav-label"> Transferts d'argent
                         </span>
-                        <span
+                         <span x-data="{ count: {{ $transactions->count() }} }" x-on:update-transfers-count.window="count = $event.detail.count"
                             class="inline-flex ml-3  items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                            {{ $transactions->count() }} éléments
+                            {{-- Le texte est mis à jour en JS sans toucher au reste du menu --}}
+                            <b x-text="count"></b>&nbsp;éléments
                         </span>
                     </a>
                 </li>

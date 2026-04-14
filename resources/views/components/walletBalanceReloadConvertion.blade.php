@@ -32,7 +32,7 @@
       <div class="amount-cfa">
           <div class="amount-cfa-label">Équivalent en CFA</div>
           <div class="amount-cfa-value">
-              {{ number_format($valeur_amount_receveid ?? 0, 2, ',', ' ') }} CFA
+              {{-- {{ number_format($valeur_amount_receveid ?? 0, 2, ',', ' ') }}   {{ . ' ' . $wallet_info->currencie->code ?? 'FCFA' }} --}}
           </div>
       </div>
   </div>

@@ -1,7 +1,6 @@
    <!-- Badges de statut -->
    @php
        $user = $item->updatedByUser ?? null;
-
    @endphp
 
    <span class="bg-success w-25 text-white fs-5 px-2 py-1 rounded">

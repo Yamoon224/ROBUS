@@ -231,7 +231,7 @@ class AuthenticationService
 
 
                         $cacheKey = 'app_status_mobile';
-                        $cacheDuration = 5;
+                        $cacheDuration = 2;
 
                         // if (Cache::has($cacheKey)) {
                         //         return Cache::get($cacheKey);

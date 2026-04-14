@@ -23,6 +23,16 @@ use App\Models\Sid\SidUser;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Notification as NotificationFacade;
+use App\Http\Services\AuthenticationService;
+use App\Models\AppStatus;
+
+
+if (!function_exists('getAppStatus')) {
+    function getAppStatus()
+    {
+        return app(AuthenticationService::class)->appDispoRobus(AppStatus::class);
+    }
+}
 
 if (!function_exists('safeNotifyMany')) {
 

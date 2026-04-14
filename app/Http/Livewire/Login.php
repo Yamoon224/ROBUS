@@ -7,6 +7,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
+use App\Http\Services\AuthenticationService;
+use App\Models\AppStatus;
 
 class Login extends Component
 {
@@ -31,6 +33,9 @@ class Login extends Component
         $msg = 'Bienvenu chez ROBUS';
         $color = 'success';
 
+        $appStatus = app(AuthenticationService::class)->appDispoRobus(AppStatus::class);
+        $isAppOpen = $appStatus['success'] ?? false;
+        $closeMessage = $appStatus['message'] ?? 'L\'application est actuellement fermée.';
 
         $user_sid = SidUser::whereEmail($this->email)->whereStatus(true)->first();
 
@@ -39,16 +44,33 @@ class Login extends Component
 
             $this->validate();
 
-
             if (!$user_sid) {
                 $this->emit('error', 'Vous n\'etes pas identifiable veuillez contactez l\'admin ! Merci bien');
             } elseif ($user_sid->is_admin || $user_sid->is_supervisor || $user_sid->is_distributer) {
 
-                Auth::login(Auth::guard('web')->user());
-                Auth::guard('web')->user()->last_login  = Carbon::now()->toDateTimeString();
-                Auth::guard('web')->user()->last_logout  = null;
-                Auth::guard('web')->user()->save();
-                $this->emit('success', 'Authentificaion reussie redirection en cours !');
+                $canLogin = false;
+
+                if ($isAppOpen) {
+                    $canLogin = $user_sid->is_admin || $user_sid->is_supervisor || $user_sid->is_distributer;
+                } else {
+                    $canLogin = $user_sid->is_admin || $user_sid->is_supervisor;
+                }
+
+                if ($canLogin) {
+                    Auth::login(Auth::guard('web')->user());
+                    Auth::guard('web')->user()->last_login = Carbon::now()->toDateTimeString();
+                    Auth::guard('web')->user()->last_logout = null;
+                    Auth::guard('web')->user()->save();
+                    $this->emit('success', 'Authentification réussie, redirection en cours !');
+                    return redirect()->route('/');
+                } else {
+                    if (!$isAppOpen) {
+                        // Afficher le message personnalisé de fermeture
+                        $this->emit('error', $closeMessage);
+                    } else {
+                        $this->emit('error', 'Accès non autorisé. Veuillez contacter l\'administrateur.');
+                    }
+                }
                 return redirect()->route('/');
             } else {
 

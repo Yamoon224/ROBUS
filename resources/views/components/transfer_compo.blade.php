@@ -163,7 +163,7 @@
                                                         </p>
                                                     </div>
 
-                                                    <div class="flex items-center justify-center text-success mt-3">
+                                                    <div  wire:key="action-transfert-{{ $item->id }}" class="flex items-center justify-center text-success mt-3">
                                                         @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                             @if ($item->type_transaction == 'Retrait')
                                                                 <x-take-action-button action="ChooseUpdateTransaction"
@@ -215,7 +215,7 @@
                                                     </div>
 
                                                     @if ($item->type_transaction === 'Retrait')
-                                                        <div class="flex items-center justify-center text-success mt-3">
+                                                        <div  wire:key="action-transfert-{{ $item->id }}" class="flex items-center justify-center text-success mt-3">
                                                             @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                 <x-taked-action-button
                                                                     action="ChooseUpdateDrawalTransaction"

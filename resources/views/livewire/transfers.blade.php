@@ -1330,6 +1330,28 @@
         tabId: null
     };
 
+
+    window.addEventListener('refresh-counts', (event) => {
+        const data = event.detail;
+        for (const [key, value] of Object.entries(data)) {
+            const el = document.getElementById(`${key}-count`);
+            if (el) el.innerText = value;
+        }
+    });
+
+    document.addEventListener('livewire:update', () => {
+        const activeTab = localStorage.getItem('activeTab') || 'transfers';
+        const tab = document.getElementById(activeTab + '-nav');
+        if (tab) tab.click();
+    });
+
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            const tabId = link.id.replace('-nav', '');
+            localStorage.setItem('activeTab', tabId);
+        });
+    });
+
     // Au chargement, détecter l'onglet actif
     $(document).ready(function() {
         // Sauvegarder l'onglet actif initial
@@ -1413,21 +1435,4 @@
             }
         }
     });
-
-    // Fonction pour changer d'onglet UNIQUEMENT quand l'utilisateur le demande
-    window.switchTab = function(tabId, navId) {
-        // Désactiver tous les onglets
-        $('.nav-link').removeClass('active').attr('aria-selected', false);
-        $('.tab-pane').removeClass('active');
-
-        // Activer le nouvel onglet
-        $(`#${navId}`).addClass('active').attr('aria-selected', true);
-        $(`#${tabId}`).addClass('active');
-
-        // Mettre à jour la variable
-        activeTab = {
-            navId,
-            tabId
-        };
-    };
 </script>

@@ -4,10 +4,28 @@
     $countries = getCountriesForUser(Auth::guard('web')->user());
     $countrie_civ = getCountriesForVisitorsUser(Auth::guard('web')->user());
     $cumulPendding = cumulTransaction();
+    
+    // Récupération de l'état de l'application
+    $appStatus = getAppStatus();
+    $isAppOpen = $appStatus['success'] ?? false;
+    $appClosedMessage = $appStatus['message'] ?? '';
+    $user = Auth::guard('web')->user();
+    $isAdminOrSupervisor = $user && ($user->is_admin || $user->is_supervisor);
 @endphp
 <!-- BEGIN: Side Menu -->
 
 @if (sabdyVerify())
+
+ @if (!$isAppOpen && !$isAdminOrSupervisor)
+
+        <nav class="side-nav">
+            <div class="alert alert-warning text-center mb-3">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{ $appClosedMessage ?: 'L\'application est actuellement fermée. Certaines fonctionnalités sont limitées.' }}
+            </div>
+        </nav>
+
+    @else 
     <nav class="side-nav">
         <a href="{{ route('/') }}" class="intro-x flex items-center pl-5 pt-4">
             <img alt="Robus" class="w-20" src="{{ asset_url('dist/images/logo_robus.png') }}">
@@ -930,6 +948,8 @@
             </li>
         </ul>
     </nav>
+    @endif
+
 @else
     abort(599);
 @endif

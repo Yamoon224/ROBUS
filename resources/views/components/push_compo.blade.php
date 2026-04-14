@@ -129,7 +129,7 @@
                                                       </div>
 
 
-                                                      <div class="flex items-center justify-center mt-4">
+                                                      <div  wire:key="action-push-{{ $item->id }}" class="flex items-center justify-center mt-4">
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                               @if ($item->choose_transaction == 1)
                                                                   <x-take-action-button action="ChooseUpdatePush"

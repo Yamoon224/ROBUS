@@ -401,7 +401,8 @@ class Transfers extends Component
 
     public $modalActive = false;
     public $pendingMenu = null;
-
+    // active menu
+    public $activeTab = 'transfers';
 
     protected $listeners = [
         '' => 'transactionInterReload',
@@ -465,6 +466,11 @@ class Transfers extends Component
         'modal-opened' => 'setModalActive',
         'modal-closed' => 'setModalInactive',
     ];
+
+    public function setActiveTab($tab)
+    {
+        $this->activeTab = $tab;
+    }
 
     public function setModalActive()
     {
@@ -782,7 +788,6 @@ class Transfers extends Component
                     'updated_at' => now()
                 ]);
 
-                // Dispatcher l'événement (dans la transaction)
                 event(new $config['event']($transaction));
             });
 
@@ -810,98 +815,97 @@ class Transfers extends Component
     //  Notify and real times and active menus
     public function notifyNewBank()
     {
-        $this->showNBankNotification = true;
-        // $this->emit('modal-hide-virement');
-        // $this->emit('menu-virement-active');
-    }
-
-    public function notifyAllWallet()
-    {
-        $this->showNBankNotification = true;
-        // $this->emit('modal-hide-virement');
-    }
-
-    public function notifyNewPaiement()
-    {
-        $this->showNPaiementNotification = true;
-        // $this->emit('menu-paiement-active');
+        // Au lieu de $this->showNBankNotification = true;
+        $this->dispatchBrowserEvent('update-bank-count', [
+            'count' => WalletBank::whereStatus('PENDING')->count()
+        ]);
     }
 
     public function notifyNewTransfers()
     {
-        $this->showNTransfersNotification = true;
-        // $this->emit('modal-hide-transfers');
-        // $this->emit('menu-transaction-active');
+        $this->dispatchBrowserEvent('update-transfers-count', [
+            'count' => WalletTransaction::whereStatus('PENDING')->count()
+        ]);
+    }
+
+    public function notifyNewPaiement()
+    {
+        $this->dispatchBrowserEvent('update-paiement-count', [
+            'count' => WalletPayment::whereStatus('PENDING')->count()
+        ]);
     }
 
     public function notifyNewInter()
     {
-        $this->showNTransfersNotification = true;
-        // $this->emit('modal-hide-inters');
-        // $this->emit('menu-inters-active');
+        $this->dispatchBrowserEvent('update-inter-count', [
+            'count' => WalletInter::whereStatus('PENDING')->count()
+        ]);
     }
 
     public function notifyNewCard()
     {
-        $this->showNTransfersNotification = true;
-        // $this->emit('modal-hide-reloadCard');
-        // $this->emit('menu-reloadCarte-active');
+        $this->dispatchBrowserEvent('update-reload-count', [
+            'count' => WalletDeposit::whereStatus('PENDING')->count()
+        ]);
     }
 
     public function notifyNewPhone()
     {
-        $this->showNTransfersNotification = true;
-        // $this->emit('modal-hide-phoneCredit');
-        // $this->emit('menu-phoneCredit-active');
-
+        $this->dispatchBrowserEvent('update-phone-count', [
+            'count' => WalletPhoneCredit::whereStatus('PENDING')->count()
+        ]);
     }
 
     public function notifyNewXbet()
     {
-        $this->showNTransfersNotification = true;
-        // $this->emit('modal-hide-phoneCredit');
-        // $this->emit('menu-xbet-active');
+        $this->dispatchBrowserEvent('update-xbet-count', [
+            'count' => WalletXbet::whereStatus('PENDING')->count()
+        ]);
     }
 
-
-    // New element add
     public function notifyNewVersement()
     {
-        $this->showNTransfersNotification = true;
-        // $this->emit('modal-hide-phoneCredit');
-        // $this->emit('menu-versement-active');
+        $this->dispatchBrowserEvent('update-versement-count', [
+            'count' => WalletVersement::whereStatus('PENDING')->count()
+        ]);
+    }
+
+    public function notifyNewBankSend()
+    {
+        $this->dispatchBrowserEvent('update-banksend-count', [
+            'count' => WalletBankSend::whereStatus('PENDING')->count()
+        ]);
+    }
+
+    public function notifyNewPush()
+    {
+        $this->dispatchBrowserEvent('update-push-count', [
+            'count' => WalletPush::whereStatus('PENDING')->count()
+        ]);
+    }
+
+    public function notifyNewDjamo()
+    {
+        $this->dispatchBrowserEvent('update-djamo-count', [
+            'count' => WalletDjamo::whereStatus('PENDING')->count()
+        ]);
+    }
+
+    public function notifyNewDrawal()
+    {
+        $this->dispatchBrowserEvent('update-djamo-count', [
+            'count' => WalletDjamo::whereStatus('PENDING')->count()
+        ]);
     }
 
 
     public function notifyNewTresort()
     {
-        $this->showNTransfersNotification = true;
-        // $this->emit('modal-hide-phoneCredit');
-        // $this->emit('menu-tresort-active');
+        $this->dispatchBrowserEvent('update-tresort-count', [
+            'count' => WalletTresortMoney::whereStatus('PENDING')->count()
+        ]);
     }
 
-
-    public function notifyNewPush()
-    {
-        $this->showNTransfersNotification = true;
-        // $this->emit('modal-hide-phoneCredit');
-        // $this->emit('menu-push-active');
-    }
-
-
-    public function notifyNewDjamo()
-    {
-        $this->showNTransfersNotification = true;
-        // $this->emit('modal-hide-phoneCredit');
-        // $this->emit('menu-djamo-active');
-    }
-
-    public function notifyNewDrawal()
-    {
-        $this->showNTransfersNotification = true;
-        // $this->emit('modal-hide-phoneCredit');
-        // $this->emit('menu-djamo-active');
-    }
 
 
     // Sted 1 validated Transaction
@@ -4460,10 +4464,7 @@ class Transfers extends Component
                 return;
             }
 
-            DB::afterCommit(function () use ($walletLocked) {
-                event(new ChooseDrawalEvent($walletLocked));
-            });
-
+            event(new ChooseDrawalEvent($walletLocked));
             $this->emit('modal-hide-transfers');
             $this->emit('info', 'Transaction confirmé et le destinateur vas recevoir les informations avec succès.');
             $this->emit('menu-transaction-active');
@@ -4616,6 +4617,8 @@ class Transfers extends Component
             DB::afterCommit(function () use ($walletLocked) {
                 event(new ChooseDrawalEvent($walletLocked));
             });
+
+            event(new ChooseDrawalEvent($walletLocked));
 
             $this->emit('info', 'Transaction choisie avec succès.');
             $this->emit('menu-push-active');
@@ -4880,7 +4883,8 @@ class Transfers extends Component
     }
 
 
-    //    Paginated
+
+
     public function gotoPageTrans($page)
     {
         $this->setPage($page);
@@ -5165,7 +5169,7 @@ class Transfers extends Component
             ->orderBy('wallet_phone_credits.created_at', 'desc')
             ->paginate(15);
 
-   
+
 
         $xbets = $xbet
             ->join('wallets', 'wallet_xbets.wallet_id', 'wallets.id')
