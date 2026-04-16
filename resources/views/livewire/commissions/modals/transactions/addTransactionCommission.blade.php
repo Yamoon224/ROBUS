@@ -79,8 +79,7 @@
                 <div class="flex justify-end space-x-4 w-full items-center">
                     <!-- Bouton Annuler -->
                     <button wire:click="cancelReloadCardField" wire:loading.attr="disabled"
-                        wire:target="addTransactionCommission" wire:loading.class="hidden" type="button"
-                        class="btn btn-outline-secondary w-20 mr-1">
+                        wire:target="cancelReloadCardField" type="button" class="btn btn-outline-secondary w-20 mr-1">
                         Annuler
                     </button>
 

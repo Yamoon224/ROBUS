@@ -64,38 +64,38 @@
         Livewire.on('activate-tab', (tabId) => {
 
             // Fonction pour activer l'onglet
-            function activateTab(id) {
-                // Désactiver tous les onglets
-                $('.nav-link').removeClass('active').attr('aria-selected', false);
-                $('.tab-pane').removeClass('active');
+            // function activateTab(id) {
+            //     // Désactiver tous les onglets
+            //     $('.nav-link').removeClass('active').attr('aria-selected', false);
+            //     $('.tab-pane').removeClass('active');
 
-                // Activer l'onglet spécifié
-                $(`#${id}-nav`).addClass('active').attr('aria-selected', true);
-                $(`#${id}`).addClass('active');
+            //     // Activer l'onglet spécifié
+            //     $(`#${id}-nav`).addClass('active').attr('aria-selected', true);
+            //     $(`#${id}`).addClass('active');
 
-                console.log(`✅ Onglet ${id} activé`);
-            }
+            //     console.log(`✅ Onglet ${id} activé`);
+            // }
 
-            // Activation immédiate
-            activateTab(tabId);
+            // // Activation immédiate
+            // activateTab(tabId);
 
-            // Protection contre les désactivations (3 secondes max)
-            let protectionCount = 0;
-            const protectionInterval = setInterval(() => {
-                protectionCount++;
+            // // Protection contre les désactivations (3 secondes max)
+            // let protectionCount = 0;
+            // const protectionInterval = setInterval(() => {
+            //     protectionCount++;
 
-                // Vérifier si l'onglet est toujours actif
-                if (!$(`#${tabId}-nav`).hasClass('active')) {
+            //     // Vérifier si l'onglet est toujours actif
+            //     if (!$(`#${tabId}-nav`).hasClass('active')) {
 
-                    activateTab(tabId);
-                }
+            //         activateTab(tabId);
+            //     }
 
-                // Arrêter après 3 secondes (30 tentatives à 100ms)
-                if (protectionCount >= 30) {
-                    clearInterval(protectionInterval);
-                    console.log(`🛡️ Protection arrêtée pour ${tabId}`);
-                }
-            }, 100);
+            //     // Arrêter après 3 secondes (30 tentatives à 100ms)
+            //     if (protectionCount >= 30) {
+            //         clearInterval(protectionInterval);
+            //         console.log(`🛡️ Protection arrêtée pour ${tabId}`);
+            //     }
+            // }, 100);
         });
 
         Livewire.on('show-disabled-modal', () => {
@@ -496,6 +496,9 @@
 
             $('#create-transactionWalletCommission-modal').removeClass('show');
             $('#create-transactionWalletCommission-modal').addClass('hide');
+
+            $('#create-transactionWalletCommissionBank-modal').removeClass('show');
+            $('#create-transactionWalletCommissionBank-modal').addClass('hide');
 
             $('#update-reloadWallet-modal').removeClass('show');
             $('#update-reloadWallet-modal').addClass('hide');
@@ -1081,6 +1084,10 @@
             $('#create-transactionWalletCommission-modal').removeClass('show');
             $('#create-transactionWalletCommission-modal').addClass('hide');
 
+
+            $('#create-transactionWalletCommissionBank-modal').removeClass('show');
+            $('#create-transactionWalletCommissionBank-modal').addClass('hide');
+
             $('#update-reloadWallet-modal').removeClass('show');
             $('#update-reloadWallet-modal').addClass('hide');
 
@@ -1102,6 +1109,9 @@
             $('#create-transactionWalletCommission-modal').removeClass('show');
             $('#create-transactionWalletCommission-modal').addClass('hide');
 
+
+            $('#create-transactionWalletCommissionBank-modal').removeClass('show');
+            $('#create-transactionWalletCommissionBank-modal').addClass('hide');
 
             $('#update-reloadWallet-modal').removeClass('show');
             $('#update-reloadWallet-modal').addClass('hide');
@@ -1970,6 +1980,20 @@
         Livewire.on('modal-transactionWalletCommission-show', () => {
             $('#create-transactionWalletCommission-modal').removeClass('hide');
             $('#create-transactionWalletCommission-modal').addClass('show');
+            $('#commission-nav').removeClass('active');
+            $('commission-nav').attr('aria-selected', true);
+            $('#commission').removeClass('active');
+            $('#reload-nav').removeClass('active');
+            $('reload-nav').attr('aria-selected', false);
+            $('#reload').removeClass('active');
+            $('#comTransaction-nav').addClass('active');
+            $('comTransaction-nav').attr('aria-selected', false);
+            $('#comTransaction').addClass('active');
+        });
+
+        Livewire.on('modal-transactionWalletCommissionBank-show', () => {
+            $('#create-transactionWalletCommissionBank-modal').removeClass('hide');
+            $('#create-transactionWalletCommissionBank-modal').addClass('show');
             $('#commission-nav').removeClass('active');
             $('commission-nav').attr('aria-selected', true);
             $('#commission').removeClass('active');

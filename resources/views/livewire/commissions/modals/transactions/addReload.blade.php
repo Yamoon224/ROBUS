@@ -16,11 +16,11 @@
                 </svg>
             </a>
 
-           
+
             <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 style_image_providers mt-6">
                 <div class="col-span-12">
                     <img class="object-none object-center bg-yellow-300 w-logo"
-                        src="{{ asset('public/dist/providers/robus.png') }}" alt="image"wire:model="image">
+                        src="{{ asset_url('dist/providers/robus.png') }}" alt="image"wire:model="image">
                 </div>
             </div>
 
@@ -61,8 +61,10 @@
 
             </div>
             <div class="modal-footer style-foo">
-                <button wire:click="cancelReloadCardField" type="button"
-                    class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
+                <button wire:click="cancelReloadCardField" wire:loading.attr="disabled"
+                    wire:target="cancelReloadCardField" type="button" class="btn btn-outline-secondary w-20 mr-1">
+                    Annuler
+                </button>
                 <button wire:click="addReload" type="button" wire:loading.remove=""
                     class="btn btn-primary w-50">Envoyer la demande</button>
                 <div wire:loading wire:target="addReload">

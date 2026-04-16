@@ -330,10 +330,27 @@
                         </svg>
                     </div>
 
-                    <span class="btn-text"> Transfert des commissions</span>
+                    <span class="btn-text"> Transfert des commissions ADMIN</span>
 
                 </button>
             @endif
+            @if (Auth::guard('web')->user()->hasPermissionTo('rechargement-commissions'))
+                <button class="user-badge  w-22 mr-1 mb-1 "
+                    wire:click="$emit('modal-transactionWalletCommissionBank-show' , 'create-transactionWalletCommissionBank-modal')">
+
+                    <div class="btn-icon">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                    </div>
+
+                    <span class="btn-text"> Transfert des commissions Banque</span>
+
+                </button>
+            @endif
+
 
         </div>
 
@@ -716,21 +733,13 @@
 
 
         </div>
-        <script>
-            window.addEventListener('DOMContentLoaded', function() {
-                Echo.channel('update_all_wallet').listen(
-                    '.wallet_update_all',
-                    (e) => {
-                        window.livewire.emit('notifyNewReload:' + e.id);
-                    },
-                )
-            });
-        </script>
+      
     </div>
     @include('livewire.commissions.modals.transactions.updateReload')
     @include('livewire.commissions.modals.transactions.addReload')
     @include('livewire.commissions.modals.transactions.addCommission')
     @include('livewire.commissions.modals.transactions.addTransactionCommission')
+    @include('livewire.commissions.modals.transactions.addTransactionCommissionBank')
 
 </div>
 
