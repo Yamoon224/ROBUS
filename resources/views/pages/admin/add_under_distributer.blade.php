@@ -9,7 +9,6 @@
                 <!-- BEGIN: Form Validation -->
                 <div class="intro-y box">
 
-
                 </div>
             </div>
             <div class="intro-y col-span-12 lg:col-span-8">
@@ -48,31 +47,50 @@
                     <div class="p-5">
 
                         <div class=" {{ $currentStep != 1 ? 'displayNone' : '' }}" id="step-1">
-                            <div class="w-full max-w-sm shadow dark:bg-gray-800  mb-1">
+                            <div class="w-full max-w-sm  dark:bg-gray-800  mb-1">
 
                                 <div class="flex flex-col items-center pb-10">
-                                    <img class="w-20 h-20 mb-3 rounded-full shadow-lg"
-                                        src="https://robus.home.ci/robus/public/dist/images/logo_orange.png"
-                                        alt="Robus" />
+                                    <div class="flex justify-center items-center">
+                                        <img class="w-20 h-20 mb-3"
+                                            src="{{ asset_url('dist/images/logo_robus.png') }}" alt="Robus" />
+                                    </div>
 
                                     <div>
 
-                                        <p class="font-bold mt-3 mr-3 ml-3"> Vous êtes actuellement sur le service
-                                            d'inscription
-                                            des sous distributeurs Robus.
+                                        <h3 class="text-xl font-bold text-gray-900 text-center mb-2">
+                                            Inscription sous-distributeur
+                                        </h3>
 
-                                        </p>
-                                        <p class="font-bold mt-3 mr-3 ml-3">
-                                            Merci de saisir votre nom et votre adresse e-mail pour suivre l'inscription.
-
-                                        </p>
-
+                                        <!-- Messages -->
+                                        <div class="space-y-3 mt-2">
+                                            <p class="text-sm text-gray-600 dark:text-gray-300 flex items-start gap-2">
+                                                <svg class="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                                    </path>
+                                                </svg>
+                                                <span>Vous êtes actuellement sur le service d'inscription des
+                                                    sous‑distributeurs
+                                                    <strong class="font-semibold">Robus</strong>.</span>
+                                            </p>
+                                            <p class="text-sm text-gray-600 dark:text-gray-300 flex items-start gap-2">
+                                                <svg class="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                                    </path>
+                                                </svg>
+                                                <span>Merci de saisir votre nom et votre adresse e‑mail pour suivre
+                                                    l'inscription.</span>
+                                            </p>
+                                        </div>
 
                                     </div>
 
                                 </div>
                             </div>
-                            <form id="send_end" class="form-vertical row"
+                            <form id="send_end" class="form-vertical row mt-6"
                                 action="{{ route('admin.store_under_distributer') }}" method="post"
                                 enctype="multipart/form-data">
                                 @csrf
@@ -116,7 +134,7 @@
                             </form>
                         </div>
                         <div class=" {{ $currentStep != 2 ? 'displayNone' : '' }}" id="step-2">
-                            <form id="send_one" class="form-vertical row"
+                            <form id="send_one" class="form-vertical row mt-6"
                                 action="{{ route('admin.store_under_distributer_two') }}" method="post"
                                 enctype="multipart/form-data">
                                 @csrf

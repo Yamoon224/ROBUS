@@ -820,7 +820,6 @@ class AdminController extends Controller
                     $user->email_agent = $under_distributer_key->email_agent ?? null;
                     $user->country_id  = $request->country_id ?? null;
                     $user->city_id  = $request->city ?? null;
-                    // $user->zone_id  = $request->zone_id ?? null;
                     $user->zone  = $request->zone ?? null;
                     $user->email =  $request->email;
                     $user->phone  = $request->phone;

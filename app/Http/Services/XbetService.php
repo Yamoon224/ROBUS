@@ -199,7 +199,7 @@ class XbetService
 
         $amount__commission = $amount + ($percent_robus->percent_with_drawal * $amount);
 
-        $amount_solde = robus()->wallet->amount - $amount__commission;
+        $amount_solde = robus()->wallet->amount ;
 
         $walletXbet->update([
             'amount_solde' => $amount_solde,
@@ -248,9 +248,7 @@ class XbetService
             }
         } else {
 
-
             $admin_valeur =  $this->convertionService->convertAdminCommission($percent_robus->percent_with_drawal * $amount);
-
             $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_xbet_id', $walletXbet->id, $admin_valeur);
         }
 

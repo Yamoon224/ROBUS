@@ -231,19 +231,14 @@ class OnexbetTransactionController extends Controller
 
                                         if ($request->choose_type_transaction == 2) {
 
-                                                if ($this->validatedamountDays->validateAmount($val_amount_send)) {
 
-                                                        $amountReceved =  $reel_amount - (float) ($percent_robus->percent_with_drawal *  $reel_amount);
-                                                        $transactionResult = $this->processWithdrawalTransaction($request, $percent_robus, $amountReceved, $val_amount_send);
-                                                        if ($transactionResult['success']) {
-
-                                                                $this->notificationPhone->sendNotification1xbets($transactionResult['walletXbet']);
-                                                                return $this->messageAfterValidated($transactionResult['walletXbet']);
-                                                        } else {
-                                                                return json_message_response(false, $transactionResult['message'], 333);
-                                                        }
+                                                $amountReceved =  $reel_amount - (float) ($percent_robus->percent_with_drawal *  $reel_amount);
+                                                $transactionResult = $this->processWithdrawalTransaction($request, $percent_robus, $amountReceved, $val_amount_send);
+                                                if ($transactionResult['success']) {
+                                                        $this->notificationPhone->sendNotification1xbets($transactionResult['walletXbet']);
+                                                        return $this->messageAfterValidated($transactionResult['walletXbet']);
                                                 } else {
-                                                        return json_message_response(false, "Vérifiez votre solde !!", 341);
+                                                        return json_message_response(false, $transactionResult['message'], 333);
                                                 }
                                         } else {
 

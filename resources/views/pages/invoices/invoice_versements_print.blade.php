@@ -152,11 +152,17 @@
                     <td class="value bold">{{ number_format($walletBanks->amount_received ?? 0, 0, ',', ' ') }}
                         {{ $walletBanks->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
-                <tr>
-                    <td class="label">Frais</td>
-                    <td class="value">{{ number_format($walletBanks->costs_amount ?? 0, 0, ',', ' ') }}
-                        {{ $walletBanks->wallet->currencie->code ?? 'FCFA' }}</td>
-                </tr>
+
+
+                @if ($walletBanks->wallet->sidUser->is_custumers)
+                    <tr>
+                        <td class="label">Frais</td>
+                        <td class="value">{{ number_format($walletBanks->costs_amount ?? 0, 0, ',', ' ') }}
+                            {{ $walletBanks->wallet->currencie->code ?? 'FCFA' }}</td>
+                    </tr>
+                @endif
+
+
                 <tr class="total-row">
                     <td class="label bold">TOTAL À PAYER</td>
                     <td class="value bold">{{ number_format($walletBanks->amount ?? 0, 0, ',', ' ') }}

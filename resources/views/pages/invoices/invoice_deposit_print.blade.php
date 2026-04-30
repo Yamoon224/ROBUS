@@ -15,7 +15,7 @@
         <!-- Header compact -->
         <div class="header">
             <div class="logo-area">
-                @if(isset($logo) && $logo)
+                @if (isset($logo) && $logo)
                     <img src="{{ $logo }}" height="35" alt="Logo">
                 @else
                     <strong style="font-size: 14pt; color: #3498db;">{{ env('APP_NAME', 'Application') }}</strong>
@@ -42,11 +42,15 @@
                     </tr>
                     <tr>
                         <td class="label">Date demande:</td>
-                        <td class="value">{{ $walletDeposits->created_at ? date('d/m/Y H:i', strtotime($walletDeposits->created_at)) : 'N/A' }}</td>
+                        <td class="value">
+                            {{ $walletDeposits->created_at ? date('d/m/Y H:i', strtotime($walletDeposits->created_at)) : 'N/A' }}
+                        </td>
                     </tr>
                     <tr>
                         <td class="label">Date traitement:</td>
-                        <td class="value">{{ isset($walletDeposits->deposit->created_at) ? date('d/m/Y H:i', strtotime($walletDeposits->deposit->created_at)) : 'N/A' }}</td>
+                        <td class="value">
+                            {{ isset($walletDeposits->deposit->created_at) ? date('d/m/Y H:i', strtotime($walletDeposits->deposit->created_at)) : 'N/A' }}
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -55,7 +59,7 @@
                     <tr>
                         <td class="label">Statut:</td>
                         <td class="value">
-                            @if($walletDeposits->status == 'SUCCESS')
+                            @if ($walletDeposits->status == 'SUCCESS')
                                 <span class="status-badge status-success">✓ ACCEPTÉ</span>
                             @elseif($walletDeposits->status == 'REFUND')
                                 <span class="status-badge status-refund">↺ REMBOURSÉ</span>
@@ -73,10 +77,10 @@
         </div>
 
         <!-- Description (si présente) -->
-        @if($walletDeposits->description)
-        <div class="description">
-            « {{ $walletDeposits->description }} »
-        </div>
+        @if ($walletDeposits->description)
+            <div class="description">
+                « {{ $walletDeposits->description }} »
+            </div>
         @endif
 
         <!-- Client - Version compacte -->
@@ -92,20 +96,25 @@
                 </div>
                 <div class="info-item">
                     <div class="info-label">Téléphone</div>
-                    <div class="info-value">{{ $walletDeposits->wallet->sidUser->phone ?? ($walletDeposits->wallet->user->phone ?? 'N/A') }}</div>
+                    <div class="info-value">
+                        {{ $walletDeposits->wallet->sidUser->phone ?? ($walletDeposits->wallet->user->phone ?? 'N/A') }}
+                    </div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">Pays / Ville</div>
                     <div class="info-value">
                         {{ $walletDeposits->wallet->sidUser->country->name ?? ($walletDeposits->wallet->user->country->name ?? 'N/A') }}
-                        / {{ $walletDeposits->wallet->sidUser->city->name ?? ($walletDeposits->wallet->user->city->name ?? 'N/A') }}
+                        /
+                        {{ $walletDeposits->wallet->sidUser->city->name ?? ($walletDeposits->wallet->user->city->name ?? 'N/A') }}
                     </div>
                 </div>
-                @if(isset($walletDeposits->wallet->sidUser->is_under_distributer) && $walletDeposits->wallet->sidUser->is_under_distributer == 1)
-                <div class="info-item">
-                    <div class="info-label">Distributeur</div>
-                    <div class="info-value" style="color:#e74c3c;">{{ $walletDeposits->wallet->wallet_id ?? 'N/A' }}</div>
-                </div>
+                @if (isset($walletDeposits->wallet->sidUser->is_under_distributer) &&
+                        $walletDeposits->wallet->sidUser->is_under_distributer == 1)
+                    <div class="info-item">
+                        <div class="info-label">Distributeur</div>
+                        <div class="info-value" style="color:#e74c3c;">
+                            {{ $walletDeposits->wallet->wallet_id ?? 'N/A' }}</div>
+                    </div>
                 @endif
             </div>
         </div>
@@ -122,17 +131,17 @@
                     <div class="info-label">Devise</div>
                     <div class="info-value">{{ $walletDeposits->wallet->currencie->code ?? 'FCFA' }}</div>
                 </div>
-                @if(isset($walletDeposits->num_carte))
-                <div class="info-item">
-                    <div class="info-label">Numéro de la carte</div>
-                    <div class="info-value">{{ $walletDeposits->num_carte }}</div>
-                </div>
+                @if (isset($walletDeposits->num_carte))
+                    <div class="info-item">
+                        <div class="info-label">Numéro de la carte</div>
+                        <div class="info-value">{{ $walletDeposits->num_carte }}</div>
+                    </div>
                 @endif
-                 @if(isset($walletDeposits->name))
-                <div class="info-item">
-                    <div class="info-label">Nom & prénom </div>
-                    <div class="info-value">{{ $walletDeposits->name }}</div>
-                </div>
+                @if (isset($walletDeposits->name))
+                    <div class="info-item">
+                        <div class="info-label">Nom & prénom </div>
+                        <div class="info-value">{{ $walletDeposits->name }}</div>
+                    </div>
                 @endif
             </div>
 
@@ -140,19 +149,29 @@
             <table class="amount-table">
                 <tr>
                     <td class="label">Montant demandé</td>
-                    <td class="value">{{ number_format($walletDeposits->amount ?? 0, 0, ',', ' ') }} {{ $walletDeposits->wallet->currencie->code ?? 'FCFA' }}</td>
+                    <td class="value">{{ number_format($walletDeposits->amount ?? 0, 0, ',', ' ') }}
+                        {{ $walletDeposits->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
                 <tr>
                     <td class="label">Montant reçu</td>
-                    <td class="value bold">{{ number_format($walletDeposits->amount_received ?? 0, 0, ',', ' ') }} {{ $walletDeposits->wallet->currencie->code ?? 'FCFA' }}</td>
+                    <td class="value bold">{{ number_format($walletDeposits->amount_received ?? 0, 0, ',', ' ') }}
+                        {{ $walletDeposits->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
-                <tr>
-                    <td class="label">Frais</td>
-                    <td class="value">{{ number_format($walletDeposits->costs_amount ?? 0, 0, ',', ' ') }} {{ $walletDeposits->wallet->currencie->code ?? 'FCFA' }}</td>
-                </tr>
+
+
+                @if ($walletDeposits->wallet->sidUser->is_custumers)
+                    <tr>
+                        <td class="label">Frais</td>
+                        <td class="value">{{ number_format($walletDeposits->costs_amount ?? 0, 0, ',', ' ') }}
+                            {{ $walletDeposits->wallet->currencie->code ?? 'FCFA' }}</td>
+                    </tr>
+                @endif
+
+
                 <tr class="total-row">
                     <td class="label bold">TOTAL À PAYER</td>
-                    <td class="value bold">{{ number_format($walletDeposits->amount ?? 0, 0, ',', ' ') }} {{ $walletDeposits->wallet->currencie->code ?? 'FCFA' }}</td>
+                    <td class="value bold">{{ number_format($walletDeposits->amount ?? 0, 0, ',', ' ') }}
+                        {{ $walletDeposits->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
             </table>
 
@@ -165,7 +184,7 @@
         </div>
     </div>
 
-  
+
     <script type="text/javascript">
         try {
             this.print();

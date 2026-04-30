@@ -61,26 +61,27 @@
 
             </div>
             <div class="modal-footer style-foo">
-                <button wire:click="cancelReloadCardField" wire:loading.attr="disabled"
-                    wire:target="cancelReloadCardField" type="button" class="btn btn-outline-secondary w-20 mr-1">
+
+                <!-- Annuler -->
+                <button wire:click="cancelReloadCardField" wire:loading.remove wire:target="cancelReloadCardField"
+                    class="btn btn-outline-secondary w-20 mr-1">
                     Annuler
                 </button>
-                <button wire:click="addReload" type="button" wire:loading.remove=""
-                    class="btn btn-primary w-50">Envoyer la demande</button>
+
+                <div wire:loading wire:target="cancelReloadCardField">
+                    Fermeture...
+                </div>
+
+                <!-- Envoyer -->
+                <button wire:click="addReload" wire:loading.remove wire:target="addReload" class="btn btn-primary w-50">
+                    Envoyer la demande
+                </button>
+
                 <div wire:loading wire:target="addReload">
                     Traitement en cours...
                 </div>
+
             </div>
         </div>
     </div>
-    <script>
-        window.addEventListener('DOMContentLoaded', function() {
-            Echo.channel('wallet-reload-created').listen(
-                '.Created_wallet_reload',
-                (e) => {
-                    window.livewire.emit('notifyNewReload:' + e.id);
-                },
-            )
-        });
-    </script>
 </div>
