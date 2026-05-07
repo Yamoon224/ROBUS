@@ -793,7 +793,6 @@ class Reloaduv extends Component
                         }
 
                         if ($wallet_search->sidUser->email != null) {
-                            Mail::to($wallet_search->sidUser->email)->queue(new UvSend('Votre demande de transaction de la commission de ' . $walletTransaction->amount_received . ' ' . $wallet_search->currencie->code  . ' chez  : '  . $walletUser->firstname . $walletUser->lastname . ' ' . ' Le ' .  $walletTransaction->created_at  . ' Validé avec succes'));
                         }
 
                         $this->resetField();

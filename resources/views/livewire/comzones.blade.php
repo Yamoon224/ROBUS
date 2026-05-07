@@ -44,6 +44,7 @@
                         <th class="text-center whitespace-nowrap">Nom & Prénom</th>
                         <th class="text-center whitespace-nowrap">Email & télépone</th>
                         <th class="text-center whitespace-nowrap">Operations</th>
+                        <th class="text-center whitespace-nowrap">Liaison</th>
                         <th class="text-center whitespace-nowrap">Statut</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
@@ -83,6 +84,175 @@
                                             {{ $opera->operator->name ?? null }}
                                         </span>
                                     @endforeach
+                                @endif
+
+                            </td>
+                            <td class="w-60">
+
+                                <div class="text-center  border-t border-slate-200/60 dark:border-darkmode-400 mt-3">
+
+                                    @if ($item->is_com_accepted)
+                                        @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                            <div class="flex items-center justify-center text-success">
+                                                <a wire:click="addConnected({{ $item->id }}, 'show-connected-comZone-modal'); $emit('show-connected-comZone-modal')"
+                                                    class="flex items-center mr-3 @if ($item->is_com_accepted == 1) @else @endif"
+                                                    href="javascript:;" wire:loading.attr="disabled"
+                                                    title="@if ($item->is_com_accepted == 1) Désactiver @else Activer @endif">
+                                                    Déja attribuer a
+                                                </a>
+                                            </div>
+                                            <div class="user-badge user-badge--compagnie">
+                                                {{ $item->company_id != null ? $item->company->name : null }}
+                                            </div>
+                                            <div class="flex items-center justify-center text-pending mt-3 mb-3">
+                                                <a wire:click="addConnected({{ $item->id }}, 'show-desactive-company-modal'); $emit('show-desactive-company-modal')"
+                                                    class="flex items-center mr-3 @if ($item->is_com_accepted == 1) @else @endif"
+                                                    href="javascript:;" wire:loading.attr="disabled"
+                                                    title="@if ($item->is_com_accepted == 1) Désactiver @else Activer @endif">
+                                                    Rétirer a
+                                                    {{ $item->company_id != null ? $item->company->name : null }}
+                                                </a>
+                                            </div>
+                                        @endif
+                                    @else
+                                        @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                            <div class="flex items-center justify-center text-danger">
+                                                <a wire:click="editConnectedComZone({{ $item->id }}, 'show-connected-comZone-modal'); $emit('show-connected-comZone-modal')"
+                                                    class="flex items-center mr-3 @if ($item->is_com_accepted == 1) @else @endif"
+                                                    href="javascript:;"
+                                                    title="@if ($item->is_com_accepted == 1) Désactiver @else Activer @endif">
+                                                    Attribution en attente
+                                                </a>
+
+                                            </div>
+                                        @endif
+                                    @endif
+
+                                </div>
+                                @if ($item->get_role() != '[]')
+                                    @foreach ($item->get_role() as $role)
+                                        @if ($role->id == 8)
+                                            @if ($item->com_zone_id != null)
+                                                <div class="text-slate-300 text-xs  mt-0.5 mb-2 mt-3">
+                                                    <div class="user-badge user-badge--distributor">
+                                                        COM ZONE
+                                                    </div>
+
+                                                    <div class="user-name">
+                                                        {{ $item->com_zone_id != null ? $item->comzone->firstname . ' ' . $item->comzone->lastname : null }}
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
+
+                                                    @if ($item->is_com_accepted)
+                                                        @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                                            <div class="flex items-center justify-center text-success">
+
+                                                                <a wire:click="editConnected({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
+                                                                    class="flex items-center mr-3 @if ($item->is_com_accepted == 1) @else @endif"
+                                                                    href="javascript:;" wire:loading.attr="disabled"
+                                                                    title="@if ($item->is_com_accepted == 1) Désactiver @else Activer @endif">
+                                                                    <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i>
+                                                                    Deja Lié
+
+                                                                </a>
+
+                                                            </div>
+                                                        @endif
+                                                    @else
+                                                        @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                                            <div class="flex items-center justify-center text-danger">
+                                                                <a wire:click="editConnected({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
+                                                                    class="flex items-center mr-3 @if ($item->is_com_accepted == 1) @else @endif"
+                                                                    href="javascript:;"
+                                                                    title="@if ($item->is_com_accepted == 1) Désactiver @else Activer @endif">
+                                                                    En-attente de liaison
+
+                                                                </a>
+
+                                                            </div>
+                                                        @endif
+                                                    @endif
+
+
+                                                </div>
+                                            @else
+                                                @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                                    <div class="flex items-center justify-center text-primary mt-3">
+
+                                                        <a wire:click="addConnected({{ $item->id }}, 'show-connected-master-modal'); $emit('show-connected-master-modal')"
+                                                            class="flex items-center mr-3 @if ($item->is_com_accepted == 1) @else @endif"
+                                                            href="javascript:;" wire:loading.attr="disabled"
+                                                            title="@if ($item->is_com_accepted == 1) Désactiver @else Activer @endif">
+                                                            Lié a un client/SD/Compagnie
+                                                        </a>
+
+                                                    </div>
+                                                @endif
+                                            @endif
+                                        @endif
+                                    @endforeach
+                                @else
+                                    @if ($item->com_zone_id != null)
+                                        <div class="text-slate-300 text-xs  mt-0.5 mb-2">
+                                            <div class="user-badge user-badge--distributor">
+                                                COM ZONE
+                                            </div>
+                                            <div class="text-slate-300 text-xs mt-2">
+                                                {{ $item->com_zone_id != null ? $item->master->firstname . ' ' . $item->master->lastname : null }}
+                                            </div>
+                                        </div>
+                                        <div class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
+
+                                            @if ($item->is_com_accepted)
+                                                @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                                    <div class="flex items-center justify-center text-success">
+
+                                                        <a wire:click="editConnected({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
+                                                            class="flex items-center mr-3 @if ($item->is_com_accepted == 1) @else @endif"
+                                                            href="javascript:;" wire:loading.attr="disabled"
+                                                            title="@if ($item->is_com_accepted == 1) Désactiver @else Activer @endif">
+                                                            <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i>
+                                                            Deja Lié
+
+                                                        </a>
+
+                                                    </div>
+                                                @endif
+                                            @else
+                                                @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                                    <div class="flex items-center justify-center text-danger">
+                                                        <a wire:click="editConnected({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
+                                                            class="flex items-center mr-3 @if ($item->is_com_accepted == 1) @else @endif"
+                                                            href="javascript:;"
+                                                            title="@if ($item->is_com_accepted == 1) Désactiver @else Activer @endif">
+                                                            En-attente de liaison
+
+                                                        </a>
+
+                                                    </div>
+                                                @endif
+                                            @endif
+
+
+                                        </div>
+                                    @else
+                                        @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                            <div class="flex items-center justify-center text-primary ">
+
+                                                <a wire:click="addConnected({{ $item->id }}, 'show-connected-master-modal'); $emit('show-connected-master-modal')"
+                                                    class="flex items-center mr-3 @if ($item->is_com_accepted == 1) @else @endif"
+                                                    href="javascript:;" wire:loading.attr="disabled"
+                                                    title="@if ($item->is_com_accepted == 1) Désactiver @else Activer @endif">
+                                                    Lié a un MASTER
+                                                </a>
+
+                                            </div>
+                                        @endif
+                                    @endif
+
                                 @endif
 
                             </td>
@@ -127,10 +297,11 @@
                                                 </h2>
                                                 <a class="dropdown-toggle w-5 h-5 block" href="javascript:;"
                                                     aria-expanded="false" data-tw-toggle="dropdown"> <svg
-                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                        icon-name="more-horizontal" data-lucide="more-horizontal"
+                                                        xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round" icon-name="more-horizontal"
+                                                        data-lucide="more-horizontal"
                                                         class="lucide lucide-more-horizontal w-5 h-5 text-slate-500">
                                                         <circle cx="12" cy="12" r="1"></circle>
                                                         <circle cx="19" cy="12" r="1"></circle>
@@ -201,5 +372,7 @@
     </div>
     @include('livewire.modals.disabledUsers')
     @include('livewire.modals.deletedUsers')
+    @include('livewire.modals.connectedCustumers')
+    @include('livewire.modals.connectedOneCustumersDistributors')
 
 </div>

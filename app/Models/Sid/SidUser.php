@@ -66,10 +66,10 @@ class SidUser extends Authenticatable
     }
 
 
-  public function integrator()
-{
-    return $this->hasOne(IntegrationClient::class, 'sid_user_id', 'id');
-}
+    public function integrator()
+    {
+        return $this->hasOne(IntegrationClient::class, 'sid_user_id', 'id');
+    }
 
 
     public function categorie()
@@ -81,6 +81,11 @@ class SidUser extends Authenticatable
     public function master()
     {
         return $this->belongsTo(SidUser::class, 'master_id', 'id');
+    }
+
+    public function comzone()
+    {
+        return $this->belongsTo(SidUser::class, 'com_zone_id', 'id');
     }
 
 

@@ -131,7 +131,7 @@
                                         <div class="flex items-center justify-center text-success">
 
                                             <a wire:click="edit({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
-                                                class="flex items-center mr-3 @if ($item->status == 1) @else @endif"
+                                                class="flex items-center w-24 h-10 bg-success text-white @if ($item->status == 1) @else @endif"
                                                 href="javascript:;"
                                                 title="@if ($item->status == 1) Désactiver @else Activer @endif">
                                                 <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i> Activé
@@ -143,7 +143,7 @@
                                     @if (Auth::guard('web')->user()->hasPermissionTo('activer-administrateur'))
                                         <div class="flex items-center justify-center text-danger">
                                             <a wire:click="edit({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
-                                                class="flex items-center mr-3 @if ($item->status == 1) @else @endif"
+                                                class="flex items-center w-24 h-10 bg-success text-white @if ($item->status == 1) @else @endif"
                                                 href="javascript:;"
                                                 title="@if ($item->status == 1) Désactiver @else Activer @endif">
                                                 <i class="fas fa-lock w-4 h-4 mr-2"></i>Désactivé
@@ -152,6 +152,60 @@
                                         </div>
                                     @endif
                                 @endif
+
+                                <div class="mt-6">
+
+                                    @if ($item->com_zone_id != null)
+                                        <div class="comzone-card">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <span class="badge-comzone">
+                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                                    </svg>
+                                                    COM ZONE
+                                                </span>
+                                                <span
+                                                    class="badge-status {{ $item->is_com_accepted ? 'badge-status-linked' : 'badge-status-pending' }}">
+                                                    @if ($item->is_com_accepted)
+                                                        <i class="fas fa-check-circle mr-1 text-xs"></i> Lié
+                                                    @else
+                                                        <i class="fas fa-clock mr-1 text-xs"></i> En attente
+                                                    @endif
+                                                </span>
+                                            </div>
+                                            <div class="comzone-name">{{ $item->comzone->firstname ?? '' }}
+                                                {{ $item->comzone->lastname ?? '' }}</div>
+                                            @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                                <div class="mt-3 pt-2 border-t border-slate-200 text-center">
+                                                    <button
+                                                        wire:click="editConnected({{ $item->id }}, 'show-deconnected-zoneCom-modal'); $emit('show-deconnected-zoneCom-modal')"
+                                                        class="btn-action {{ $item->is_com_accepted ? 'btn-detach' : 'btn-validate' }}">
+                                                        @if ($item->is_com_accepted)
+                                                            <i class="fas fa-unlink-alt mr-1"></i> Détacher
+                                                        @else
+                                                            <i class="fas fa-link mr-1"></i> Valider la liaison
+                                                        @endif
+                                                    </button>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <div class="comzone-empty-card">
+                                            <i class="fas fa-user-friends comzone-empty-icon"></i>
+                                            <div class="comzone-empty-text">Aucun COM ZONE associé</div>
+                                            @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                                <button
+                                                    wire:click="addConnectedComZone({{ $item->id }}, 'show-connected-zoneCom-modal'); $emit('show-connected-zoneCom-modal')"
+                                                    class="btn-action btn-link">
+                                                    <i class="fas fa-plus-circle mr-1"></i> Lier un COM ZONE
+                                                </button>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </div>
                             </td>
 
                             <td class="w-60">
@@ -250,5 +304,7 @@
     </div>
     @include('livewire.modals.disabledUsers')
     @include('livewire.modals.deletedUsers')
+    @include('livewire.modals.connectedOneComZone')
+    @include('livewire.modals.deconnectedOneUser')
 
 </div>

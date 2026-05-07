@@ -153,6 +153,16 @@
             $('#connected-master-modal').removeClass('show');
             $('#connected-master-modal').addClass('hide');
 
+            $('#connected-zoneCom-modal').removeClass('show');
+            $('#connected-zoneCom-modal').addClass('hide');
+
+            $('#deconnected-zoneCom-modal').removeClass('show');
+            $('#deconnected-zoneCom-modal').addClass('hide');
+
+
+            $('#connected-comZone-modal').removeClass('show');
+            $('#connected-comZone-modal').addClass('hide');
+
             $('#validated-password-modal').removeClass('show');
             $('#validated-password-modal').addClass('hide');
 
@@ -632,6 +642,23 @@
             $('#connected-master-modal').removeClass('hide');
             $('#connected-master-modal').addClass('show');
         });
+
+        Livewire.on('show-connected-zoneCom-modal', () => {
+            $('#connected-zoneCom-modal').removeClass('hide');
+            $('#connected-zoneCom-modal').addClass('show');
+        });
+
+        Livewire.on('show-deconnected-zoneCom-modal', () => {
+            $('#deconnected-zoneCom-modal').removeClass('hide');
+            $('#deconnected-zoneCom-modal').addClass('show');
+        });
+
+
+        Livewire.on('show-connected-comZone-modal', () => {
+            $('#connected-comZone-modal').removeClass('hide');
+            $('#connected-comZone-modal').addClass('show');
+        });
+
 
         Livewire.on('show-connected-company-modal', () => {
             $('#connected-company-modal').removeClass('hide');

@@ -15,6 +15,7 @@ class custumers extends Component
     use WithPagination;
 
     public $search = "";
+    public $searchComZone = "";
     public $countriesFilter = "";
     public $statusFilter_piece = "";
     public $statusFilter_active = "";
@@ -23,6 +24,7 @@ class custumers extends Component
     public $sortField = 'id';
     public $sortAsc = true;
     public $sidUserId;
+    public $detachUserId;
     public $sidUserStatus;
     public $user_id;
     public $master_id;
@@ -191,6 +193,16 @@ class custumers extends Component
         $this->emit($state);
     }
 
+    public function addComZoneConnected($id, $state)
+    {
+        $check = SidUser::whereId($id)->first();
+        $this->user_id = $check->id;
+        $this->master_id = $check->master_id;
+        $this->user_country = $check->country->id;
+        $this->user_city = $check->city->id;
+        $this->underdistributeurDesabled = $check->is_com_accepted;
+        $this->emit($state);
+    }
 
     public function connected()
     {
@@ -247,11 +259,42 @@ class custumers extends Component
         }
     }
 
+    public function connectedOneComZone()
+    {
+        $check = SidUser::find($this->user_id);
+
+        $check_master = SidUser::find($this->master_selected)->first();
+
+        if (!empty($check)) {
+            $check->update(['com_zone_id' => $this->master_selected, 'is_com_accepted' => true]);
+            $msg = 'Vous avez été lié a un client';
+            $msg_title = 'Liaison a un client';
+            $check_master->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+            $this->emit('modal-hide', 'hide');
+            $this->cancelConnectedField();
+            $this->emit('refreshPage'); 
+            $this->emit('success', $check->com_zone_id  == $this->master_selected ? 'Client lié !' : 'Client désactivée !');
+        }
+    }
     public function resetField()
     {
         $this->sidUserId = '';
         $this->sidUserStatus = '';
         $this->emit('modal-hide', 'hide');
+    }
+
+    public function confirmDetach()
+    {
+        $user = SidUser::find($this->user_id);
+        if ($user) {
+            $user->update([
+                'com_zone_id' => null,
+                'is_com_accepted' => false
+            ]);
+            $this->emit('refreshPage');
+            $this->emit('success', 'Utilisateur détaché avec succès.');
+        }
+        $this->resetField();
     }
 
     public function render()
@@ -295,7 +338,7 @@ class custumers extends Component
         if ($this->startDate) {
             $users->whereDate('created_at', '>=', $this->startDate);
         }
-        
+
         if ($this->endDate) {
             $users->whereDate('created_at', '<=', $this->endDate);
         }
@@ -385,8 +428,20 @@ class custumers extends Component
             $user->amount_fcfa = $amount_solde;
         }
 
+        $query = SidUser::whereIsComZone(true)
+            ->where('country_id', $this->user_country)
+            ->when($this->searchComZone, function ($q) {
+                $q->where(function ($q2) {
+                    $q2->where('firstname', 'like', '%' . $this->searchComZone . '%')
+                        ->orWhere('lastname', 'like', '%' . $this->searchComZone . '%')
+                        ->orWhere('email', 'like', '%' . $this->searchComZone . '%');
+                });
+            });
+
+
         return view('livewire.custumers', [
             "users" => $users,
+            "comZones" => $query->paginate(10),
             "countries" => Country::where('status', true)->orderBy("name", 'desc')->get()
         ]);
     }

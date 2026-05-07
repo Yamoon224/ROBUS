@@ -626,6 +626,27 @@ Route::get('clear-route-robus',  function () {
     return "Config setting update";
 });
 
+Route::get('clear-route-robus', function () {
+
+    if (request()->query('token') !== env('CLEAR_CACHE_TOKEN')) {
+        abort(403, 'Unauthorized');
+    }
+
+    Artisan::call('optimize:clear');
+    Artisan::call('config:clear');
+    Artisan::call('route:clear');
+    Artisan::call('cache:clear');
+
+    Artisan::call('config:cache');
+    Artisan::call('route:cache');
+    Artisan::call('view:cache');
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Cache cleared successfully',
+    ]);
+});
+
 Route::get('clear-cache-robus',  function () {
     Artisan::call('cache:clear');
     return "Config setting update";
@@ -695,6 +716,16 @@ Route::get('/reads_applications', function () {
     return 'Artisan commands executed successfully.';
 });
 
+Route::get('/deploy-cache', function () {
+
+    Artisan::call('optimize:clear');
+    Artisan::call('config:cache');
+    Artisan::call('route:cache');
+    Artisan::call('view:cache');
+
+    return 'Cache refreshed successfully';
+});
+
 Route::get('/code_qr_applications', function () {
 
     Artisan::call('wallet:generate-qrcodes --from-id=1524 --chunk=50 --sleep=2');
@@ -709,7 +740,7 @@ Route::get('/reads_application_web', function () {
 // Supprimer les jobs failed également
 Route::get('/delete-all-jobs', function (Request $request) {
     $token = $request->get('token');
-    $validToken = env('QUEUE_MANAGEMENT_TOKEN');
+    $validToken = "robus_2026_e08f9b6e96e44b96155dd038db304b16f5a36481";
     
     if ($token !== $validToken) {
         return response()->json(['error' => 'Unauthorized'], 403);
@@ -732,7 +763,7 @@ Route::get('/process-queue', function (Request $request) {
     try {
 
         $token = $request->get('token');
-        $validToken = env('QUEUE_MANAGEMENT_TOKEN');
+        $validToken = "robus_2026_e08f9b6e96e44b96155dd038db304b16f5a36481";
 
         if ($token !== $validToken) {
             return response()->json(['error' => 'Unauthorized'], 403);

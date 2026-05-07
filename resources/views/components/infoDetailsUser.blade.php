@@ -19,9 +19,13 @@
            <div class="user-badge user-badge--compagnie">
                Masteur
            </div>
-     @elseif ($user && $user->is_api == 1)
+       @elseif ($user && $user->is_api == 1)
            <div class="user-badge user-badge--compagnie">
-                Intégrateur API
+               Intégrateur API
+           </div>
+       @elseif ($user && $user->is_com_zone == 1)
+           <div class="user-badge user-badge--compagnie">
+               COM ZONE
            </div>
        @else
            <div class="user-badge user-badge--admin">
