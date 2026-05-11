@@ -12,7 +12,7 @@ class HomeService
 
     // HOME Prospects valeurs
 
-      public function getDaysReloadProspectAmountTotal($walletModel)
+    public function getDaysReloadProspectAmountTotal($walletModel)
     {
 
 
@@ -48,8 +48,8 @@ class HomeService
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
             ->whereBetween($transaction_days, [$startOfMonth, $endOfMonth])
             ->where($transaction_status, 'SUCCESS');
-       
-            $query->where(function ($query) use ($wallet_transaction) {
+
+        $query->where(function ($query) use ($wallet_transaction) {
             $query->where($wallet_transaction, propect()->wallet->id);
         });
 
@@ -406,7 +406,7 @@ class HomeService
             'countries.name as country_name',
             'cities.name as citie_name',
             'currencies.code as currency_code',
-            'providers.name as provider',
+            'providers.name as provider',                // ← on garde le provider
             DB::raw("SUM({$walletTransactionTable}.amount) as total_amount"),
             DB::raw("COUNT({$walletTransactionTable}.id) as total_transactions"),
             DB::raw("MAX({$walletTransactionTable}.created_at) as last_transaction_date"),
@@ -420,17 +420,15 @@ class HomeService
             ->where("{$walletTransactionTable}.status", 'SUCCESS')
             ->where('sid_users.is_under_distributer', true);
 
-        // ✅ Filtres dynamiques
-        if (!empty($filters['provider_id'])) {
-            $query->where("{$walletTransactionTable}.provider_id", $filters['provider_id']);
-        }
+        // ✅ Suppression du filtre provider_id
+        // if (!empty($filters['provider_id'])) { ... }  // ← à enlever
 
-        // ✅ Filtre par pays
+        // Filtre par pays (si présent)
         if (!empty($filters['country_id'])) {
             $query->where('sid_users.country_id', $filters['country_id']);
         }
 
-        // ✅ Filtre période
+        // Filtre période (inchangé)
         if (!empty($filters['periode'])) {
             switch ($filters['periode']) {
                 case 'today':
@@ -444,16 +442,14 @@ class HomeService
                     break;
                 case 'year':
                 default:
-                    // ✅ Période par défaut = année en cours
                     $query->whereYear("{$walletTransactionTable}.created_at", now()->year);
                     break;
             }
         } else {
-            // ✅ par défaut, filtrer sur l’année en cours
             $query->whereYear("{$walletTransactionTable}.created_at", now()->year);
         }
 
-        // ✅ Groupements corrects
+        // ✅ Groupement incluant le provider
         $transactions = $query
             ->groupBy(
                 'sid_users.id',
@@ -470,17 +466,17 @@ class HomeService
             ->orderByDesc('total_amount')
             ->get();
 
-        // ✅ Transformation du résultat pour la vue
+        // Transformation (on conserve la clé 'provider')
         $ranking = $transactions->map(function ($t) {
             return [
                 'sub_distributor'     => $t->sub_distributor ?? 'N/A',
                 'sub_countrie'        => $t->country_name ?? 'N/A',
-                'sub_citie' => $t->citie_name ?? 'N/A',
+                'sub_citie'           => $t->citie_name ?? 'N/A',
                 'sub_userId'          => $t->sub_userId ?? 'N/A',
                 'sub_email'           => $t->sub_email ?? 'N/A',
                 'wallet_balance'      => (float) $t->wallet_balance ?? 0,
                 'currency'            => $t->currency_code ?? 'N/A',
-                'provider'            => $t->provider ?? 'N/A',
+                'provider'            => $t->provider ?? 'N/A',        // ← réintégré
                 'total_amount'        => (float) $t->total_amount ?? 0,
                 'total_transactions'  => (int) $t->total_transactions ?? 0,
                 'last_transaction_date' => $t->last_transaction_date
@@ -489,10 +485,9 @@ class HomeService
             ];
         });
 
-        // ✅ Regrouper par pays pour l’affichage
+        // Regroupement par pays (optionnel)
         return $ranking->groupBy('sub_countrie')->map(fn($group) => $group->values());
     }
-
 
     public function getSubDistributorsWalletTransactionRanking($walletModel)
     {

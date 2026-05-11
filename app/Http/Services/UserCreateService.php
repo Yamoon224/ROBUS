@@ -18,6 +18,11 @@ use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
 use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
+use App\Models\Wallets\WalletPush;
+use App\Models\Wallets\WalletTresortMoney;
+use App\Models\Wallets\WalletVersement;
+use App\Models\Wallets\WalletBankSend;
+use App\Models\Wallets\WalletDjamo;
 use App\Models\WithMerchant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
@@ -981,6 +986,10 @@ class UserCreateService
                         'silver_ceiling'  =>   $user->country->silver_ceiling
                 ]);
 
+                $user->wallet->update([
+                        'status'  =>  true
+                ]);
+
                 if (!empty($requestData['password'])) {
                         $user->password = Hash::make($requestData['password']);
                         $user->save();
@@ -1017,6 +1026,11 @@ class UserCreateService
 
                 // Histoticals Null valeurs
                 $this->getDeleteTransactionsNullHistorical(WalletPayment::class, $walletId->id);
+                $this->getDeleteTransactionsNullHistorical(WalletPush::class, $walletId->id);
+                $this->getDeleteTransactionsNullHistorical(WalletTresortMoney::class, $walletId->id);
+                $this->getDeleteTransactionsNullHistorical(WalletVersement::class, $walletId->id);
+                $this->getDeleteTransactionsNullHistorical(WalletBankSend::class, $walletId->id);
+                $this->getDeleteTransactionsNullHistorical(WalletDjamo::class, $walletId->id);
                 $this->getDeleteTransactionsNullHistorical(WalletWave::class, $walletId->id);
                 $this->getDeleteTransactionsNullHistorical(WalletXbet::class, $walletId->id);
                 $this->getDeleteTransactionsNullHistorical(WalletTransaction::class, $walletId->id);
@@ -1079,6 +1093,10 @@ class UserCreateService
                         'silver_ceiling'  =>   $user->country->silver_ceiling
                 ]);
 
+                 $user->wallet->update([
+                        'status'  =>  true
+                ]);
+                
                 if ($user->is_company == true) {
 
                         $user->company->update([
@@ -1137,6 +1155,11 @@ class UserCreateService
                 // Histoticals Null valeurs
                 $this->getDeleteTransactionsNullHistorical(WalletPayment::class, $walletId->id);
                 $this->getDeleteTransactionsNullHistorical(WalletWave::class, $walletId->id);
+                $this->getDeleteTransactionsNullHistorical(WalletPush::class, $walletId->id);
+                $this->getDeleteTransactionsNullHistorical(WalletTresortMoney::class, $walletId->id);
+                $this->getDeleteTransactionsNullHistorical(WalletVersement::class, $walletId->id);
+                $this->getDeleteTransactionsNullHistorical(WalletBankSend::class, $walletId->id);
+                $this->getDeleteTransactionsNullHistorical(WalletDjamo::class, $walletId->id);
                 $this->getDeleteTransactionsNullHistorical(WalletXbet::class, $walletId->id);
                 $this->getDeleteTransactionsNullHistorical(WalletTransaction::class, $walletId->id);
                 $this->getDeleteRecevedTransactionsHistorical(WalletTransaction::class, $walletId->wallet_id);

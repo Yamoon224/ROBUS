@@ -16,7 +16,7 @@ class WalletXbetRakings extends Component
 
         $filters = [
             'periode' => $this->periode ?? 'all',
-            'provider_id' => $this->service ?? 'all',
+            // 'provider_id' => $this->service ?? 'all',
             'country_id' => $this->country ?? null,
         ];
 

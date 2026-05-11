@@ -33,15 +33,7 @@
                             <tr class="intro-x">
                                 <td class="text-center w-40">
 
-                                    <div
-                                        class="px-3 py-2 text-dark btn-purple dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                        <div class="fc-event-title-container" style="color: white;">
-                                            <div class="fc-event-title fc-sticky">
-                                                {{ $item['provider'] }}
-
-                                            </div>
-                                        </div>
-                                    </div>
+                                  
                                     @if ($index < 3)
                                         <span
                                             class="inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm shadow-lg
