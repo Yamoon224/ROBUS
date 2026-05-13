@@ -155,7 +155,9 @@ Route::group(['prefix' => ''], function () {
             Route::get('/browse', [UserController::class, 'browse_comzone'])->name('comzones.admins.browse');
             Route::get('/add', [AdminController::class, 'add_com_zone'])->name('comzones.admins.add');
             Route::post('/store', [MasterController::class, 'store_comzones'])->name('comzones.admin.store');
-            Route::get('/show/{id}', [MasterController::class, 'show_comzone'])->name('comzones.admins.show');
+            Route::get('/statistics', [AdminController::class, 'comzoneStatistics'])->name('comzones.admins.statistics');
+            Route::get('/show/{id}', [AdminController::class, 'showComzones'])->name('comzones.admins.show');
+            Route::post('/show/{id}/operators', [AdminController::class, 'updateComzoneOperators'])->name('comzones.admins.operators.update');
             Route::post('/update/{id}', [MasterController::class, 'update_comzone'])->name('comzones.admins.update');
         });
 

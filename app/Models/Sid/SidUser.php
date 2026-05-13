@@ -77,6 +77,10 @@ class SidUser extends Authenticatable
         return $this->belongsTo(Categorie::class, 'categorie_id', 'id');
     }
 
+    public function operatorServices()
+    {
+        return $this->hasMany(OperatorService::class, 'sid_user_id', 'id');
+    }
 
     public function master()
     {
@@ -86,6 +90,11 @@ class SidUser extends Authenticatable
     public function comzone()
     {
         return $this->belongsTo(SidUser::class, 'com_zone_id', 'id');
+    }
+
+    public function linkedComzoneUsers()
+    {
+        return $this->hasMany(SidUser::class, 'com_zone_id', 'id');
     }
 
 

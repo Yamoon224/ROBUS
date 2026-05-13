@@ -35,6 +35,9 @@ class Comzones extends Component
     public $master_selected;
     public $comzoneDesabled = 0;
     public $searchCustumers = '';
+    public $selectedComZoneId = null;
+    public $selectedComZoneName = '';
+    public $linkedUsers = [];
 
     public function edit($id, $state)
     {
@@ -43,6 +46,34 @@ class Comzones extends Component
         $this->sidUserInfos = $check->firstname . ' ' . $check->lastname;
         $this->sidUserStatus = $check->status;
         $this->emit($state);
+    }
+
+    public function openLinkedUsersModal($comZoneId)
+    {
+        $comZone = SidUser::where('is_com_zone', true)->find($comZoneId);
+
+        if (!$comZone) {
+            $this->emit('error', 'COM ZONE introuvable.');
+            return;
+        }
+
+        $this->selectedComZoneId = $comZone->id;
+        $this->selectedComZoneName = trim($comZone->firstname . ' ' . $comZone->lastname);
+        $this->linkedUsers = $comZone->linkedComzoneUsers()
+            ->with(['country', 'city', 'wallet'])
+            ->orderBy('firstname')
+            ->orderBy('lastname')
+            ->get();
+
+        $this->emit('show-details-connected-custumers-modal');
+    }
+
+    public function closeLinkedUsersModal()
+    {
+        $this->selectedComZoneId = null;
+        $this->selectedComZoneName = '';
+        $this->linkedUsers = [];
+        $this->emit('modal-hide');
     }
 
     public function cancelConnectedField()
@@ -136,7 +167,7 @@ class Comzones extends Component
         // Notification au master (une seule fois avec le résumé)
         if ($updatedCount > 0) {
             $action = $isLier ? 'liés à' : 'détachés de';
-            
+
             $master->notify(new UserNotification([
                 'title' => 'Mise à jour des liaisons COM ZONE',
                 'message' => $updatedCount . " utilisateur(s) ont été " . $action . " votre COM ZONE."
@@ -255,7 +286,24 @@ class Comzones extends Component
 
 
         $users = $users->where('is_com_zone', true)
-            ->with(['wallet.sidUser.country.currencie']) // Charge les relations nécessaires pour la conversion
+            ->with([
+                'wallet.sidUser.country.currencie',
+                'linkedComzoneUsers' => function ($query) {
+                    $query->select(
+                        'id',
+                        'firstname',
+                        'lastname',
+                        'email',
+                        'phone',
+                        'com_zone_id',
+                        'is_custumers',
+                        'is_under_distributer',
+                        'is_master',
+                        'status'
+                    )->orderBy('firstname');
+                },
+            ]) // Charge les relations nécessaires pour la conversion
+            ->withCount('linkedComzoneUsers')
             ->withSum('wallet as wallet_balance', 'amount')
             ->orderByDesc('wallet_balance')
             ->paginate($this->perPage ?? 30);
@@ -351,7 +399,6 @@ class Comzones extends Component
             "countries" => Country::where('robus', true)->orderBy("name", 'desc')->get(),
             "operators" => Operator::whereStatus(true)->whereIsCom(true)->orderBy("name", 'desc')->get(),
             'masters' => $masters,
-
         ]);
     }
 }

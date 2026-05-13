@@ -324,6 +324,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('under_distributors', [UserController::class, 'comzone_under_distributors']);
             Route::get('masters_distributors', [UserController::class, 'masters_com_zones']);
             Route::get('custumers_distributors', [UserController::class, 'custumers_com_zones']);
+            Route::get('transactions/counters', [ComZoneController::class, 'transactionCounters']);
 
             // Providers transactions
             Route::get('/providers', [ProviderController::class, 'comzones_providers']);

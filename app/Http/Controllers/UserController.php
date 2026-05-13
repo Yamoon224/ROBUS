@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\UpdateActiveAccountEvent;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Controllers\Controller;
+use App\Http\Services\ComZoneCommissionService;
 use App\Http\Services\TransactionsAccountService;
 use App\Http\Services\UserCreateService;
 use App\Http\Services\ValidatorService;
@@ -446,6 +447,67 @@ class UserController extends Controller
         } else {
             abort(403);
         }
+    }
+
+    public function show_comzone(Request $request, int $id, ComZoneCommissionService $comZoneCommissionService)
+    {
+        if (Auth::guard('web')->user()->hasPermissionTo('voir-clients')) {
+            $user = SidUser::whereId($id)->firstOrFail();
+            $kycs = $user->kyc()->get() ?? null;
+            $walletIds = Wallet::whereIn(
+                'sid_user_id',
+                SidUser::where('com_zone_id', $user->id)->pluck('id')
+            )->pluck('id');
+
+            $transactions = WalletTransaction::whereIn('wallet_id', $walletIds)
+                ->orderBy('created_at', 'desc')
+                ->paginate(20);
+            $paiements = WalletPayment::whereIn('wallet_id', $walletIds)
+                ->orderBy('created_at', 'desc')
+                ->paginate(20);
+            $virements = WalletBank::whereIn('wallet_id', $walletIds)
+                ->orderBy('created_at', 'desc')
+                ->paginate(20);
+            $phoneCredits = WalletPhoneCredit::whereIn('wallet_id', $walletIds)
+                ->orderBy('created_at', 'desc')
+                ->paginate(20);
+            $reloadCards = WalletDeposit::whereIn('wallet_id', $walletIds)
+                ->orderBy('created_at', 'desc')
+                ->paginate(20);
+            $walletOrderCarte = BankCard::whereIn('wallet_id', $walletIds)
+                ->orderBy('created_at', 'desc')
+                ->paginate(20);
+            $walletComzones = WalletXbet::whereIn('wallet_id', $walletIds)
+                ->orderBy('created_at', 'desc')
+                ->paginate(20);
+            $reaload_uv = WalletReload::whereIn('wallet_id', $walletIds)
+                ->orderBy('created_at', 'desc')
+                ->paginate(20);
+            $Internationals = WalletInter::whereIn('wallet_id', $walletIds)
+                ->orderBy('created_at', 'desc')
+                ->paginate(20);
+
+            $usersCountry = Auth::guard('web')->user()->country->currencie->name;
+            $comZoneServiceTransactions = $comZoneCommissionService->transactionsForComZone($user);
+
+            return view('pages.custumers.show_comzone', compact(
+                'user',
+                'kycs',
+                'transactions',
+                'paiements',
+                'virements',
+                'phoneCredits',
+                'reloadCards',
+                'walletOrderCarte',
+                'walletComzones',
+                'reaload_uv',
+                'Internationals',
+                'usersCountry',
+                'comZoneServiceTransactions'
+            ));
+        }
+
+        abort(403);
     }
     public function getWalletWithMerchantSumUserProperty($id)
     {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Controllers\Controller;
 use App\Http\Services\AuthenticationService;
+use App\Http\Services\ComZoneCommissionService;
 use App\Http\Services\TransactionsAccountService;
 use App\Http\Services\UserCreateService;
 use App\Http\Services\ValidatorService;
@@ -23,6 +24,8 @@ use App\Models\Custumers\Zone;
 use App\Models\Kyc;
 use App\Models\Master;
 use App\Models\PercentCompanie;
+use App\Models\Operator;
+use App\Models\OperatorService;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletBank;
@@ -241,6 +244,8 @@ class AdminController extends Controller
                     return redirect(route('users.prospects.browse'))->with('color', $color)->with('status', $msg);
                 } else if ($user->is_distributer) {
                     return redirect(route('operators.admins.browse'))->with('color', $color)->with('status', $msg);
+                } else if ($user->is_com_zone) {
+                    return redirect(route('comzones.admins.browse'))->with('color', $color)->with('status', $msg);
                 } else {
                     return redirect(route('unders.admins.browse'))->with('color', $color)->with('status', $msg);
                 }
@@ -1766,6 +1771,123 @@ class AdminController extends Controller
     }
 
 
+    public function showComzones(int $id, Request $request, ComZoneCommissionService $comZoneCommissionService)
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-sous-distributeurs')) {
+            abort(403);
+        }
+
+
+        $user = SidUser::whereId($id)->with('operator_services.operator')->first();
+
+        $wallet_solde = Wallet::where('sid_user_id', $user->id)->first();
+
+        $usersCountry = Auth::guard('web')->user()->country->currencie->name;
+
+        $kycs = $user->kyc()->get() ?? null;
+
+        $roles = Role::all();
+
+        $countries = Country::where('status', true)->get();
+
+        // Execeptions
+        $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
+        $operators = Operator::whereStatus(true)->whereIsCom(true)->orderBy("name", 'desc')->get();
+        $operatorServices = OperatorService::where('sid_user_id', $user->id)
+            ->whereIn('operator_id', $operators->pluck('id')->all())
+            ->get()
+            ->keyBy('operator_id');
+        $old_operators = $operatorServices->keys()->toArray();
+        $comZoneServiceTransactions = $comZoneCommissionService->transactionsForComZone($user);
+
+        return view('pages.admin.show_comzones', compact(
+            'user',
+            'operators',
+            'old_operators',
+            'operatorServices',
+            'comZoneServiceTransactions',
+            'roles',
+            'countries',
+            'usersCountry',
+            'kycs'
+
+        ));
+    }
+
+    public function comzoneStatistics(ComZoneCommissionService $comZoneCommissionService)
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-sous-distributeurs')) {
+            abort(403);
+        }
+
+        $comZones = SidUser::where('is_com_zone', true)
+            ->with(['country', 'wallet'])
+            ->orderBy('firstname')
+            ->get();
+
+        $statistics = $comZones->map(function ($comZone) use ($comZoneCommissionService) {
+            return [
+                'com_zone' => $comZone,
+                'stats' => $comZoneCommissionService->calculateForComZone($comZone),
+            ];
+        });
+
+        $totals = [
+            'linked_users_count' => $statistics->sum('stats.linked_users_count'),
+            'transactions_count' => $statistics->sum('stats.transactions_count'),
+            'transactions_amount' => $statistics->sum('stats.transactions_amount'),
+            'commission' => $statistics->sum('stats.commission'),
+        ];
+
+        return view('pages.admin.comzones.statistics', compact('statistics', 'totals'));
+    }
+
+    public function updateComzoneOperators(int $id, Request $request)
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur')) {
+            abort(403);
+        }
+
+        $user = SidUser::where('is_com_zone', true)->findOrFail($id);
+
+        $validated = $request->validate([
+            'operator_id' => ['required', 'integer', 'exists:operators,id'],
+            'active' => ['nullable', 'boolean'],
+            'numbers' => ['nullable', 'integer', 'min:0'],
+            'amount' => ['nullable', 'numeric', 'min:0'],
+            'commission' => ['nullable', 'numeric', 'min:0'],
+        ]);
+
+        $operatorId = (int) $validated['operator_id'];
+        $isComOperator = Operator::whereStatus(true)->whereIsCom(true)->whereKey($operatorId)->exists();
+
+        if (!$isComOperator) {
+            return back()->with('color', 'danger')->with('status', 'Service COM ZONE invalide.');
+        }
+
+        if (!$request->boolean('active')) {
+            OperatorService::where('sid_user_id', $user->id)
+                ->where('operator_id', $operatorId)
+                ->forceDelete();
+
+            return back()->with('color', 'success')->with('status', 'Service retiré avec succès.');
+        }
+
+        $operatorService = OperatorService::withTrashed()->firstOrNew([
+            'sid_user_id' => $user->id,
+            'operator_id' => $operatorId,
+        ]);
+        
+        $operatorService->numbers = $validated['numbers'] ?? null;
+        $operatorService->amount = $validated['amount'] ?? 0;
+        $operatorService->commission = $validated['commission'] ?? 0;
+        $operatorService->deleted_at = null;
+        $operatorService->save();
+
+        return back()->with('color', 'success')->with('status', 'Service mis à jour avec succès.');
+    }
+
     public function show_propects(int $id, Request $request)
     {
 
@@ -2558,7 +2680,7 @@ class AdminController extends Controller
             if (!$company->wallet) {
                 continue;
             }
-            
+
 
             $commissionModels = [
                 "Commission sur Rechargements"         => WalletDeposit::class,

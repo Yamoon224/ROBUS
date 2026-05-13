@@ -43,7 +43,7 @@ class TransactionController extends Controller
     protected $percentRobus;
     protected $searchTransaction;
     private $authService;
-    protected $appStatusResult;
+    protected $appStatus;
 
     public function __construct(
         TransactionRepository $transactionReposi,

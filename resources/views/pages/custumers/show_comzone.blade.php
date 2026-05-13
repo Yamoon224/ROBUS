@@ -169,6 +169,84 @@
     </div>
     <!-- END: Profile Info -->
 
+    <div class="intro-y box p-5 mt-5">
+        <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-3">
+            <h2 class="font-medium text-base mr-auto">Transactions par service</h2>
+        </div>
+
+        <div class="mt-5">
+            @forelse (($comZoneServiceTransactions ?? []) as $serviceTransaction)
+                <div class="border border-slate-200/60 dark:border-darkmode-400 rounded-md p-4 mb-5">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                        <div>
+                            <div class="font-medium text-base">{{ $serviceTransaction['name'] }}</div>
+                            <div class="text-slate-500 text-sm mt-1">
+                                {{ $serviceTransaction['transactions_count'] }} transaction(s)
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                            <div class="bg-slate-100 dark:bg-darkmode-400 rounded p-3">
+                                <div class="text-slate-500">Montant total</div>
+                                <div class="font-medium">
+                                    {{ number_format($serviceTransaction['transactions_amount'], 2, ',', ' ') }}
+                                    {{ $user->country->currencie->code ?? null }}
+                                </div>
+                            </div>
+                            <div class="bg-slate-100 dark:bg-darkmode-400 rounded p-3">
+                                <div class="text-slate-500">Commission COM Zone</div>
+                                <div class="font-medium text-success">
+                                    {{ number_format($serviceTransaction['commission'], 2, ',', ' ') }}
+                                    {{ $user->country->currencie->code ?? null }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto mt-4">
+                        <table class="table table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="whitespace-nowrap">Date</th>
+                                    <th class="whitespace-nowrap">Client</th>
+                                    <th class="whitespace-nowrap">Opérateur</th>
+                                    <th class="whitespace-nowrap text-center">Montant</th>
+                                    <th class="whitespace-nowrap text-center">Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($serviceTransaction['transactions'] as $transaction)
+                                    <tr>
+                                        <td class="whitespace-nowrap">{{ $transaction->created_at ?? null }}</td>
+                                        <td class="whitespace-nowrap">
+                                            {{ $transaction->wallet->sidUser->firstname ?? null }}
+                                            {{ $transaction->wallet->sidUser->lastname ?? null }}
+                                        </td>
+                                        <td class="whitespace-nowrap">{{ $transaction->provider->name ?? '-' }}</td>
+                                        <td class="text-center whitespace-nowrap">
+                                            {{ number_format($transaction->amount ?? 0, 2, ',', ' ') }}
+                                            {{ $user->country->currencie->code ?? null }}
+                                        </td>
+                                        <td class="text-center whitespace-nowrap">
+                                            <span class="px-2 py-1 rounded bg-success text-white text-xs">
+                                                {{ $transaction->status ?? null }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center">Aucune transaction pour ce service</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            @empty
+                <div class="text-center text-slate-500">Aucun service configuré pour ce COM Zone</div>
+            @endforelse
+        </div>
+    </div>
+
     <div class="tab-content mt-6">
         <div id="doc" class="tab-pane active" role="tabpanel" aria-labelledby="doc-tab">
 

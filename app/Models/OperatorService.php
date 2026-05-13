@@ -15,7 +15,13 @@ class OperatorService extends Model
 
     protected $table = 'operator_services';
 
-    protected $fillable = ['operator_id', 'sid_user_id'];
+    protected $fillable = [
+        'operator_id',
+        'sid_user_id',
+        'numbers',
+        'amount',
+        'commission',
+    ];
 
 
     public function operator()
@@ -79,5 +85,32 @@ class OperatorService extends Model
                 $operator->isChecked = true;
                 return $operator;
             });
+    }
+
+    public function calculateComZoneCommission(int $transactionCount, float $transactionAmount): float
+    {
+        $configuredCount = (int) ($this->numbers ?? 0);
+        $configuredAmount = (float) ($this->amount ?? 0);
+        $configuredCommission = (float) ($this->commission ?? 0);
+
+        if ($configuredCommission <= 0) {
+            return 0;
+        }
+
+        $hasCountRule = $configuredCount > 0;
+        $hasAmountRule = $configuredAmount > 0;
+
+        if (!$hasCountRule && !$hasAmountRule) {
+            return 0;
+        }
+
+        $countMatches = !$hasCountRule || $transactionCount >= $configuredCount;
+        $amountMatches = !$hasAmountRule || $transactionAmount >= $configuredAmount;
+
+        if ($countMatches && $amountMatches) {
+            return $configuredCommission;
+        }
+
+        return 0;
     }
 }
