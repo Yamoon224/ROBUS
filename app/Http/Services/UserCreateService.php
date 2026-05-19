@@ -55,6 +55,7 @@ class UserCreateService
                         'email' => $requestData['email'],
                         'phone' => $requestData['phone'],
                         'created_by' => robus()->id,
+                        'com_zone_id' => robus()->is_com_zone ? robus()->id : null,
                         'password' => Hash::make($requestData['password']),
                         'is_master' => $is_master,
                         'is_under_distributer' => $is_under_distributer,
@@ -141,6 +142,7 @@ class UserCreateService
                         'email' => $requestData['email'],
                         'phone' => $requestData['phone'],
                         'created_by' => robus()->id,
+                        'com_zone_id' => robus()->is_com_zone ? robus()->id : null,
                         'password' => Hash::make($requestData['password']),
                         'is_custumers' => true,
                 ]);

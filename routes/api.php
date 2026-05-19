@@ -325,10 +325,9 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('masters_distributors', [UserController::class, 'masters_com_zones']);
             Route::get('custumers_distributors', [UserController::class, 'custumers_com_zones']);
             Route::get('transactions/counters', [ComZoneController::class, 'transactionCounters']);
-
+            Route::get('operation_services', [ComZoneController::class, 'operationService']);
             // Providers transactions
             Route::get('/providers', [ProviderController::class, 'comzones_providers']);
-
             // create Users
             Route::post('add_masters/store', [ComZoneController::class, 'store_under_masters']);
             Route::post('add_custumers/store', [ComZoneController::class, 'store_under_custumers']);

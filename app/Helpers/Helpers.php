@@ -556,7 +556,7 @@ function getReloadMoneysPaiements()
 
 function sabdyHomeVerify()
 {
-    $allowedRoles = ['root', 'Distributeur', 'superviseur'];
+    $allowedRoles = ['root', 'Distributeur', 'superviseur' , 'com_zone'];
 
     $user = Auth::guard('web')->user();
 
@@ -569,7 +569,7 @@ function sabdyHomeVerify()
 
 function sabdyWebVerify()
 {
-    $allowedRoles = ['root', 'Distributeur', 'superviseur',  'sous-distributeur'];
+    $allowedRoles = ['root', 'Distributeur', 'superviseur',  'sous-distributeur' , 'com_zone'];
 
     $user = Auth::guard('web')->user();
 

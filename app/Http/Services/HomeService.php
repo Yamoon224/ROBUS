@@ -622,12 +622,15 @@ class HomeService
 
 
 
-    public function getUserTypeTotal($user, $status)
+   public function getUserTypeTotal($user, $status)
     {
+        $query = SidUser::where($user, $status);
 
-        $totalUsers = SidUser::where($user,  $status)->count();
+        if (sabdy()->is_com_zone) {
+            $query->where('com_zone_id', sabdy()->id);
+        }
 
-        return $totalUsers;
+        return $query->count();
     }
 
 
@@ -687,6 +690,10 @@ class HomeService
             $query->where(function ($query) use ($wallet_transactions) {
                 $query->where($wallet_transactions, sabdy()->wallet->id);
             });
+        } elseif (sabdy()->is_com_zone) {
+            $linkedUserIds = SidUser::where('com_zone_id', sabdy()->id)->pluck('id');
+
+            $query->whereIn('wallets.sid_user_id', $linkedUserIds);
         } else {
 
             $query->where('wallets.country_id', '!=', $countryId)
@@ -711,6 +718,10 @@ class HomeService
             $query->where(function ($query) use ($wallet_transactions) {
                 $query->where($wallet_transactions, sabdy()->wallet->id);
             });
+        } elseif (sabdy()->is_com_zone) {
+            $linkedUserIds = SidUser::where('com_zone_id', sabdy()->id)->pluck('id');
+
+            $query->whereIn('wallets.sid_user_id', $linkedUserIds);
         } else {
 
             $query->where(function ($query) use ($walletMy) {
@@ -742,6 +753,10 @@ class HomeService
             $query->where(function ($query) use ($wallet_transaction) {
                 $query->where($wallet_transaction, sabdy()->wallet->id);
             });
+        } elseif (sabdy()->is_com_zone) {
+            $linkedUserIds = SidUser::where('com_zone_id', sabdy()->id)->pluck('id');
+
+            $query->whereIn('wallets.sid_user_id', $linkedUserIds);
         } else {
 
             $query->where(function ($query) use ($walletMy) {
@@ -775,6 +790,10 @@ class HomeService
             $query->where(function ($query) use ($wallet_transaction) {
                 $query->where($wallet_transaction, sabdy()->wallet->id);
             });
+        } elseif (sabdy()->is_com_zone) {
+            $linkedUserIds = SidUser::where('com_zone_id', sabdy()->id)->pluck('id');
+
+            $query->whereIn('wallets.sid_user_id', $linkedUserIds);
         } else {
 
             $query->where(function ($query) use ($walletMy) {
@@ -808,6 +827,10 @@ class HomeService
             $query->where(function ($query) use ($wallet_transaction) {
                 $query->where($wallet_transaction, sabdy()->wallet->id);
             });
+        } elseif (sabdy()->is_com_zone) {
+            $linkedUserIds = SidUser::where('com_zone_id', sabdy()->id)->pluck('id');
+
+            $query->whereIn('wallets.sid_user_id', $linkedUserIds);
         } else {
 
             $query->where(function ($query) use ($walletMy) {
@@ -845,6 +868,14 @@ class HomeService
             $query->where(function ($query) use ($wallet_transaction) {
                 $query->where($wallet_transaction, sabdy()->wallet->id);
             });
+        } elseif (sabdy()->is_com_zone) {
+            $query = $walletModel::join('wallets', 'wallets.id', $wallet_transaction)
+                ->whereDate($transaction_days, Carbon::today())
+                ->where($transaction_status, 'SUCCESS');
+
+            $linkedUserIds = SidUser::where('com_zone_id', sabdy()->id)->pluck('id');
+
+            $query->whereIn('wallets.sid_user_id', $linkedUserIds);
         } else {
 
             $query = $walletModel::whereDate($transaction_days, Carbon::today())
@@ -896,6 +927,10 @@ class HomeService
             $query->where(function ($query) use ($wallet_transaction) {
                 $query->where($wallet_transaction, sabdy()->wallet->id);
             });
+        } elseif (sabdy()->is_com_zone) {
+            $linkedUserIds = SidUser::where('com_zone_id', sabdy()->id)->pluck('id');
+
+            $query->whereIn('wallets.sid_user_id', $linkedUserIds);
         } else {
             // Cas où ce n'est ni un distributeur ni un sous-distributeur
             $query->where(function ($query) use ($walletMy) {
@@ -972,6 +1007,10 @@ class HomeService
             $query->where(function ($query) use ($wallet_transaction) {
                 $query->where($wallet_transaction, sabdy()->wallet->id);
             });
+        } elseif (sabdy()->is_com_zone) {
+            $linkedUserIds = SidUser::where('com_zone_id', sabdy()->id)->pluck('id');
+
+            $query->whereIn('wallets.sid_user_id', $linkedUserIds);
         } else {
 
             $query->where(function ($query) use ($walletMy) {

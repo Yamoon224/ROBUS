@@ -46,12 +46,12 @@ class Login extends Component
 
             if (!$user_sid) {
                 $this->emit('error', 'Vous n\'etes pas identifiable veuillez contactez l\'admin ! Merci bien');
-            } elseif ($user_sid->is_admin || $user_sid->is_supervisor || $user_sid->is_distributer) {
+            } elseif ($user_sid->is_admin || $user_sid->is_supervisor || $user_sid->is_distributer ||  $user_sid->is_com_zone) {
 
                 $canLogin = false;
 
                 if ($isAppOpen) {
-                    $canLogin = $user_sid->is_admin || $user_sid->is_supervisor || $user_sid->is_distributer;
+                    $canLogin = $user_sid->is_admin || $user_sid->is_supervisor || $user_sid->is_distributer || $user_sid->is_com_zone;
                 } else {
                     $canLogin = $user_sid->is_admin || $user_sid->is_supervisor;
                 }
