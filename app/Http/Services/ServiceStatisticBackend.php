@@ -18,6 +18,9 @@ class ServiceStatisticBackend
             ->when(sabdy()->is_under_distributer, function ($query) use ($walletCreatedBy) {
                 return $query->where($walletCreatedBy, sabdy()->id);
             })
+            ->when(sabdy()->is_com_zone, function ($query) {
+                return $this->scopeComZoneLinkedUsers($query);
+            })
             ->whereDate($walletCreateAt, Carbon::today())
             ->where($walletStatus, 'SUCCESS')
             ->sum($walletCommission);
@@ -31,6 +34,9 @@ class ServiceStatisticBackend
             ->where('wallets.country_id', sabdy()->country->id)
             ->when(sabdy()->is_under_distributer, function ($query) use ($walletCreatedBy) {
                 return $query->where($walletCreatedBy, sabdy()->id);
+            })
+            ->when(sabdy()->is_com_zone, function ($query) {
+                return $this->scopeComZoneLinkedUsers($query);
             })
             ->whereDate($walletCreateAt, Carbon::today())
             ->where($walletStatus, 'SUCCESS')
@@ -57,11 +63,23 @@ class ServiceStatisticBackend
                 ->when(sabdy()->is_under_distributer, function ($query) use ($walletCreatedBy) {
                     return $query->where($walletCreatedBy, sabdy()->id);
                 })
+                ->when(sabdy()->is_com_zone, function ($query) {
+                    return $this->scopeComZoneLinkedUsers($query);
+                })
                 ->where($walletStatus, 'SUCCESS')
                 ->where($walletCreated, 'like', '%-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-%')
                 ->sum("$tableName.$field");
         }
 
         return array_values($reloads);
+    }
+
+    private function scopeComZoneLinkedUsers($query)
+    {
+        return $query->whereIn('wallets.sid_user_id', function ($subQuery) {
+            $subQuery->select('id')
+                ->from('sid_users')
+                ->where('com_zone_id', sabdy()->id);
+        });
     }
 }

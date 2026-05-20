@@ -41,6 +41,11 @@ class Cartestate extends Component
                     ->when(sabdy()->is_under_distributer, function ($query) {
                         return $query->where('wallet_deposits.created_by', sabdy()->id);
                     })
+                    ->when(sabdy()->is_com_zone, function ($query) {
+                        return $query->whereIn('wallets.sid_user_id', function ($subQuery) {
+                            $subQuery->select('id')->from('sid_users')->where('com_zone_id', sabdy()->id);
+                        });
+                    })
                     ->select('wallet_deposits.*')->orderBy('wallet_deposits.created_at', 'desc')->paginate(15),
                 'usersCountry' =>  $walletUser->country->currencie->name,
                'user_sum' => app(ServiceStatisticBackend::class)->getWalletSumGain(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_by', 'wallet_deposits.created_at', 'wallet_deposits.status', 'wallet_deposits.amount'),

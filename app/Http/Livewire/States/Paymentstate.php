@@ -41,6 +41,11 @@ class Paymentstate extends Component
                     ->when(sabdy()->is_under_distributer, function ($query) {
                         return $query->where('wallet_payments.created_by', sabdy()->id);
                     })
+                    ->when(sabdy()->is_com_zone, function ($query) {
+                        return $query->whereIn('wallets.sid_user_id', function ($subQuery) {
+                            $subQuery->select('id')->from('sid_users')->where('com_zone_id', sabdy()->id);
+                        });
+                    })
                     ->select('wallet_payments.*')->orderBy('wallet_payments.created_at', 'desc')->paginate(15),
                 'usersCountry' =>  $walletUser->country->currencie->name,
                 'sum_commissions' => $this->WalletReloadSumGain,

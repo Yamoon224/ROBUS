@@ -47,6 +47,11 @@ class XbetState extends Component
                     ->when(sabdy()->is_under_distributer, function ($query) {
                         return $query->where('wallet_xbets.created_by', sabdy()->id);
                     })
+                    ->when(sabdy()->is_com_zone, function ($query) {
+                        return $query->whereIn('wallets.sid_user_id', function ($subQuery) {
+                            $subQuery->select('id')->from('sid_users')->where('com_zone_id', sabdy()->id);
+                        });
+                    })
                     ->select('wallet_xbets.*')->orderBy('wallet_xbets.created_at', 'desc')->paginate(15),
                 'usersCountry' =>  $walletUser->country->currencie->name,
                 'user_sum' => app(ServiceStatisticBackend::class)->getWalletSumGain(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_by', 'wallet_xbets.created_at', 'wallet_xbets.status', 'wallet_xbets.amount'),

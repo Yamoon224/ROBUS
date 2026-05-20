@@ -1259,7 +1259,7 @@ class Reloaduv extends Component
         if ($walletUser->is_under_distributer == true) {
 
             abort(403);
-        } elseif ($walletUser->is_distributer == true) {
+        } elseif ($walletUser->is_distributer == true || $walletUser->is_com_zone == true) {
 
 
             if ($this->searchRealod != "") {

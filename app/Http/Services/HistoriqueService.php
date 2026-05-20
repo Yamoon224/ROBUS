@@ -109,6 +109,13 @@ class HistoriqueService
             $query->where(function ($query) use ($wallet_transactions) {
                 $query->where($wallet_transactions, sabdy()->wallet->id);
             });
+        }elseif (sabdy()->is_com_zone) {
+
+            $query->whereIn('wallets.sid_user_id', function ($sub) {
+                $sub->select('id')
+                    ->from('sid_users')
+                    ->where('com_zone_id', sabdy()->id);
+            });
         } else {
 
             $query->where(function ($query) use ($walletMy) {

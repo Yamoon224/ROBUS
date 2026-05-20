@@ -39,6 +39,11 @@ class Phonestate extends Component
                     ->when(sabdy()->is_under_distributer, function ($query) {
                         return $query->where('wallet_phone_credits.created_by', sabdy()->id);
                     })
+                    ->when(sabdy()->is_com_zone, function ($query) {
+                        return $query->whereIn('wallets.sid_user_id', function ($subQuery) {
+                            $subQuery->select('id')->from('sid_users')->where('com_zone_id', sabdy()->id);
+                        });
+                    })
                     ->select('wallet_phone_credits.*')->orderBy('wallet_phone_credits.created_at', 'desc')->paginate(15),
                 'usersCountry' =>  $walletUser->country->currencie->name,
           'user_sum' => app(ServiceStatisticBackend::class)->getWalletSumGain(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_by', 'wallet_phone_credits.created_at', 'wallet_phone_credits.status', 'wallet_phone_credits.amount'),

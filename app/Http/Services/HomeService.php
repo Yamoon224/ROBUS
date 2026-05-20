@@ -622,7 +622,7 @@ class HomeService
 
 
 
-   public function getUserTypeTotal($user, $status)
+    public function getUserTypeTotal($user, $status)
     {
         $query = SidUser::where($user, $status);
 
@@ -691,9 +691,12 @@ class HomeService
                 $query->where($wallet_transactions, sabdy()->wallet->id);
             });
         } elseif (sabdy()->is_com_zone) {
-            $linkedUserIds = SidUser::where('com_zone_id', sabdy()->id)->pluck('id');
 
-            $query->whereIn('wallets.sid_user_id', $linkedUserIds);
+            $query->whereIn('wallets.sid_user_id', function ($sub) {
+                $sub->select('id')
+                    ->from('sid_users')
+                    ->where('com_zone_id', sabdy()->id);
+            });
         } else {
 
             $query->where('wallets.country_id', '!=', $countryId)
@@ -719,9 +722,13 @@ class HomeService
                 $query->where($wallet_transactions, sabdy()->wallet->id);
             });
         } elseif (sabdy()->is_com_zone) {
-            $linkedUserIds = SidUser::where('com_zone_id', sabdy()->id)->pluck('id');
 
-            $query->whereIn('wallets.sid_user_id', $linkedUserIds);
+
+            $query->whereIn('wallets.sid_user_id', function ($sub) {
+                $sub->select('id')
+                    ->from('sid_users')
+                    ->where('com_zone_id', sabdy()->id);
+            });
         } else {
 
             $query->where(function ($query) use ($walletMy) {
@@ -754,9 +761,11 @@ class HomeService
                 $query->where($wallet_transaction, sabdy()->wallet->id);
             });
         } elseif (sabdy()->is_com_zone) {
-            $linkedUserIds = SidUser::where('com_zone_id', sabdy()->id)->pluck('id');
-
-            $query->whereIn('wallets.sid_user_id', $linkedUserIds);
+             $query->whereIn('wallets.sid_user_id', function($sub) {
+            $sub->select('id')
+                ->from('sid_users')
+                ->where('com_zone_id', sabdy()->id);
+        });
         } else {
 
             $query->where(function ($query) use ($walletMy) {
@@ -791,9 +800,11 @@ class HomeService
                 $query->where($wallet_transaction, sabdy()->wallet->id);
             });
         } elseif (sabdy()->is_com_zone) {
-            $linkedUserIds = SidUser::where('com_zone_id', sabdy()->id)->pluck('id');
-
-            $query->whereIn('wallets.sid_user_id', $linkedUserIds);
+            $query->whereIn('wallets.sid_user_id', function($sub) {
+            $sub->select('id')
+                ->from('sid_users')
+                ->where('com_zone_id', sabdy()->id);
+        });
         } else {
 
             $query->where(function ($query) use ($walletMy) {
@@ -828,9 +839,11 @@ class HomeService
                 $query->where($wallet_transaction, sabdy()->wallet->id);
             });
         } elseif (sabdy()->is_com_zone) {
-            $linkedUserIds = SidUser::where('com_zone_id', sabdy()->id)->pluck('id');
-
-            $query->whereIn('wallets.sid_user_id', $linkedUserIds);
+            $query->whereIn('wallets.sid_user_id', function($sub) {
+            $sub->select('id')
+                ->from('sid_users')
+                ->where('com_zone_id', sabdy()->id);
+        });
         } else {
 
             $query->where(function ($query) use ($walletMy) {
@@ -873,9 +886,11 @@ class HomeService
                 ->whereDate($transaction_days, Carbon::today())
                 ->where($transaction_status, 'SUCCESS');
 
-            $linkedUserIds = SidUser::where('com_zone_id', sabdy()->id)->pluck('id');
-
-            $query->whereIn('wallets.sid_user_id', $linkedUserIds);
+            $query->whereIn('wallets.sid_user_id', function($sub) {
+            $sub->select('id')
+                ->from('sid_users')
+                ->where('com_zone_id', sabdy()->id);
+        });
         } else {
 
             $query = $walletModel::whereDate($transaction_days, Carbon::today())
@@ -928,9 +943,11 @@ class HomeService
                 $query->where($wallet_transaction, sabdy()->wallet->id);
             });
         } elseif (sabdy()->is_com_zone) {
-            $linkedUserIds = SidUser::where('com_zone_id', sabdy()->id)->pluck('id');
-
-            $query->whereIn('wallets.sid_user_id', $linkedUserIds);
+            $query->whereIn('wallets.sid_user_id', function($sub) {
+            $sub->select('id')
+                ->from('sid_users')
+                ->where('com_zone_id', sabdy()->id);
+        });
         } else {
             // Cas où ce n'est ni un distributeur ni un sous-distributeur
             $query->where(function ($query) use ($walletMy) {
@@ -1008,9 +1025,11 @@ class HomeService
                 $query->where($wallet_transaction, sabdy()->wallet->id);
             });
         } elseif (sabdy()->is_com_zone) {
-            $linkedUserIds = SidUser::where('com_zone_id', sabdy()->id)->pluck('id');
-
-            $query->whereIn('wallets.sid_user_id', $linkedUserIds);
+            $query->whereIn('wallets.sid_user_id', function($sub) {
+            $sub->select('id')
+                ->from('sid_users')
+                ->where('com_zone_id', sabdy()->id);
+        });
         } else {
 
             $query->where(function ($query) use ($walletMy) {

@@ -272,7 +272,7 @@ class custumers extends Component
             $check_master->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
             $this->emit('modal-hide', 'hide');
             $this->cancelConnectedField();
-            $this->emit('refreshPage'); 
+            $this->emit('refreshPage');
             $this->emit('success', $check->com_zone_id  == $this->master_selected ? 'Client lié !' : 'Client désactivée !');
         }
     }
@@ -299,7 +299,13 @@ class custumers extends Component
 
     public function render()
     {
+
         $users = SidUser::query();
+
+        if (sabdy()->is_com_zone) {
+            $users->where('com_zone_id', sabdy()->id);
+        }
+
 
         if ($this->search != "") {
 
@@ -355,11 +361,18 @@ class custumers extends Component
                 ->paginate($this->perPage);
         }
 
-        $users = $users->where('is_custumers', true)
-            ->with(['wallet.sidUser.country.currencie']) // Charge les relations nécessaires pour la conversion
+
+        $query = SidUser::where('is_custumers', true);
+
+        if (sabdy()->is_com_zone) {
+            $query->where('com_zone_id', sabdy()->id);
+        }
+
+        $users = $query->with(['wallet.sidUser.country.currencie'])
             ->withSum('wallet as wallet_balance', 'amount')
             ->orderByDesc('wallet_balance')
             ->paginate($this->perPage ?? 30);
+
 
         foreach ($users as $user) {
             $solde = $user->wallet_balance ?? 0;
@@ -428,15 +441,24 @@ class custumers extends Component
             $user->amount_fcfa = $amount_solde;
         }
 
-        $query = SidUser::whereIsComZone(true)
-            ->where('country_id', $this->user_country)
-            ->when($this->searchComZone, function ($q) {
-                $q->where(function ($q2) {
-                    $q2->where('firstname', 'like', '%' . $this->searchComZone . '%')
-                        ->orWhere('lastname', 'like', '%' . $this->searchComZone . '%')
-                        ->orWhere('email', 'like', '%' . $this->searchComZone . '%');
-                });
+        if (sabdy()->is_com_zone) {
+            // Limiter aux utilisateurs liés à cette zone (com_zone_id = id de la zone)
+            $query->where('com_zone_id', sabdy()->id);
+        } else {
+            // Sinon, on peut chercher parmi tous les utilisateurs
+            // Exemple : uniquement les clients (is_custumers = true)
+            $query->where('is_custumers', true);
+        }
+
+        // Ajout de la recherche textuelle
+        if ($this->searchComZone) {
+            $search = '%' . $this->searchComZone . '%';
+            $query->where(function ($q) use ($search) {
+                $q->where('firstname', 'like', $search)
+                    ->orWhere('lastname', 'like', $search)
+                    ->orWhere('email', 'like', $search);
             });
+        }
 
 
         return view('livewire.custumers', [

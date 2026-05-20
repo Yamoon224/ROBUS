@@ -139,12 +139,15 @@ class AdminMasters extends Component
     public function render()
     {
 
-        $users = SidUser::query();
+        $users = SidUser::where('is_master', true);
+
+        if (sabdy()->is_com_zone) {
+            $users->where('com_zone_id', sabdy()->id);
+        }
 
         if ($this->search != "") {
 
             $this->resetPage();
-
             $users->where("firstname", "LIKE",  "%" . $this->search . "%")
                 ->orWhere("lastname", "LIKE",  "%" . $this->search . "%")
                 ->orWhere("phone", "LIKE",  "%" . $this->search . "%")
@@ -157,8 +160,7 @@ class AdminMasters extends Component
         }
 
 
-        $users = $users->where('is_master', true)
-            ->with(['wallet.sidUser.country.currencie']) // Charge les relations nécessaires pour la conversion
+        $users = $users->with(['wallet.sidUser.country.currencie']) // Charge les relations nécessaires pour la conversion
             ->withSum('wallet as wallet_balance', 'amount')
             ->orderByDesc('wallet_balance')
             ->paginate($this->perPage ?? 30);

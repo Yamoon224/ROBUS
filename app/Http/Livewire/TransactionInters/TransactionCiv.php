@@ -3004,7 +3004,7 @@ class TransactionCiv extends Component
 
             $commission_invoice = PaymentCost::whereId(2)->first();
 
-            if ($walletUser->wallet->sidUser->is_under_distributer == 1) {
+            if ($walletUser->wallet->sidUser->is_under_distributer == 1 || $walletUser->wallet->sidUser->is_com_zone == 1) {
 
                 $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->comission_auther;
 

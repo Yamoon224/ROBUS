@@ -484,20 +484,22 @@ class UnderDistributors extends Component
 
     public function render()
     {
-        $usersQuery = SidUser::query();
+        $usersQuery = SidUser::where('is_under_distributer', true);
 
-        if ($this->search != "") {
-            $this->resetPage();
-            $usersQuery->where('is_under_distributer', true)
-                ->when($this->search, function ($query) {
-                    $query->where(function ($query) {
-                        $query->where("firstname", "LIKE", "%" . $this->search . "%")
-                            ->orWhere("lastname", "LIKE", "%" . $this->search . "%")
-                            ->orWhere("phone", "LIKE", "%" . $this->search . "%")
-                            ->orWhere("email", "LIKE", "%" . $this->search . "%");
-                    });
-                });
+        if (sabdy()->is_com_zone) {
+            $usersQuery->where('com_zone_id', sabdy()->id);
         }
+
+        if (!empty($this->search)) {
+            $this->resetPage();
+            $usersQuery->where(function ($q) {
+                $q->where('firstname', 'like', '%' . $this->search . '%')
+                    ->orWhere('lastname', 'like', '%' . $this->search . '%')
+                    ->orWhere('phone', 'like', '%' . $this->search . '%')
+                    ->orWhere('email', 'like', '%' . $this->search . '%');
+            });
+        }
+
 
         if ($this->countriesFilter != "") {
             $usersQuery->where("country_id", $this->countriesFilter);

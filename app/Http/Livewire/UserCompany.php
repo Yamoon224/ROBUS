@@ -225,13 +225,16 @@ class UserCompany extends Component
     {
         $users = SidUser::query()->where('is_company', true);
 
+        if (sabdy()->is_com_zone) {
+            $users->where('com_zone_id', sabdy()->id);
+        }
         if ($this->search != "") {
             $this->resetPage();
 
             $users->where(function ($query) {
-                $query->where('is_admin', true)
-                    ->orWhere("is_distributer", true)
-                    ->orWhere("is_under_distributer", true)
+                $query->where('is_admin', false)
+                    ->orWhere("is_distributer", false)
+                    ->orWhere("is_under_distributer", false)
                     ->orWhere("firstname", "LIKE", "%" . $this->search . "%")
                     ->orWhere("lastname", "LIKE", "%" . $this->search . "%")
                     ->orWhere("phone", "LIKE", "%" . $this->search . "%")
@@ -256,8 +259,7 @@ class UserCompany extends Component
         if ($this->cityNameSearch != "") {
 
             $this->resetPage();
-            $users->where('is_company', true)
-                ->when($this->cityNameSearch, function ($query) {
+            $users->when($this->cityNameSearch, function ($query) {
                     $query->where(function ($query) {
                         $query->where("zone", "LIKE", "%" . $this->cityNameSearch . "%");
                     });

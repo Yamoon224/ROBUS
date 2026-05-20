@@ -47,6 +47,11 @@ class Transferstate extends Component
                     ->when(sabdy()->is_under_distributer, function ($query) {
                         return $query->where('wallet_transactions.created_by', sabdy()->id);
                     })
+                    ->when(sabdy()->is_com_zone, function ($query) {
+                        return $query->whereIn('wallets.sid_user_id', function ($subQuery) {
+                            $subQuery->select('id')->from('sid_users')->where('com_zone_id', sabdy()->id);
+                        });
+                    })
                     ->select('wallet_transactions.*')->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
                 'usersCountry' =>  $walletUser->country->currencie->name,
                 'user_sum' => app(ServiceStatisticBackend::class)->getWalletSumGain(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_by', 'wallet_transactions.created_at', 'wallet_transactions.status', 'wallet_transactions.amount'),

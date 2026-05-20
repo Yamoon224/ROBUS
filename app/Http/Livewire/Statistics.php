@@ -94,12 +94,14 @@ class Statistics extends Component
                 ->when(sabdy()->is_under_distributer, function ($query) {
                     return $query->where('wallet_banks.created_by', sabdy()->id);
                 })
+                ->when(sabdy()->is_com_zone, fn ($query) => $this->scopeComZoneLinkedUsers($query))
                 ->limit(3)->select('wallet_banks.*')->orderBy('wallet_banks.created_at', 'desc')->get(),
             'Wallet_Deposits_last' => WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
                 ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
                 ->when(sabdy()->is_under_distributer, function ($query) {
                     return $query->where('wallet_deposits.created_by', sabdy()->id);
                 })
+                ->when(sabdy()->is_com_zone, fn ($query) => $this->scopeComZoneLinkedUsers($query))
                 ->limit(3)->select('wallet_deposits.*')->orderBy('wallet_deposits.created_at', 'desc')->get(),
 
             'Wallet_Inters_last' => WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
@@ -107,6 +109,7 @@ class Statistics extends Component
                 ->when(sabdy()->is_under_distributer, function ($query) {
                     return $query->where('wallet_inters.created_by', sabdy()->id);
                 })
+                ->when(sabdy()->is_com_zone, fn ($query) => $this->scopeComZoneLinkedUsers($query))
                 ->limit(3)->select('wallet_inters.*')->orderBy('wallet_inters.created_at', 'desc')->get(),
 
             'Wallet_Payments_last' => WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
@@ -114,24 +117,29 @@ class Statistics extends Component
                 ->when(sabdy()->is_under_distributer, function ($query) {
                     return $query->where('wallet_payments.created_by', sabdy()->id);
                 })
+                ->when(sabdy()->is_com_zone, fn ($query) => $this->scopeComZoneLinkedUsers($query))
                 ->limit(3)->select('wallet_payments.*')->orderBy('wallet_payments.created_at', 'desc')->get(),
             'Wallet_Transactions_last' => WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
                 ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
                 ->when(sabdy()->is_under_distributer, function ($query) {
                     return $query->where('wallet_transactions.created_by', sabdy()->id);
                 })
+                ->when(sabdy()->is_com_zone, fn ($query) => $this->scopeComZoneLinkedUsers($query))
                 ->limit(3)->select('wallet_transactions.*')->orderBy('created_at', 'desc')->get(),
+                
             'Wallet_PhoneCredits_last' => WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
                 ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
                 ->when(sabdy()->is_under_distributer, function ($query) {
                     return $query->where('wallet_phone_credits.created_by', sabdy()->id);
                 })
+                ->when(sabdy()->is_com_zone, fn ($query) => $this->scopeComZoneLinkedUsers($query))
                 ->limit(3)->select('wallet_phone_credits.*')->orderBy('wallet_phone_credits.created_at', 'desc')->get(),
             'Wallet_Reloads_last' => WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
                 ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
                 ->when(sabdy()->is_under_distributer, function ($query) {
                     return $query->where('wallet_reloads.created_by', sabdy()->id);
                 })
+                ->when(sabdy()->is_com_zone, fn ($query) => $this->scopeComZoneLinkedUsers($query))
                 ->limit(3)->select('wallet_reloads.*')->orderBy('wallet_reloads.created_at', 'desc')->get(),
 
 
@@ -141,6 +149,7 @@ class Statistics extends Component
                 ->when(sabdy()->is_under_distributer, function ($query) {
                     return $query->where('wallet_versements.created_by', sabdy()->id);
                 })
+                ->when(sabdy()->is_com_zone, fn ($query) => $this->scopeComZoneLinkedUsers($query))
                 ->limit(3)->select('wallet_versements.*')->orderBy('wallet_versements.created_at', 'desc')->get(),
 
             'Wallet_push_last' => WalletPush::join('wallets', 'wallet_pushes.wallet_id', 'wallets.id')
@@ -148,6 +157,7 @@ class Statistics extends Component
                 ->when(sabdy()->is_under_distributer, function ($query) {
                     return $query->where('wallet_pushes.created_by', sabdy()->id);
                 })
+                ->when(sabdy()->is_com_zone, fn ($query) => $this->scopeComZoneLinkedUsers($query))
                 ->limit(3)->select('wallet_pushes.*')->orderBy('wallet_pushes.created_at', 'desc')->get(),
 
 
@@ -156,6 +166,7 @@ class Statistics extends Component
                 ->when(sabdy()->is_under_distributer, function ($query) {
                     return $query->where('wallet_tresort_money.created_by', sabdy()->id);
                 })
+                ->when(sabdy()->is_com_zone, fn ($query) => $this->scopeComZoneLinkedUsers($query))
                 ->limit(3)->select('wallet_tresort_money.*')->orderBy('wallet_tresort_money.created_at', 'desc')->get(),
 
             'Wallet_djamo_last' => WalletDjamo::join('wallets', 'wallet_djamos.wallet_id', 'wallets.id')
@@ -163,6 +174,7 @@ class Statistics extends Component
                 ->when(sabdy()->is_under_distributer, function ($query) {
                     return $query->where('wallet_djamos.created_by', sabdy()->id);
                 })
+                ->when(sabdy()->is_com_zone, fn ($query) => $this->scopeComZoneLinkedUsers($query))
                 ->limit(3)->select('wallet_djamos.*')->orderBy('wallet_djamos.created_at', 'desc')->get(),
 
             'Wallet_xbet_last' => WalletXbet::join('wallets', 'wallet_xbets.wallet_id', 'wallets.id')
@@ -170,6 +182,7 @@ class Statistics extends Component
                 ->when(sabdy()->is_under_distributer, function ($query) {
                     return $query->where('wallet_xbets.created_by', sabdy()->id);
                 })
+                ->when(sabdy()->is_com_zone, fn ($query) => $this->scopeComZoneLinkedUsers($query))
                 ->limit(3)->select('wallet_xbets.*')->orderBy('wallet_xbets.created_at', 'desc')->get(),
 
             'usersCountry' =>  $walletUser->country->currencie->name,
@@ -228,6 +241,12 @@ class Statistics extends Component
             $query->where(function ($query) use ($wallet_transactions) {
                 $query->where($wallet_transactions, sabdy()->wallet->id);
             });
+        } elseif (sabdy()->is_com_zone) {
+            $query->whereIn('wallets.sid_user_id', function ($sub) {
+                $sub->select('id')
+                    ->from('sid_users')
+                    ->where('com_zone_id', sabdy()->id);
+            });
         } else {
 
             $query->where(function ($query) use ($walletMy) {
@@ -243,5 +262,14 @@ class Statistics extends Component
 
         // Compter les transactions
         return $query->count();
+    }
+
+    private function scopeComZoneLinkedUsers($query)
+    {
+        return $query->whereIn('wallets.sid_user_id', function ($subQuery) {
+            $subQuery->select('id')
+                ->from('sid_users')
+                ->where('com_zone_id', sabdy()->id);
+        });
     }
 }
