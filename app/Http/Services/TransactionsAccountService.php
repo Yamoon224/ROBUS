@@ -761,7 +761,7 @@ class TransactionsAccountService
     public function getMastersUser()
     {
 
-        $under_distributors = SidUser::where('country_id', robus()->country->id)->whereIsMaster(true)->get();
+        $under_distributors = SidUser::where('com_zone_id', robus()->id)->whereIsMaster(true)->get();
 
         return $under_distributors;
     }
@@ -769,7 +769,7 @@ class TransactionsAccountService
     public function getComZonesUser()
     {
 
-        $under_distributors = SidUser::where('country_id', robus()->country->id)->get();
+        $under_distributors = SidUser::where('com_zone_id', robus()->id)->get();
 
         return $under_distributors;
     }
@@ -777,7 +777,7 @@ class TransactionsAccountService
     public function getCustmersUser()
     {
 
-        $under_distributors = SidUser::where('country_id', robus()->country->id)->whereIsCustumers(true)->get();
+        $under_distributors = SidUser::where('com_zone_id', robus()->id)->whereIsCustumers(true)->get();
 
         return $under_distributors;
     }
@@ -786,9 +786,28 @@ class TransactionsAccountService
     {
 
 
-        $under_distributors = SidUser::where('country_id', robus()->country->id)->whereIsUnderDistributer(true)->get();
+        $under_distributors = SidUser::where('com_zone_id', robus()->id)->whereIsUnderDistributer(true)->get();
 
         return $under_distributors;
+    }
+
+    public function getComZoneUserCounters(): array
+    {
+        $counts = SidUser::where('com_zone_id', robus()->id)
+            ->selectRaw('
+                SUM(CASE WHEN is_custumers = 1 THEN 1 ELSE 0 END) as clients,
+                SUM(CASE WHEN is_under_distributer = 1 THEN 1 ELSE 0 END) as under_distributors,
+                SUM(CASE WHEN is_company = 1 THEN 1 ELSE 0 END) as companies,
+                SUM(CASE WHEN is_master = 1 THEN 1 ELSE 0 END) as masters
+            ')
+            ->first();
+
+        return [
+            'clients' => (int) ($counts->clients ?? 0),
+            'under_distributors' => (int) ($counts->under_distributors ?? 0),
+            'companies' => (int) ($counts->companies ?? 0),
+            'masters' => (int) ($counts->masters ?? 0),
+        ];
     }
 
     public function getTodayTransactionCommissionAmountTotal($walletModel)

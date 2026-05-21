@@ -9,6 +9,15 @@ use App\Models\Sid\SidUser;
 
 class HomeService
 {
+    private function todayRange(): array
+    {
+        return [Carbon::today()->startOfDay(), Carbon::today()->endOfDay()];
+    }
+
+    private function currentMonthRange(): array
+    {
+        return [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()];
+    }
 
     // HOME Prospects valeurs
 
@@ -640,7 +649,7 @@ class HomeService
 
         $totalAmount = $walletModel::where('wallet_id',  sabdy()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereDate('created_at', Carbon::today())
+            ->whereBetween('created_at', $this->todayRange())
             ->sum('amount');
 
         return $totalAmount;
@@ -652,7 +661,7 @@ class HomeService
 
         $totalAmount = $walletModel::where('wallet_id',  sabdy()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereMonth(DB::raw('created_at'), now()->month)
+            ->whereBetween('created_at', $this->currentMonthRange())
             ->sum('amount');
 
         return $totalAmount;
@@ -665,7 +674,7 @@ class HomeService
 
         $totalCount = $walletModel::where('wallet_id', sabdy()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereDate('created_at', Carbon::today())
+            ->whereBetween('created_at', $this->todayRange())
             ->count();
 
         return $totalCount;
@@ -682,7 +691,7 @@ class HomeService
             $wallet_transactions,
             'wallets.id'
         )
-            ->whereDate($transaction_days, Carbon::today());
+            ->whereBetween($transaction_days, $this->todayRange());
 
         if (sabdy()->is_distributer) {
             $query->where($walletMy, sabdy()->id);
@@ -712,7 +721,7 @@ class HomeService
     {
 
         $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, $this->todayRange())
             ->where($wallet_status, $status);
 
         if (sabdy()->is_distributer) {
@@ -750,7 +759,7 @@ class HomeService
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, $this->todayRange())
             ->where($transaction_status, 'SUCCESS');
 
 
@@ -788,7 +797,7 @@ class HomeService
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, $this->todayRange())
             ->where('provider_id', $providers)
             ->where($transaction_status, 'SUCCESS');
 
@@ -827,7 +836,7 @@ class HomeService
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, $this->todayRange())
             ->where('provider_id', $providerId)
             ->where($transaction_status, 'SUCCESS');
 
@@ -868,14 +877,14 @@ class HomeService
 
         if (sabdy()->is_distributer) {
 
-            $query = $walletModel::whereDate($transaction_days, Carbon::today())
+            $query = $walletModel::whereBetween($transaction_days, $this->todayRange())
                 ->where($transaction_status, 'SUCCESS');
 
             $query->where($walletMy, sabdy()->id);
         } elseif (sabdy()->is_under_distributer) {
 
             $query = $walletModel::join('wallets', 'wallets.id', $wallet_transaction)
-                ->whereDate($transaction_days, Carbon::today())
+                ->whereBetween($transaction_days, $this->todayRange())
                 ->where($transaction_status, 'SUCCESS');
 
             $query->where(function ($query) use ($wallet_transaction) {
@@ -883,7 +892,7 @@ class HomeService
             });
         } elseif (sabdy()->is_com_zone) {
             $query = $walletModel::join('wallets', 'wallets.id', $wallet_transaction)
-                ->whereDate($transaction_days, Carbon::today())
+                ->whereBetween($transaction_days, $this->todayRange())
                 ->where($transaction_status, 'SUCCESS');
 
             $query->whereIn('wallets.sid_user_id', function($sub) {
@@ -893,7 +902,7 @@ class HomeService
         });
         } else {
 
-            $query = $walletModel::whereDate($transaction_days, Carbon::today())
+            $query = $walletModel::whereBetween($transaction_days, $this->todayRange())
                 ->where($transaction_status, 'SUCCESS');
 
             $query->where(function ($query) use ($walletMy) {
@@ -932,7 +941,7 @@ class HomeService
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction,  'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, $this->todayRange())
             ->whereProviderType($providerId)
             ->where($transaction_status, 'SUCCESS');
 

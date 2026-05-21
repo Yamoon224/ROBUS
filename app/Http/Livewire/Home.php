@@ -20,6 +20,7 @@ use App\Models\Wallets\WalletTresortMoney;
 use App\Models\Wallets\WalletVersement;
 use App\Models\Wallets\WalletAdmin;
 use App\Models\Wallets\WalletCommission;
+use Illuminate\Support\Facades\Cache;
 
 class Home extends Component
 {
@@ -32,6 +33,8 @@ class Home extends Component
         $walletUser = sabdy();
 
         $currencie = sabdy()->wallet->currencie->name;
+
+        $dashboardData = Cache::remember($this->dashboardCacheKey($walletUser), now()->addSeconds(30), function () use ($walletUser, $currencie) {
 
         // Account valeurs transactions
         $payment_error = app(HomeService::class)->getTransactionCount(WalletPayment::class, 'ERROR', 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by', 'wallet_payments.status');
@@ -50,9 +53,10 @@ class Home extends Component
         $deposit_padding = app(HomeService::class)->getTransactionCount(WalletDeposit::class, 'PENDING', 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by', 'wallet_deposits.status');
         $deposit_success = app(HomeService::class)->getTransactionCount(WalletDeposit::class, 'SUCCESS', 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by', 'wallet_deposits.status');
 
-        $reload_error = app(HomeService::class)->getTransactionCountReload(WalletReload::class);
-        $reload_padding = app(HomeService::class)->getTransactionCountReload(WalletReload::class);
-        $reload_success = app(HomeService::class)->getTransactionCountReload(WalletReload::class);
+        $reload_count = app(HomeService::class)->getTransactionCountReload(WalletReload::class);
+        $reload_error = $reload_count;
+        $reload_padding = $reload_count;
+        $reload_success = $reload_count;
 
         $phone_credit_error = app(HomeService::class)->getTransactionCount(WalletPhoneCredit::class, 'ERROR',  'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by', 'wallet_phone_credits.status');
         $phone_credit_padding = app(HomeService::class)->getTransactionCount(WalletPhoneCredit::class, 'PENDING', 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by', 'wallet_phone_credits.status');
@@ -116,7 +120,7 @@ class Home extends Component
         $push_amount = app(HomeService::class)->getTodayTransactionAmountTotal(WalletPush::class, 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by',  'wallet_pushes.status',  'wallet_pushes.amount');
         $tresortMoney_amount = app(HomeService::class)->getTodayTransactionAmountTotal(WalletTresortMoney::class, 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by',  'wallet_tresort_money.status',  'wallet_tresort_money.amount');
         $versment_amount = app(HomeService::class)->getTodayTransactionAmountTotal(WalletVersement::class, 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by',  'wallet_versements.status',  'wallet_versements.amount');
-        $bank_send = app(HomeService::class)->getTodayTransactionAmountTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by',  'wallet_banks.status',  'wallet_banks.amount');
+        $bank_send = $bank_amount;
         // $wave_amount = app(HomeService::class)->getTodayTransactionAmountTotal(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by',  'wallet_waves.status',  'wallet_waves.amount');
 
         // Amount transactions month
@@ -164,7 +168,7 @@ class Home extends Component
         $versment_amount_days = app(HomeService::class)->getTransactionAllCount(WalletVersement::class, 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by');
         $tresortMoney_amount_days = app(HomeService::class)->getTransactionAllCount(WalletTresortMoney::class, 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by');
 
-        return view('livewire.home', [
+        return [
 
 
             // 'is_masters' => $masters,
@@ -318,7 +322,15 @@ class Home extends Component
             'walletAdmin' => WalletAdmin::where('status', 1)->sum('amount'),
 
             // 'open_apps' => $closeRobus,
-        ]);
+        ];
+        });
+
+        return view('livewire.home', $dashboardData);
+    }
+
+    private function dashboardCacheKey($walletUser): string
+    {
+        return 'home-dashboard:' . $walletUser->id;
     }
 
 

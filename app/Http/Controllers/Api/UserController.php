@@ -634,11 +634,21 @@ class UserController extends Controller
             return response()->json($appStatusResult, 200);
         }
 
+        if (! robus()->is_com_zone) {
+            return response()->json([
+                'success' => false,
+                'user_counters' => "Vous devez être un COM ZONE",
+                'user_alls' => "Vous devez être un COM ZONE",
+            ]);
+        }
+
         $under_distributors =    $this->transactionAccount->getComZonesUser();
+        $userCounters = $this->transactionAccount->getComZoneUserCounters();
 
         return response()->json([
             'success' => true,
-            'user_alls' => robus()->is_com_zone ? new UnderCollection($under_distributors) : "Vous devez être un COM ZONE",
+            'user_counters' => $userCounters,
+            'user_alls' => new UnderCollection($under_distributors),
         ]);
     }
     /**

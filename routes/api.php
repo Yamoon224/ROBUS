@@ -321,17 +321,12 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('info/kyc', [UserController::class, 'kyc_masters']);
             Route::post('info/update', [UserController::class, 'update_masters']);
             Route::post('info/active_compte', [UserController::class, 'updload_identity_masters']);
-            Route::get('under_distributors', [UserController::class, 'comzone_under_distributors']);
-            Route::get('masters_distributors', [UserController::class, 'masters_com_zones']);
-            Route::get('custumers_distributors', [UserController::class, 'custumers_com_zones']);
             Route::get('transactions/counters', [ComZoneController::class, 'transactionCounters']);
             Route::get('operation_services', [ComZoneController::class, 'operationService']);
-            // Providers transactions
-            Route::get('/providers', [ProviderController::class, 'comzones_providers']);
-            // create Users
             Route::post('add_masters/store', [ComZoneController::class, 'store_under_masters']);
             Route::post('add_custumers/store', [ComZoneController::class, 'store_under_custumers']);
             Route::post('add_under_distributors/store', [ComZoneController::class, 'store_under_distributors']);
+            Route::post('add_compagnie/store', [ComZoneController::class, 'store_add_compagnie']);
         });
 
         // Unders distributors

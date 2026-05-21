@@ -23,6 +23,61 @@ class ValidatorService
         ]);
     }
 
+    public function validateComZoneDataUnder($data)
+    {
+        return Validator::make($data, [
+            'firstname' => ['required', 'string', 'max:255'],
+            'lastname' => ['required', 'string', 'max:255'],
+            'country_id' => 'required',
+            'zone' => 'required',
+            'city' => 'required',
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:sid_users'],
+            'phone' => ['required', 'unique:sid_users'],
+            'password' => ['required', 'confirmed'],
+            'image' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+            'image_recto' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+            'image_verso' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+            'image_trade' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+            'image_agence' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+        ]);
+    }
+
+    public function validateComZoneDataCompanie($data)
+    {
+        return Validator::make($data, [
+            'firstname' => ['required', 'string', 'max:255'],
+            'lastname' => ['required', 'string', 'max:255'],
+            'country_id' => 'required',
+            'zone' => 'required',
+            'city' => 'required',
+            'rib_banque' => 'required',
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:sid_users'],
+            'phone' => ['required', 'unique:sid_users'],
+            'image' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+            'image_recto' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+            'image_verso' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+            'image_trade' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+            'image_agence' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+        ]);
+    }
+
+    public function validateUserComData($data)
+    {
+        return Validator::make($data, [
+            'firstname' => ['required', 'string', 'max:255'],
+            'lastname' => ['required', 'string', 'max:255'],
+            'country_id' => 'required',
+            'zone' => 'required',
+            'city' => 'required',
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:sid_users'],
+            'phone' => ['required', 'unique:sid_users'],
+            'image' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+            'image_recto' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+            'image_verso' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+        ]);
+    }
+
+
     public function validateUserDataAdmin($data)
     {
         return Validator::make($data, [
@@ -57,10 +112,10 @@ class ValidatorService
         ]);
     }
 
-     public function validateUserUpdateCompanyDataAdmin($data)
+    public function validateUserUpdateCompanyDataAdmin($data)
     {
         return Validator::make($data, [
-             'firstname' => ['required', 'string', 'max:255'],
+            'firstname' => ['required', 'string', 'max:255'],
             'country_id' => 'required',
             'zone' => 'required',
             'lastname' => ['required', 'string', 'max:255'],

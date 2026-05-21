@@ -462,7 +462,7 @@ class ComZoneController extends Controller
     public function store_under_distributors(Request $request)
     {
 
-        $validator = $this->userValidatorService->validateUserData($request->all());
+        $validator = $this->userValidatorService->validateComZoneDataUnder($request->all());
 
         if ($validator->fails()) {
             return response()->json([
@@ -474,11 +474,13 @@ class ComZoneController extends Controller
 
         try {
 
-            $response = $this->createUserService->createUnderDistributor(
+            $response = $this->createUserService->createComZoneUnderDistributor(
                 $request->all(),
                 $request->file('image'),
                 $request->file('image_recto'),
-                $request->file('image_verso')
+                $request->file('image_verso'),
+                $request->file('image_trade'),
+                $request->file('image_agence'),
             );
 
             $msg = "Sous distributeur crée avec succès";
@@ -509,7 +511,7 @@ class ComZoneController extends Controller
     public function store_under_masters(Request $request)
     {
 
-        $validator = $this->userValidatorService->validateUserData($request->all());
+        $validator = $this->userValidatorService->validateUserComData($request->all());
 
         if ($validator->fails()) {
             return response()->json([
@@ -553,10 +555,10 @@ class ComZoneController extends Controller
         }
     }
 
-    public function store_under_custumers(Request $request)
+    public function store_add_compagnie(Request $request)
     {
 
-        $validator = $this->userValidatorService->validateUserData($request->all());
+        $validator = $this->userValidatorService->validateComZoneDataCompanie($request->all());
 
         if ($validator->fails()) {
             return response()->json([
@@ -568,7 +570,56 @@ class ComZoneController extends Controller
 
         try {
 
-            $response = $this->createUserService->createCustumer(
+            $response = $this->createUserService->createComZoneCompagnie(
+                 $request->all(),
+                $request->file('image'),
+                $request->file('image_recto'),
+                $request->file('image_verso'),
+                $request->file('image_trade'),
+                $request->file('image_agence'),
+            );
+
+            $msg = "Masters crée avec succès";
+
+            if ($response['success']) {
+
+                $user = $response['user'];
+
+                $valeur_message =  ' Un MASTER ';
+                Mail::to($user->email)->send(new NewAdmin('Vous etes désormais ' . $valeur_message . env('APP_NAME') .
+                    ' Votre email : '  . $user->email . ' Votre mot de passe : ' . $request->password));
+
+                return response()->json(['success' => true, 'message' =>  $msg, 'user' => $response['user']], 200);
+            } else {
+                return response()->json(['success' => false, 'message' => $response['message']], 333);
+            }
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+                ],
+                301
+            );
+        }
+    }
+
+    public function store_under_custumers(Request $request)
+    {
+
+        $validator = $this->userValidatorService->validateUserComData($request->all());
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Champ est requis',
+                'data' => $validator->errors()
+            ], 333);
+        }
+
+        try {
+
+            $response = $this->createUserService->createComZoneCustumer(
                 $request->all(),
                 $request->file('image'),
                 $request->file('image_recto'),
