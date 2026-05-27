@@ -234,6 +234,32 @@ class UserController extends Controller
         }
     }
 
+
+    public function position_unders(Request $request)
+    {
+
+        try {
+
+            $user = SidUser::find(robus()->id);
+
+            $user->update([
+                'longitude' => $request->longitude,
+                'latitude' => $request->latitude,
+            ]);
+
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Les informations sur la position ont été mises à jour avec succès',
+                'user' => new UserSingleCollection($user)
+            ], 200);
+        } catch (\Exception $exception) {
+            $message = __('message.is not Une erreur est survenue. Veuillez réessayer.');
+            return json_message_response(false, $message, 333);
+        }
+    }
+
     public function locations_unders_zone(string $zone)
     {
 
@@ -628,11 +654,11 @@ class UserController extends Controller
     public function dashboard_comzones()
     {
         // Vérifier l'état de l'application
-        $appStatusResult = $this->authService->appDispoComZoneRobus(AppComZoneStatus::class);
+        // $appStatusResult = $this->authService->appDispoComZoneRobus(AppComZoneStatus::class);
 
-        if (!$appStatusResult['success']) {
-            return response()->json($appStatusResult, 200);
-        }
+        // if (!$appStatusResult['success']) {
+        //     return response()->json($appStatusResult, 200);
+        // }
 
         if (! robus()->is_com_zone) {
             return response()->json([

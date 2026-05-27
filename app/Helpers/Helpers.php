@@ -272,17 +272,15 @@ function cumulTransaction()
 if (!function_exists('asset_link_url')) {
     function asset_link_url($path)
     {
-        // Vérifie si le chemin contient déjà 'public/'
+
         if (strpos($path, 'public/') === 0) {
             return asset($path);
         }
 
-        // Si le chemin contient 'image_inters', ajoute 'public/' devant
         if (strpos($path, 'image_inters') !== false) {
             return asset('public/' . $path);
         }
 
-        // Sinon retourne le chemin normal
         return asset($path);
     }
 }

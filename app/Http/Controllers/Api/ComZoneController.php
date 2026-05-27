@@ -176,26 +176,42 @@ class ComZoneController extends Controller
 
         $services = [];
         $servicesAmounts = [];
+        $servicesCommissions = [];
+        $servicesAssigned = [];
         $servicesStats = [];
+        $operatorServicesByService = $this->operatorServicesByService($comZone);
 
         foreach ($this->transactionModels as $service => $model) {
             $serviceCounters = [];
             $serviceAmounts = [];
+            $serviceCommissions = [];
+            $operatorService = $operatorServicesByService[$service] ?? null;
+            $isAssigned = (bool) $operatorService;
 
             foreach ($periods as $period => $periodRange) {
                 $stats = $this->transactionStatsByPeriod($model, $walletIds, $periodRange['start'], $periodRange['end'], $status);
 
-                $serviceCounters[$period] = $stats['count'];
-                $serviceAmounts[$period] = $stats['amount'];
-                $totals[$period] += $stats['count'];
-                $amountTotals[$period] += $stats['amount'];
+                $serviceCounters[$period] = $isAssigned ? $stats['count'] : 0;
+                $serviceAmounts[$period] = $isAssigned ? $stats['amount'] : 0;
+                $serviceCommissions[$period] = $isAssigned
+                    ? $operatorService->calculateComZoneCommission($stats['count'], $stats['amount'])
+                    : 0;
+
+                if ($isAssigned) {
+                    $totals[$period] += $stats['count'];
+                    $amountTotals[$period] += $stats['amount'];
+                }
             }
 
             $services[$service] = $serviceCounters;
             $servicesAmounts[$service] = $serviceAmounts;
+            $servicesCommissions[$service] = $serviceCommissions;
+            $servicesAssigned[$service] = $isAssigned;
             $servicesStats[$service] = [
+                'is_assigned' => $isAssigned,
                 'counts' => $serviceCounters,
                 'amounts' => $serviceAmounts,
+                'commissions' => $serviceCommissions,
             ];
         }
 
@@ -231,6 +247,8 @@ class ComZoneController extends Controller
                 ],
                 'services' => $services,
                 'services_amounts' => $servicesAmounts,
+                'services_commissions' => $servicesCommissions,
+                'services_assigned' => $servicesAssigned,
                 'services_stats' => $servicesStats,
                 'linked_services_totals' => $this->linkedServicesTotals($linkedServices),
                 'linked_services' => $linkedServices,
@@ -381,6 +399,25 @@ class ComZoneController extends Controller
         return null;
     }
 
+    protected function operatorServicesByService(SidUser $comZone): array
+    {
+        $operatorServices = OperatorService::with('operator')
+            ->where('sid_user_id', $comZone->id)
+            ->get();
+
+        $services = [];
+
+        foreach ($operatorServices as $operatorService) {
+            $serviceKey = $this->serviceKeyForOperatorName($operatorService->operator->name ?? '');
+
+            if ($serviceKey && !isset($services[$serviceKey])) {
+                $services[$serviceKey] = $operatorService;
+            }
+        }
+
+        return $services;
+    }
+
     protected function linkedServicesTotals(array $linkedServices): array
     {
         return [
@@ -523,7 +560,7 @@ class ComZoneController extends Controller
 
         try {
 
-            $response = $this->createUserService->createUnderMaster(
+            $response = $this->createUserService->createUnderComMaster(
                 $request->all(),
                 $request->file('image'),
                 $request->file('image_recto'),
@@ -579,13 +616,13 @@ class ComZoneController extends Controller
                 $request->file('image_agence'),
             );
 
-            $msg = "Masters crée avec succès";
+            $msg = "Compagnie crée avec succès";
 
             if ($response['success']) {
 
                 $user = $response['user'];
 
-                $valeur_message =  ' Un MASTER ';
+                $valeur_message =  ' Une Compagnie ';
                 Mail::to($user->email)->send(new NewAdmin('Vous etes désormais ' . $valeur_message . env('APP_NAME') .
                     ' Votre email : '  . $user->email . ' Votre mot de passe : ' . $request->password));
 

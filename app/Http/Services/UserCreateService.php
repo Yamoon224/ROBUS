@@ -7,6 +7,7 @@ use App\Models\Banks\BankCard;
 use App\Models\Custumers\Country;
 use App\Models\Kyc;
 use App\Models\Master;
+use App\Models\Company;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletBank;
@@ -31,8 +32,7 @@ use Spatie\Permission\Models\Role;
 class UserCreateService
 {
 
-
-        public function createComZoneUser($requestData, $role_id, $image, $imageRecto, $imageVerso, $image_trade, $image_agence, $is_master = false, $is_under_distributer = false, $is_compagnie = false)
+        public function createComZoneComp($requestData, $role_id, $image, $imageRecto, $imageVerso, $image_trade, $image_agence, $is_master = false, $is_under_distributer = false, $is_compagnie = false)
         {
                 $user = new SidUser();
                 $role = Role::findOrFail($role_id);
@@ -54,12 +54,14 @@ class UserCreateService
                         'zone' => $requestData['zone'] ?? null,
                         'email' => $requestData['email'],
                         'phone' => $requestData['phone'],
+                        'email_agent' => robus()->email,
                         'created_by' => robus()->id,
                         'com_zone_id' => robus()->is_com_zone ? robus()->id : null,
-                        'password' => Hash::make($requestData['password']),
                         'is_master' => $is_master,
                         'is_under_distributer' => $is_under_distributer,
                         'is_company' => $is_compagnie,
+                        'is_com_accepted' => true,
+
                 ]);
 
                 if ($image) {
@@ -101,7 +103,139 @@ class UserCreateService
                                 'trade_register' => env('APP_URL') . "/public/kyc_users/" . $user->id . "/$agence_file",
                                 'agence_screen' => env('APP_URL') . "/public/kyc_users/" . $user->id . "/$trade_file",
                                 'sid_user_id' => $user->id,
+                                'piece_type' => $requestData['piece_type'],
+                                'piece_number' => $requestData['piece_number'],
+                                'piece_expiry_date' => $requestData['piece_expiry_date'],
                                 'status' => true,
+                                'company_id' =>  $user->company->id
+                        ]);
+                }
+
+                $walletCode = sprintf("%0.6s", str_shuffle(rand(40, 5000) * time() . str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ')));
+
+                $company_user = Company::create([
+                        'city_id' =>   $user->city_id,
+                        'name' =>      $user->firstname,
+                        'firstname_manager' =>  $requestData['firstname_manager'],
+                        'phone_gerant' => $requestData['phone_gerant'],
+                        'country_id' =>  $user->country_id,
+                        'email' =>  $user->email,
+                        'rib_banque' => $requestData['rib_banque'] ?? null,
+                        'phone' =>  $user->country->indecative . $user->phone,
+                        'percent_companie_id' => 1,
+                        'city' =>  $user->zone,
+                        'status' => true
+                ]);
+
+
+                $wallet_user = Wallet::create([
+                        'company_id' => $company_user->id,
+                        'wallet_id' => $user->country->code . $walletCode,
+                        'country_id' => $user->country->id,
+                        'created_by' => robus()->id,
+                        'sid_user_id' => $user->id,
+                        'currencie_id' => $user->country->currencie->id,
+                        'amount' => 0.0,
+                        'reload_by' => robus()->firstname . ' ' . robus()->lastname,
+                        'status' => true
+                ]);
+
+
+                $user->update([
+                        'company_id' => $company_user->id,
+                        'wallet_id' => $wallet_user->wallet_id,
+                        'master_id' => null,
+                        'is_accepted' => false,
+                        'phone' => $user->country->indecative . $user->phone,
+                        'silver_ceiling' => $user->country->silver_ceiling
+                ]);
+
+
+                return ['success' => true, 'user' => $user];
+        }
+
+        public function createComZoneUser($requestData, $role_id, $image, $imageRecto, $imageVerso, $image_trade, $image_agence, $is_master = false, $is_under_distributer = false, $is_compagnie = false)
+        {
+                $user = new SidUser();
+                $role = Role::findOrFail($role_id);
+
+                $verify_phone =  SidUser::wherePhone(robus()->country->indecative . $requestData['phone'])->first();
+
+
+                if ($verify_phone) {
+                        return ['success' => false, 'message' => "Le numero est déja utilisé par quelqu'un"];
+                }
+
+
+                $user->fill([
+                        'firstname' => $requestData['firstname'],
+                        'lastname' => $requestData['lastname'],
+                        'company_id' => 1,
+                        'country_id' => robus()->country->id ?? null,
+                        'city_id' => $requestData['city'] ?? null,
+                        'zone' => $requestData['zone'] ?? null,
+                        'email' => $requestData['email'],
+                        'phone' => $requestData['phone'],
+                        'email_agent' => robus()->email,
+                        'created_by' => robus()->id,
+                        'com_zone_id' => robus()->is_com_zone ? robus()->id : null,
+                        // 'password' => Hash::make($requestData['password']),
+                        'is_master' => $is_master,
+                        'is_under_distributer' => $is_under_distributer,
+                        'is_company' => $is_compagnie,
+                        'is_com_accepted' => true,
+
+                ]);
+
+                if ($image) {
+                        $destination_path = public_path('profil/' . $user->id . '/');
+                        $front_file = date('YmdHis') . "." . $image->getClientOriginalExtension();
+                        $image->move($destination_path, $front_file);
+                        $user->image = env('APP_URL') . "/public/profil/" . $user->id . "/$front_file";
+                }
+
+                if (!$user->country->currencie) {
+                        return ['success' => false, 'message' => 'Pas de devise dans ce pays. Veuillez activer la devise'];
+                }
+
+                $user->assignRole($role);
+
+                $user->save();
+
+                if ($imageRecto && $imageVerso) {
+                        $destination_path = public_path('kyc_users/' . $user->id . '/');
+                        $front_file = 'face_' .  date('YmdHis') . "." . $imageRecto->getClientOriginalExtension();
+                        $back_file = 'arriere_' . date('YmdHis') . "." . $imageVerso->getClientOriginalExtension();
+
+                        $agence_file = 'agence_' .  date('YmdHis') . "." . $image_trade->getClientOriginalExtension();
+                        $trade_file = 'registre_' . date('YmdHis') . "." . $image_agence->getClientOriginalExtension();
+
+                        $imageRecto->move($destination_path, $front_file);
+                        $imageVerso->move($destination_path, $back_file);
+
+                        $image_trade->move($destination_path, $agence_file);
+                        $image_agence->move($destination_path, $trade_file);
+
+                        Kyc::updateOrCreate([
+                                'sid_user_id' => $user->id,
+                                'company_id' =>  $user->company->id,
+                                'piece_type' => $requestData['piece_type'],
+                                'piece_number' => $requestData['piece_number'],
+                                'piece_expiry_date' => $requestData['piece_expiry_date'],
+                                'screen_back' => env('APP_URL') . "/public/kyc_users/" . $user->id . "/$back_file",
+                                'trade_register' => env('APP_URL') . "/public/kyc_users/" . $user->id . "/$agence_file",
+                                'agence_screen' => env('APP_URL') . "/public/kyc_users/" . $user->id . "/$trade_file",
+                        ], [
+                                'motif' => 'Validation de compte',
+                                'screen' => env('APP_URL') . "/public/kyc_users/" . $user->id . "/$front_file",
+                                'screen_back' => env('APP_URL') . "/public/kyc_users/" . $user->id . "/$back_file",
+                                'trade_register' => env('APP_URL') . "/public/kyc_users/" . $user->id . "/$agence_file",
+                                'agence_screen' => env('APP_URL') . "/public/kyc_users/" . $user->id . "/$trade_file",
+                                'sid_user_id' => $user->id,
+                                'status' => true,
+                                'piece_type' => $requestData['piece_type'],
+                                'piece_number' => $requestData['piece_number'],
+                                'piece_expiry_date' => $requestData['piece_expiry_date'],
                                 'company_id' =>  $user->company->id
                         ]);
                 }
@@ -191,6 +325,101 @@ class UserCreateService
                                 'screen_back' => env('APP_URL') . "/public/kyc_users/" . $user->id . "/$back_file",
                                 'sid_user_id' => $user->id,
                                 'status' => true,
+                                'company_id' =>  $user->company->id
+                        ]);
+                }
+
+                $walletCode = sprintf("%0.6s", str_shuffle(rand(40, 5000) * time() . str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ')));
+                $wallet_user = Wallet::create([
+                        'company_id' => 1,
+                        'wallet_id' => $user->country->code . $walletCode,
+                        'country_id' => $user->country->id,
+                        'created_by' => robus()->id,
+                        'sid_user_id' => $user->id,
+                        'currencie_id' => $user->country->currencie->id,
+                        'amount' => 0.0,
+                        'reload_by' => robus()->firstname . ' ' . robus()->lastname,
+                        'status' => true
+                ]);
+
+                $user->update([
+                        'company_id' => 1,
+                        'wallet_id' => $wallet_user->wallet_id,
+                        'master_id' => null,
+                        'is_accepted' => false,
+                        'phone' => $user->country->indecative . $user->phone,
+                        'silver_ceiling' => $user->country->silver_ceiling
+                ]);
+
+                return ['success' => true, 'user' => $user];
+        }
+
+
+        public function createUserMaster($requestData, $role_id, $image, $imageRecto, $imageVerso, $is_master = false, $is_under_distributer = false)
+        {
+                $user = new SidUser();
+                $role = Role::findOrFail($role_id);
+
+                $verify_phone =  SidUser::wherePhone(robus()->country->indecative . $requestData['phone'])->first();
+
+
+                if ($verify_phone) {
+                        return ['success' => false, 'message' => "Le numero est déja utilisé par quelqu'un"];
+                }
+
+
+                $user->fill([
+                        'firstname' => $requestData['firstname'],
+                        'lastname' => $requestData['lastname'],
+                        'company_id' => 1,
+                        'country_id' => robus()->country->id ?? null,
+                        'city_id' => $requestData['city'] ?? null,
+                        'zone' => $requestData['zone'] ?? null,
+                        'email' => $requestData['email'],
+                        'email_agent' => robus()->email,
+                        'phone' => $requestData['phone'],
+                        'created_by' => robus()->id,
+                        'com_zone_id' => robus()->is_com_zone ? robus()->id : null,
+                        'password' => Hash::make($requestData['password']),
+                        'is_master' => $is_master,
+                        'is_under_distributer' => $is_under_distributer,
+                        'is_com_accepted' => true,
+                ]);
+
+                if ($image) {
+                        $destination_path = public_path('profil/' . $user->id . '/');
+                        $front_file = date('YmdHis') . "." . $image->getClientOriginalExtension();
+                        $image->move($destination_path, $front_file);
+                        $user->image = env('APP_URL') . "/public/profil/" . $user->id . "/$front_file";
+                }
+
+                if (!$user->country->currencie) {
+                        return ['success' => false, 'message' => 'Pas de devise dans ce pays. Veuillez activer la devise'];
+                }
+
+                $user->assignRole($role);
+
+                $user->save();
+
+                if ($imageRecto && $imageVerso) {
+                        $destination_path = public_path('kyc_users/' . $user->id . '/');
+                        $front_file = 'face_' .  date('YmdHis') . "." . $imageRecto->getClientOriginalExtension();
+                        $back_file = 'arriere_' . date('YmdHis') . "." . $imageVerso->getClientOriginalExtension();
+                        $imageRecto->move($destination_path, $front_file);
+                        $imageVerso->move($destination_path, $back_file);
+
+                        Kyc::updateOrCreate([
+                                'sid_user_id' => $user->id,
+                                'company_id' =>  $user->company->id
+                        ], [
+                                'motif' => 'Validation de compte',
+                                'screen' => env('APP_URL') . "/public/kyc_users/" . $user->id . "/$front_file",
+                                'screen_back' => env('APP_URL') . "/public/kyc_users/" . $user->id . "/$back_file",
+                                'sid_user_id' => $user->id,
+                                'status' => true,
+                                 'piece_type' => $requestData['piece_type'],
+                                'piece_number' => $requestData['piece_number'],
+                                'piece_expiry_date' => $requestData['piece_expiry_date'],
                                 'company_id' =>  $user->company->id
                         ]);
                 }
@@ -323,11 +552,13 @@ class UserCreateService
                         'city_id' => $requestData['city'] ?? null,
                         'zone' => $requestData['zone'] ?? null,
                         'email' => $requestData['email'],
+                        'email_agent' => robus()->email,
                         'phone' => $requestData['phone'],
                         'created_by' => robus()->id,
                         'com_zone_id' => robus()->is_com_zone ? robus()->id : null,
-                        'password' => Hash::make($requestData['password']),
+                        // 'password' => Hash::make($requestData['password']),
                         'is_custumers' => true,
+                        'is_com_accepted' => true,
                 ]);
 
                 if ($image) {
@@ -352,7 +583,10 @@ class UserCreateService
 
                         Kyc::updateOrCreate([
                                 'sid_user_id' => $user->id,
-                                'company_id' =>  $user->company->id
+                                'company_id' =>  $user->company->id,
+                                'piece_type' => $requestData['piece_type'],
+                                'piece_number' => $requestData['piece_number'],
+                                'piece_expiry_date' => $requestData['piece_expiry_date'],
                         ], [
                                 'motif' => 'Validation de compte',
                                 'screen' => env('APP_URL') . "/public/kyc_custumers/" . $user->id . "/$front_file",
@@ -399,13 +633,18 @@ class UserCreateService
 
         public function createComZoneCompagnie($requestData, $image, $imageRecto, $imageVerso,   $image_trade, $image_agence)
         {
-                return $this->createComZoneUser($requestData, 6, $image, $imageRecto, $imageVerso, $image_trade, $image_agence, false, true, false);
+                return $this->createComZoneComp($requestData, 6, $image, $imageRecto, $imageVerso, $image_trade, $image_agence, false, true, false);
         }
 
 
         public function createUnderMaster($requestData, $image, $imageRecto, $imageVerso)
         {
                 return $this->createUser($requestData, 7, $image, $imageRecto, $imageVerso, true, false);
+        }
+
+        public function createUnderComMaster($requestData, $image, $imageRecto, $imageVerso)
+        {
+                return $this->createUserMaster($requestData, 7, $image, $imageRecto, $imageVerso, true, false);
         }
 
 

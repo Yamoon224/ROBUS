@@ -32,6 +32,7 @@ use App\Http\Controllers\Api\Transfers\WaveTransactionController;
 use App\Http\Controllers\Api\Transfers\withTransactionController;
 use App\Http\Controllers\Api\Transfers\VersementController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\VisiteController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PaystackWebhookController;
 use App\Http\Controllers\PixelPaymentController;
@@ -239,6 +240,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('transactions/store', [TransactionController::class, 'create_transaction']);
             Route::post('transaction/delete/{id}', [TransactionController::class, 'delete_transaction']);
             Route::get('search/{wallet_id}', [TransactionController::class, 'search_transaction']);
+            Route::get('search_com/{wallet_id}', [TransactionController::class, 'search_com_transaction']);
             Route::get('search_transaction/{commission_id}', [TransactionController::class, 'search_transaction_money_commission']);
             Route::get('search_transaction_received/{commission_id}', [TransactionController::class, 'search_transaction_money_commission_received']);
             Route::get('search_transaction_robus_commission/{wallet}/{commission_id}', [TransactionController::class, 'search_transaction_commission_robus']);
@@ -327,11 +329,14 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('add_custumers/store', [ComZoneController::class, 'store_under_custumers']);
             Route::post('add_under_distributors/store', [ComZoneController::class, 'store_under_distributors']);
             Route::post('add_compagnie/store', [ComZoneController::class, 'store_add_compagnie']);
+            Route::post('/visites/store',  [VisiteController::class, 'store']);
+            Route::post('/visites/verify', [VisiteController::class, 'verify']);
         });
 
         // Unders distributors
         Route::prefix('undersdistributors')->group(function () {
             Route::get('locations', [UserController::class, 'locations_unders']);
+            Route::post('position', [UserController::class, 'position_unders']);
             Route::get('locations/{id}', [UserController::class, 'locations_unders_zone']);
         });
     });

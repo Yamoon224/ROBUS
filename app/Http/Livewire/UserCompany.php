@@ -224,6 +224,7 @@ class UserCompany extends Component
     public function render()
     {
         $users = SidUser::query()->where('is_company', true);
+        $queryComzone = SidUser::where('is_com_zone', true);
 
         if (sabdy()->is_com_zone) {
             $users->where('com_zone_id', sabdy()->id);
@@ -260,10 +261,10 @@ class UserCompany extends Component
 
             $this->resetPage();
             $users->when($this->cityNameSearch, function ($query) {
-                    $query->where(function ($query) {
-                        $query->where("zone", "LIKE", "%" . $this->cityNameSearch . "%");
-                    });
-                })
+                $query->where(function ($query) {
+                    $query->where("zone", "LIKE", "%" . $this->cityNameSearch . "%");
+                });
+            })
                 ->paginate($this->perPage);
         }
 
@@ -341,19 +342,18 @@ class UserCompany extends Component
             $user->amount_fcfa = $amount_solde;
         }
 
-        $query = SidUser::whereIsComZone(true)
-            ->where('country_id', $this->user_country)
-            ->when($this->searchComZone, function ($q) {
-                $q->where(function ($q2) {
-                    $q2->where('firstname', 'like', '%' . $this->searchComZone . '%')
-                        ->orWhere('lastname', 'like', '%' . $this->searchComZone . '%')
-                        ->orWhere('email', 'like', '%' . $this->searchComZone . '%');
-                });
+        if ($this->searchComZone) {
+            $search = '%' . $this->searchComZone . '%';
+            $queryComzone->where(function ($q) use ($search) {
+                $q->where('firstname', 'like', $search)
+                    ->orWhere('lastname', 'like', $search)
+                    ->orWhere('email', 'like', $search);
             });
+        }
 
         return view('livewire.user-company', [
             "users" => $users,
-            "comZones" => $query->paginate(10),
+            "comZones" => $queryComzone->paginate(30),
             "countries" => Country::where('robus', true)->orderBy("name", 'desc')->get(),
             "operators" => Operator::whereStatus(true)->whereIsCommission(true)->orderBy("name", 'desc')->get(),
         ]);

@@ -1270,6 +1270,19 @@ class TransactionController extends Controller
         }
     }
 
+
+    public function search_com_transaction($search)
+    {
+        try {
+
+            return $this->searchTransaction->searchTransaction($search);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'Pas d\'utilisateur',
+            ], 200);
+        }
+    }
     // Search Valeur receive and valeur pay of Virement
     public function search_transaction_money_commission($amount_transaction)
     {

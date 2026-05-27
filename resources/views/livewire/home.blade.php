@@ -144,7 +144,7 @@
                 </div>
             </div>
 
-            @if (Auth::guard('web')->user()->hasPermissionTo('voir-commission-admin'))
+            {{-- @if (Auth::guard('web')->user()->hasPermissionTo('voir-commission-admin'))
                 <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
                     <div class="amount-label text-sm text-gray-500">Compte des commissions SD total</div>
                     <div class="amount-commission-balance">
@@ -172,7 +172,7 @@
                         </div>
                     </div>
                 </div>
-            @endif
+            @endif --}}
 
         </div>
 

@@ -302,6 +302,8 @@ class custumers extends Component
 
         $users = SidUser::query();
 
+        $queryComzone = SidUser::where('is_com_zone', true);
+
         if (sabdy()->is_com_zone) {
             $users->where('com_zone_id', sabdy()->id);
         }
@@ -363,6 +365,7 @@ class custumers extends Component
 
 
         $query = SidUser::where('is_custumers', true);
+
 
         if (sabdy()->is_com_zone) {
             $query->where('com_zone_id', sabdy()->id);
@@ -453,7 +456,7 @@ class custumers extends Component
         // Ajout de la recherche textuelle
         if ($this->searchComZone) {
             $search = '%' . $this->searchComZone . '%';
-            $query->where(function ($q) use ($search) {
+            $queryComzone->where(function ($q) use ($search) {
                 $q->where('firstname', 'like', $search)
                     ->orWhere('lastname', 'like', $search)
                     ->orWhere('email', 'like', $search);
@@ -463,7 +466,7 @@ class custumers extends Component
 
         return view('livewire.custumers', [
             "users" => $users,
-            "comZones" => $query->paginate(10),
+            "comZones" => $queryComzone->paginate(10),
             "countries" => Country::where('status', true)->orderBy("name", 'desc')->get()
         ]);
     }

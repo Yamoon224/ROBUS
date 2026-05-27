@@ -485,6 +485,7 @@ class UnderDistributors extends Component
     public function render()
     {
         $usersQuery = SidUser::where('is_under_distributer', true);
+        $queryComzone = SidUser::where('is_com_zone', true);
 
         if (sabdy()->is_com_zone) {
             $usersQuery->where('com_zone_id', sabdy()->id);
@@ -610,19 +611,18 @@ class UnderDistributors extends Component
             $user->amount_fcfa = $amount_solde;
         }
 
-        $query = SidUser::whereIsComZone(true)
-            ->where('country_id', $this->user_country)
-            ->when($this->searchComZone, function ($q) {
-                $q->where(function ($q2) {
-                    $q2->where('firstname', 'like', '%' . $this->searchComZone . '%')
-                        ->orWhere('lastname', 'like', '%' . $this->searchComZone . '%')
-                        ->orWhere('email', 'like', '%' . $this->searchComZone . '%');
-                });
+        if ($this->searchComZone) {
+            $search = '%' . $this->searchComZone . '%';
+            $queryComzone->where(function ($q) use ($search) {
+                $q->where('firstname', 'like', $search)
+                    ->orWhere('lastname', 'like', $search)
+                    ->orWhere('email', 'like', $search);
             });
+        }
 
         return view('livewire.under-distributors', [
             "users" => $users,
-            "comZones" => $query->paginate(10),
+            "comZones" => $queryComzone->paginate(10),
             "countries" => Country::where('robus', true)->orderBy("name", 'desc')->get(),
             "operators" => Operator::whereStatus(true)->whereIsUnder(true)->orderBy("name", 'desc')->get(),
             "operatorsCommissions" => Operator::whereStatus(true)->whereIsCommission(true)->orderBy("name", 'desc')->get(),
