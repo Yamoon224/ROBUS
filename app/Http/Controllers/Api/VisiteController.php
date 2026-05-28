@@ -60,7 +60,7 @@ class VisiteController extends Controller
             $validated['latitude'],
             $validated['longitude']
         );
-
+      
         // Trop loin → rejet
         if ($distance > self::MAX_DISTANCE_M) {
             return response()->json([
@@ -118,6 +118,7 @@ class VisiteController extends Controller
             'latitude'    => $validated['latitude'],
             'longitude'   => $validated['longitude'],
             'status'      => 'pending',
+            'type' => 'visite',
             'code_visit'  => $code,
         ]);
 
