@@ -633,7 +633,7 @@ class UserCreateService
 
         public function createComZoneCompagnie($requestData, $image, $imageRecto, $imageVerso,   $image_trade, $image_agence)
         {
-                return $this->createComZoneComp($requestData, 6, $image, $imageRecto, $imageVerso, $image_trade, $image_agence, false, true, false);
+                return $this->createComZoneComp($requestData, 6, $image, $imageRecto, $imageVerso, $image_trade, $image_agence, false, false, true);
         }
 
 

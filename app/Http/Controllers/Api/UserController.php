@@ -653,12 +653,6 @@ class UserController extends Controller
 
     public function dashboard_comzones()
     {
-        // Vérifier l'état de l'application
-        // $appStatusResult = $this->authService->appDispoComZoneRobus(AppComZoneStatus::class);
-
-        // if (!$appStatusResult['success']) {
-        //     return response()->json($appStatusResult, 200);
-        // }
 
         if (! robus()->is_com_zone) {
             return response()->json([
@@ -669,12 +663,118 @@ class UserController extends Controller
         }
 
         $under_distributors =    $this->transactionAccount->getComZonesUser();
+        $companies = SidUser::where('com_zone_id', robus()->id)->whereIsCompany(true)->get();
+        $clients = SidUser::where('com_zone_id', robus()->id)->whereIsCustumers(true)->get();
+        $sousDistributeurs = SidUser::where('com_zone_id', robus()->id)->whereIsUnderDistributer(true)->get();
+        $masters = SidUser::where('com_zone_id', robus()->id)->whereIsMaster(true)->get();
         $userCounters = $this->transactionAccount->getComZoneUserCounters();
 
         return response()->json([
             'success' => true,
             'user_counters' => $userCounters,
             'user_alls' => new UnderCollection($under_distributors),
+            'user_networks' => [
+                'compagnies' => new UnderCollection($companies),
+                'clients' => new UnderCollection($clients),
+                'sous_distributeurs' => new UnderCollection($sousDistributeurs),
+                'masters' => new UnderCollection($masters),
+            ],
+        ]);
+    }
+
+    public function reseau_compagnies()
+    {
+
+        if (! robus()->is_com_zone) {
+            return response()->json([
+                'success' => false,
+                'user_counters' => "Vous devez être un COM ZONE",
+                'user_alls' => "Vous devez être un COM ZONE",
+            ]);
+        }
+
+
+        $clients = SidUser::where('com_zone_id', robus()->id)->whereIsCompany(true)->get();
+        $userCounters = SidUser::where('com_zone_id', robus()->id)
+            ->where('is_company', true)
+            ->count();
+
+        return response()->json([
+            'success' => true,
+            'user_counters' => $userCounters,
+            'user_networks' => [
+                'compagnies' => new UnderCollection($clients),
+            ],
+        ]);
+    }
+
+    public function reseau_clients()
+    {
+
+        if (! robus()->is_com_zone) {
+            return response()->json([
+                'success' => false,
+                'user_counters' => "Vous devez être un COM ZONE",
+                'user_alls' => "Vous devez être un COM ZONE",
+            ]);
+        }
+
+        $clients = SidUser::where('com_zone_id', robus()->id)->whereIsCustumers(true)->get();
+        $userCounters = SidUser::where('com_zone_id', robus()->id)
+        ->where('is_custumers', true)->count();
+
+        return response()->json([
+            'success' => true,
+            'user_counters' => $userCounters,
+            'user_networks' => [
+                'clients' => new UnderCollection($clients),
+            ],
+        ]);
+    }
+
+    public function reseau_sous_distributeurs()
+    {
+
+        if (! robus()->is_com_zone) {
+            return response()->json([
+                'success' => false,
+                'user_counters' => "Vous devez être un COM ZONE",
+                'user_alls' => "Vous devez être un COM ZONE",
+            ]);
+        }
+
+        $sousDistributeurs = SidUser::where('com_zone_id', robus()->id)->whereIsUnderDistributer(true)->get();
+        $userCounters = SidUser::where('com_zone_id', robus()->id)->where('is_under_distributer', true)->count();
+
+        return response()->json([
+            'success' => true,
+            'user_counters' => $userCounters,
+            'user_networks' => [
+                'sous_distributeurs' => new UnderCollection($sousDistributeurs),
+            ],
+        ]);
+    }
+
+    public function reseau_masters()
+    {
+
+        if (! robus()->is_com_zone) {
+            return response()->json([
+                'success' => false,
+                'user_counters' => "Vous devez être un COM ZONE",
+                'user_alls' => "Vous devez être un COM ZONE",
+            ]);
+        }
+
+        $masters = SidUser::where('com_zone_id', robus()->id)->whereIsMaster(true)->get();
+        $userCounters = SidUser::where('com_zone_id', robus()->id)->where('is_master', true)->count();
+
+        return response()->json([
+            'success' => true,
+            'user_counters' => $userCounters,
+            'user_networks' => [
+                'masters' => new UnderCollection($masters),
+            ],
         ]);
     }
     /**

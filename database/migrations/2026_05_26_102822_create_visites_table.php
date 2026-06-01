@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('wallet_id')->nullable();
             $table->foreign('wallet_id')->references('id')->on('wallets')->onDelete('cascade');
             $table->unsignedBigInteger('sidUser_id')->nullable();
-            $table->foreign('sidUser_id')->references('id')->on('sidUsers')->onDelete('cascade');
+            $table->foreign('sidUser_id')->references('id')->on('sid_users')->onDelete('cascade');
             $table->integer('created_by')->nullable();
             $table->integer('deleted_by')->nullable();
             $table->decimal('latitude',  10, 8)->nullable(); 

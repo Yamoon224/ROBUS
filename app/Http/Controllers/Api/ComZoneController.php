@@ -31,6 +31,7 @@ use App\Models\OperatorService;
 
 class ComZoneController extends Controller
 {
+    private const COMMISSION_TRANSACTION_STATUS = 'SUCCESS';
 
 
     protected $userValidatorService;
@@ -53,20 +54,20 @@ class ComZoneController extends Controller
         'versements' => WalletVersement::class,
     ];
     protected array $transactionServiceLabels = [
-        'Active Transactions' => 'transactions',
-        'Active Crédits' => 'credits',
-        'Active Paiements' => 'paiements',
-        'Active International' => 'internationals',
-        'Active Rechargements' => 'rechargements',
+        'DEPOT' => 'transactions',
+        'CREDIT TELEPHONIQUE' => 'credits',
+        'PAIEMENT DE FACTURE' => 'paiements',
+        'TRANSFERT INTERNATIONAL' => 'internationals',
+        'RECHARGEMENT' => 'rechargements',
         'Active Virements' => 'virements',
         'Active Commande' => 'commandes',
         'Active Push' => 'push',
         'Active Djamo' => 'djamo',
-        'Active Xbets' => 'xbets',
+        'XBET' => 'xbets',
         'Active Bank Send' => 'bank_sends',
         'Active Wave' => 'wave',
         'Active Tresort Money' => 'tresort_money',
-        'Active Versements' => 'versements',
+        'VERSEMENT BANCAIRE' => 'versements',
     ];
 
     public function __construct(
@@ -177,24 +178,32 @@ class ComZoneController extends Controller
         $services = [];
         $servicesAmounts = [];
         $servicesCommissions = [];
+        $servicesCommissionCounts = [];
+        $servicesCommissionAmounts = [];
         $servicesAssigned = [];
         $servicesStats = [];
         $operatorServicesByService = $this->operatorServicesByService($comZone);
+
 
         foreach ($this->transactionModels as $service => $model) {
             $serviceCounters = [];
             $serviceAmounts = [];
             $serviceCommissions = [];
+            $serviceCommissionCounts = [];
+            $serviceCommissionAmounts = [];
             $operatorService = $operatorServicesByService[$service] ?? null;
             $isAssigned = (bool) $operatorService;
 
             foreach ($periods as $period => $periodRange) {
                 $stats = $this->transactionStatsByPeriod($model, $walletIds, $periodRange['start'], $periodRange['end'], $status);
+                $commissionStats = $this->transactionStatsByPeriod($model, $walletIds, $periodRange['start'], $periodRange['end'], self::COMMISSION_TRANSACTION_STATUS);
 
                 $serviceCounters[$period] = $isAssigned ? $stats['count'] : 0;
                 $serviceAmounts[$period] = $isAssigned ? $stats['amount'] : 0;
+                $serviceCommissionCounts[$period] = $isAssigned ? $commissionStats['count'] : 0;
+                $serviceCommissionAmounts[$period] = $isAssigned ? $commissionStats['amount'] : 0;
                 $serviceCommissions[$period] = $isAssigned
-                    ? $operatorService->calculateComZoneCommission($stats['count'], $stats['amount'])
+                    ? $operatorService->calculateComZoneCommission($commissionStats['count'], $commissionStats['amount'])
                     : 0;
 
                 if ($isAssigned) {
@@ -206,11 +215,16 @@ class ComZoneController extends Controller
             $services[$service] = $serviceCounters;
             $servicesAmounts[$service] = $serviceAmounts;
             $servicesCommissions[$service] = $serviceCommissions;
+            $servicesCommissionCounts[$service] = $serviceCommissionCounts;
+            $servicesCommissionAmounts[$service] = $serviceCommissionAmounts;
             $servicesAssigned[$service] = $isAssigned;
             $servicesStats[$service] = [
                 'is_assigned' => $isAssigned,
                 'counts' => $serviceCounters,
                 'amounts' => $serviceAmounts,
+                'commission_status' => self::COMMISSION_TRANSACTION_STATUS,
+                'commission_counts' => $serviceCommissionCounts,
+                'commission_amounts' => $serviceCommissionAmounts,
                 'commissions' => $serviceCommissions,
             ];
         }
@@ -248,6 +262,9 @@ class ComZoneController extends Controller
                 'services' => $services,
                 'services_amounts' => $servicesAmounts,
                 'services_commissions' => $servicesCommissions,
+                'commissions_status' => self::COMMISSION_TRANSACTION_STATUS,
+                'services_commission_counts' => $servicesCommissionCounts,
+                'services_commission_amounts' => $servicesCommissionAmounts,
                 'services_assigned' => $servicesAssigned,
                 'services_stats' => $servicesStats,
                 'linked_services_totals' => $this->linkedServicesTotals($linkedServices),
@@ -315,6 +332,9 @@ class ComZoneController extends Controller
                     'service' => null,
                     'transactions_count' => 0,
                     'transactions_amount' => 0,
+                    'commission_status' => self::COMMISSION_TRANSACTION_STATUS,
+                    'commission_transactions_count' => 0,
+                    'commission_transactions_amount' => 0,
                     'commission' => 0,
                     'numbers_rule' => $operatorService->numbers,
                     'amount_rule' => $operatorService->amount,
@@ -325,8 +345,11 @@ class ComZoneController extends Controller
             }
 
             $query = $this->transactionQuery($model, $walletIds, $start, $end, $status);
+            $commissionQuery = $this->transactionQuery($model, $walletIds, $start, $end, self::COMMISSION_TRANSACTION_STATUS);
             $transactionsCount = (clone $query)->count();
             $transactionsAmount = (float) (clone $query)->sum('amount');
+            $commissionTransactionsCount = (clone $commissionQuery)->count();
+            $commissionTransactionsAmount = (float) (clone $commissionQuery)->sum('amount');
 
             $transactionsQuery = (clone $query)->orderBy('created_at', 'desc');
 
@@ -344,7 +367,10 @@ class ComZoneController extends Controller
                 'service' => $serviceKey,
                 'transactions_count' => $transactionsCount,
                 'transactions_amount' => $transactionsAmount,
-                'commission' => $operatorService->calculateComZoneCommission($transactionsCount, $transactionsAmount),
+                'commission_status' => self::COMMISSION_TRANSACTION_STATUS,
+                'commission_transactions_count' => $commissionTransactionsCount,
+                'commission_transactions_amount' => $commissionTransactionsAmount,
+                'commission' => $operatorService->calculateComZoneCommission($commissionTransactionsCount, $commissionTransactionsAmount),
                 'numbers_rule' => $operatorService->numbers,
                 'amount_rule' => $operatorService->amount,
                 'transactions' => $this->formatServiceTransactions($transactionsQuery->limit($limit)->get()),

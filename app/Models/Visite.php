@@ -19,7 +19,7 @@ class Visite extends Model
 
      public function sidUser()
     {
-        return $this->belongsTo(SidUser::class, 'sid_user_id', 'id')->withTrashed();
+        return $this->belongsTo(SidUser::class, 'sidUser_id', 'id')->withTrashed();
     }
 
      public function wallet()

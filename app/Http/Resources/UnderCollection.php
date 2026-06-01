@@ -29,6 +29,7 @@ class UnderCollection extends ResourceCollection
                         'data' => $this->collection->map(function ($data) {
                                 $is_custumer = $data->is_custumers;
                                 $is_under_distributer = $data->is_under_distributer;
+                                $is_company = $data->is_company;
                                 return [
                                         'id'      => $data->id,
                                         'firstname' => $data->firstname,
@@ -37,7 +38,7 @@ class UnderCollection extends ResourceCollection
                                         'phone' => $data->phone,
                                         'status' => $data->status,
                                         'image' => $data->image,
-                                        'type_users' => $is_custumer ? "Client" : ($is_under_distributer ? "Sous distributeur" : "Master"),
+                                        'type_users' => $is_custumer ? "Client" : ($is_under_distributer ? "Sous distributeur" : ($is_company ? "Compagnie" : "Master")),
                                         'wallet' => optional($data->wallet)->amount .  ' ' . optional($data?->wallet?->currencie)->code ?? null,
                                         'wallet_status' => optional($data->wallet)->status,
                                         'wallet_id' => optional($data->wallet)->wallet_id ?? null,
@@ -48,6 +49,7 @@ class UnderCollection extends ResourceCollection
                                         'is_active' => $data->is_active,
                                         'is_distributer' => $data->is_distributer,
                                         'is_under_distributer' => $data->is_under_distributer,
+                                        'is_company' => $data->is_company,
                                         'is_master' => $data->is_master,
                                         'screen' => [
                                                 'screen_front' => optional($data->kyc)->screen,

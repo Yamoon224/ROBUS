@@ -117,6 +117,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('dashboardCommissions', [UserController::class, 'dashboardCommissions']);
             Route::get('blockCommissions', [UserController::class, 'BlockCommissions']);
             Route::get('historicals', [UserController::class, 'dashboard_historique']);
+            Route::get('visites/historicals', [VisiteController::class, 'userhistoricals']);
             Route::get('info', [UserController::class, 'info']);
             Route::get('info/kyc', [UserController::class, 'kyc']);
             Route::post('info/update', [UserController::class, 'updateInfo']);
@@ -319,6 +320,12 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
         // COM ZONE APIS
         Route::prefix('comzones')->group(function () {
             Route::get('dashboard', [UserController::class, 'dashboard_comzones']);
+
+            Route::get('reseau_compagnies', [UserController::class, 'reseau_compagnies']);
+            Route::get('reseau_clients', [UserController::class, 'reseau_clients']);
+            Route::get('reseau_sous_distributeurs', [UserController::class, 'reseau_sous_distributeurs']);
+            Route::get('reseau_masters', [UserController::class, 'reseau_masters']);
+
             Route::get('info', [UserController::class, 'info_masters']);
             Route::get('info/kyc', [UserController::class, 'kyc_masters']);
             Route::post('info/update', [UserController::class, 'update_masters']);
@@ -331,6 +338,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('add_compagnie/store', [ComZoneController::class, 'store_add_compagnie']);
             Route::post('/visites/store',  [VisiteController::class, 'store']);
             Route::post('/visites/verify', [VisiteController::class, 'verify']);
+            Route::get('/visites/historicals', [VisiteController::class, 'historicals']);
         });
 
         // Unders distributors
