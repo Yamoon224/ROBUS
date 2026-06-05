@@ -3,14 +3,6 @@
 namespace App\Http\Resources;
 
 
-use App\Http\Resources\InterTransactionUnderCollection;
-use App\Http\Resources\OneXbetUnderCollection;
-use App\Http\Resources\PaymentUnderCollection;
-use App\Http\Resources\PhoneCreditUnderCollection;
-use App\Http\Resources\ReloadCardUnderCollection;
-use App\Http\Resources\TransactionUnderCollection;
-use App\Http\Resources\VersementUnderCollection;
-use App\Http\Resources\WaveUnderCollection;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class UnderCollection extends ResourceCollection
@@ -30,7 +22,7 @@ class UnderCollection extends ResourceCollection
                                 $is_custumer = $data->is_custumers;
                                 $is_under_distributer = $data->is_under_distributer;
                                 $is_company = $data->is_company;
-                                return [
+                                $item = [
                                         'id'      => $data->id,
                                         'firstname' => $data->firstname,
                                         'lastname' => $data->lastname,
@@ -57,18 +49,21 @@ class UnderCollection extends ResourceCollection
                                                 'image' => optional($data->kyc)->image,
                                                 '       ' => optional($data->kyc)->motif,
                                         ],
-                                        // 'transactions' =>   new TransactionUnderCollection($data?->wallet?->walletTransactions),
-                                        // 'Paiements' =>   new PaymentUnderCollection($data->wallet->walletPayments),
-                                        // 'Versements' =>   new VersementUnderCollection($data->wallet->walletBanks),
-                                        // 'Credit telephoniques' =>   new PhoneCreditUnderCollection($data->wallet->walletPhoneCredits),
-                                        // 'Rechargement de carte' =>   new ReloadCardUnderCollection($data->wallet->walletDeposits),
-                                        // 'Rechargement d\'UV' =>   new reloadUnderCollection($data->wallet->walletReloads),
-                                        // 'Commande de carte' =>   new relaoadCardUnderCollection($data->wallet->orderCards),
-                                        // // 'Commande de carte' =>   new relaoadCardUnderCollection($data->wallet->orderCards),
-                                        // 'Transfers inter' =>   new InterTransactionUnderCollection($data->wallet->walletInters),
-                                        // '1xbet' =>   new OneXbetUnderCollection($data->wallet->walletXbets),
-                                        // 'Achat UV wave' =>   new WaveUnderCollection($data->wallet->walletWaves),
                                 ];
+
+                                if ($data->transactions_by_type !== null) {
+                                        $item['transactions_by_type'] = $data->transactions_by_type;
+                                }
+
+                                // if ($data->transactions_details_by_type !== null) {
+                                //         $item['transactions_details_by_type'] = $data->transactions_details_by_type;
+                                // }
+
+                                if ($data->transactions_total !== null) {
+                                        $item['transactions_total'] = $data->transactions_total;
+                                }
+
+                                return $item;
                         })
                 ];
         }

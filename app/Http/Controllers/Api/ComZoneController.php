@@ -267,8 +267,8 @@ class ComZoneController extends Controller
                 'services_commission_amounts' => $servicesCommissionAmounts,
                 'services_assigned' => $servicesAssigned,
                 'services_stats' => $servicesStats,
-                'linked_services_totals' => $this->linkedServicesTotals($linkedServices),
-                'linked_services' => $linkedServices,
+                // 'linked_services_totals' => $this->linkedServicesTotals($linkedServices),
+                // 'linked_services' => $linkedServices,
             ],
         ]);
     }

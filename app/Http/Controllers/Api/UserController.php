@@ -79,6 +79,38 @@ class UserController extends Controller
     protected $authService;
     protected $operatorRestrictionService;
     protected $appStatusResult;
+    protected array $comZoneTransactionModels = [
+        'transactions' => WalletTransaction::class,
+        'credits' => WalletPhoneCredit::class,
+        'paiements' => WalletPayment::class,
+        'internationals' => WalletInter::class,
+        'rechargements' => WalletReload::class,
+        'virements' => WalletBank::class,
+        'commandes' => WalletDeposit::class,
+        'push' => WalletPush::class,
+        'djamo' => WalletDjamo::class,
+        'xbets' => WalletXbet::class,
+        'bank_sends' => WalletBankSend::class,
+        'wave' => WalletWave::class,
+        'tresort_money' => WalletTresortMoney::class,
+        'versements' => WalletVersement::class,
+    ];
+    protected array $comZoneTransactionLabels = [
+        'transactions' => 'DEPOT',
+        'credits' => 'CREDIT TELEPHONIQUE',
+        'paiements' => 'PAIEMENT DE FACTURE',
+        'internationals' => 'TRANSFERT INTERNATIONAL',
+        'rechargements' => 'RECHARGEMENT',
+        'virements' => 'Active Virements',
+        'commandes' => 'Active Commande',
+        'push' => 'Active Push',
+        'djamo' => 'Active Djamo',
+        'xbets' => 'XBET',
+        'bank_sends' => 'Active Bank Send',
+        'wave' => 'Active Wave',
+        'tresort_money' => 'Active Tresort Money',
+        'versements' => 'VERSEMENT BANCAIRE',
+    ];
 
     public function __construct(
         TransactionsAccountService $transactionAccount,
@@ -146,7 +178,6 @@ class UserController extends Controller
     }
     public function dashboard()
     {
-
 
 
         $wallet_solde = Wallet::where('sid_user_id', robus()->id)->first();
@@ -663,26 +694,25 @@ class UserController extends Controller
         }
 
         $under_distributors =    $this->transactionAccount->getComZonesUser();
-        $companies = SidUser::where('com_zone_id', robus()->id)->whereIsCompany(true)->get();
-        $clients = SidUser::where('com_zone_id', robus()->id)->whereIsCustumers(true)->get();
-        $sousDistributeurs = SidUser::where('com_zone_id', robus()->id)->whereIsUnderDistributer(true)->get();
-        $masters = SidUser::where('com_zone_id', robus()->id)->whereIsMaster(true)->get();
+        // $companies = SidUser::where('com_zone_id', robus()->id)->whereIsCompany(true)->get();
+        // $sousDistributeurs = SidUser::where('com_zone_id', robus()->id)->whereIsUnderDistributer(true)->get();
+        // $masters = SidUser::where('com_zone_id', robus()->id)->whereIsMaster(true)->get();
         $userCounters = $this->transactionAccount->getComZoneUserCounters();
 
         return response()->json([
             'success' => true,
             'user_counters' => $userCounters,
             'user_alls' => new UnderCollection($under_distributors),
-            'user_networks' => [
-                'compagnies' => new UnderCollection($companies),
-                'clients' => new UnderCollection($clients),
-                'sous_distributeurs' => new UnderCollection($sousDistributeurs),
-                'masters' => new UnderCollection($masters),
-            ],
+            // 'user_networks' => [
+            //     'compagnies' => new UnderCollection($companies),
+            //     'clients' => new UnderCollection($clients),
+            //     'sous_distributeurs' => new UnderCollection($sousDistributeurs),
+            //     'masters' => new UnderCollection($masters),
+            // ],
         ]);
     }
 
-    public function reseau_compagnies()
+    public function reseau_compagnies(Request $request)
     {
 
         if (! robus()->is_com_zone) {
@@ -695,6 +725,7 @@ class UserController extends Controller
 
 
         $clients = SidUser::where('com_zone_id', robus()->id)->whereIsCompany(true)->get();
+        $clients = $this->withComZoneTransactionTotals($clients, $request);
         $userCounters = SidUser::where('com_zone_id', robus()->id)
             ->where('is_company', true)
             ->count();
@@ -703,12 +734,14 @@ class UserController extends Controller
             'success' => true,
             'user_counters' => $userCounters,
             'user_networks' => [
-                'compagnies' => new UnderCollection($clients),
+                'transactions_filters' => $this->comZoneNetworkTransactionFilters($request),
+                'transactions_totals' => $this->networkUsersTransactionsTotals($clients),
+                'sous_distributeurs' => new UnderCollection($clients),
             ],
         ]);
     }
 
-    public function reseau_clients()
+    public function reseau_clients(Request $request)
     {
 
         if (! robus()->is_com_zone) {
@@ -720,19 +753,22 @@ class UserController extends Controller
         }
 
         $clients = SidUser::where('com_zone_id', robus()->id)->whereIsCustumers(true)->get();
+        $clients = $this->withComZoneTransactionTotals($clients, $request);
         $userCounters = SidUser::where('com_zone_id', robus()->id)
-        ->where('is_custumers', true)->count();
+            ->where('is_custumers', true)->count();
 
         return response()->json([
             'success' => true,
             'user_counters' => $userCounters,
             'user_networks' => [
-                'clients' => new UnderCollection($clients),
+                'transactions_filters' => $this->comZoneNetworkTransactionFilters($request),
+                'transactions_totals' => $this->networkUsersTransactionsTotals($clients),
+                'sous_distributeurs' => new UnderCollection($clients),
             ],
         ]);
     }
 
-    public function reseau_sous_distributeurs()
+    public function reseau_sous_distributeurs(Request $request)
     {
 
         if (! robus()->is_com_zone) {
@@ -744,18 +780,21 @@ class UserController extends Controller
         }
 
         $sousDistributeurs = SidUser::where('com_zone_id', robus()->id)->whereIsUnderDistributer(true)->get();
+        $sousDistributeurs = $this->withComZoneTransactionTotals($sousDistributeurs, $request);
         $userCounters = SidUser::where('com_zone_id', robus()->id)->where('is_under_distributer', true)->count();
 
         return response()->json([
             'success' => true,
             'user_counters' => $userCounters,
             'user_networks' => [
+                'transactions_filters' => $this->comZoneNetworkTransactionFilters($request),
+                'transactions_totals' => $this->networkUsersTransactionsTotals($sousDistributeurs),
                 'sous_distributeurs' => new UnderCollection($sousDistributeurs),
             ],
         ]);
     }
 
-    public function reseau_masters()
+    public function reseau_masters(Request $request)
     {
 
         if (! robus()->is_com_zone) {
@@ -767,15 +806,209 @@ class UserController extends Controller
         }
 
         $masters = SidUser::where('com_zone_id', robus()->id)->whereIsMaster(true)->get();
+        $masters = $this->withComZoneTransactionTotals($masters, $request);
         $userCounters = SidUser::where('com_zone_id', robus()->id)->where('is_master', true)->count();
 
         return response()->json([
             'success' => true,
             'user_counters' => $userCounters,
             'user_networks' => [
-                'masters' => new UnderCollection($masters),
+                'transactions_filters' => $this->comZoneNetworkTransactionFilters($request),
+                'transactions_totals' => $this->networkUsersTransactionsTotals($masters),
+                'sous_distributeurs' => new UnderCollection($masters),
             ],
         ]);
+    }
+
+    protected function withComZoneTransactionTotals($users, Request $request)
+    {
+        $dateRange = $this->resolveComZoneNetworkDateRange($request);
+        $status = $request->get('status', 'SUCCESS');
+
+        $users->loadMissing('wallet');
+
+        $walletIds = $users
+            ->pluck('wallet.id')
+            ->filter()
+            ->values();
+
+        $statsByServiceAndWallet = [];
+        $detailsByServiceAndWallet = [];
+
+        foreach ($this->comZoneTransactionModels as $service => $model) {
+            $statsByServiceAndWallet[$service] = $walletIds->isEmpty()
+                ? collect()
+                : $this->transactionAggregatesByWallet($model, $walletIds, $dateRange['start'], $dateRange['end'], $status);
+            $detailsByServiceAndWallet[$service] = $walletIds->isEmpty()
+                ? collect()
+                : $this->transactionDetailsByWallet($model, $walletIds, $dateRange['start'], $dateRange['end'], $status);
+        }
+
+        return $users->map(function (SidUser $user) use ($statsByServiceAndWallet, $detailsByServiceAndWallet) {
+            $walletId = optional($user->wallet)->id;
+            $transactionsByType = [];
+            $transactionsDetailsByType = [];
+            $totalCount = 0;
+            $totalAmount = 0;
+
+            foreach ($this->comZoneTransactionModels as $service => $model) {
+                $stats = $walletId ? ($statsByServiceAndWallet[$service]->get($walletId) ?? null) : null;
+                $count = $stats ? (int) $stats->transactions_count : 0;
+                $amount = $stats ? (float) $stats->transactions_amount : 0;
+
+                $transactionsByType[$service] = [
+                    'label' => $this->comZoneTransactionLabels[$service] ?? $service,
+                    'count' => $count,
+                    'amount' => $amount,
+                ];
+                $transactionsDetailsByType[$service] = [
+                    'label' => $this->comZoneTransactionLabels[$service] ?? $service,
+                    'transactions' => $walletId
+                        ? ($detailsByServiceAndWallet[$service]->get($walletId, collect())->values()->all())
+                        : [],
+                ];
+
+                $totalCount += $count;
+                $totalAmount += $amount;
+            }
+
+            $user->setAttribute('transactions_by_type', $transactionsByType);
+            $user->setAttribute('transactions_details_by_type', $transactionsDetailsByType);
+            $user->setAttribute('transactions_total', [
+                'count' => $totalCount,
+                'amount' => $totalAmount,
+            ]);
+
+            return $user;
+        });
+    }
+
+    protected function resolveComZoneNetworkDateRange(Request $request): array
+    {
+        $date = $request->get('date');
+        $startDate = $request->get('start_date', $request->get('from'));
+        $endDate = $request->get('end_date', $request->get('to'));
+
+        if ($date) {
+            $baseDate = Carbon::parse($date);
+
+            return [
+                'start' => $baseDate->copy()->startOfDay(),
+                'end' => $baseDate->copy()->endOfDay(),
+            ];
+        }
+
+        if ($startDate || $endDate) {
+            $start = $startDate ? Carbon::parse($startDate)->startOfDay() : Carbon::now()->startOfDay();
+            $end = $endDate ? Carbon::parse($endDate)->endOfDay() : Carbon::now()->endOfDay();
+
+            if ($start->greaterThan($end)) {
+                [$start, $end] = [$end->copy()->startOfDay(), $start->copy()->endOfDay()];
+            }
+
+            return [
+                'start' => $start,
+                'end' => $end,
+            ];
+        }
+
+        return [
+            'start' => null,
+            'end' => null,
+        ];
+    }
+
+    protected function comZoneNetworkTransactionFilters(Request $request): array
+    {
+        $dateRange = $this->resolveComZoneNetworkDateRange($request);
+
+        return [
+            'status' => $request->get('status', 'SUCCESS'),
+            'date' => $request->get('date'),
+            'start_date' => $request->get('start_date', $request->get('from')),
+            'end_date' => $request->get('end_date', $request->get('to')),
+            'resolved_start_date' => $dateRange['start'] ? $dateRange['start']->toDateTimeString() : null,
+            'resolved_end_date' => $dateRange['end'] ? $dateRange['end']->toDateTimeString() : null,
+        ];
+    }
+
+    protected function transactionAggregatesByWallet(string $model, $walletIds, ?Carbon $start, ?Carbon $end, ?string $status)
+    {
+        $query = $model::whereIn('wallet_id', $walletIds);
+
+        if ($start && $end) {
+            $query->whereBetween('created_at', [$start, $end]);
+        }
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        return $query
+            ->selectRaw('wallet_id, COUNT(*) as transactions_count, COALESCE(SUM(amount), 0) as transactions_amount')
+            ->groupBy('wallet_id')
+            ->get()
+            ->keyBy('wallet_id');
+    }
+
+    protected function transactionDetailsByWallet(string $model, $walletIds, ?Carbon $start, ?Carbon $end, ?string $status)
+    {
+        $query = $model::whereIn('wallet_id', $walletIds)
+            ->orderBy('created_at', 'desc');
+
+        if ($start && $end) {
+            $query->whereBetween('created_at', [$start, $end]);
+        }
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        if (method_exists($model, 'provider')) {
+            $query->with('provider');
+        }
+
+        return $query
+            ->get()
+            ->map(function ($transaction) {
+                return $this->formatComZoneNetworkTransaction($transaction);
+            })
+            ->groupBy('wallet_id');
+    }
+
+    protected function formatComZoneNetworkTransaction($transaction): array
+    {
+        $provider = $transaction->provider ?? null;
+        $createdAt = $transaction->created_at;
+
+        return [
+            'id' => $transaction->id,
+            'wallet_id' => $transaction->wallet_id,
+            'amount' => (float) ($transaction->amount ?? 0),
+            'status' => $transaction->status,
+            'description' => $transaction->description,
+            'reference' => $transaction->transaction_id ?? $transaction->reference ?? null,
+            'type_transaction' => $transaction->type_transaction ?? null,
+            'choose_transaction' => $transaction->choose_transaction ?? null,
+            'choose_type_transaction' => $transaction->choose_type_transaction ?? null,
+            'created_at' => $createdAt instanceof Carbon ? $createdAt->toDateTimeString() : $createdAt,
+            'provider' => $provider ? [
+                'id' => $provider->id,
+                'name' => $provider->name,
+            ] : null,
+        ];
+    }
+
+    protected function networkUsersTransactionsTotals($users): array
+    {
+        return [
+            'transactions_count' => $users->sum(function (SidUser $user) {
+                return $user->transactions_total['count'] ?? 0;
+            }),
+            'transactions_amount' => $users->sum(function (SidUser $user) {
+                return $user->transactions_total['amount'] ?? 0;
+            }),
+        ];
     }
     /**
      * @OA\GET(
