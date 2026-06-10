@@ -104,6 +104,9 @@ class SidUser extends Authenticatable
     }
 
 
+    
+    
+
     public function walletDrawal()
     {
         return $this->hasOne(WalletDrawal::class)->withTrashed();

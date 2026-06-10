@@ -185,7 +185,7 @@
                         <li>
 
                             <a href="{{ route('company.browse') }}"
-                                class="menu {{ $route == 'company.browse' || $route == 'company.show_company' || $route == 'admin.add_company' ? 'menu--active' : '' }}">
+                                class="menu {{ $route == 'company.browse' || $route == 'company.show' || $route == 'admin.add_company' ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i data-feather="user-check" class="block mx-auto"></i>
                                 </div>
                                 <div class="menu__title"> Societés </div>

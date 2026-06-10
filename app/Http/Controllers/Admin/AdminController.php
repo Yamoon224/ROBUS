@@ -27,6 +27,7 @@ use App\Models\PercentCompanie;
 use App\Models\Operator;
 use App\Models\OperatorService;
 use App\Models\Sid\SidUser;
+use App\Models\Visite;
 use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletBank;
 use App\Models\Wallets\WalletDeposit;
@@ -69,6 +70,23 @@ class AdminController extends Controller
     protected $createUserService;
     private $authService;
     protected $appStatusResult;
+
+    protected array $comZoneTransactionModels = [
+        'transactions' => WalletTransaction::class,
+        'credits' => WalletPhoneCredit::class,
+        'paiements' => WalletPayment::class,
+        'internationals' => WalletInter::class,
+        'rechargements' => WalletReload::class,
+        'virements' => WalletBank::class,
+        'commandes' => WalletDeposit::class,
+        'push' => WalletPush::class,
+        'djamo' => WalletDjamo::class,
+        'xbets' => WalletXbet::class,
+        'bank_sends' => WalletBankSend::class,
+        'wave' => WalletWave::class,
+        'tresort_money' => WalletTresortMoney::class,
+        'versements' => WalletVersement::class,
+    ];
 
     public function __construct(
         TransactionsAccountService $transactionAccountService,
@@ -1771,50 +1789,218 @@ class AdminController extends Controller
     }
 
 
+    protected function resolveComZoneNetworkDateRange(Request $request): array
+    {
+        $date = $request->get('date');
+        $startDate = $request->get('start_date', $request->get('from'));
+        $endDate = $request->get('end_date', $request->get('to'));
+
+        if ($date) {
+            $baseDate = Carbon::parse($date);
+
+            return [
+                'start' => $baseDate->copy()->startOfDay(),
+                'end' => $baseDate->copy()->endOfDay(),
+            ];
+        }
+
+        if ($startDate || $endDate) {
+            $start = $startDate ? Carbon::parse($startDate)->startOfDay() : Carbon::now()->startOfDay();
+            $end = $endDate ? Carbon::parse($endDate)->endOfDay() : Carbon::now()->endOfDay();
+
+            if ($start->greaterThan($end)) {
+                [$start, $end] = [$end->copy()->startOfDay(), $start->copy()->endOfDay()];
+            }
+
+            return [
+                'start' => $start,
+                'end' => $end,
+            ];
+        }
+
+        return [
+            'start' => null,
+            'end' => null,
+        ];
+    }
+
+    protected function withComZoneTransactionTotals($users, Request $request)
+    {
+        $dateRange = $this->resolveComZoneNetworkDateRange($request);
+        $status = $request->get('status', 'SUCCESS');
+
+        $users->loadMissing('wallet');
+
+        $walletIds = $users
+            ->pluck('wallet.id')
+            ->filter()
+            ->values();
+
+        $statsByServiceAndWallet = [];
+        $detailsByServiceAndWallet = [];
+
+        foreach ($this->comZoneTransactionModels as $service => $model) {
+            $statsByServiceAndWallet[$service] = $walletIds->isEmpty()
+                ? collect()
+                : $this->transactionAggregatesByWallet($model, $walletIds, $dateRange['start'], $dateRange['end'], $status);
+            $detailsByServiceAndWallet[$service] = $walletIds->isEmpty()
+                ? collect()
+                : $this->transactionDetailsByWallet($model, $walletIds, $dateRange['start'], $dateRange['end'], $status);
+        }
+
+        return $users->map(function (SidUser $user) use ($statsByServiceAndWallet, $detailsByServiceAndWallet) {
+            $walletId = optional($user->wallet)->id;
+            $transactionsByType = [];
+            $transactionsDetailsByType = [];
+            $totalCount = 0;
+            $totalAmount = 0;
+
+            foreach ($this->comZoneTransactionModels as $service => $model) {
+                $stats = $walletId ? ($statsByServiceAndWallet[$service]->get($walletId) ?? null) : null;
+                $count = $stats ? (int) $stats->transactions_count : 0;
+                $amount = $stats ? (float) $stats->transactions_amount : 0;
+
+                $transactionsByType[$service] = [
+                    'label' => $this->comZoneTransactionLabels[$service] ?? $service,
+                    'count' => $count,
+                    'amount' => $amount,
+                ];
+                $transactionsDetailsByType[$service] = [
+                    'label' => $this->comZoneTransactionLabels[$service] ?? $service,
+                    'transactions' => $walletId
+                        ? ($detailsByServiceAndWallet[$service]->get($walletId, collect())->values()->all())
+                        : [],
+                ];
+
+                $totalCount += $count;
+                $totalAmount += $amount;
+            }
+
+            $user->setAttribute('transactions_by_type', $transactionsByType);
+            $user->setAttribute('transactions_details_by_type', $transactionsDetailsByType);
+            $user->setAttribute('transactions_total', [
+                'count' => $totalCount,
+                'amount' => $totalAmount,
+            ]);
+
+            return $user;
+        });
+    }
+
+    protected function transactionAggregatesByWallet(string $model, $walletIds, ?Carbon $start, ?Carbon $end, ?string $status)
+    {
+        $query = $model::whereIn('wallet_id', $walletIds);
+
+        if ($start && $end) {
+            $query->whereBetween('created_at', [$start, $end]);
+        }
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        return $query
+            ->selectRaw('wallet_id, COUNT(*) as transactions_count, COALESCE(SUM(amount), 0) as transactions_amount')
+            ->groupBy('wallet_id')
+            ->get()
+            ->keyBy('wallet_id');
+    }
+
+    protected function transactionDetailsByWallet(string $model, $walletIds, ?Carbon $start, ?Carbon $end, ?string $status)
+    {
+        $query = $model::whereIn('wallet_id', $walletIds)
+            ->orderBy('created_at', 'desc');
+
+        if ($start && $end) {
+            $query->whereBetween('created_at', [$start, $end]);
+        }
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        if (method_exists($model, 'provider')) {
+            $query->with('provider');
+        }
+
+        return $query
+            ->get()
+            ->map(function ($transaction) {
+                return $this->formatComZoneNetworkTransaction($transaction);
+            })
+            ->groupBy('wallet_id');
+    }
+
+    protected function formatComZoneNetworkTransaction($transaction): array
+    {
+        $provider = $transaction->provider ?? null;
+        $createdAt = $transaction->created_at;
+
+        return [
+            'id' => $transaction->id,
+            'wallet_id' => $transaction->wallet_id,
+            'amount' => (float) ($transaction->amount ?? 0),
+            'status' => $transaction->status,
+            'description' => $transaction->description,
+            'reference' => $transaction->transaction_id ?? $transaction->reference ?? null,
+            'type_transaction' => $transaction->type_transaction ?? null,
+            'choose_transaction' => $transaction->choose_transaction ?? null,
+            'choose_type_transaction' => $transaction->choose_type_transaction ?? null,
+            'created_at' => $createdAt instanceof Carbon ? $createdAt->toDateTimeString() : $createdAt,
+            'provider' => $provider ? [
+                'id' => $provider->id,
+                'name' => $provider->name,
+            ] : null,
+        ];
+    }
     public function showComzones(int $id, Request $request, ComZoneCommissionService $comZoneCommissionService)
     {
-
+        // Vérification des permissions
         if (!Auth::guard('web')->user()->hasPermissionTo('voir-sous-distributeurs')) {
             abort(403);
         }
 
+        // Récupération de l'utilisateur
+        $user = SidUser::with('operator_services.operator')->find($id);
 
-        $user = SidUser::whereId($id)->with('operator_services.operator')->first();
+        if (!$user) {
+            abort(404, 'Utilisateur non trouvé');
+        }
 
-        $wallet_solde = Wallet::where('sid_user_id', $user->id)->first();
-
-        $usersCountry = Auth::guard('web')->user()->country->currencie->name;
-
-        $kycs = $user->kyc()->get() ?? null;
-
+        // Récupération des autres données (non liées aux listes)
+        $walletSolde = Wallet::where('sid_user_id', $user->id)->first();
+        $currentUser = Auth::guard('web')->user();
+        $usersCountry = $currentUser?->country?->currencie?->name ?? 'XOF';
+        $kycs = $user->kyc()->get();
         $roles = Role::all();
-
         $countries = Country::where('status', true)->get();
 
-        // Execeptions
-        $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
-        $operators = Operator::whereStatus(true)->whereIsCom(true)->orderBy("name", 'desc')->get();
+        $operators = Operator::where('status', true)
+            ->where('is_com', true)
+            ->orderBy('name', 'desc')
+            ->get();
+
         $operatorServices = OperatorService::where('sid_user_id', $user->id)
-            ->whereIn('operator_id', $operators->pluck('id')->all())
+            ->whereIn('operator_id', $operators->pluck('id')->toArray())
             ->get()
             ->keyBy('operator_id');
-        $old_operators = $operatorServices->keys()->toArray();
+
+        $oldOperators = $operatorServices->keys()->toArray();
         $comZoneServiceTransactions = $comZoneCommissionService->transactionsForComZone($user);
 
         return view('pages.admin.show_comzones', compact(
             'user',
+            'walletSolde',
             'operators',
-            'old_operators',
+            'oldOperators',
             'operatorServices',
             'comZoneServiceTransactions',
             'roles',
             'countries',
             'usersCountry',
             'kycs'
-
         ));
     }
-
     public function comzoneStatistics(ComZoneCommissionService $comZoneCommissionService)
     {
         if (!Auth::guard('web')->user()->hasPermissionTo('voir-sous-distributeurs')) {
@@ -1878,7 +2064,7 @@ class AdminController extends Controller
             'sid_user_id' => $user->id,
             'operator_id' => $operatorId,
         ]);
-        
+
         $operatorService->numbers = $validated['numbers'] ?? null;
         $operatorService->amount = $validated['amount'] ?? 0;
         $operatorService->commission = $validated['commission'] ?? 0;

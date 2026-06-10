@@ -205,6 +205,15 @@ class UserController extends Controller
         }
     }
 
+    public function browse_vistes()
+    {
+        if (Auth::guard('web')->user()->hasPermissionTo('voir-clients')) {
+
+            return view('pages.custumers.browse_visite');
+        } else {
+            abort(403);
+        }
+    }
     public function browseunders()
     {
 

@@ -153,6 +153,8 @@ Route::group(['prefix' => ''], function () {
         //Com zones
         Route::prefix('comzones')->group(function () {
             Route::get('/browse', [UserController::class, 'browse_comzone'])->name('comzones.admins.browse');
+            Route::get('/visites', [UserController::class, 'browse_vistes'])->name('browse_vistes.admins.browse');
+            Route::get('visites/show/{id}', [AdminController::class, 'showvisitesComzones'])->name('showvisitesComzones.admins.show');
             Route::get('/add', [AdminController::class, 'add_com_zone'])->name('comzones.admins.add');
             Route::post('/store', [MasterController::class, 'store_comzones'])->name('comzones.admin.store');
             Route::get('/statistics', [AdminController::class, 'comzoneStatistics'])->name('comzones.admins.statistics');
@@ -201,7 +203,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/show/{id}', [UserController::class, 'show'])->name('custumers.show');
             Route::get('/edit/{id}', [UserController::class, 'show_edit'])->name('custumers.show_edit');
             Route::post('update/{id}/store', [UserController::class, 'edit_custumers'])->name('custumers.edit_custumers');
-            Route::get('/show_company/{id}', [UserController::class, 'show_company'])->name('company.show_company');
+            Route::get('/show_company/{id}', [UserController::class, 'show_company'])->name('company.show');
             Route::get('/show_comzone/{id}', [UserController::class, 'show_comzone'])->name('comzone.show_comzone');
             Route::post('/update_custumers/{id}', [UserController::class, 'update_custumers'])->name('custumers.update_custumers');
             Route::post('/update_validated/{id}', [UserController::class, 'update_validated'])->name('prospects.update_documents');

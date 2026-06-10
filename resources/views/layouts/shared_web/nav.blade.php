@@ -134,7 +134,7 @@
                             <li>
 
                                 <a href="{{ route('company.browse') }}"
-                                    class="side-menu {{ $route == 'company.browse' || $route == 'company.show_company' || $route == 'admin.add_company' ? 'side-menu--active' : '' }}">
+                                    class="side-menu {{ $route == 'company.browse' || $route == 'company.show' || $route == 'admin.add_company' ? 'side-menu--active' : '' }}">
                                     <div class="side-menu__icon"> <i data-feather="user-check"
                                             class="block mx-auto"></i>
                                     </div>

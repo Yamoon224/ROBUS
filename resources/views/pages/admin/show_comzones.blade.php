@@ -191,113 +191,154 @@ $operatorServices = $operatorServices ?? collect();
 <div class="intro-y box p-5 mt-5">
     <div class="flex items-center border-b border-slate-200/60 dark:border-darkmode-400 pb-3 mb-5">
         <h2 class="font-medium text-base mr-auto flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-pie text-primary"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M12 3v9l6 6"/><path d="M12 3a9 9 0 0 1 9 9"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-chart-pie text-primary">
+                <path d="M21 12a9 9 0 1 1-9-9" />
+                <path d="M12 3v9l6 6" />
+                <path d="M12 3a9 9 0 0 1 9 9" />
+            </svg>
             Transactions par service COM Zone
         </h2>
     </div>
 
     <div class="space-y-6">
         @forelse ($comZoneServiceTransactions ?? [] as $service)
-            <div class="border border-slate-200 dark:border-darkmode-400 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
-                <!-- Entête du service -->
-                <div class="bg-gradient-to-r from-slate-50 to-white dark:from-darkmode-600 dark:to-darkmode-700 px-5 py-4 border-b border-slate-100 dark:border-darkmode-400">
-                    <div class="flex flex-wrap justify-between items-center gap-3">
-                        <div>
-                            <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                                <span class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up text-primary"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
-                                </span>
-                                {{ $service['name'] }}
-                            </h3>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                                {{ $service['transactions_count'] }} transaction(s)
+        <div
+            class="border border-slate-200 dark:border-darkmode-400 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
+            <!-- Entête du service -->
+            <div
+                class="bg-gradient-to-r from-slate-50 to-white dark:from-darkmode-600 dark:to-darkmode-700 px-5 py-4 border-b border-slate-100 dark:border-darkmode-400">
+                <div class="flex flex-wrap justify-between items-center gap-3">
+                    <div>
+                        <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                            <span class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-trending-up text-primary">
+                                    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6" />
+                                    <polyline points="17 18 23 18 23 12" />
+                                </svg>
+                            </span>
+                            {{ $service['name'] }}
+                        </h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                            {{ $service['transactions_count'] }} transaction(s)
+                        </p>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="bg-emerald-50 dark:bg-emerald-950/30 rounded-lg px-4 py-2 text-center">
+                            <p class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Montant total</p>
+                            <p class="text-lg font-bold text-emerald-700 dark:text-emerald-300">
+                                {{ number_format($service['transactions_amount'], 2, ',', ' ') }} {{ $currencie ?? '' }}
                             </p>
                         </div>
-                        <div class="flex gap-3">
-                            <div class="bg-emerald-50 dark:bg-emerald-950/30 rounded-lg px-4 py-2 text-center">
-                                <p class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Montant total</p>
-                                <p class="text-lg font-bold text-emerald-700 dark:text-emerald-300">
-                                    {{ number_format($service['transactions_amount'], 2, ',', ' ') }} {{ $currencie ?? '' }}
-                                </p>
-                            </div>
-                            <div class="bg-blue-50 dark:bg-blue-950/30 rounded-lg px-4 py-2 text-center">
-                                <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">Commission COM Zone</p>
-                                <p class="text-lg font-bold text-blue-700 dark:text-blue-300">
-                                    {{ number_format($service['commission'], 2, ',', ' ') }} {{ $currencie ?? '' }}
-                                </p>
-                            </div>
+                        <div class="bg-blue-50 dark:bg-blue-950/30 rounded-lg px-4 py-2 text-center">
+                            <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">Commission COM Zone</p>
+                            <p class="text-lg font-bold text-blue-700 dark:text-blue-300">
+                                {{ number_format($service['commission'], 2, ',', ' ') }} {{ $currencie ?? '' }}
+                            </p>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Tableau des transactions -->
-                <div class="overflow-x-auto">
-                    <table class="table w-full">
-                        <thead class="bg-slate-100 dark:bg-darkmode-400">
-                            <tr>
-                                <th class="px-5 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">Date</th>
-                                <th class="px-5 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">Client</th>
-                                <th class="px-5 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">Opérateur</th>
-                                <th class="px-5 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">Montant</th>
-                                <th class="px-5 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">Statut</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-200 dark:divide-darkmode-400">
-                            @forelse ($service['transactions'] as $transaction)
-                                <tr>
-                                    <td class="px-5 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
-                                        {{ optional($transaction->created_at)->format('d/m/Y H:i') ?? '—' }}
-                                    </td>
-                                    <td class="px-5 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
-                                        {{ optional($transaction->wallet->sidUser)->firstname ?? '' }}
-                                        {{ optional($transaction->wallet->sidUser)->lastname ?? '' }}
-                                        @if(!optional($transaction->wallet->sidUser)->firstname && !optional($transaction->wallet->sidUser)->lastname)
-                                            <span class="text-slate-400">Client inconnu</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-5 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
-                                        {{ $transaction->provider->name ?? '-' }}
-                                    </td>
-                                    <td class="px-5 py-3 whitespace-nowrap text-right text-sm font-medium text-slate-700 dark:text-slate-200">
-                                        {{ number_format($transaction->amount ?? 0, 2, ',', ' ') }} {{ $currencie ?? '' }}
-                                    </td>
-                                    <td class="px-5 py-3 whitespace-nowrap text-center">
-                                        @php
-                                            $status = strtolower($transaction->status ?? '');
-                                            $badgeClass = match($status) {
-                                                'succès', 'success', 'completed' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-                                                'pending', 'en attente' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-                                                'failed', 'échoué' => 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-                                                default => 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-                                            };
-                                        @endphp
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $badgeClass }}">
-                                            {{ $transaction->status ?? '—' }}
-                                        </span>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="px-5 py-8 text-center text-slate-500 dark:text-slate-400">
-                                        <div class="flex flex-col items-center gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-inbox"><polyline points="22 12 18 12 15 21 9 21 6 12 2 12"/><path d="M12 2v6"/><line x1="2" x2="22" y1="12" y2="12"/></svg>
-                                            <span>Aucune transaction pour ce service</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
+            <!-- Tableau des transactions -->
+            <div class="overflow-x-auto">
+                <table class="table w-full">
+                    <thead class="bg-slate-100 dark:bg-darkmode-400">
+                        <tr>
+                            <th
+                                class="px-5 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                                Date</th>
+                            <th
+                                class="px-5 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                                Client</th>
+                            <th
+                                class="px-5 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                                Opérateur</th>
+                            <th
+                                class="px-5 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                                Montant</th>
+                            <th
+                                class="px-5 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                                Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 dark:divide-darkmode-400">
+                        @forelse ($service['transactions'] as $transaction)
+                        <tr>
+                            <td class="px-5 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
+                                {{ optional($transaction->created_at)->format('d/m/Y H:i') ?? '—' }}
+                            </td>
+                            <td class="px-5 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
+                                {{ optional($transaction->wallet->sidUser)->firstname ?? '' }}
+                                {{ optional($transaction->wallet->sidUser)->lastname ?? '' }}
+                                @if(!optional($transaction->wallet->sidUser)->firstname &&
+                                !optional($transaction->wallet->sidUser)->lastname)
+                                <span class="text-slate-400">Client inconnu</span>
+                                @endif
+                            </td>
+                            <td class="px-5 py-3 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">
+                                {{ $transaction->provider->name ?? '-' }}
+                            </td>
+                            <td
+                                class="px-5 py-3 whitespace-nowrap text-right text-sm font-medium text-slate-700 dark:text-slate-200">
+                                {{ number_format($transaction->amount ?? 0, 2, ',', ' ') }} {{ $currencie ?? '' }}
+                            </td>
+                            <td class="px-5 py-3 whitespace-nowrap text-center">
+                                @php
+                                $status = strtolower($transaction->status ?? '');
+                                $badgeClass = match($status) {
+                                'succès', 'success', 'completed' => 'bg-emerald-100 text-emerald-700
+                                dark:bg-emerald-900/30 dark:text-emerald-400',
+                                'pending', 'en attente' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/30
+                                dark:text-amber-400',
+                                'failed', 'échoué' => 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+                                default => 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                                };
+                                @endphp
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $badgeClass }}">
+                                    {{ $transaction->status ?? '—' }}
+                                </span>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="px-5 py-8 text-center text-slate-500 dark:text-slate-400">
+                                <div class="flex flex-col items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" class="lucide lucide-inbox">
+                                        <polyline points="22 12 18 12 15 21 9 21 6 12 2 12" />
+                                        <path d="M12 2v6" />
+                                        <line x1="2" x2="22" y1="12" y2="12" />
+                                    </svg>
+                                    <span>Aucune transaction pour ce service</span>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
+        </div>
         @empty
-            <div class="text-center py-12">
-                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-darkmode-400 mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-slash"><circle cx="12" cy="12" r="10"/><line x1="3" y1="3" x2="21" y2="21"/></svg>
-                </div>
-                <p class="text-slate-500 dark:text-slate-400 text-lg">Aucun service configuré pour cette COM Zone</p>
-                <p class="text-slate-400 dark:text-slate-500 text-sm mt-1">Les transactions apparaîtront ici dès que des services seront rattachés.</p>
+        <div class="text-center py-12">
+            <div
+                class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-darkmode-400 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-circle-slash">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="3" y1="3" x2="21" y2="21" />
+                </svg>
             </div>
+            <p class="text-slate-500 dark:text-slate-400 text-lg">Aucun service configuré pour cette COM Zone</p>
+            <p class="text-slate-400 dark:text-slate-500 text-sm mt-1">Les transactions apparaîtront ici dès que des
+                services seront rattachés.</p>
+        </div>
         @endforelse
     </div>
 </div>
@@ -338,10 +379,10 @@ $operatorServices = $operatorServices ?? collect();
 
 </div>
 <!-- END: Profile Info -->
-
-
-
 <div class="tab-content mt-6">
+
+    {{-- Section des filtres --}}
+
 
     <div id="doc" class="tab-pane active" role="tabpanel" aria-labelledby="doc-tab">
 
@@ -966,7 +1007,52 @@ $operatorServices = $operatorServices ?? collect();
         @livewire('transaction-details.transactions-users', ['walletAllTransactions' => $user->id])
 
     </div>
-   
+    <div id="custumers" class="tab-pane " role="tabpanel" aria-labelledby="custumers-tab">
+
+        @livewire('users-detail-list', [
+        'comZoneId' => $user->id,
+        'userType' => 'customers',
+        'routePrefix' => 'custumers',
+        'title' => 'Clients'
+        ])
+
+    </div>
+    <div id="sd" class="tab-pane " role="tabpanel" aria-labelledby="sd-tab">
+
+        @livewire('users-detail-list', [
+        'comZoneId' => $user->id,
+        'userType' => 'distributors',
+        'routePrefix' => 'unders.admins',
+        'title' => 'Sous-distributeurs'
+        ])
+
+    </div>
+    <div id="company" class="tab-pane " role="tabpanel" aria-labelledby="company-tab">
+
+        @livewire('users-detail-list', [
+        'comZoneId' => $user->id,
+        'userType' => 'company',
+        'routePrefix' => 'company',
+        'title' => 'Entreprises'
+        ])
+
+    </div>
+    <div id="masters" class="tab-pane " role="tabpanel" aria-labelledby="masters-tab">
+
+        @livewire('users-detail-list', [
+        'comZoneId' => $user->id,
+        'userType' => 'masters',
+        'routePrefix' => 'masters',
+        'title' => 'Masters'
+        ])
+    </div>
+
+    <div id="visites" class="tab-pane " role="tabpanel" aria-labelledby="visites-tab">
+        @livewire('visited-comzone', ['userId' => $user->id])
+    </div>
+
+
+
 </div>
 
 @endsection
