@@ -9,7 +9,7 @@ use App\Models\Visite;
 class VisitedComzone extends Component
 {
 
-      use WithPagination;
+    use WithPagination;
 
     public $userId;
     public $search = '';

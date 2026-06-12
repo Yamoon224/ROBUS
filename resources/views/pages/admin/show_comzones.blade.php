@@ -1050,6 +1050,9 @@ $operatorServices = $operatorServices ?? collect();
     <div id="visites" class="tab-pane " role="tabpanel" aria-labelledby="visites-tab">
         @livewire('visited-comzone', ['userId' => $user->id])
     </div>
+     <div id="stats" class="tab-pane " role="tabpanel" aria-labelledby="stats-tab">
+        @livewire('stats-visite', ['userId' => $user->id])
+    </div>
 
 
 

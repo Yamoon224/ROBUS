@@ -19,17 +19,17 @@ class UsersVisites extends Component
     public $startDate = null;
     public $endDate = null;
     public $perPage = 15;
-    
+
     // Tri
     public $sortField = 'created_at';
     public $sortAsc = false;
-    
+
     // Filtres utilisateur
     public $sidUserId;
     public $userStatus = "";
     public $userCountry = "";
     public $userCity = "";
-    
+
     // Filtres géographiques
     public $countries = [];
     public $cities = [];
@@ -38,16 +38,22 @@ class UsersVisites extends Component
     public $showDetailsModal = false;
     public $selectedVisite = null;
 
+    // ==================== MOUNT ====================
+
     public function mount($sidUserId = null)
     {
         $this->sidUserId = $sidUserId;
         $this->loadCountries();
     }
 
+    // ==================== CHARGEMENT ====================
+
     public function loadCountries()
     {
         $this->countries = Country::where('status', true)->get();
     }
+
+    // ==================== MODAL ====================
 
     public function viewDetails($visiteId)
     {
@@ -60,6 +66,8 @@ class UsersVisites extends Component
         $this->showDetailsModal = false;
         $this->selectedVisite = null;
     }
+
+    // ==================== MISE À JOUR DES FILTRES ====================
 
     public function updatedUserCountry($countryId)
     {
@@ -76,94 +84,71 @@ class UsersVisites extends Component
 
     public function resetFilters()
     {
-        $this->search = "";
+        $this->search      = "";
         $this->statusFilter = "";
-        $this->startDate = null;
-        $this->endDate = null;
-        $this->userStatus = "";
+        $this->startDate   = null;
+        $this->endDate     = null;
+        $this->userStatus  = "";
         $this->userCountry = "";
-        $this->userCity = "";
-        $this->citySearch = "";
-        $this->perPage = 15;
-        $this->sortField = 'created_at';
-        $this->sortAsc = false;
+        $this->userCity    = "";
+        $this->citySearch  = "";
+        $this->perPage     = 15;
+        $this->sortField   = 'created_at';
+        $this->sortAsc     = false;
         $this->resetPage();
     }
 
+    // ==================== LOGIQUE D'ACCÈS ====================
+
     /**
-     * Récupère les IDs des utilisateurs autorisés selon le rôle
+     * Récupère les IDs des utilisateurs autorisés selon le rôle :
+     *
+     * - Si un sidUserId est passé en paramètre → uniquement cet utilisateur
+     * - Si is_com_zone = true  → uniquement ses propres visites
+     * - Si is_com_zone = false → toutes les visites (tableau vide = pas de filtre)
      */
-    private function getAllowedUserIds()
+    private function getAllowedUserIds(): array
     {
         $user = sabdy();
-        
-        // Si un ID spécifique est passé en paramètre
+
+        // Paramètre explicite passé depuis la route/composant
         if ($this->sidUserId) {
             return [$this->sidUserId];
         }
-        
-        // 🔥 CAS 1: L'utilisateur est une ZONE DE CONFIANCE (com_zone)
-        // Il doit voir les visites de TOUS les utilisateurs de sa zone
+
+        // COM Zone : voit uniquement SES propres visites
         if ($user->is_com_zone) {
-            // Récupérer tous les utilisateurs qui appartiennent à cette zone
-            // La relation est : sidUser.com_zone_id = $user->id
-            $userIds = SidUser::where('com_zone_id', $user->id)->pluck('id')->toArray();
-            
-            // Ajouter l'utilisateur lui-même s'il n'est pas déjà dans la liste
-            if (!in_array($user->id, $userIds)) {
-                $userIds[] = $user->id;
-            }
-            
-            return $userIds;
+            return [$user->id];
         }
-        
-        // 🔥 CAS 2: L'utilisateur est un MASTER
-        // Il voit les visites de ses sous-distributeurs
-        if ($user->is_master) {
-            $userIds = SidUser::where('master_id', $user->id)->pluck('id')->toArray();
-            $userIds[] = $user->id;
-            return $userIds;
-        }
-        
-        // 🔥 CAS 3: L'utilisateur est un SOUS-DISTRIBUTEUR
-        // Il voit ses propres visites et celles de ses clients
-        if ($user->is_under_distributer) {
-            $userIds = SidUser::where('under_distributer_id', $user->id)->pluck('id')->toArray();
-            $userIds[] = $user->id;
-            return $userIds;
-        }
-        
-        // 🔥 CAS 4: Par défaut, l'utilisateur ne voit que ses propres visites
-        return [$user->id];
+
+        // Pas un COM Zone : voit TOUTES les visites (aucun filtre sur les IDs)
+        return [];
     }
 
-    /**
-     * Construit la requête des visites
-     */
+    // ==================== REQUÊTE PRINCIPALE ====================
+
     public function getVisitesQuery()
     {
         $allowedUserIds = $this->getAllowedUserIds();
-        
-        \Log::info('IDs autorisés pour les visites :', $allowedUserIds);
-        
-        $query = Visite::query()
-            ->with(['sidUser', 'wallet']);
-        
-        // 🔥 FILTRE PRINCIPAL : Ne montrer que les visites des utilisateurs autorisés
+
+        $query = Visite::query()->with(['sidUser', 'wallet']);
+
+        // Filtre sur les utilisateurs autorisés (ignoré si tableau vide)
         if (!empty($allowedUserIds)) {
             $query->whereIn('sidUser_id', $allowedUserIds);
         }
-        
-        // Filtre par recherche
+
+        // Recherche textuelle
         if ($this->search) {
-            $query->where(function ($q) {
-                $q->where('id', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('sidUser', function ($q) {
-                        $q->where('name', 'like', '%' . $this->search . '%')
-                            ->orWhere('firstname', 'like', '%' . $this->search . '%')
-                            ->orWhere('email', 'like', '%' . $this->search . '%')
-                            ->orWhere('phone', 'like', '%' . $this->search . '%');
-                    });
+            $search = $this->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('id', 'like', '%' . $search . '%')
+                  ->orWhereHas('sidUser', function ($q) use ($search) {
+                      $q->where('name', 'like', '%' . $search . '%')
+                        ->orWhere('firstname', 'like', '%' . $search . '%')
+                        ->orWhere('email', 'like', '%' . $search . '%')
+                        ->orWhere('phone', 'like', '%' . $search . '%');
+                  });
             });
         }
 
@@ -174,53 +159,58 @@ class UsersVisites extends Component
 
         // Filtre par statut utilisateur
         if ($this->userStatus !== '') {
-            $query->whereHas('sidUser', function ($q) {
-                $q->where('status', $this->userStatus);
+            $userStatus = $this->userStatus;
+            $query->whereHas('sidUser', function ($q) use ($userStatus) {
+                $q->where('status', $userStatus);
             });
         }
 
         // Filtre par pays
         if ($this->userCountry) {
-            $query->whereHas('sidUser', function ($q) {
-                $q->where('country_id', $this->userCountry);
+            $userCountry = $this->userCountry;
+            $query->whereHas('sidUser', function ($q) use ($userCountry) {
+                $q->where('country_id', $userCountry);
             });
         }
 
         // Filtre par ville
         if ($this->userCity) {
-            $query->whereHas('sidUser', function ($q) {
-                $q->where('city_id', $this->userCity);
+            $userCity = $this->userCity;
+            $query->whereHas('sidUser', function ($q) use ($userCity) {
+                $q->where('city_id', $userCity);
             });
         }
 
-        // Filtre par dates
+        // Filtre par date de début
         if ($this->startDate) {
             $query->whereDate('created_at', '>=', $this->startDate);
         }
+
+        // Filtre par date de fin
         if ($this->endDate) {
             $query->whereDate('created_at', '<=', $this->endDate);
         }
 
         // Tri
-        if ($this->sortField) {
-            if ($this->sortField == 'user_name') {
-                $query->leftJoin('sid_users', 'visites.sidUser_id', '=', 'sid_users.id')
-                    ->orderBy('sid_users.name', $this->sortAsc ? 'asc' : 'desc')
-                    ->select('visites.*');
-            } elseif ($this->sortField == 'user_email') {
-                $query->leftJoin('sid_users', 'visites.sidUser_id', '=', 'sid_users.id')
-                    ->orderBy('sid_users.email', $this->sortAsc ? 'asc' : 'desc')
-                    ->select('visites.*');
-            } else {
-                $query->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc');
-            }
+        if ($this->sortField === 'user_name') {
+            $query->leftJoin('sid_users', 'visites.sidUser_id', '=', 'sid_users.id')
+                  ->orderBy('sid_users.name', $this->sortAsc ? 'asc' : 'desc')
+                  ->select('visites.*');
+        } elseif ($this->sortField === 'user_email') {
+            $query->leftJoin('sid_users', 'visites.sidUser_id', '=', 'sid_users.id')
+                  ->orderBy('sid_users.email', $this->sortAsc ? 'asc' : 'desc')
+                  ->select('visites.*');
+        } else {
+            $query->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc');
         }
 
         return $query;
     }
 
+    // ==================== PROPRIÉTÉS CALCULÉES ====================
+
     /**
-     * Propriété paginée des visites
+     * Liste paginée des visites
      */
     public function getVisitesProperty()
     {
@@ -228,7 +218,7 @@ class UsersVisites extends Component
     }
 
     /**
-     * Total des visites
+     * Nombre total de visites (selon filtres actifs)
      */
     public function getTotalProperty()
     {
@@ -236,25 +226,27 @@ class UsersVisites extends Component
     }
 
     /**
-     * Statistiques des visites
+     * Statistiques globales (sans les filtres de recherche)
      */
     public function getStatisticsProperty()
     {
         $allowedUserIds = $this->getAllowedUserIds();
-        
+
         $baseQuery = Visite::query();
-        
+
         if (!empty($allowedUserIds)) {
             $baseQuery->whereIn('sidUser_id', $allowedUserIds);
         }
-        
+
         return [
-            'total' => (clone $baseQuery)->count(),
-            'pending' => (clone $baseQuery)->where('status', 'pending')->count(),
+            'total'     => (clone $baseQuery)->count(),
+            'pending'   => (clone $baseQuery)->where('status', 'pending')->count(),
             'confirmed' => (clone $baseQuery)->where('status', 'confirmed')->count(),
-            'rejected' => (clone $baseQuery)->where('status', 'rejected')->count(),
+            'rejected'  => (clone $baseQuery)->where('status', 'rejected')->count(),
         ];
     }
+
+    // ==================== ACTIONS ====================
 
     /**
      * Mettre à jour le statut d'une visite
@@ -262,24 +254,25 @@ class UsersVisites extends Component
     public function updateStatus($visiteId, $status)
     {
         $visite = Visite::find($visiteId);
+
         if ($visite) {
             $visite->update([
-                'status' => $status,
-                'confirmed_at' => $status == 'confirmed' ? now() : null
+                'status'       => $status,
+                'confirmed_at' => $status === 'confirmed' ? now() : null,
             ]);
+
             session()->flash('message', 'Statut mis à jour avec succès');
             $this->dispatchBrowserEvent('status-updated');
         }
     }
 
-    /**
-     * Rendu principal
-     */
+    // ==================== RENDU ====================
+
     public function render()
     {
         return view('livewire.users-visites', [
-            'visites' => $this->visites,
-            'total' => $this->total,
+            'visites'    => $this->visites,
+            'total'      => $this->total,
             'statistics' => $this->statistics,
         ]);
     }
