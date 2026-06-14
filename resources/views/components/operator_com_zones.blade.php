@@ -28,11 +28,11 @@
             <tbody>
                 @foreach ($operators as $operator)
                 @php
-                $operatorService = $operatorServices->get($operator->id); // maintenant définie
+                $operatorService = $operatorServices->get($operator->id);
                 $isSubmittedOperator = (int) old('operator_id') === $operator->id;
                 $isChecked = $isSubmittedOperator
                 ? old('active') == 1
-                : in_array($operator->id, $old_operators ?? []);
+                : $operatorService !== null;
                 $formId = "operator-service-form-{$operator->id}";
                 $numbersValue = $isSubmittedOperator ? old('numbers') : ($operatorService?->numbers ?? '');
                 $amountValue = $isSubmittedOperator ? old('amount') : ($operatorService?->amount ?? 0);

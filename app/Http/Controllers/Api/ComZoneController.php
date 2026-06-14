@@ -680,7 +680,7 @@ class ComZoneController extends Controller
             ], 333);
         }
 
-        try {
+        // try {
 
             $response = $this->createUserService->createComZoneCustumer(
                 $request->all(),
@@ -703,15 +703,15 @@ class ComZoneController extends Controller
             } else {
                 return response()->json(['success' => false, 'message' => $response['message']], 333);
             }
-        } catch (\Throwable $th) {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
-                ],
-                301
-            );
-        }
+        // } catch (\Throwable $th) {
+        //     return response()->json(
+        //         [
+        //             'success' => false,
+        //             'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+        //         ],
+        //         301
+        //     );
+        // }
     }
 
 

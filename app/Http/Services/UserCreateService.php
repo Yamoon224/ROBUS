@@ -417,7 +417,7 @@ class UserCreateService
                                 'screen_back' => env('APP_URL') . "/public/kyc_users/" . $user->id . "/$back_file",
                                 'sid_user_id' => $user->id,
                                 'status' => true,
-                                 'piece_type' => $requestData['piece_type'],
+                                'piece_type' => $requestData['piece_type'],
                                 'piece_number' => $requestData['piece_number'],
                                 'piece_expiry_date' => $requestData['piece_expiry_date'],
                                 'company_id' =>  $user->company->id
@@ -556,7 +556,6 @@ class UserCreateService
                         'phone' => $requestData['phone'],
                         'created_by' => robus()->id,
                         'com_zone_id' => robus()->is_com_zone ? robus()->id : null,
-                        // 'password' => Hash::make($requestData['password']),
                         'is_custumers' => true,
                         'is_com_accepted' => true,
                 ]);

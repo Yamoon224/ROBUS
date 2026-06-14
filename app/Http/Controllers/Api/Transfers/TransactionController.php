@@ -211,7 +211,7 @@ class TransactionController extends Controller
                     ], 333);
                 }
 
-                if (robus()->is_under_distributer || robus()->is_api) {
+                if (robus()->is_under_distributer || robus()->is_api || robus()->is_com_zone) {
 
                     $percent_robus = $this->percentRobus->getRobusPercentageSDistributers();
 
@@ -220,9 +220,9 @@ class TransactionController extends Controller
                     $isNotDistributor = !optional($wallet_search->sidUser)->is_under_distributer;
                     $isNotAdmin = !optional($wallet_search->sidUser)->is_admin;
                     $isNotDistributor = !optional($wallet_search->sidUser)->is_distributer;
+                    $isNotComZone = !optional($wallet_search->sidUser)->is_distributer;
 
-                    if ($isCustomer && $isNotDistributor && $isNotAdmin && $isNotDistributor) {
-
+                    if ($isCustomer && $isNotDistributor && $isNotAdmin && $isNotDistributor &&  $isNotComZone) {
 
                         if ($percent_robus !== null) {
 
