@@ -47,6 +47,26 @@ class custumers extends Component
         $this->countries = Country::orderBy('name')->get();
     }
 
+    public function updating($propertyName)
+    {
+        if (in_array($propertyName, [
+            'search',
+            'countriesFilter',
+            'citiesFilter',
+            'cityNameSearch',
+            'statusFilter_piece',
+            'statusFilter_active',
+            'startDate',
+            'endDate',
+        ], true)) {
+            $this->resetPage();
+        }
+
+        if ($propertyName === 'searchComZone') {
+            $this->resetPage('comZonesPage');
+        }
+    }
+
 
     public function updatedCountriesFilter($countryId)
     {
@@ -273,7 +293,7 @@ class custumers extends Component
             $this->emit('modal-hide', 'hide');
             $this->cancelConnectedField();
             $this->emit('refreshPage');
-            $this->emit('success', $check->com_zone_id  == $this->master_selected ? 'Client lié !' : 'Client désactivée !');
+            $this->emit('success', $check->com_zone_id  == $this->master_selected ? 'Client lié !' : 'Client lié avec succès !');
         }
     }
     public function resetField()
@@ -300,39 +320,36 @@ class custumers extends Component
     public function render()
     {
 
-        $users = SidUser::query();
+        $usersQuery = SidUser::where('is_custumers', true);
 
         $queryComzone = SidUser::where('is_com_zone', true);
 
         if (sabdy()->is_com_zone) {
-            $users->where('com_zone_id', sabdy()->id);
+            $usersQuery->where('com_zone_id', sabdy()->id);
         }
 
 
         if ($this->search != "") {
 
-            $this->resetPage();
-
-            $users->where('is_custumers', true)
-                ->where(function ($query) {
-                    $query->where('firstname', 'LIKE', "%{$this->search}%")
-                        ->orWhere('lastname', 'LIKE', "%{$this->search}%")
-                        ->orWhere('email', 'LIKE', "%{$this->search}%")
-                        ->orWhere('phone', 'LIKE', "%{$this->search}%");
-                });
+            $usersQuery->where(function ($query) {
+                $query->where('firstname', 'LIKE', "%{$this->search}%")
+                    ->orWhere('lastname', 'LIKE', "%{$this->search}%")
+                    ->orWhere('email', 'LIKE', "%{$this->search}%")
+                    ->orWhere('phone', 'LIKE', "%{$this->search}%");
+            });
         }
 
         if ($this->statusFilter_piece != "") {
-            $users->where("Without_piece", $this->statusFilter_piece);
+            $usersQuery->where("Without_piece", $this->statusFilter_piece);
         }
 
         if ($this->statusFilter_active != "") {
-            $users->where("is_active", $this->statusFilter_active);
+            $usersQuery->where("is_active", $this->statusFilter_active);
         }
 
 
         if ($this->countriesFilter != "") {
-            $users->where("country_id", $this->countriesFilter);
+            $usersQuery->where("country_id", $this->countriesFilter);
         }
 
         if (!is_array($this->cities) && !is_object($this->cities)) {
@@ -340,38 +357,25 @@ class custumers extends Component
         }
 
         if ($this->citiesFilter != "") {
-            $users->where("city_id", $this->citiesFilter);
+            $usersQuery->where("city_id", $this->citiesFilter);
         }
 
         if ($this->startDate) {
-            $users->whereDate('created_at', '>=', $this->startDate);
+            $usersQuery->whereDate('created_at', '>=', $this->startDate);
         }
 
         if ($this->endDate) {
-            $users->whereDate('created_at', '<=', $this->endDate);
+            $usersQuery->whereDate('created_at', '<=', $this->endDate);
         }
 
         if ($this->cityNameSearch != "") {
 
-            $this->resetPage();
-            $users->where('is_custumers', true)
-                ->when($this->cityNameSearch, function ($query) {
-                    $query->where(function ($query) {
-                        $query->where("zone", "LIKE", "%" . $this->cityNameSearch . "%");
-                    });
-                })
-                ->paginate($this->perPage);
+            $usersQuery->where(function ($query) {
+                $query->where("zone", "LIKE", "%" . $this->cityNameSearch . "%");
+            });
         }
 
-
-        $query = SidUser::where('is_custumers', true);
-
-
-        if (sabdy()->is_com_zone) {
-            $query->where('com_zone_id', sabdy()->id);
-        }
-
-        $users = $query->with(['wallet.sidUser.country.currencie'])
+        $users = $usersQuery->with(['wallet.sidUser.country.currencie'])
             ->withSum('wallet as wallet_balance', 'amount')
             ->orderByDesc('wallet_balance')
             ->paginate($this->perPage ?? 30);
@@ -444,15 +448,6 @@ class custumers extends Component
             $user->amount_fcfa = $amount_solde;
         }
 
-        if (sabdy()->is_com_zone) {
-            // Limiter aux utilisateurs liés à cette zone (com_zone_id = id de la zone)
-            $query->where('com_zone_id', sabdy()->id);
-        } else {
-            // Sinon, on peut chercher parmi tous les utilisateurs
-            // Exemple : uniquement les clients (is_custumers = true)
-            $query->where('is_custumers', true);
-        }
-
         // Ajout de la recherche textuelle
         if ($this->searchComZone) {
             $search = '%' . $this->searchComZone . '%';
@@ -466,7 +461,7 @@ class custumers extends Component
 
         return view('livewire.custumers', [
             "users" => $users,
-            "comZones" => $queryComzone->paginate(10),
+            "comZones" => $queryComzone->paginate(10, ['*'], 'comZonesPage'),
             "countries" => Country::where('status', true)->orderBy("name", 'desc')->get()
         ]);
     }

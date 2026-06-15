@@ -50,6 +50,25 @@ class UnderDistributors extends Component
         $this->countries = Country::orderBy('name')->get();
     }
 
+    public function updating($propertyName)
+    {
+        if (in_array($propertyName, [
+            'search',
+            'countriesFilter',
+            'citiesFilter',
+            'cityNameSearch',
+            'statusFilter_active',
+            'startDate',
+            'endDate',
+        ], true)) {
+            $this->resetPage();
+        }
+
+        if ($propertyName === 'searchComZone') {
+            $this->resetPage('comZonesPage');
+        }
+    }
+
 
     public function updatedCountriesFilter($countryId)
     {
@@ -111,7 +130,7 @@ class UnderDistributors extends Component
             $this->emit('modal-hide', 'hide');
             $this->cancelConnectedField();
             $this->emit('refreshPage');
-            $this->emit('success', $check->com_zone_id  == $this->master_selected ? 'SD lié !' : 'SD désactivée !');
+            $this->emit('success', $check->com_zone_id  == $this->master_selected ? 'SD lié !' : 'SD  lié avec succès !');
         }
     }
 
@@ -492,7 +511,6 @@ class UnderDistributors extends Component
         }
 
         if (!empty($this->search)) {
-            $this->resetPage();
             $usersQuery->where(function ($q) {
                 $q->where('firstname', 'like', '%' . $this->search . '%')
                     ->orWhere('lastname', 'like', '%' . $this->search . '%')
@@ -519,7 +537,6 @@ class UnderDistributors extends Component
         }
 
         if ($this->cityNameSearch != "") {
-            $this->resetPage();
             $usersQuery->where('is_under_distributer', true)
                 ->when($this->cityNameSearch, function ($query) {
                     $query->where(function ($query) {
@@ -622,7 +639,7 @@ class UnderDistributors extends Component
 
         return view('livewire.under-distributors', [
             "users" => $users,
-            "comZones" => $queryComzone->paginate(10),
+            "comZones" => $queryComzone->paginate(10, ['*'], 'comZonesPage'),
             "countries" => Country::where('robus', true)->orderBy("name", 'desc')->get(),
             "operators" => Operator::whereStatus(true)->whereIsUnder(true)->orderBy("name", 'desc')->get(),
             "operatorsCommissions" => Operator::whereStatus(true)->whereIsCommission(true)->orderBy("name", 'desc')->get(),

@@ -170,7 +170,7 @@
                                     </div>
                                 </div>
                                 @endif
-                                @if (Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur'))
+                                @if (Auth::guard('web')->user()->hasPermissionTo('voir-com-zones'))
                                 <a class="mr-1 mb-2 btn-sm mr-5 ml-5"
                                     href="{{ route('comzones.admins.show', ['id' => $item->id]) }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -184,7 +184,7 @@
 
 
                                 @endif
-                                @if (Auth::guard('web')->user()->hasPermissionTo('modifier-utilisateur'))
+                                @if (Auth::guard('web')->user()->hasPermissionTo('modifier-com-zone'))
                                 <a class="flex items-center mr-3"
                                     href="{{ route('unders.show_edit', ['id' => $item->id]) }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"

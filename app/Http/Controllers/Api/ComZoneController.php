@@ -180,6 +180,7 @@ class ComZoneController extends Controller
         $servicesCommissions = [];
         $servicesCommissionCounts = [];
         $servicesCommissionAmounts = [];
+        $servicesCommissionTransactionAmounts = [];
         $servicesAssigned = [];
         $servicesStats = [];
         $operatorServicesByService = $this->operatorServicesByService($comZone);
@@ -191,6 +192,7 @@ class ComZoneController extends Controller
             $serviceCommissions = [];
             $serviceCommissionCounts = [];
             $serviceCommissionAmounts = [];
+            $serviceCommissionTransactionAmounts = [];
             $operatorService = $operatorServicesByService[$service] ?? null;
             $isAssigned = (bool) $operatorService;
 
@@ -201,10 +203,12 @@ class ComZoneController extends Controller
                 $serviceCounters[$period] = $isAssigned ? $stats['count'] : 0;
                 $serviceAmounts[$period] = $isAssigned ? $stats['amount'] : 0;
                 $serviceCommissionCounts[$period] = $isAssigned ? $commissionStats['count'] : 0;
-                $serviceCommissionAmounts[$period] = $isAssigned ? $commissionStats['amount'] : 0;
-                $serviceCommissions[$period] = $isAssigned
+                $serviceCommissionTransactionAmounts[$period] = $isAssigned ? $commissionStats['amount'] : 0;
+                $commissionAmount = $isAssigned
                     ? $operatorService->calculateComZoneCommission($commissionStats['count'], $commissionStats['amount'])
                     : 0;
+                $serviceCommissionAmounts[$period] = $commissionAmount;
+                $serviceCommissions[$period] = $commissionAmount;
 
                 if ($isAssigned) {
                     $totals[$period] += $stats['count'];
@@ -217,6 +221,7 @@ class ComZoneController extends Controller
             $servicesCommissions[$service] = $serviceCommissions;
             $servicesCommissionCounts[$service] = $serviceCommissionCounts;
             $servicesCommissionAmounts[$service] = $serviceCommissionAmounts;
+            $servicesCommissionTransactionAmounts[$service] = $serviceCommissionTransactionAmounts;
             $servicesAssigned[$service] = $isAssigned;
             $servicesStats[$service] = [
                 'is_assigned' => $isAssigned,
@@ -225,6 +230,7 @@ class ComZoneController extends Controller
                 'commission_status' => self::COMMISSION_TRANSACTION_STATUS,
                 'commission_counts' => $serviceCommissionCounts,
                 'commission_amounts' => $serviceCommissionAmounts,
+                'commission_transaction_amounts' => $serviceCommissionTransactionAmounts,
                 'commissions' => $serviceCommissions,
             ];
         }
@@ -265,6 +271,7 @@ class ComZoneController extends Controller
                 'commissions_status' => self::COMMISSION_TRANSACTION_STATUS,
                 'services_commission_counts' => $servicesCommissionCounts,
                 'services_commission_amounts' => $servicesCommissionAmounts,
+                'services_commission_transaction_amounts' => $servicesCommissionTransactionAmounts,
                 'services_assigned' => $servicesAssigned,
                 'services_stats' => $servicesStats,
                 // 'linked_services_totals' => $this->linkedServicesTotals($linkedServices),
