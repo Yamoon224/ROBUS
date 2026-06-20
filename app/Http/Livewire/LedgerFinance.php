@@ -2,37 +2,60 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\LedgerEntry;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Carbon;
-use App\Models\LedgerEntry;
-use Illuminate\Support\Facades\DB;
 
 class LedgerFinance extends Component
 {
     use WithPagination;
 
+    private const SORTABLE_FIELDS = [
+        'transaction_id',
+        'description',
+        'debit',
+        'credit',
+        'created_at',
+    ];
+
+    private const PER_PAGE_OPTIONS = [20, 50, 100, 200];
+
     protected $paginationTheme = 'bootstrap';
 
     // Filtres avancés
-    public $search = "";
-    public $typeFilter = "all";
-    public $startDate = "";
-    public $endDate = "";
-    public $dateRange = "today";
-    public $minAmount = "";
-    public $maxAmount = "";
-    public $movementType = "all"; // credit, debit, all
-    public $selectedColumns = ['transaction_id', 'description', 'debit', 'credit', 'created_at'];
+    public $search = '';
+
+    public $typeFilter = 'all';
+
+    public $startDate = '';
+
+    public $endDate = '';
+
+    public $dateRange = 'today';
+
+    public $minAmount = '';
+
+    public $maxAmount = '';
+
+    public $movementType = 'all'; // credit, debit, all
+
     public $sortField = 'created_at';
+
     public $sortDirection = 'desc';
+
     public $perPage = 50;
 
     // Statistiques
     public $totalCredits = 0;
+
     public $totalDebits = 0;
+
     public $balance = 0;
+
     public $creditCount = 0;
+
     public $debitCount = 0;
 
     protected $queryString = [
@@ -56,9 +79,45 @@ class LedgerFinance extends Component
         $this->resetPage();
     }
 
+    public function updatedMovementType()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedTypeFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStartDate()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedEndDate()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedMinAmount()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedMaxAmount()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPerPage()
+    {
+        $this->resetPage();
+    }
+
     public function updatedDateRange($value)
     {
         $this->applyDateRange($value);
+        $this->resetPage();
     }
 
     protected function applyDateRange($range)
@@ -105,6 +164,10 @@ class LedgerFinance extends Component
 
     public function sortBy($field)
     {
+        if (! in_array($field, self::SORTABLE_FIELDS, true)) {
+            return;
+        }
+
         if ($this->sortField === $field) {
             $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
         } else {
@@ -115,9 +178,11 @@ class LedgerFinance extends Component
 
     public function exportToCsv()
     {
-        $entries = $this->getFilteredQuery()->get();
+        $query = $this->getFilteredQuery()
+            ->setEagerLoads([])
+            ->orderBy($this->validatedSortField(), $this->validatedSortDirection());
 
-        $filename = 'grand_livre_' . Carbon::now()->format('Y-m-d_His') . '.csv';
+        $filename = 'grand_livre_'.Carbon::now()->format('Y-m-d_His').'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv',
@@ -130,25 +195,22 @@ class LedgerFinance extends Component
             'Débit (FCFA)',
             'Crédit (FCFA)',
             'Date',
-            'Type',
-            'Admin/Commission'
+            'Catégorie',
         ];
 
-        $callback = function () use ($entries, $columns) {
+        $callback = function () use ($query, $columns) {
             $file = fopen('php://output', 'w');
+            fwrite($file, "\xEF\xBB\xBF");
             fputcsv($file, $columns);
 
-            foreach ($entries as $entry) {
+            foreach ($query->cursor() as $entry) {
                 fputcsv($file, [
                     $entry->transaction_id,
                     $entry->description,
-                    $entry->debit > 0 ? number_format($entry->debit, 2) : '0',
-                    $entry->credit > 0 ? number_format($entry->credit, 2) : '0',
+                    number_format((float) $entry->debit, 2, '.', ''),
+                    number_format((float) $entry->credit, 2, '.', ''),
                     $entry->created_at->format('d/m/Y H:i'),
-                    $entry->is_comission ? 'Commission' : ($entry->is_admin ? 'Admin' : 'Standard'),
-                    $entry->is_admin ? 'Admin' : ($entry->is_comission ? 'Commission' : '-'),
-                    $entry->is_uv ? 'Admin Achat UV' : ($entry->is_uv ? 'Commission Achat d\'UV' : '+'),
-                    $entry->is_wallet ? 'Achat UV' : ($entry->is_wallet ? 'Montant UV' : '-'),
+                    $entry->category_label,
                 ]);
             }
 
@@ -160,23 +222,38 @@ class LedgerFinance extends Component
 
     protected function getFilteredQuery()
     {
-        $query = LedgerEntry::query()->with('adminCom');
+        $query = LedgerEntry::query()->with('adminCom.sidUser');
 
         // 📅 Filtre par date
         if ($this->startDate && $this->endDate) {
+            try {
+                $start = Carbon::parse($this->startDate)->startOfDay();
+                $end = Carbon::parse($this->endDate)->endOfDay();
+            } catch (\Throwable $exception) {
+                $start = Carbon::today()->startOfDay();
+                $end = Carbon::today()->endOfDay();
+            }
+
+            if ($start->greaterThan($end)) {
+                [$start, $end] = [$end->copy()->startOfDay(), $start->copy()->endOfDay()];
+            }
+
             $query->whereBetween('created_at', [
-                Carbon::parse($this->startDate)->startOfDay(),
-                Carbon::parse($this->endDate)->endOfDay(),
+                $start,
+                $end,
             ]);
         }
 
         // 🔍 Recherche avancée
-        if (!empty($this->search)) {
+        if (! empty($this->search)) {
             $query->where(function ($q) {
-                $q->where('description', 'LIKE', '%' . $this->search . '%')
-                    ->orWhere('transaction_id', 'LIKE', '%' . $this->search . '%')
+                $q->where('description', 'LIKE', '%'.$this->search.'%')
+                    ->orWhere('transaction_id', 'LIKE', '%'.$this->search.'%')
                     ->orWhereHas('adminCom', function ($q) {
-                        $q->where('type', 'LIKE', '%' . $this->search . '%');
+                        $q->whereHas('sidUser', function ($userQuery) {
+                            $userQuery->where('firstname', 'LIKE', '%'.$this->search.'%')
+                                ->orWhere('lastname', 'LIKE', '%'.$this->search.'%');
+                        });
                     });
             });
         }
@@ -189,17 +266,22 @@ class LedgerFinance extends Component
         }
 
         // 💰 Filtre par montant
-        if (!empty($this->minAmount)) {
+        if ($this->minAmount !== '' && is_numeric($this->minAmount)) {
             $query->where(function ($q) {
                 $q->where('debit', '>=', $this->minAmount)
                     ->orWhere('credit', '>=', $this->minAmount);
             });
         }
 
-        if (!empty($this->maxAmount)) {
+        if ($this->maxAmount !== '' && is_numeric($this->maxAmount)) {
             $query->where(function ($q) {
-                $q->where('debit', '<=', $this->maxAmount)
-                    ->orWhere('credit', '<=', $this->maxAmount);
+                $q->where(function ($debitQuery) {
+                    $debitQuery->where('debit', '>', 0)
+                        ->where('debit', '<=', $this->maxAmount);
+                })->orWhere(function ($creditQuery) {
+                    $creditQuery->where('credit', '>', 0)
+                        ->where('credit', '<=', $this->maxAmount);
+                });
             });
         }
 
@@ -208,12 +290,15 @@ class LedgerFinance extends Component
             $query->where('is_comission', true);
         } elseif ($this->typeFilter === 'admin') {
             $query->where('is_admin', true);
-        } elseif ($this->typeFilter === 'commission UV') {
+        } elseif ($this->typeFilter === 'uv_commission') {
             $query->where('is_uv', true);
-        } elseif ($this->typeFilter === 'Achat UV') {
+        } elseif ($this->typeFilter === 'uv_purchase') {
             $query->where('is_wallet', true);
         } elseif ($this->typeFilter === 'standard') {
-            $query->where('is_comission', false)->where('is_admin', false);
+            $query->where('is_comission', false)
+                ->where('is_admin', false)
+                ->where('is_uv', false)
+                ->where('is_wallet', false);
         }
 
         return $query;
@@ -221,7 +306,7 @@ class LedgerFinance extends Component
 
     public function calculateStats()
     {
-        $query = $this->getFilteredQuery();
+        $query = $this->getFilteredQuery()->setEagerLoads([]);
 
         $stats = (clone $query)->select(
             DB::raw('SUM(credit) as total_credits'),
@@ -242,55 +327,58 @@ class LedgerFinance extends Component
         $query = $this->getFilteredQuery();
 
         // Trier
-        $query->orderBy($this->sortField, $this->sortDirection);
+        $query->orderBy($this->validatedSortField(), $this->validatedSortDirection());
 
-        $gains = $query->paginate($this->perPage);
-
+        $perPage = in_array((int) $this->perPage, self::PER_PAGE_OPTIONS, true)
+            ? (int) $this->perPage
+            : 50;
+        $gains = $query->paginate($perPage);
 
         // Calculer les statistiques
         $this->calculateStats();
 
-        // Totaux généraux (non filtrés)
-        $totalCommissionsAdmin = LedgerEntry::where('is_admin', true)->sum('credit');
-        $totalCommissionsBanque = LedgerEntry::where('is_comission', true)->sum('debit');
-
-        $totalCommissionsAdminUV = LedgerEntry::where('is_uv', true)->sum('credit');
-        $totalAchatUV = LedgerEntry::where('is_wallet', true)->sum('debit');
-
-
-        $today = Carbon::today();
-
-        $commissionsAdminToday = LedgerEntry::where('is_admin', true)
-            ->whereDate('created_at', $today)
-            ->sum('credit');
-
-        $commissionsBanqueToday = LedgerEntry::where('is_comission', true)
-            ->whereDate('created_at', $today)
-            ->sum('debit');
-
-
-        $commissionsAdminUVToday = LedgerEntry::where('is_uv', true)
-            ->whereDate('created_at', $today)
-            ->sum('credit');
-
-        $ByUVToday = LedgerEntry::where('is_wallet', true)
-            ->whereDate('created_at', $today)
-            ->sum('debit');
-
+        $todayStart = Carbon::today()->startOfDay();
+        $todayEnd = Carbon::today()->endOfDay();
+        $summary = LedgerEntry::query()->selectRaw(
+            'COALESCE(SUM(CASE WHEN is_admin = 1 THEN credit ELSE 0 END), 0) AS total_admin,
+             COALESCE(SUM(CASE WHEN is_comission = 1 THEN debit ELSE 0 END), 0) AS total_bank,
+             COALESCE(SUM(CASE WHEN is_uv = 1 THEN credit ELSE 0 END), 0) AS total_uv_commission,
+             COALESCE(SUM(CASE WHEN is_wallet = 1 THEN debit ELSE 0 END), 0) AS total_uv_purchase,
+             COALESCE(SUM(CASE WHEN is_admin = 1 AND created_at BETWEEN ? AND ? THEN credit ELSE 0 END), 0) AS today_admin,
+             COALESCE(SUM(CASE WHEN is_comission = 1 AND created_at BETWEEN ? AND ? THEN debit ELSE 0 END), 0) AS today_bank,
+             COALESCE(SUM(CASE WHEN is_uv = 1 AND created_at BETWEEN ? AND ? THEN credit ELSE 0 END), 0) AS today_uv_commission,
+             COALESCE(SUM(CASE WHEN is_wallet = 1 AND created_at BETWEEN ? AND ? THEN debit ELSE 0 END), 0) AS today_uv_purchase',
+            [
+                $todayStart, $todayEnd,
+                $todayStart, $todayEnd,
+                $todayStart, $todayEnd,
+                $todayStart, $todayEnd,
+            ]
+        )->first();
 
         return view('livewire.ledger-finance', [
             'gains' => $gains,
-            'totalCommissionsAdmin' => $totalCommissionsAdmin,
-            'totalCommissionsBanque' => $totalCommissionsBanque,
-            'commissionsAdminToday' => $commissionsAdminToday,
-            'commissionsBanqueToday' => $commissionsBanqueToday,
-
-            'totalCommissionsAdminUV' => $totalCommissionsAdminUV,
-            'totalAchatUV' => $totalAchatUV,
-
-            'commissionsAdminUVToday' => $commissionsAdminUVToday,
-            'ByUVToday' => $ByUVToday,
+            'totalCommissionsAdmin' => (float) $summary->total_admin,
+            'totalCommissionsBanque' => (float) $summary->total_bank,
+            'commissionsAdminToday' => (float) $summary->today_admin,
+            'commissionsBanqueToday' => (float) $summary->today_bank,
+            'totalCommissionsAdminUV' => (float) $summary->total_uv_commission,
+            'totalAchatUV' => (float) $summary->total_uv_purchase,
+            'commissionsAdminUVToday' => (float) $summary->today_uv_commission,
+            'ByUVToday' => (float) $summary->today_uv_purchase,
 
         ]);
+    }
+
+    protected function validatedSortField(): string
+    {
+        return in_array($this->sortField, self::SORTABLE_FIELDS, true)
+            ? $this->sortField
+            : 'created_at';
+    }
+
+    protected function validatedSortDirection(): string
+    {
+        return $this->sortDirection === 'asc' ? 'asc' : 'desc';
     }
 }

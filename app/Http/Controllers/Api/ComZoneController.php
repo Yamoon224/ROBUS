@@ -28,6 +28,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Services\ComZoneCommissionService;
 use App\Models\OperatorService;
+use Illuminate\Support\Facades\Log;
 
 class ComZoneController extends Controller
 {
@@ -137,6 +138,110 @@ class ComZoneController extends Controller
             ],
         ]);
     }
+
+    public function reloadAchievedGoals()
+    {
+        $comZone = robus();
+
+        if (!$comZone || !$comZone->is_com_zone) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vous devez être un COM ZONE',
+                'data' => [],
+            ], 403);
+        }
+
+        try {
+            $result = $this->comZoneCommissionService->rewardAchievedGoals($comZone);
+
+            return response()->json([
+                'success' => true,
+                'message' => $result['total_recharged'] > 0
+                    ? 'Compte rechargé automatiquement avec succès.'
+                    : 'Aucun nouvel objectif atteint à recharger.',
+                'data' => $result,
+            ]);
+        } catch (\Throwable $exception) {
+            Log::error('Échec de la recharge automatique COM ZONE', [
+                'com_zone_id' => $comZone->id,
+                'exception' => $exception,
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'La recharge automatique n\'a pas pu être effectuée.',
+                'data' => [],
+            ], 500);
+        }
+    }
+
+    public function reloadAllAchievedGoals(Request $request)
+    {
+        $configuredSecret = (string) config('services.com_zone_cron.secret');
+
+        if ($configuredSecret === '') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Le secret du cron COM ZONE n\'est pas configuré.',
+            ], 503);
+        }
+
+
+        $summary = [
+            'processed' => 0,
+            'recharged' => 0,
+            'failed' => 0,
+            'total_recharged' => 0.0,
+            'results' => [],
+        ];
+
+        SidUser::where('is_com_zone', true)
+            ->orderBy('id')
+            ->chunkById(100, function ($comZones) use (&$summary) {
+                foreach ($comZones as $comZone) {
+                    $summary['processed']++;
+
+                    try {
+                        $result = $this->comZoneCommissionService->rewardAchievedGoals($comZone);
+                        $amount = (float) $result['total_recharged'];
+                        
+
+                        if ($amount > 0) {
+                            $summary['recharged']++;
+                        }
+
+                        // 2084786.5499999998
+                        $summary['total_recharged'] += $amount;
+                        $summary['results'][] = [
+                            'com_zone_id' => $comZone->id,
+                            'success' => true,
+                            'recharged_amount' => $amount,
+                            'wallet_balance' => $result['wallet_balance'],
+                            'commission_wallet_balance' => $result['commission_wallet_balance'],
+                        ];
+                    } catch (\Throwable $exception) {
+                        $summary['failed']++;
+                        $summary['results'][] = [
+                            'com_zone_id' => $comZone->id,
+                            'success' => false,
+                            'recharged_amount' => 0,
+                        ];
+
+                        Log::error('Échec de la recharge globale COM ZONE', [
+                            'com_zone_id' => $comZone->id,
+                            'exception' => $exception,
+                        ]);
+                    }
+                }
+            });
+
+        return response()->json([
+            'success' => $summary['failed'] === 0,
+            'message' => 'Traitement global des objectifs COM ZONE terminé.',
+            'data' => $summary,
+        ], $summary['failed'] === 0 ? 200 : 207);
+    }
+
     public function transactionCounters(Request $request)
     {
         $comZone = robus();
@@ -687,7 +792,7 @@ class ComZoneController extends Controller
             ], 333);
         }
 
-        // try {
+        try {
 
             $response = $this->createUserService->createComZoneCustumer(
                 $request->all(),
@@ -710,15 +815,15 @@ class ComZoneController extends Controller
             } else {
                 return response()->json(['success' => false, 'message' => $response['message']], 333);
             }
-        // } catch (\Throwable $th) {
-        //     return response()->json(
-        //         [
-        //             'success' => false,
-        //             'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
-        //         ],
-        //         301
-        //     );
-        // }
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+                ],
+                301
+            );
+        }
     }
 
 

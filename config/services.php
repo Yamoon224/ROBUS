@@ -43,4 +43,8 @@ return [
         'secret_key' => env('RECAPTCHA_SECRET_KEY'),
     ],
 
+    'com_zone_cron' => [
+        'secret' => env('COM_ZONE_CRON_SECRET'),
+    ],
+
 ];

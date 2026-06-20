@@ -404,7 +404,7 @@ class Reloaduv extends Component
 
                 $this->resetField();
                 return  $this->errorWalletAccount();
-            } else if ($wallet_search->sidUser->is_distributer == true || $wallet_search->sidUser->is_under_distributer == true  || $wallet_search->sidUser->is_admin == true  || $wallet_search->sidUser->is_supervisor == true || $wallet_search->sidUser->is_company == true || $wallet_search->sidUser->is_api == true) { {
+            } else if ($wallet_search->sidUser->is_distributer == true || $wallet_search->sidUser->is_under_distributer == true  || $wallet_search->sidUser->is_admin == true  || $wallet_search->sidUser->is_supervisor == true || $wallet_search->sidUser->is_company == true || $wallet_search->sidUser->is_api == true || $wallet_search->sidUser->is_com_zone == true) { {
 
                     $val_amount = $this->relaod_uv_amout_robus;
 
@@ -669,7 +669,7 @@ class Reloaduv extends Component
 
                 $this->resetField();
                 return  $this->errorWalletAccount();
-            } else if ($wallet_search->sidUser->is_distributer == true || $wallet_search->sidUser->is_under_distributer == true  || $wallet_search->sidUser->is_admin == true  || $wallet_search->sidUser->is_supervisor == true || $wallet_search->sidUser->is_company == true || $wallet_search->sidUser->is_custumers == true) { {
+            } else if ($wallet_search->sidUser->is_distributer == true || $wallet_search->sidUser->is_under_distributer == true  || $wallet_search->sidUser->is_admin == true  || $wallet_search->sidUser->is_supervisor == true || $wallet_search->sidUser->is_company == true || $wallet_search->sidUser->is_custumers == true || $wallet_search->sidUser->is_com_zone == true) { {
 
                     $val_amount = $this->relaod_uv_amout_robus;
 
@@ -841,7 +841,7 @@ class Reloaduv extends Component
                 $this->resetField();
                 return  $this->errorWalletAccount();
 
-            } else if ($wallet_search->sidUser->is_distributer == true || $wallet_search->sidUser->is_under_distributer == true  || $wallet_search->sidUser->is_admin == true  || $wallet_search->sidUser->is_supervisor == true || $wallet_search->sidUser->is_company == true || $wallet_search->sidUser->is_custumers == true) { {
+            } else if ($wallet_search->sidUser->is_distributer == true || $wallet_search->sidUser->is_under_distributer == true  || $wallet_search->sidUser->is_admin == true  || $wallet_search->sidUser->is_supervisor == true || $wallet_search->sidUser->is_company == true || $wallet_search->sidUser->is_custumers == true || $wallet_search->sidUser->is_com_zone == true) { {
 
                     $val_amount = $this->relaod_uv_amout_robus;
 

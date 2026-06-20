@@ -265,8 +265,9 @@
                 <option value="all">Toutes</option>
                 <option value="commission">Commissions Banque</option>
                 <option value="admin">Commissions Admin</option>
-                <option value="commission UV">Commission achat UV</option>
-                <option value="Achat UV">Montant achat UV</option>
+                <option value="uv_commission">Commission achat UV</option>
+                <option value="uv_purchase">Montant achat UV</option>
+                <option value="standard">Mouvements standards / objectifs COM ZONE</option>
             </select>
         </div>
 
@@ -367,11 +368,13 @@
                                     @if ($gains->count() > 0)
                                         @foreach ($gains as $item)
                                             @php
-                                                $type = $item->adminCom->type ?? 'UNKNOWN';
-                                                $isCommission = $item->is_comission;
-                                                $isAdmin = $item->is_admin;
-                                                $isComUv = $item->is_uv;
-                                                $isAmountUV = $item->is_wallet;
+                                                $categoryClass = match ($item->category) {
+                                                    'commission' => 'bg-purple-100 text-purple-800',
+                                                    'admin' => 'bg-orange-100 text-orange-800',
+                                                    'uv_commission' => 'bg-blue-100 text-blue-800',
+                                                    'uv_purchase' => 'bg-cyan-100 text-cyan-800',
+                                                    default => 'bg-gray-100 text-gray-800',
+                                                };
                                             @endphp
                                             <tr class="intro-x hover:bg-gray-100">
                                                 <td class="text-center">
@@ -383,15 +386,11 @@
 
                                                 <td class="text-center">
                                                     {{ $item->description }}
-                                                    @if ($isCommission || $isAdmin)
+                                                    @if ($item->adminCom?->sidUser)
                                                         <br>
                                                         <small class="text-gray-500">
-                                                            ({{ $isCommission ? 'Commission' : '' }}
-                                                            {{ $isAdmin ? 'Admin' : '' }}
-                                                            {{ $isComUv ? 'Commission achat UV' : '' }}
-                                                            {{ $isAmountUV ? 'Montant achat UV' : '' }}
-                                                            
-                                                            )
+                                                            {{ $item->adminCom->sidUser->firstname }}
+                                                            {{ $item->adminCom->sidUser->lastname }}
                                                         </small>
                                                     @endif
                                                 </td>
@@ -425,32 +424,9 @@
                                                 </td>
 
                                                 <td class="text-center">
-                                                    @if ($isCommission)
-                                                        <span
-                                                            class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">
-                                                            Commission
-                                                        </span>
-                                                    @elseif($isAdmin)
-                                                        <span
-                                                            class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs">
-                                                            Admin
-                                                        </span>
-                                                    @elseif($isComUv)
-                                                        <span
-                                                            class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs">
-                                                            Commission achat UV
-                                                        </span>
-                                                    @elseif($isAmountUV)
-                                                        <span
-                                                            class="px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs">
-                                                            Montant achat UV
-                                                        </span>
-                                                    @else
-                                                        <span
-                                                            class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">
-                                                            Standard
-                                                        </span>
-                                                    @endif
+                                                    <span class="px-2 py-1 rounded-full text-xs {{ $categoryClass }}">
+                                                        {{ $item->category_label }}
+                                                    </span>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -469,17 +445,17 @@
                                 @if ($gains->count() > 0)
                                     <tfoot class="bg-gray-200 font-bold">
                                         <tr>
-                                            <td colspan="2" class="text-right">TOTAUX:</td>
+                                            <td colspan="2" class="text-right">TOTAUX DE LA PÉRIODE FILTRÉE :</td>
                                             <td class="text-center text-red-600">
-                                                {{ number_format($gains->sum('debit'), 2) }} FCFA
+                                                {{ number_format($totalDebits, 2) }} FCFA
                                             </td>
                                             <td class="text-center text-green-600">
-                                                {{ number_format($gains->sum('credit'), 2) }} FCFA
+                                                {{ number_format($totalCredits, 2) }} FCFA
                                             </td>
                                             <td colspan="2" class="text-center">
                                                 Solde: <span
-                                                    class="{{ $gains->sum('credit') - $gains->sum('debit') >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                                                    {{ number_format($gains->sum('credit') - $gains->sum('debit'), 2) }}
+                                                    class="{{ $balance >= 0 ? 'text-green-600' : 'text-red-600' }}">
+                                                    {{ number_format($balance, 2) }}
                                                     FCFA
                                                 </span>
                                             </td>

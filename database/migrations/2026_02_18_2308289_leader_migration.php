@@ -41,8 +41,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('ledger_entries', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('ledger_entries');
     }
 };

@@ -170,6 +170,7 @@
                                     </div>
                                 </div>
                                 @endif
+                                
                                 @if (Auth::guard('web')->user()->hasPermissionTo('voir-com-zones'))
                                 <a class="mr-1 mb-2 btn-sm mr-5 ml-5"
                                     href="{{ route('comzones.admins.show', ['id' => $item->id]) }}">

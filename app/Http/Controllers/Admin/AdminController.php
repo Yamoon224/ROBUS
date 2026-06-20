@@ -1986,7 +1986,13 @@ class AdminController extends Controller
             ->keyBy('operator_id');
 
         $oldOperators = $operatorServices->keys()->toArray();
-        $comZoneServiceTransactions = $comZoneCommissionService->transactionsForComZone($user);
+        $commissionDate = Carbon::now();
+        $comZoneServiceTransactions = $comZoneCommissionService->transactionsForComZone(
+            $user,
+            10,
+            $commissionDate->copy()->startOfDay(),
+            $commissionDate->copy()->endOfDay()
+        );
 
         return view('pages.admin.show_comzones', compact(
             'user',
@@ -1995,6 +2001,7 @@ class AdminController extends Controller
             'oldOperators',
             'operatorServices',
             'comZoneServiceTransactions',
+            'commissionDate',
             'roles',
             'countries',
             'usersCountry',

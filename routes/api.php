@@ -88,6 +88,8 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
         });
     });
 
+    Route::post('cron/comzones/objectifs/recharger', [ComZoneController::class, 'reloadAllAchievedGoals']);
+
     Route::middleware(['auth:api', 'check.suspended'])->group(function () {
 
         Route::prefix('paystack')->group(function () {
@@ -331,6 +333,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('info/active_compte', [UserController::class, 'updload_identity_masters']);
             Route::get('transactions/counters', [ComZoneController::class, 'transactionCounters']);
             Route::get('operation_services', [ComZoneController::class, 'operationService']);
+            Route::post('objectifs/recharger', [ComZoneController::class, 'reloadAchievedGoals']);
             Route::post('add_masters/store', [ComZoneController::class, 'store_under_masters']);
             Route::post('add_custumers/store', [ComZoneController::class, 'store_under_custumers']);
             Route::post('add_under_distributors/store', [ComZoneController::class, 'store_under_distributors']);
