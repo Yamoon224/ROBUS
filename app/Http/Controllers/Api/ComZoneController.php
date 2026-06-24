@@ -38,38 +38,53 @@ class ComZoneController extends Controller
     protected $userValidatorService;
     protected $createUserService;
     protected $comZoneCommissionService;
+
     protected array $transactionModels = [
-        'transactions' => WalletTransaction::class,
-        'credits' => WalletPhoneCredit::class,
-        'paiements' => WalletPayment::class,
+        'transactions'   => WalletTransaction::class,
+        'credits'        => WalletPhoneCredit::class,
+        'paiements'      => WalletPayment::class,
         'internationals' => WalletInter::class,
-        'rechargements' => WalletReload::class,
-        'virements' => WalletBank::class,
-        'commandes' => WalletDeposit::class,
-        'push' => WalletPush::class,
-        'djamo' => WalletDjamo::class,
-        'xbets' => WalletXbet::class,
-        'bank_sends' => WalletBankSend::class,
-        'wave' => WalletWave::class,
-        'tresort_money' => WalletTresortMoney::class,
-        'versements' => WalletVersement::class,
+        'rechargements'  => WalletReload::class,
+        'virements'      => WalletBank::class,
+        'commandes'      => WalletDeposit::class,   // ─┐
+        'push'           => WalletPush::class,       //  ├─ fusionnés en "rechargement_carte"
+        'djamo'          => WalletDjamo::class,      // ─┘
+        'xbets'          => WalletXbet::class,
+        'bank_sends'     => WalletBankSend::class,
+        'wave'           => WalletWave::class,
+        'tresort_money'  => WalletTresortMoney::class,
+        'versements'     => WalletVersement::class,
     ];
+
     protected array $transactionServiceLabels = [
-        'DEPOT' => 'transactions',
-        'CREDIT TELEPHONIQUE' => 'credits',
-        'PAIEMENT DE FACTURE' => 'paiements',
+        'DEPOT'                   => 'transactions',
+        'CREDIT TELEPHONIQUE'     => 'credits',
+        'PAIEMENT DE FACTURE'     => 'paiements',
         'TRANSFERT INTERNATIONAL' => 'internationals',
-        'RECHARGEMENT' => 'rechargements',
-        'Active Virements' => 'virements',
-        'Active Commande' => 'commandes',
-        'Active Push' => 'push',
-        'Active Djamo' => 'djamo',
-        'XBET' => 'xbets',
-        'Active Bank Send' => 'bank_sends',
-        'Active Wave' => 'wave',
-        'Active Tresort Money' => 'tresort_money',
-        'VERSEMENT BANCAIRE' => 'versements',
+        'RECHARGEMENT DE CARTE'   => 'commandes',      // ← revenir à "commandes"
+        'RECHARGEMENT'            => 'rechargements',
+        'DEPOT ET RETRAIT'        => 'transactions',
+        'XBET'                    => 'xbets',
+        'VERSEMENT BANCAIRE'      => 'versements',
     ];
+    // Labels lisibles affichés dans la réponse JSON
+    // La clé correspond à la clé technique du service ou du groupe fusionné
+    protected array $transactionLabels = [
+        'transactions'       => 'Dépôt',
+        'credits'            => 'Crédit Téléphonique',
+        'paiements'          => 'Paiement de Facture',
+        'internationals'     => 'Transfert International',
+        'rechargements'      => 'Rechargement',
+        'virements'          => 'Virement Bancaire',
+        'xbets'              => 'Xbet',
+        'bank_sends'         => 'Envoi Bancaire',
+        'wave'               => 'Wave',
+        'tresort_money'      => 'Tresort Money',
+        'versements'         => 'Versement Bancaire',
+        // Groupe fusionné (commandes + push + djamo)
+        'rechargement_carte' => 'Rechargement de Carte',
+    ];
+
 
     public function __construct(
         ValidatorService $userValidatorService,
@@ -204,7 +219,7 @@ class ComZoneController extends Controller
                     try {
                         $result = $this->comZoneCommissionService->rewardAchievedGoals($comZone);
                         $amount = (float) $result['total_recharged'];
-                        
+
 
                         if ($amount > 0) {
                             $summary['recharged']++;
@@ -244,102 +259,254 @@ class ComZoneController extends Controller
 
     public function transactionCounters(Request $request)
     {
+        // ── Vérification COM ZONE ─────────────────────────────────────────────
         $comZone = robus();
 
         if (!$comZone || !$comZone->is_com_zone) {
             return response()->json([
                 'success' => false,
                 'message' => 'Vous devez être un COM ZONE',
-                'data' => [],
+                'data'    => [],
             ], 333);
         }
 
+        // ── Paramètres de la requête ──────────────────────────────────────────
         $status = $request->get('status', 'SUCCESS');
+
         try {
             $dateRange = $this->resolveDateRange($request);
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
                 'message' => 'Format de date invalide',
-                'data' => [],
+                'data'    => [],
             ], 333);
         }
+
         $recentTransactionsLimit = (int) $request->get('limit', 10);
         $recentTransactionsLimit = max(1, min($recentTransactionsLimit, 50));
+
+        // ── Wallets des utilisateurs de cette COM ZONE ────────────────────────
         $walletIds = Wallet::whereIn(
             'sid_user_id',
             SidUser::where('com_zone_id', $comZone->id)->pluck('id')
         )->pluck('id');
 
-        $periods = $this->transactionCounterPeriods($dateRange['base_date'], $dateRange['start'], $dateRange['end']);
-        $totals = [];
-        $amountTotals = [];
+        // ── Périodes à analyser ───────────────────────────────────────────────
+        $periods = $this->transactionCounterPeriods(
+            $dateRange['base_date'],
+            $dateRange['start'],
+            $dateRange['end']
+        );
 
+        // ── Initialisation des totaux globaux ─────────────────────────────────
+        $totals       = [];
+        $amountTotals = [];
         foreach (array_keys($periods) as $period) {
-            $totals[$period] = 0;
+            $totals[$period]       = 0;
             $amountTotals[$period] = 0;
         }
 
-        $services = [];
-        $servicesAmounts = [];
-        $servicesCommissions = [];
-        $servicesCommissionCounts = [];
-        $servicesCommissionAmounts = [];
+        // ─────────────────────────────────────────────────────────────────────
+        // DÉFINITION DES GROUPES À FUSIONNER
+        //
+        // "commandes", "push" et "djamo" sont tous les 3 des services de
+        // rechargement de carte. Ils seront fusionnés en une seule entrée
+        // "rechargement_carte" dans la réponse JSON.
+        //
+        // Pour ajouter un futur groupe, ajoutez simplement une ligne ici :
+        // 'transferts_bancaires' => ['virements', 'bank_sends', 'wave'],
+        // ─────────────────────────────────────────────────────────────────────
+        $groupes = [
+            'rechargement_carte' => ['commandes', 'push', 'djamo'],
+        ];
+
+        // Tableau inverse : "commandes" → "rechargement_carte"
+        // Permet de savoir rapidement dans quel groupe est chaque service
+        $serviceVersGroupe = [];
+        foreach ($groupes as $nomGroupe => $membres) {
+            foreach ($membres as $membre) {
+                $serviceVersGroupe[$membre] = $nomGroupe;
+            }
+        }
+
+        // ── Initialisation des compteurs pour chaque groupe ───────────────────
+        $compteursGroupes = [];
+        foreach ($groupes as $nomGroupe => $membres) {
+            $compteursGroupes[$nomGroupe] = [
+                'membres'                        => $membres,
+                'est_assigne'                    => false,
+                'counts'                         => [],
+                'amounts'                        => [],
+                'commission_counts'              => [],
+                'commission_amounts'             => [],
+                'commission_transaction_amounts' => [],
+                'commissions'                    => [],
+            ];
+            foreach (array_keys($periods) as $period) {
+                $compteursGroupes[$nomGroupe]['counts'][$period]                         = 0;
+                $compteursGroupes[$nomGroupe]['amounts'][$period]                        = 0;
+                $compteursGroupes[$nomGroupe]['commission_counts'][$period]              = 0;
+                $compteursGroupes[$nomGroupe]['commission_amounts'][$period]             = 0;
+                $compteursGroupes[$nomGroupe]['commission_transaction_amounts'][$period] = 0;
+                $compteursGroupes[$nomGroupe]['commissions'][$period]                    = 0;
+            }
+        }
+
+        // ── Tableaux de résultats individuels ────────────────────────────────
+        $services                             = [];
+        $servicesAmounts                      = [];
+        $servicesCommissions                  = [];
+        $servicesCommissionCounts             = [];
+        $servicesCommissionAmounts            = [];
         $servicesCommissionTransactionAmounts = [];
-        $servicesAssigned = [];
-        $servicesStats = [];
+        $servicesAssigned                     = [];
+        $servicesStats                        = [];
+
         $operatorServicesByService = $this->operatorServicesByService($comZone);
 
-
+        // ── Boucle sur chaque service / modèle ───────────────────────────────
         foreach ($this->transactionModels as $service => $model) {
-            $serviceCounters = [];
-            $serviceAmounts = [];
-            $serviceCommissions = [];
-            $serviceCommissionCounts = [];
-            $serviceCommissionAmounts = [];
+
+            $serviceCounters                     = [];
+            $serviceAmounts                      = [];
+            $serviceCommissions                  = [];
+            $serviceCommissionCounts             = [];
+            $serviceCommissionAmounts            = [];
             $serviceCommissionTransactionAmounts = [];
+
             $operatorService = $operatorServicesByService[$service] ?? null;
-            $isAssigned = (bool) $operatorService;
+            $isAssigned      = (bool) $operatorService;
 
+            // Ce service fait-il partie d'un groupe ?
+            // "commandes" → "rechargement_carte" / "virements" → null
+            $nomGroupe = $serviceVersGroupe[$service] ?? null;
+
+            // ── Boucle sur chaque période ─────────────────────────────────────
             foreach ($periods as $period => $periodRange) {
-                $stats = $this->transactionStatsByPeriod($model, $walletIds, $periodRange['start'], $periodRange['end'], $status);
-                $commissionStats = $this->transactionStatsByPeriod($model, $walletIds, $periodRange['start'], $periodRange['end'], self::COMMISSION_TRANSACTION_STATUS);
 
-                $serviceCounters[$period] = $isAssigned ? $stats['count'] : 0;
-                $serviceAmounts[$period] = $isAssigned ? $stats['amount'] : 0;
-                $serviceCommissionCounts[$period] = $isAssigned ? $commissionStats['count'] : 0;
-                $serviceCommissionTransactionAmounts[$period] = $isAssigned ? $commissionStats['amount'] : 0;
+                $stats = $this->transactionStatsByPeriod(
+                    $model,
+                    $walletIds,
+                    $periodRange['start'],
+                    $periodRange['end'],
+                    $status
+                );
+
+                $commissionStats = $this->transactionStatsByPeriod(
+                    $model,
+                    $walletIds,
+                    $periodRange['start'],
+                    $periodRange['end'],
+                    self::COMMISSION_TRANSACTION_STATUS
+                );
+
+                // Si le service n'est pas assigné à la COM ZONE, tout vaut 0
+                $count     = $isAssigned ? $stats['count']            : 0;
+                $amount    = $isAssigned ? $stats['amount']           : 0;
+                $commCount = $isAssigned ? $commissionStats['count']  : 0;
+                $commAmt   = $isAssigned ? $commissionStats['amount'] : 0;
+
                 $commissionAmount = $isAssigned
-                    ? $operatorService->calculateComZoneCommission($commissionStats['count'], $commissionStats['amount'])
+                    ? $operatorService->calculateComZoneCommission($commCount, $commAmt)
                     : 0;
-                $serviceCommissionAmounts[$period] = $commissionAmount;
-                $serviceCommissions[$period] = $commissionAmount;
 
+                $serviceCounters[$period]                     = $count;
+                $serviceAmounts[$period]                      = $amount;
+                $serviceCommissionCounts[$period]             = $commCount;
+                $serviceCommissionTransactionAmounts[$period] = $commAmt;
+                $serviceCommissionAmounts[$period]            = $commissionAmount;
+                $serviceCommissions[$period]                  = $commissionAmount;
+
+                // Cumul dans les totaux globaux
                 if ($isAssigned) {
-                    $totals[$period] += $stats['count'];
-                    $amountTotals[$period] += $stats['amount'];
+                    $totals[$period]       += $count;
+                    $amountTotals[$period] += $amount;
+                }
+
+                // Cumul dans le groupe si ce service en fait partie
+                if ($nomGroupe !== null) {
+                    $compteursGroupes[$nomGroupe]['counts'][$period]                         += $count;
+                    $compteursGroupes[$nomGroupe]['amounts'][$period]                        += $amount;
+                    $compteursGroupes[$nomGroupe]['commission_counts'][$period]              += $commCount;
+                    $compteursGroupes[$nomGroupe]['commission_transaction_amounts'][$period] += $commAmt;
+                    $compteursGroupes[$nomGroupe]['commission_amounts'][$period]             += $commissionAmount;
+                    $compteursGroupes[$nomGroupe]['commissions'][$period]                    += $commissionAmount;
+
+                    if ($isAssigned) {
+                        $compteursGroupes[$nomGroupe]['est_assigne'] = true;
+                    }
                 }
             }
 
-            $services[$service] = $serviceCounters;
-            $servicesAmounts[$service] = $serviceAmounts;
-            $servicesCommissions[$service] = $serviceCommissions;
-            $servicesCommissionCounts[$service] = $serviceCommissionCounts;
-            $servicesCommissionAmounts[$service] = $serviceCommissionAmounts;
+            // Enregistrement individuel du service (avec son label lisible)
+            $services[$service]                             = $serviceCounters;
+            $servicesAmounts[$service]                      = $serviceAmounts;
+            $servicesCommissions[$service]                  = $serviceCommissions;
+            $servicesCommissionCounts[$service]             = $serviceCommissionCounts;
+            $servicesCommissionAmounts[$service]            = $serviceCommissionAmounts;
             $servicesCommissionTransactionAmounts[$service] = $serviceCommissionTransactionAmounts;
-            $servicesAssigned[$service] = $isAssigned;
+            $servicesAssigned[$service]                     = $isAssigned;
             $servicesStats[$service] = [
-                'is_assigned' => $isAssigned,
-                'counts' => $serviceCounters,
-                'amounts' => $serviceAmounts,
-                'commission_status' => self::COMMISSION_TRANSACTION_STATUS,
-                'commission_counts' => $serviceCommissionCounts,
-                'commission_amounts' => $serviceCommissionAmounts,
+                'label'                          => $this->transactionLabels[$service] ?? $service,
+                'is_assigned'                    => $isAssigned,
+                'counts'                         => $serviceCounters,
+                'amounts'                        => $serviceAmounts,
+                'commission_status'              => self::COMMISSION_TRANSACTION_STATUS,
+                'commission_counts'              => $serviceCommissionCounts,
+                'commission_amounts'             => $serviceCommissionAmounts,
                 'commission_transaction_amounts' => $serviceCommissionTransactionAmounts,
-                'commissions' => $serviceCommissions,
+                'commissions'                    => $serviceCommissions,
             ];
         }
 
+        // ─────────────────────────────────────────────────────────────────────
+        // FUSION DES GROUPES DANS LA RÉPONSE
+        //
+        // On ajoute "rechargement_carte" avec son label "Rechargement de Carte"
+        // (somme de commandes + push + djamo) et on supprime les 3 entrées
+        // individuelles de tous les tableaux de la réponse.
+        // ─────────────────────────────────────────────────────────────────────
+        foreach ($groupes as $nomGroupe => $membres) {
+            $cg = $compteursGroupes[$nomGroupe];
+
+            // Ajouter le groupe fusionné dans chaque tableau de résultats
+            $services[$nomGroupe]                             = $cg['counts'];
+            $servicesAmounts[$nomGroupe]                      = $cg['amounts'];
+            $servicesCommissions[$nomGroupe]                  = $cg['commissions'];
+            $servicesCommissionCounts[$nomGroupe]             = $cg['commission_counts'];
+            $servicesCommissionAmounts[$nomGroupe]            = $cg['commission_amounts'];
+            $servicesCommissionTransactionAmounts[$nomGroupe] = $cg['commission_transaction_amounts'];
+            $servicesAssigned[$nomGroupe]                     = $cg['est_assigne'];
+            $servicesStats[$nomGroupe] = [
+                'label'                          => $this->transactionLabels[$nomGroupe] ?? $nomGroupe,
+                'is_assigned'                    => $cg['est_assigne'],
+                'members'                        => $membres,
+                'counts'                         => $cg['counts'],
+                'amounts'                        => $cg['amounts'],
+                'commission_status'              => self::COMMISSION_TRANSACTION_STATUS,
+                'commission_counts'              => $cg['commission_counts'],
+                'commission_amounts'             => $cg['commission_amounts'],
+                'commission_transaction_amounts' => $cg['commission_transaction_amounts'],
+                'commissions'                    => $cg['commissions'],
+            ];
+
+            // Supprimer les membres individuels de tous les tableaux
+            foreach ($membres as $membre) {
+                unset(
+                    $services[$membre],
+                    $servicesAmounts[$membre],
+                    $servicesCommissions[$membre],
+                    $servicesCommissionCounts[$membre],
+                    $servicesCommissionAmounts[$membre],
+                    $servicesCommissionTransactionAmounts[$membre],
+                    $servicesAssigned[$membre],
+                    $servicesStats[$membre]
+                );
+            }
+        }
+
+        // ── Données supplémentaires ───────────────────────────────────────────
         $linkedUsersCounters = $this->linkedUsersCounters($comZone->id);
         $linkedServices = $this->linkedOperationServices(
             $comZone,
@@ -350,41 +517,39 @@ class ComZoneController extends Controller
             $recentTransactionsLimit
         );
 
+        // ── Réponse JSON finale ───────────────────────────────────────────────
         return response()->json([
             'success' => true,
             'message' => 'Statistiques des transactions COM ZONE',
             'data' => [
                 'com_zone_id' => $comZone->id,
-                'status' => $status,
+                'status'      => $status,
                 'filters' => [
-                    'date' => $request->get('date'),
-                    'start_date' => $request->get('start_date', $request->get('from')),
-                    'end_date' => $request->get('end_date', $request->get('to')),
+                    'date'                => $request->get('date'),
+                    'start_date'          => $request->get('start_date', $request->get('from')),
+                    'end_date'            => $request->get('end_date', $request->get('to')),
                     'resolved_start_date' => $dateRange['start']->toDateTimeString(),
-                    'resolved_end_date' => $dateRange['end']->toDateTimeString(),
-                    'limit' => $recentTransactionsLimit,
+                    'resolved_end_date'   => $dateRange['end']->toDateTimeString(),
+                    'limit'               => $recentTransactionsLimit,
                 ],
-                'linked_users_count' => $linkedUsersCounters['total'],
+                'linked_users_count'  => $linkedUsersCounters['total'],
                 'linked_users_counts' => $linkedUsersCounters,
                 'totals' => [
-                    'counts' => $totals,
+                    'counts'  => $totals,
                     'amounts' => $amountTotals,
                 ],
-                'services' => $services,
-                'services_amounts' => $servicesAmounts,
-                'services_commissions' => $servicesCommissions,
-                'commissions_status' => self::COMMISSION_TRANSACTION_STATUS,
-                'services_commission_counts' => $servicesCommissionCounts,
-                'services_commission_amounts' => $servicesCommissionAmounts,
+                'services'                                => $services,
+                'services_amounts'                        => $servicesAmounts,
+                'services_commissions'                    => $servicesCommissions,
+                'commissions_status'                      => self::COMMISSION_TRANSACTION_STATUS,
+                'services_commission_counts'              => $servicesCommissionCounts,
+                'services_commission_amounts'             => $servicesCommissionAmounts,
                 'services_commission_transaction_amounts' => $servicesCommissionTransactionAmounts,
-                'services_assigned' => $servicesAssigned,
-                'services_stats' => $servicesStats,
-                // 'linked_services_totals' => $this->linkedServicesTotals($linkedServices),
-                // 'linked_services' => $linkedServices,
+                'services_assigned'                       => $servicesAssigned,
+                'services_stats'                          => $servicesStats,
             ],
         ]);
     }
-
     protected function resolveDateRange(Request $request): array
     {
         $date = $request->get('date');
@@ -545,7 +710,9 @@ class ComZoneController extends Controller
 
         $services = [];
 
+
         foreach ($operatorServices as $operatorService) {
+
             $serviceKey = $this->serviceKeyForOperatorName($operatorService->operator->name ?? '');
 
             if ($serviceKey && !isset($services[$serviceKey])) {
@@ -746,7 +913,7 @@ class ComZoneController extends Controller
         try {
 
             $response = $this->createUserService->createComZoneCompagnie(
-                 $request->all(),
+                $request->all(),
                 $request->file('image'),
                 $request->file('image_recto'),
                 $request->file('image_verso'),

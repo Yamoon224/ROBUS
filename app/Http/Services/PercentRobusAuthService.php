@@ -147,14 +147,41 @@ class PercentRobusAuthService
     {
         $countryNameGroup = robus()->country->name_groupe;
 
+        $isSpecialProfile = robus()->is_under_distributer || robus()->is_api;
+
         switch ($countryNameGroup) {
             case 'MAG':
-                return TransactionCost::whereId(44)->first();
+                return  $isSpecialProfile ? TransactionCost::whereId(44)->first() : TransactionCost::whereId(53)->first();
             default:
                 return null;
         }
     }
 
+    public function getRobusPercentageMobileAFL()
+    {
+        $countryNameGroup = robus()->country->name_groupe;
+        $isSpecialProfile = robus()->is_under_distributer || robus()->is_api;
+
+        switch ($countryNameGroup) {
+            case 'AFL':
+                return  $isSpecialProfile ? TransactionCost::whereId(53)->first() : TransactionCost::whereId(54)->first();
+            default:
+                return null;
+        }
+    }
+
+    public function getRobusPercentageMobileAFC()
+    {
+        $countryNameGroup = robus()->country->name_groupe;
+        $isSpecialProfile = robus()->is_under_distributer || robus()->is_api;
+
+        switch ($countryNameGroup) {
+            case 'AFC':
+                return  $isSpecialProfile ? TransactionCost::whereId(56)->first() : TransactionCost::whereId(55)->first();
+            default:
+                return null;
+        }
+    }
 
     public function getRobusPercentageMobileWave()
     {
@@ -6411,8 +6438,8 @@ class PercentRobusAuthService
 
         $robusId = sabdy()->country->id;
 
-     
-        
+
+
         if (isset($countriesLevels[$robusId])) {
 
             $specificCountry = $countriesLevels[$robusId][$countrie->id];
@@ -6480,7 +6507,7 @@ class PercentRobusAuthService
 
     public function getRobusPercentageBankSend(int $countryId): ?BankCommission
     {
-    
+
         // Mapping des pays par commission
         $groups = [
             // Europe
@@ -6511,7 +6538,7 @@ class PercentRobusAuthService
 
     public function getRobusPercentageInterMoney(int $countryId): ?BankCommission
     {
-    
+
         // Mapping des pays par commission
         $groups = [
             3 => [45, 157],

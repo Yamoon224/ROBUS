@@ -374,7 +374,7 @@ class TransactionController extends Controller
 
                                     $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
 
-                                    $walletTransaction = $this->robusTransactionService->createRobusWalletPaiementTransaction($request->amount, $percent_amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal, $walletAmountSend->amount , $is_unders);
+                                    $walletTransaction = $this->robusTransactionService->createRobusWalletPaiementTransaction($request->amount, $percent_amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal, $walletAmountSend->amount, $is_unders);
 
                                     if ($walletTransaction != null) {
 
@@ -445,11 +445,13 @@ class TransactionController extends Controller
                         );
                     }
                     if (robus()->country->name_groupe == 'CIV') {
-
                         $percent_robus = $this->percentRobus->getRobusPercentageMobile();
                     } elseif (robus()->country->name_groupe == 'MAG') {
-
                         $percent_robus = $this->percentRobus->getRobusPercentageMobileMaroc();
+                    } elseif (robus()->country->name_groupe == 'AFL') {
+                        $percent_robus = $this->percentRobus->getRobusPercentageMobileAFL();
+                    } elseif (robus()->country->name_groupe == 'AFC') {
+                        $percent_robus = $this->percentRobus->getRobusPercentageMobileAFC();
                     } else {
 
                         return response()->json(
@@ -498,6 +500,12 @@ class TransactionController extends Controller
                     if (robus()->country->name_groupe == 'CIV') {
 
                         $percent_robus = $this->percentRobus->getRobusPercentageMobileTwo();
+                    } elseif (robus()->country->name_groupe == 'MAG') {
+                        $percent_robus = $this->percentRobus->getRobusPercentageMobileMaroc();
+                    } elseif (robus()->country->name_groupe == 'AFL') {
+                        $percent_robus = $this->percentRobus->getRobusPercentageMobileAFL();
+                    } elseif (robus()->country->name_groupe == 'AFC') {
+                        $percent_robus = $this->percentRobus->getRobusPercentageMobileAFC();
                     } else {
 
                         return  json_message_response(false, "Pa de Transfert Mobile Money dans la zone !", 333);
@@ -875,8 +883,21 @@ class TransactionController extends Controller
                         }
 
 
-                        $walletTransaction =  $this->mobileWalletTransactionService->createRobusDrawalWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->name_custumer, $cost_payment, $request->phone, 2, $request->type_piece, $request->num_piece, $request->reference ,   $imagePath,
-                                $imageBackendPath );
+                        $walletTransaction =  $this->mobileWalletTransactionService->createRobusDrawalWalletTransactionDistributer(
+                            $percent_robus,
+                            $request->provider,
+                            $request->amount,
+                            $request->date_piece,
+                            $request->name_custumer,
+                            $cost_payment,
+                            $request->phone,
+                            2,
+                            $request->type_piece,
+                            $request->num_piece,
+                            $request->reference,
+                            $imagePath,
+                            $imageBackendPath
+                        );
 
                         if ($walletTransaction != null) {
 
@@ -1555,13 +1576,11 @@ class TransactionController extends Controller
                         $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
                         $commission_transaction_val_nat_pay = $isUnders ? (float)$commission_transaction->percent_deposit * (float) $commission_transaction_val_percent_pay : (float)$commission_transaction->percent_deposit * $amount_transaction;
                         $commission_transaction_val_nat_receive = (float)$amount_transaction - (float) $commission_transaction_val_percent_pay;
-                    
                     } else if ($commission_transaction && $data?->sidUser?->is_under_distributer) {
 
                         $commission_transaction_val_percent_pay =  $isUnders ?  $commission_transaction->percent_deposit * (float) $amount_transaction  : (float)$commission_transaction->percent_under_scanner * $amount_transaction;
                         $commission_transaction_val_nat_pay = $isUnders ? (float) $commission_transaction->percent_deposit * (float) $commission_transaction_val_percent_pay : (float)$commission_transaction->percent_deposit * $amount_transaction;
                         $commission_transaction_val_nat_receive = (float)$amount_transaction - (float) $commission_transaction_val_percent_pay;
-                    
                     }
 
                     $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);

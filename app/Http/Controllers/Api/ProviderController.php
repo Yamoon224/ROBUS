@@ -311,7 +311,6 @@ class ProviderController extends Controller
                             "Crédit téléphonique" => ProviderSingleCollection::collection($providers['phoneInter']),
                             "Versement bancaire" => ProviderSingleCollection::collection($providers['virementBank']),
                             "Rechargement de carte" => ProviderSingleCollection::collection($providers['reloadCardInter']),
-                            "Rechargement de carte" =>  ProviderSingleCollection::collection($providers['reloadCardInter']),
                             "Bank Send" =>  ProviderSingleCollection::collection($providers['interBankSend']),
                         ];
                     }

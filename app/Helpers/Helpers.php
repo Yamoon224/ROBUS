@@ -35,7 +35,6 @@ if (!function_exists('getAppStatus')) {
 }
 
 if (!function_exists('safeNotifyMany')) {
-
     function safeNotifyMany($users, Notification $notification): void
     {
         try {
@@ -130,7 +129,6 @@ if (! function_exists('applyRestrictionMap')) {
         }
     }
 }
-
 
 
 if (!function_exists('appDispoRobus')) {

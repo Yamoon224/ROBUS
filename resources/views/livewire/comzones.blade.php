@@ -7,8 +7,8 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
 
             @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur'))
-                <a class="btn btn-primary shadow-md mr-2" href="{{ route('comzones.admins.add') }}">Ajouter une
-                    COM ZONE</a>
+            <a class="btn btn-primary shadow-md mr-2" href="{{ route('comzones.admins.add') }}">Ajouter une
+                COM ZONE</a>
             @endif
             <a class="btn btn-secondary shadow-md mr-2" href="{{ route('comzones.admins.statistics') }}">
                 Statistiques
@@ -88,7 +88,7 @@
 
                         </td>
                         <td class="table-report__action w-60">
-                             <div class="text-center mb-3">
+                            <div class="text-center mb-3">
                                 <button type="button" wire:click="openLinkedUsersModal({{ $item->id }})"
                                     wire:loading.attr="disabled" class="btn btn-primary btn-sm">
                                     Voir les utilisateurs liés
@@ -125,8 +125,9 @@
                             @endif
                         </td>
                         <td class="w-60">
-                           
+
                             <div class="flex mt-4 lg:mt-0 ">
+                                @if (Auth::guard('web')->user()->hasPermissionTo('voir-activites'))
                                 @if ($item->is_com_zone)
                                 <div class="flex items-start ">
 
@@ -170,7 +171,9 @@
                                     </div>
                                 </div>
                                 @endif
-                                
+                                @endif
+
+
                                 @if (Auth::guard('web')->user()->hasPermissionTo('voir-com-zones'))
                                 <a class="mr-1 mb-2 btn-sm mr-5 ml-5"
                                     href="{{ route('comzones.admins.show', ['id' => $item->id]) }}">

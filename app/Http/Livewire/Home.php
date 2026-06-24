@@ -217,10 +217,10 @@ class Home extends Component
                 'success_inter'         => $inter_success,
                 'pendding_inter'        => $inter_padding,
 
-                'amount_djamo_days'        => $djamo_amount_month,
-                'amount_push_days'         => $push_amount_month,
-                'amount_tresortMoney_days' => $tresortMoney_amount_month,
-                'amount_versment_days'     => $versment_amount_month,
+                'amount_djamo_days'        => $djamo_amount,
+                'amount_push_days'         => $push_amount,
+                'amount_tresortMoney_days' => $tresortMoney_amount,
+                'amount_versment_days'     => $versment_amount,
 
                 'amount_payment_days'           => $payement_amount,
                 'amount_payment_cie_days'       => $payement_amount_cie,
