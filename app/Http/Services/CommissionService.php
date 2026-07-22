@@ -61,7 +61,7 @@ class CommissionService
         }
     }
 
-    public function distributeAdminCommissionAcceptedCompanies($adminCiv, string $walletColumn, $walletId, $totalCommission, $amountDeposit)
+    public function distributeAdminCommissionAcceptedCompanies($adminCiv, string $walletColumn, $walletId, $totalCommission, $amountDeposit, $amountBank = null)
     {
 
         if ($adminCiv->isEmpty()) {
@@ -81,6 +81,7 @@ class CommissionService
                     'description' => 'Commission administrateur',
                     'amount_compagnie' => $userUnder->is_under_distributer ? $totalCommission : 0,
                     'amount_under' => $userUnder->is_under_distributer ? $amountDeposit : 0,
+                    'amount_bank' => $amountBank ?? 0,
                     'is_under' => true,
                     'description_underdistributer' => $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null,
                 ], [$walletColumn => $walletId]));
@@ -287,7 +288,7 @@ class CommissionService
     }
 
 
-    public function distributeAdminCommissions($adminCiv, $walletColumn, $walletId, $totalCommission)
+    public function distributeAdminCommissions($adminCiv, $walletColumn, $walletId, $totalCommission, $amountBank = null)
     {
 
         if ($adminCiv->isEmpty()) {
@@ -307,6 +308,7 @@ class CommissionService
                     'sid_user_id' => $adminUser->id,
                     'description' => 'Commission administrateur',
                     'amount_under' =>  0,
+                    'amount_bank' => $amountBank ?? 0,
                     'description_underdistributer' => null,
                 ], [$walletColumn => $walletId]));
             }
@@ -1034,7 +1036,7 @@ class CommissionService
     }
 
 
-    public function distributeAdminCommissionUnders($adminCiv, string $walletColumn, $walletId, $amountDeposit)
+    public function distributeAdminCommissionUnders($adminCiv, string $walletColumn, $walletId, $amountDeposit, $amountBank = null)
     {
 
 
@@ -1053,6 +1055,7 @@ class CommissionService
                     'amount' => 0,
                     'sid_user_id' => $adminUser->id,
                     'description' => 'Commission administrateur',
+                    'amount_bank' => $amountBank ?? 0,
                     'amount_under' =>  $userUnder->is_under_distributer ? $amountDeposit : 0,
                     'description_underdistributer' =>  $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null
                 ], [$walletColumn => $walletId]));

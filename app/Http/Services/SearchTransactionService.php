@@ -76,6 +76,12 @@ class SearchTransactionService
             $commissionTransaction = ($underDistributer == true) ? TransactionCost::whereId(27)->first() :  TransactionCost::whereId(29)->first();
         } elseif ($countryGroup == 'MAG') {
             $commissionTransaction = ($underDistributer == true) ? TransactionCost::whereId(44)->first() :  null;
+        } elseif ($countryGroup == 'AFL') {
+            $commissionTransaction = ($underDistributer == true) ?  TransactionCost::whereId(53)->first() : TransactionCost::whereId(54)->first();
+        } elseif ($countryGroup == 'AFC') {
+            $commissionTransaction = ($underDistributer == true) ? TransactionCost::whereId(56)->first() : TransactionCost::whereId(55)->first();
+        }elseif ($countryGroup == 'AFE') {
+            $commissionTransaction = ($underDistributer == true) ? TransactionCost::whereId(57)->first() : TransactionCost::whereId(58)->first();
         } else {
 
             return response()->json(

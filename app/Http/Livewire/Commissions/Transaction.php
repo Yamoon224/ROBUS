@@ -28,7 +28,7 @@ class Transaction extends Component
     public $comission_master;
     public $comissionCompanie;
     public $percent_scanner;
-
+    public $percent_banque;
 
     public function add()
     {
@@ -59,6 +59,7 @@ class Transaction extends Component
                     'percent_admin'  => $this->percent_admin,
                     'percent_deposit'  => $this->percent_deposit,
                     'percent_with_drawal'  => $this->percent_with_drawal,
+                    'percent_banque'  => $this->percent_banque,
                     'created_by' => Auth::guard('web')->user()->id,
                     'percent_companie'  => $this->comissionCompanie,
                     'percent_custum_drawal'  => $this->percent_with_drawal_custumer,
@@ -83,6 +84,7 @@ class Transaction extends Component
         $this->transaction_name = $check->name;
         $this->percent_transaction = $check->percent * 100;
         $this->percent_admin = $check->percent_admin * 100;
+        $this->percent_banque = $check->percent_banque * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
 
         $this->percent_with_drawal_custumer = $check->percent_custum_drawal * 100;
@@ -96,7 +98,6 @@ class Transaction extends Component
         $this->distributer_custumer = $check->distributer_custumer;
         $this->emit($state);
     }
-
 
     public function update()
     {
@@ -123,6 +124,7 @@ class Transaction extends Component
             'percent_deposit' => $this->percent_deposit,
             'percent_with_drawal'  => $this->percent_with_drawal,
             'percent_companie'  => $this->comissionCompanie,
+            'percent_banque'  => $this->percent_banque,
             'percent_custum_drawal'  => $this->percent_with_drawal_custumer,
             'percent_custum_drawal_admin'  => $this->percent_with_drawal_admin,
             'percent_custum_drawal_companie'  => $this->percent_with_drawal_companie,
@@ -163,6 +165,7 @@ class Transaction extends Component
                     'percent_admin'  => $this->percent_admin,
                     'percent_deposit'  => $this->percent_deposit,
                     'percent_with_drawal'  => $this->percent_with_drawal,
+                    'percent_banque'  => $this->percent_banque,
                     'percent_custum_drawal_admin'  => $this->percent_with_drawal_admin,
                     'percent_custum_drawal_companie'  => $this->percent_with_drawal_companie,
                     'percent_custum_drawal_master'  => $this->percent_with_drawal_master,
@@ -178,6 +181,7 @@ class Transaction extends Component
             $this->percent_with_drawal_admin = '';
             $this->percent_with_drawal_companie = '';
             $this->percent_with_drawal_master = '';
+            $this->percent_banque = '';
             $this->emit('modal-hide', 'hide');
             $this->emit('success', 'Commission  ajouté !');
         } else $this->emit('error', 'Commission  existante !');
@@ -190,6 +194,7 @@ class Transaction extends Component
         $this->transaction_id = $check->id;
         $this->percent_transaction = $check->percent * 100;
         $this->percent_admin = $check->percent_admin * 100;
+        $this->percent_banque = $check->percent_banque * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
         $this->percent_deposit = $check->percent_deposit * 100;
         $this->distributer_custumer = $check->distributer_custumer;
@@ -197,6 +202,7 @@ class Transaction extends Component
         $this->comissionCompanie = $check->percent_companie  * 100;
         $this->emit($state);
     }
+    
     public function update_caf_caf()
     {
         $this->validate(
@@ -219,6 +225,7 @@ class Transaction extends Component
             'percent_admin' => $this->percent_admin,
             'percent_deposit' => $this->comissionCompanie,
             'percent_companie' => $this->percent_deposit,
+            'percent_banque'  => $this->percent_banque,
             'percent_with_drawal'  => $this->percent_with_drawal,
             'status' => 1,
             'percent_under_scanner'  => $this->percent_scanner,
@@ -239,6 +246,7 @@ class Transaction extends Component
         $this->percent_with_drawal = '';
         $this->percent_transaction = '';
         $this->comissionCompanie = '';
+        $this->percent_banque = '';
         $this->percent_with_drawal_custumer = '';
         $this->percent_with_drawal_admin = '';
         $this->percent_with_drawal_companie = '';

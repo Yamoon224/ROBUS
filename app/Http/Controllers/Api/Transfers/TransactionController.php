@@ -452,6 +452,8 @@ class TransactionController extends Controller
                         $percent_robus = $this->percentRobus->getRobusPercentageMobileAFL();
                     } elseif (robus()->country->name_groupe == 'AFC') {
                         $percent_robus = $this->percentRobus->getRobusPercentageMobileAFC();
+                    } elseif (robus()->country->name_groupe == 'AFE') {
+                        $percent_robus = $this->percentRobus->getRobusPercentageMobileAFE();
                     } else {
 
                         return response()->json(
@@ -506,6 +508,8 @@ class TransactionController extends Controller
                         $percent_robus = $this->percentRobus->getRobusPercentageMobileAFL();
                     } elseif (robus()->country->name_groupe == 'AFC') {
                         $percent_robus = $this->percentRobus->getRobusPercentageMobileAFC();
+                    } elseif (robus()->country->name_groupe == 'AFE') {
+                        $percent_robus = $this->percentRobus->getRobusPercentageMobileAFE();
                     } else {
 
                         return  json_message_response(false, "Pa de Transfert Mobile Money dans la zone !", 333);

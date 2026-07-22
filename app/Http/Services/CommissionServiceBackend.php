@@ -430,8 +430,10 @@ class CommissionServiceBackend
     public function handleAdminCommission($check, $admin_civ)
     {
         $amountValeur = $check->adminCom->amount;
+        $amount_banque = (float)$check->adminCom->amount_bank ?? 0;
 
         $walletAdmin = WalletAdmin::find(1);
+        $walletCommission = WalletCommission::find(1);
 
         if ($admin_civ->count() > 0) {
 
@@ -453,6 +455,17 @@ class CommissionServiceBackend
                         true,
                         false
                     );
+
+                    if ($amount_banque > 0) {
+                        $walletCommission->increment('amount', $amount_banque);
+                        $this->credit(
+                            $check->adminCom->id,
+                            $amount_banque,
+                            'Commission banque',
+                            false,
+                            true
+                        );
+                    }
                 } else {
                     $admin_single->wallet->update([
                         'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
@@ -731,7 +744,7 @@ class CommissionServiceBackend
         }
     }
 
-      public function handleUnderDistributorInterPhoneCreditCommission($check, $admin_civ, $description)
+    public function handleUnderDistributorInterPhoneCreditCommission($check, $admin_civ, $description)
     {
         $valeur_amount_com = (float)$check->adminCom->amount;
         $walletAdmin = WalletAdmin::find(1);
@@ -804,6 +817,7 @@ class CommissionServiceBackend
     {
         $valeur_amount_com = (float) $check->adminCom->amount_under + (float)$check->adminCom->amount_compagnie;
         $walletCommission = WalletCommission::find(1);
+        $amount_banque = (float)$check->adminCom->amount_bank ?? 0;
 
         if ($admin_civ->count() > 0) {
 
@@ -815,7 +829,8 @@ class CommissionServiceBackend
                     'description' => $description,
                     'status'  => "SUCCESS",
                     'amount_under' => $check->adminCom->amount_under,
-                    'amount_compagnie' => $check->adminCom->amount_compagnie,
+                    'amount_compagnie' => $check->adminCom->amount_compagnie ?? 0,
+                    'amount_bank' => $check->adminCom->amount_bank ?? 0,
                     'description_underdistributer' =>  $description
                 ]);
 
@@ -829,6 +844,17 @@ class CommissionServiceBackend
                         false,
                         true
                     );
+
+                    if ($amount_banque > 0) {
+                        $walletCommission->increment('amount', $amount_banque);
+                        $this->credit(
+                            $check->adminCom->id,
+                            $amount_banque,
+                            'Commission banque',
+                            false,
+                            true
+                        );
+                    }
                 } else {
                     $admin_single->wallet->decrement('amount', $valeur_amount_com);
                 }
@@ -934,7 +960,7 @@ class CommissionServiceBackend
         }
     }
 
-      public function handleUnderDistributorInterPaiementCommission($check, $admin_civ, $description)
+    public function handleUnderDistributorInterPaiementCommission($check, $admin_civ, $description)
     {
         $amount_admin = (float) $check->adminCom->amount;
         $amount_invoice = (float)$check->adminCom->amount_under + (float)$check->adminCom->amount_compagnie;
@@ -1032,7 +1058,7 @@ class CommissionServiceBackend
                     $walletAdmin->increment('amount', $amount_admin);
                     $this->credit(
                         $check->adminCom->id,
-                        $amount_admin,
+                        $amount_banque,
                         'Commission banque',
                         false,
                         true

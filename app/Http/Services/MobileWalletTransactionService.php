@@ -151,18 +151,21 @@ class MobileWalletTransactionService
 
         $valuer_admin = $valeur_percent_valeur;
 
+        $valuer_banque = $percent_robus->percent_banque * $commission;
+
         if ($country_civ->currencie->value > robus()->country->currencie->value) {
-
             $admin_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
+            $percent_valeur_banque =   (float)  $valuer_banque *   (float) robus()->country->currencie->value;
         } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
-
             $admin_valeur_convertion = (float)   $valuer_admin;
+            $percent_valeur_banque = (float)   $valuer_banque;
         } else {
 
             $admin_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
+            $percent_valeur_banque =   (float)  $valuer_banque *   (float) robus()->country->currencie->value;
         }
 
-        $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $admin_valeur_convertion);
+        $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $admin_valeur_convertion , $percent_valeur_banque);
 
         return true;
     }
@@ -234,20 +237,22 @@ class MobileWalletTransactionService
         if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
 
             $valuer_admin = $percent_robus->percent_admin * $valeur_percent_valeur;
-
             $valuer_deposit = $percent_robus->percent_deposit *  $commission;
-
             $valuer_companie = $percent_robus->percent_companie * $commission;
+            $valuer_banque = $percent_robus->percent_banque * $commission;
 
             if ($country_civ->currencie->value > robus()->country->currencie->value) {
                 $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) robus()->country->currencie->value;
                 $percent_valeur_compagnie =   (float)  $valuer_companie *   (float) robus()->country->currencie->value;
+                $percent_valeur_banque =   (float)  $valuer_banque *   (float) robus()->country->currencie->value;
             } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
                 $admin_valeur_convertion =   (float)  $valuer_deposit;
                 $percent_valeur_compagnie =   (float)  $valuer_companie;
+                $percent_valeur_banque =   (float)  $valuer_banque;
             } else {
                 $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) robus()->country->currencie->value;
                 $percent_valeur_compagnie =   (float)  $valuer_companie *   (float) robus()->country->currencie->value;
+                $percent_valeur_banque =   (float)  $valuer_banque *   (float) robus()->country->currencie->value;
             }
 
             if (!empty($activeButtons['showRemonterMoneyButton'])) {
@@ -262,9 +267,9 @@ class MobileWalletTransactionService
 
                     $walletTransaction->increment('commission_companie', $percent_valeur_compagnie);
 
-                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $percent_valeur_compagnie, $admin_valeur_convertion);
+                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $percent_valeur_compagnie, $admin_valeur_convertion, $percent_valeur_banque);
                 } else {
-                    $this->commissionServices->distributeAdminCommissionUnders($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $admin_valeur_convertion);
+                    $this->commissionServices->distributeAdminCommissionUnders($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $admin_valeur_convertion, $percent_valeur_banque);
                 }
             }
         }

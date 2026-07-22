@@ -183,6 +183,19 @@ class PercentRobusAuthService
         }
     }
 
+    public function getRobusPercentageMobileAFE()
+    {
+        $countryNameGroup = robus()->country->name_groupe;
+        $isSpecialProfile = robus()->is_under_distributer || robus()->is_api;
+
+        switch ($countryNameGroup) {
+            case 'AFE':
+                return  $isSpecialProfile ? TransactionCost::whereId(57)->first() : TransactionCost::whereId(58)->first();
+            default:
+                return null;
+        }
+    }
+
     public function getRobusPercentageMobileWave()
     {
         $countryNameGroup = robus()->country->name_groupe;

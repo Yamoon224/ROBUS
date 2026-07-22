@@ -1198,8 +1198,8 @@ class withTransactionController extends Controller
                                 return response()->json([
                                         'success' => true,
                                         'data' => [
-                                                'amount_send'    => $amountUser,
-                                                'amount_pay'     => $commissionUser,
+                                                'amount_send'    => $isDistributor ? $commissionUser : $amountUser,
+                                                'amount_pay'     => $isDistributor ?  $amountUser : $commissionUser,
                                                 'amount_receive' => $totalAmountRecevedUser . ' ' . $bankCountryReceived->currencie->code ?? "CFA",
                                         ],
                                 ], 200);
