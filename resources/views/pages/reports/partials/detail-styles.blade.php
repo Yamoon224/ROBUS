@@ -177,6 +177,83 @@
         background: #f8fafc;
     }
 
+    .report-detail__table tbody tr.report-detail__row--suspicious td {
+        color: #991b1b;
+        background: #fff1f2;
+        border-top-color: #fecdd3;
+    }
+
+    .report-detail__table tbody tr.report-detail__row--suspicious:hover td {
+        background: #ffe4e6;
+    }
+
+    .report-detail__table tbody tr.report-detail__row--continuity td {
+        color: #92400e;
+        background: #fffbeb;
+        border-top-color: #fde68a;
+    }
+
+    .report-detail__table tbody tr.report-detail__row--continuity:hover td {
+        background: #fef3c7;
+    }
+
+    .report-detail__suspicious-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .3rem;
+        padding: .25rem .55rem;
+        border-radius: 999px;
+        color: #fff;
+        background: #dc2626;
+        font-size: .68rem;
+        font-weight: 700;
+    }
+
+    .report-detail__alert--danger {
+        margin: 1rem 1.15rem;
+        padding: .8rem 1rem;
+        border: 1px solid #fecaca;
+        border-radius: .75rem;
+        color: #991b1b;
+        background: #fef2f2;
+        font-size: .78rem;
+    }
+
+    .report-detail__cause {
+        min-width: 280px;
+        max-width: 420px;
+        white-space: normal;
+    }
+
+    .report-detail__cause summary {
+        display: inline-flex;
+        cursor: pointer;
+        padding: .35rem .65rem;
+        border: 1px solid #fca5a5;
+        border-radius: .55rem;
+        color: #991b1b;
+        background: #fff;
+        font-weight: 700;
+        list-style: none;
+    }
+
+    .report-detail__cause summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .report-detail__cause-panel {
+        margin-top: .65rem;
+        padding: .7rem;
+        border-left: 3px solid #dc2626;
+        color: #7f1d1d;
+        background: rgba(255, 255, 255, .75);
+        line-height: 1.55;
+    }
+
+    .report-detail__cause-panel div + div {
+        margin-top: .25rem;
+    }
+
     .report-detail__table .is-numeric {
         text-align: right;
         font-variant-numeric: tabular-nums;

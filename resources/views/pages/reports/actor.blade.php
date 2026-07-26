@@ -9,6 +9,7 @@
 @section('content')
     @php
         $actorLabel = ucfirst(str_replace('_', ' ', $actor));
+        $fullActivity = in_array($actor, ['superviseurs', 'distributeurs', 'sous_distributeurs'], true);
         $totalReloads = collect($users)->sum('rechargements_recus');
         $totalAmount = collect($users)->sum('montant_recu');
         $totalSentReloads = collect($users)->sum('rechargements_envoyes');
@@ -24,7 +25,7 @@
                 <div>
                     <h1 class="report-detail__title">{{ $actorLabel }}</h1>
                     <p class="report-detail__subtitle">
-                        @if ($actor === 'superviseurs')
+                        @if ($fullActivity)
                             Rechargements envoyés et reçus, transactions émises et reçues le {{ $date }}
                         @else
                             Classement des utilisateurs ayant reçu le plus de rechargements le {{ $date }}
@@ -32,7 +33,7 @@
                     </p>
                 </div>
                 <div class="report-detail__actions">
-                    @if (in_array($actor, ['superviseurs', 'sous_distributeurs'], true))
+                    @if ($fullActivity)
                         <a href="{{ route('reports.daily.actor.download', ['actor' => $actor, 'date' => $date]) }}"
                             class="report-detail__button">
                             <i data-feather="download" class="w-4 h-4"></i>
@@ -64,38 +65,38 @@
             <article class="report-detail__metric">
                 <div class="report-detail__metric-value">{{ count($users) }}</div>
                 <div class="report-detail__metric-label">
-                    {{ $actor === 'superviseurs' ? 'Superviseurs actifs' : 'Utilisateurs rechargés' }}
+                    {{ $fullActivity ? 'Utilisateurs actifs' : 'Utilisateurs rechargés' }}
                 </div>
             </article>
             <article class="report-detail__metric">
                 <div class="report-detail__metric-value">
-                    {{ $actor === 'superviseurs' ? $totalSentReloads : $totalReloads }}
+                    {{ $fullActivity ? $totalSentReloads : $totalReloads }}
                 </div>
                 <div class="report-detail__metric-label">
-                    {{ $actor === 'superviseurs' ? 'Rechargements envoyés' : 'Rechargements reçus' }}
+                    {{ $fullActivity ? 'Rechargements envoyés' : 'Rechargements reçus' }}
                 </div>
             </article>
             <article class="report-detail__metric">
                 <div class="report-detail__metric-value">
-                    {{ $actor === 'superviseurs' ? $totalReloads : $formatAmount($totalAmount) }}
+                    {{ $fullActivity ? $totalReloads : $formatAmount($totalAmount) }}
                 </div>
                 <div class="report-detail__metric-label">
-                    {{ $actor === 'superviseurs' ? 'Rechargements reçus' : 'Montant des rechargements reçus' }}
+                    {{ $fullActivity ? 'Rechargements reçus' : 'Montant des rechargements reçus' }}
                 </div>
             </article>
             <article class="report-detail__metric">
                 <div class="report-detail__metric-value">
-                    @if ($actor === 'superviseurs')
+                    @if ($fullActivity)
                         {{ $totalTransactions }}
                     @else
                         {{ $totalReceivedTransactions }}
                     @endif
                 </div>
                 <div class="report-detail__metric-label">
-                    {{ $actor === 'superviseurs' ? 'Transactions émises et reçues' : 'Transactions reçues' }}
+                    {{ $fullActivity ? 'Transactions émises et reçues' : 'Transactions reçues' }}
                 </div>
             </article>
-            @if ($actor !== 'superviseurs')
+            @if (! $fullActivity)
                 <article class="report-detail__metric">
                     <div class="report-detail__metric-value">{{ $formatAmount($totalReceivedTransactionAmount) }}</div>
                     <div class="report-detail__metric-label">Montant des transactions reçues</div>
@@ -108,7 +109,7 @@
                 <div>
                     <h2 class="report-detail__section-title">Classement des bénéficiaires</h2>
                     <p class="report-detail__section-copy">
-                        {{ $actor === 'superviseurs'
+                        {{ $fullActivity
                             ? 'Trié selon le nombre total de mouvements'
                             : 'Trié par nombre de rechargements reçus, puis par montant' }}
                     </p>
@@ -122,7 +123,7 @@
                         <tr>
                             <th>Rang</th>
                             <th>Utilisateur</th>
-                            @if ($actor === 'superviseurs')
+                            @if ($fullActivity)
                                 <th class="is-numeric">Rechargements envoyés</th>
                                 <th class="is-numeric">Rechargements reçus</th>
                                 <th class="is-numeric">Transactions émises</th>
@@ -151,14 +152,16 @@
                                         {{ $user['nom'] }}
                                     </div>
                                 </td>
-                                @if ($actor === 'superviseurs')
+                                @if ($fullActivity)
                                     <td class="is-numeric">{{ $user['rechargements_envoyes'] }}</td>
                                     <td class="is-numeric">{{ $user['rechargements_recus'] }}</td>
                                     <td class="is-numeric">{{ $user['transactions'] }}</td>
                                     <td class="is-numeric">{{ $user['transactions_recues'] }}</td>
                                     <td>{{ $user['derniere_activite'] }}</td>
                                     <td>
-                                        <a href="{{ route('reports.daily.supervisor', ['supervisor' => $user['id'], 'date' => $date]) }}"
+                                        <a href="{{ $actor === 'superviseurs'
+                                                ? route('reports.daily.supervisor', ['supervisor' => $user['id'], 'date' => $date])
+                                                : route('reports.daily.actor.user', ['actor' => $actor, 'user' => $user['id'], 'date' => $date]) }}"
                                             class="report-detail__link">
                                             Voir toute l’activité
                                             <i data-feather="arrow-right" class="w-4 h-4"></i>
@@ -184,8 +187,8 @@
                         @empty
                             <tr>
                                 <td colspan="8" class="report-detail__empty">
-                                    {{ $actor === 'superviseurs'
-                                        ? 'Aucun superviseur n’a eu de mouvement à cette date.'
+                                    {{ $fullActivity
+                                        ? 'Aucun utilisateur de cette catégorie n’a eu de mouvement à cette date.'
                                         : 'Aucun utilisateur de ce type n’a reçu de rechargement à cette date.' }}
                                 </td>
                             </tr>

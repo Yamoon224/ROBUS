@@ -18,7 +18,13 @@
 </head>
 <body>
     @php
-        $label = $actor === 'superviseurs' ? 'Superviseurs' : 'Sous-distributeurs';
+        $labels = [
+            'superviseurs' => 'Superviseurs',
+            'distributeurs' => 'Distributeurs',
+            'sous_distributeurs' => 'Sous-distributeurs',
+        ];
+        $label = $labels[$actor] ?? ucfirst(str_replace('_', ' ', $actor));
+        $fullActivity = in_array($actor, ['superviseurs', 'distributeurs', 'sous_distributeurs'], true);
         $formatAmount = static fn ($amount) => number_format((float) $amount, 2, ',', ' ');
     @endphp
 
@@ -31,7 +37,7 @@
             <tr>
                 <th>Rang</th>
                 <th>Utilisateur</th>
-                @if ($actor === 'superviseurs')
+                @if ($fullActivity)
                     <th class="number">Rechargements envoyés</th>
                     <th class="number">Rechargements reçus</th>
                     <th class="number">Transactions effectuées</th>
@@ -51,7 +57,7 @@
                 <tr>
                     <td>{{ $user['rang'] }}</td>
                     <td>{{ $user['nom'] }}</td>
-                    @if ($actor === 'superviseurs')
+                    @if ($fullActivity)
                         <td class="number">{{ $user['rechargements_envoyes'] }}</td>
                         <td class="number">{{ $user['rechargements_recus'] }}</td>
                         <td class="number">{{ $user['transactions'] }}</td>

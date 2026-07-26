@@ -226,12 +226,16 @@ Route::group(['prefix' => ''], function () {
                 ->where('actor', 'superviseurs|clients|compagnies|sous_distributeurs|distributeurs|administrateurs|autres')
                 ->name('reports.daily.actor');
             Route::get('/daily-report/actors/{actor}/download', [DailyReportController::class, 'downloadActorReport'])
-                ->where('actor', 'superviseurs|sous_distributeurs')
+                ->where('actor', 'superviseurs|sous_distributeurs|distributeurs')
                 ->name('reports.daily.actor.download');
             Route::get('/daily-report/actors/{actor}/users/{user}', [DailyReportController::class, 'actorUser'])
                 ->where('actor', 'clients|compagnies|sous_distributeurs|distributeurs|administrateurs|autres')
                 ->whereNumber('user')
                 ->name('reports.daily.actor.user');
+            Route::get('/daily-report/actors/{actor}/users/{user}/download', [DailyReportController::class, 'downloadActorUserReport'])
+                ->where('actor', 'sous_distributeurs|distributeurs')
+                ->whereNumber('user')
+                ->name('reports.daily.actor.user.download');
             Route::get('/daily-report/supervisors/{supervisor}', [DailyReportController::class, 'supervisor'])
                 ->whereNumber('supervisor')
                 ->name('reports.daily.supervisor');
