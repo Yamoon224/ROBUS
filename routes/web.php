@@ -8,6 +8,7 @@ use App\Http\Controllers\CardController;
 use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\ContactListController;
 use App\Http\Controllers\CountrieController;
+use App\Http\Controllers\DailyReportController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\HistoricalController;
 use App\Http\Controllers\Invoices\InvoiceController;
@@ -219,6 +220,24 @@ Route::group(['prefix' => ''], function () {
         Route::prefix('transactions')->group(function () {
             Route::get('/browse', [TransactionController::class, 'browse'])->name('transactions.browse');
             Route::get('/uv', [TransactionController::class, 'browse_uv'])->name('transactions.uv.browse');
+            Route::get('/daily-report', [DailyReportController::class, 'index'])->name('reports.daily');
+            Route::get('/daily-report/data', [DailyReportController::class, 'data'])->name('reports.daily.data');
+            Route::get('/daily-report/actors/{actor}', [DailyReportController::class, 'actor'])
+                ->where('actor', 'superviseurs|clients|compagnies|sous_distributeurs|distributeurs|administrateurs|autres')
+                ->name('reports.daily.actor');
+            Route::get('/daily-report/actors/{actor}/download', [DailyReportController::class, 'downloadActorReport'])
+                ->where('actor', 'superviseurs|sous_distributeurs')
+                ->name('reports.daily.actor.download');
+            Route::get('/daily-report/actors/{actor}/users/{user}', [DailyReportController::class, 'actorUser'])
+                ->where('actor', 'clients|compagnies|sous_distributeurs|distributeurs|administrateurs|autres')
+                ->whereNumber('user')
+                ->name('reports.daily.actor.user');
+            Route::get('/daily-report/supervisors/{supervisor}', [DailyReportController::class, 'supervisor'])
+                ->whereNumber('supervisor')
+                ->name('reports.daily.supervisor');
+            Route::get('/daily-report/supervisors/{supervisor}/download', [DailyReportController::class, 'downloadSupervisorReport'])
+                ->whereNumber('supervisor')
+                ->name('reports.daily.supervisor.download');
             Route::get('/show/{id}', [TransactionController::class, 'show'])->name('transactions.show');
             Route::get('/read/{id}/delete', [TransactionController::class, 'delete'])->name('transactions.delete');
         });
