@@ -37,12 +37,20 @@ class WalletTransaction extends Model
         'updated_at' => 'datetime:d-m-Y H:i:s',
     ];
 
- 
-     public function updatedByUser()
+    public function updatedByUser()
     {
-        return $this->belongsTo(SidUser::class, 'updated_by', 'id');
+        return $this->belongsTo(SidUser::class, 'updated_by', 'id')->withTrashed();
     }
 
+    public function createdByUser()
+    {
+        return $this->belongsTo(SidUser::class, 'created_by', 'id')->withTrashed();
+    }
+
+    public function destinationWallet()
+    {
+        return $this->belongsTo(Wallet::class, 'num_wallet', 'wallet_id')->withTrashed();
+    }
 
     public function provider()
     {

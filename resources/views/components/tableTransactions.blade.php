@@ -88,6 +88,13 @@
                                    style="color: white;">
                                    Réequilibrage
                                </span>
+                             @elseif ($item->type_transaction == 'Compense')
+                               <span
+                                   class="alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
+                                                         text-indigo-100 bg-indigo-700 rounded"
+                                   style="color: white;">
+                                   Compense
+                               </span>
                            @else
                                <span
                                    class="alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
@@ -97,6 +104,16 @@
                                </span>
                            @endif
 
+                           @php
+                               $destinationWallet = $item->num_wallet
+                                   ? $item->destinationWallet
+                                   : null;
+                               $destinationUser = $destinationWallet?->sidUser;
+                               $destinationName = $destinationUser
+                                   ? trim(($destinationUser->firstname ?? '') . ' ' . ($destinationUser->lastname ?? ''))
+                                   : null;
+                           @endphp
+
                            <div class="user-name">
                                <svg xmlns="http://www.w3.org/2000/svg"
                                    class="h-4 w-4 text-slate-400 group-hover:text-primary" fill="none"
@@ -105,15 +122,38 @@
                                        d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
                                </svg>
                                <span class="font-mono text-sm text-slate-700 dark:text-slate-300  truncate">
-                                   {{ $item->phone ?? null }} {{ $item->num_wallet ?? null }}
+                                   {{ $destinationUser?->phone ?? $item->phone ?? 'Téléphone non renseigné' }}
                                </span>
                            </div>
+
+                           @if ($destinationWallet)
+                               <div class="user-phone">
+                                   Wallet : {{ $destinationWallet->wallet_id }}
+                               </div>
+
+                               <div class="user-name">
+                                   {{ $destinationName ?: 'Titulaire non renseigné' }}
+                               </div>
+
+                               <div class="user-location">
+                                   {{ $destinationUser?->country?->name ?? 'Pays inconnu' }}
+                                   •
+                                   {{ $destinationUser?->city?->name ?? 'Ville inconnue' }}
+                               </div>
+                           @elseif ($item->num_wallet)
+                               <div class="user-phone">
+                                   Wallet : {{ $item->num_wallet }}
+                               </div>
+                               <div class="user-location">
+                                   Informations du wallet introuvables
+                               </div>
+                           @endif
                        </td>
 
                        <td class="w-40">
 
                            <div class="mb-3">
-                               @include('components.infoValidtedUser')
+                               @include('components.infoValidtedUserTransaction')
                            </div>
 
                            @include('components.info_status')

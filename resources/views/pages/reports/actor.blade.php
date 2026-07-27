@@ -16,6 +16,7 @@
         $totalTransactions = collect($users)->sum('transactions') + collect($users)->sum('transactions_recues');
         $totalReceivedTransactions = collect($users)->sum('transactions_recues');
         $totalReceivedTransactionAmount = collect($users)->sum('montant_transactions_recu');
+        $totalContinuityBreaks = collect($users)->sum('ruptures_continuite');
         $formatAmount = static fn ($amount) => number_format((float) $amount, 2, ',', ' ');
     @endphp
 
@@ -101,6 +102,13 @@
                     <div class="report-detail__metric-value">{{ $formatAmount($totalReceivedTransactionAmount) }}</div>
                     <div class="report-detail__metric-label">Montant des transactions reçues</div>
                 </article>
+            @else
+                <article class="report-detail__metric">
+                    <div class="report-detail__metric-value text-slate-400">—</div>
+                    <div class="report-detail__metric-label">
+                        Contrôle disponible dans le détail
+                    </div>
+                </article>
             @endif
         </section>
 
@@ -128,6 +136,7 @@
                                 <th class="is-numeric">Rechargements reçus</th>
                                 <th class="is-numeric">Transactions émises</th>
                                 <th class="is-numeric">Transactions reçues</th>
+                                <th>Contrôle</th>
                                 <th>Dernière activité</th>
                                 <th>Action</th>
                             @else
@@ -157,6 +166,11 @@
                                     <td class="is-numeric">{{ $user['rechargements_recus'] }}</td>
                                     <td class="is-numeric">{{ $user['transactions'] }}</td>
                                     <td class="is-numeric">{{ $user['transactions_recues'] }}</td>
+                                    <td>
+                                        <span class="text-slate-400 text-xs">
+                                            Voir le détail
+                                        </span>
+                                    </td>
                                     <td>{{ $user['derniere_activite'] }}</td>
                                     <td>
                                         <a href="{{ $actor === 'superviseurs'
@@ -186,7 +200,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="report-detail__empty">
+                                <td colspan="{{ $fullActivity ? 9 : 8 }}" class="report-detail__empty">
                                     {{ $fullActivity
                                         ? 'Aucun utilisateur de cette catégorie n’a eu de mouvement à cette date.'
                                         : 'Aucun utilisateur de ce type n’a reçu de rechargement à cette date.' }}

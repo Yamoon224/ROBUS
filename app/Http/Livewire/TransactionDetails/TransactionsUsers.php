@@ -76,6 +76,11 @@ class TransactionsUsers extends Component
         }
 
 
+        $wallet_transaction->getCollection()->load([
+            'destinationWallet.sidUser.country',
+            'destinationWallet.sidUser.city',
+        ]);
+
         return view(
             'livewire.transaction-details.transactions-users',
             [

@@ -25,12 +25,19 @@
         ];
         $label = $labels[$actor] ?? ucfirst(str_replace('_', ' ', $actor));
         $fullActivity = in_array($actor, ['superviseurs', 'distributeurs', 'sous_distributeurs'], true);
+        $totalContinuityBreaks = collect($users)->sum('ruptures_continuite');
         $formatAmount = static fn ($amount) => number_format((float) $amount, 2, ',', ' ');
     @endphp
 
     <h1>Rapport des {{ $label }}</h1>
     <div class="subtitle">Rapport journalier du {{ $date }} · Généré le {{ now()->format('d/m/Y H:i') }}</div>
-    <div class="summary"><strong>{{ count($users) }}</strong> utilisateur(s) avec une activité enregistrée.</div>
+    <div class="summary">
+        <strong>{{ count($users) }}</strong> utilisateur(s) avec une activité enregistrée.
+        @if ($fullActivity)
+            <br>
+            Contrôle des soldes disponible dans le rapport détaillé de chaque utilisateur.
+        @endif
+    </div>
 
     <table>
         <thead>
@@ -42,6 +49,7 @@
                     <th class="number">Rechargements reçus</th>
                     <th class="number">Transactions effectuées</th>
                     <th class="number">Transactions reçues</th>
+                    <th>Contrôle</th>
                     <th>Dernière activité</th>
                 @else
                     <th class="number">Rechargements reçus</th>
@@ -62,6 +70,7 @@
                         <td class="number">{{ $user['rechargements_recus'] }}</td>
                         <td class="number">{{ $user['transactions'] }}</td>
                         <td class="number">{{ $user['transactions_recues'] }}</td>
+                        <td>Voir détail</td>
                         <td>{{ $user['derniere_activite'] ?: '—' }}</td>
                     @else
                         <td class="number">{{ $user['rechargements_recus'] }}</td>
@@ -72,7 +81,7 @@
                     @endif
                 </tr>
             @empty
-                <tr><td colspan="7" class="empty">Aucune activité pour cette date.</td></tr>
+                <tr><td colspan="{{ $fullActivity ? 8 : 7 }}" class="empty">Aucune activité pour cette date.</td></tr>
             @endforelse
         </tbody>
     </table>

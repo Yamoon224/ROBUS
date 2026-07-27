@@ -549,7 +549,12 @@
                                 <td class="is-numeric">{{ $formatAmount($transaction['montant']) }} {{ $transaction['devise_receveur'] }}</td>
                                 <td class="is-numeric">{{ $formatAmount($transaction['montant_recu']) }} {{ $transaction['devise_receveur'] }}</td>
                                 <td class="is-numeric">{{ $formatBalance($transaction['solde_superviseur_avant']) }}</td>
-                                <td class="is-numeric">{{ $formatBalance($transaction['solde_superviseur_apres']) }}</td>
+                                <td class="is-numeric">
+                                    {{ $formatBalance($transaction['solde_superviseur_apres']) }}
+                                    @if ($transaction['solde_reconstitue'] ?? false)
+                                        <br><small>Solde reconstitué</small>
+                                    @endif
+                                </td>
                                 <td class="is-numeric">{{ $formatBalance($transaction['solde_receveur_avant']) }}</td>
                                 <td class="is-numeric">{{ $formatBalance($transaction['solde_receveur_apres']) }}</td>
 

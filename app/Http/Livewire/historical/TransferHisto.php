@@ -36,7 +36,10 @@ class TransferHisto extends Component
         $walletUser = Auth::guard('web')->user() ?? Auth::guard('integration')->user();
         if (!$walletUser) abort(403);
 
-        $transfers = WalletTransaction::whereIsWeb(false);
+        $transfers = WalletTransaction::with([
+            'destinationWallet.sidUser.country',
+            'destinationWallet.sidUser.city',
+        ])->whereIsWeb(false);
 
         // Restriction par rôle
         if ($walletUser->is_under_distributer || $walletUser->is_api) {

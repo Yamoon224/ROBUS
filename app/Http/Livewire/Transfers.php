@@ -1111,6 +1111,7 @@ class Transfers extends Component
     {
         $wallet_send = $wallet_search;
         $wallet_receive = $walletUser->wallet;
+        $amount_before_receive = (float) $wallet_receive->amount;
         $commission_receive = $this->transaction_amount_robus;
 
         // Conversion commission
@@ -1135,15 +1136,16 @@ class Transfers extends Component
             ->where('wallet_id', $this->compte_number_robus)
             ->first();
 
-        $amount_drawal = (float)$walletAmountSend->total_amount + (float)$commission_send;
+        $amount_drawal = (float)$walletAmountSend->total_amount - (float)$commission_send;
         $amount_before_drawal = (float)$walletAmountSend->total_amount;
 
         // Mise à jour des wallets
         app(TransfertServiceBackend::class)->updatePaiementWithdrawalWallet($wallet_search, $commission_send);
         app(TransfertServiceBackend::class)->updatePaiementDrawalWallet($walletUser, $this->transaction_amount_robus);
 
-        $wallet = sabdy()->wallet->first();
-        $amount_solde = (float) $wallet->amount - (float) $this->transaction_amount_robus;
+        // Récupère le vrai solde du wallet de l'utilisateur connecté après son crédit.
+        $wallet_receive->refresh();
+        $amount_solde = (float) $wallet_receive->amount;
 
         // Création transaction
         $walletTransaction = app(TransfertServiceBackend::class)->createDrawalTransaction(
@@ -1157,7 +1159,8 @@ class Transfers extends Component
             $this->choose_type_transaction,
             $amount_solde,
             $amount_drawal,
-            $amount_before_drawal
+            $amount_before_drawal,
+            $amount_before_receive
         );
 
         $transaction = app(TransfertServiceBackend::class)->createNewInvoiceTransaction(
@@ -1208,7 +1211,6 @@ class Transfers extends Component
 
         return true;
     }
-
 
 
     public function addTransactionWithdrawal()

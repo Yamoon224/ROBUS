@@ -558,42 +558,258 @@ class DailyReportController extends Controller
 
     private function walletActorActivityUsers(string $actor, Carbon $start, Carbon $end): array
     {
-        if (! Schema::hasTable('sid_users')) {
+        if (! Schema::hasTable('sid_users') || ! Schema::hasTable('wallets')) {
             return [];
         }
 
-        return DB::table('sid_users as actors')
+        // Une seule requête pour récupérer tous les utilisateurs + leurs wallets
+        $rows = DB::table('sid_users as actors')
             ->whereRaw($this->actorCondition($actor, 'actors'))
-            ->pluck('actors.id')
-            ->map(fn ($id) => $this->supervisorDetails((int) $id, $start, $end, $actor))
-            ->filter()
-            ->map(function (array $details) {
-                $summary = $details['resume'];
-                $totalOperations = (int) (
-                    $summary['rechargements_envoyes']
-                    + $summary['rechargements_recus']
-                    + $summary['transactions']
-                    + $summary['transactions_recues']
-                );
-                $activityDates = collect([
-                    ...$details['rechargements_envoyes'],
-                    ...$details['rechargements_recus'],
-                    ...$details['transactions'],
-                    ...$details['transactions_recues'],
-                ])->pluck('date')->filter();
+            ->leftJoin('wallets', 'wallets.sid_user_id', '=', 'actors.id')
+            ->select([
+                'actors.id as user_id',
+                'actors.firstname',
+                'actors.lastname',
+                'wallets.id as wallet_id',
+                'wallets.wallet_id as wallet_ref',
+            ])
+            ->get();
 
-                return [
-                    'id' => $details['id'],
-                    'nom' => $details['nom'],
-                    'rechargements_envoyes' => (int) $summary['rechargements_envoyes'],
-                    'montant_recharge' => (float) $summary['montant_recharge'],
-                    'rechargements_recus' => (int) $summary['rechargements_recus'],
-                    'montant_recu' => (float) $summary['montant_recu'],
-                    'transactions' => (int) $summary['transactions'],
-                    'transactions_recues' => (int) $summary['transactions_recues'],
-                    'total_operations' => $totalOperations,
-                    'derniere_activite' => $activityDates->max(),
+        if ($rows->isEmpty()) {
+            return [];
+        }
+
+        $userMeta = [];
+        $walletIdToUser = [];  // (int) wallets.id → user_id
+        $walletRefToUser = []; // (string) wallets.wallet_id → user_id
+
+        foreach ($rows as $row) {
+            $userId = (int) $row->user_id;
+
+            if (! isset($userMeta[$userId])) {
+                $userMeta[$userId] = [
+                    'id' => $userId,
+                    'nom' => trim(($row->firstname ?? '').' '.($row->lastname ?? '')) ?: 'Utilisateur #'.$userId,
+                    'rechargements_envoyes' => 0,
+                    'montant_recharge' => 0.0,
+                    'montant_recu' => 0.0,
+                    'rechargements_recus' => 0,
+                    'transactions' => 0,
+                    'transactions_recues' => 0,
+                    'total_operations' => 0,
+                    'derniere_activite' => null,
+                    'operations_suspectes' => 0,
+                    'ruptures_continuite' => 0,
                 ];
+            }
+
+            if ($row->wallet_id !== null) {
+                $walletIdToUser[(int) $row->wallet_id] = $userId;
+            }
+
+            if ($row->wallet_ref !== null && $row->wallet_ref !== '') {
+                $walletRefToUser[(string) $row->wallet_ref] = $userId;
+            }
+        }
+
+        $allWalletIds = array_keys($walletIdToUser);
+        // account_wallet peut stocker soit le wallet_id (string) soit l'id entier (string)
+        $allWalletRefs = array_values(array_unique(array_merge(
+            array_map('strval', $allWalletIds),
+            array_keys($walletRefToUser)
+        )));
+
+        if ($allWalletIds === []) {
+            return [];
+        }
+
+        $updateActivity = function (array &$user, ?string $date): void {
+            if ($date !== null && $date > ($user['derniere_activite'] ?? '')) {
+                $user['derniere_activite'] = $date;
+            }
+        };
+
+        // Rechargements envoyés — GROUP BY wallet_id (une seule requête)
+        if (Schema::hasTable('wallet_reloads')) {
+            $receivedAmount = $this->reloadReceivedAmountExpression();
+
+            $sentQ = DB::table('wallet_reloads')
+                ->whereIn('wallet_id', $allWalletIds)
+                ->whereBetween('created_at', [$start, $end])
+                ->whereRaw("UPPER(status) = 'SUCCESS'");
+
+            if (Schema::hasColumn('wallet_reloads', 'deleted_at')) {
+                $sentQ->whereNull('deleted_at');
+            }
+
+            $sentQ->selectRaw(
+                "wallet_id,
+                 COUNT(*) AS cnt,
+                 COALESCE(SUM(amount), 0) AS montant,
+                 MAX(created_at) AS derniere"
+            )->groupBy('wallet_id')
+                ->get()
+                ->each(function ($row) use (&$userMeta, $walletIdToUser, $updateActivity): void {
+                    $uid = $walletIdToUser[(int) $row->wallet_id] ?? null;
+                    if ($uid === null || ! isset($userMeta[$uid])) {
+                        return;
+                    }
+                    $userMeta[$uid]['rechargements_envoyes'] += (int) $row->cnt;
+                    $userMeta[$uid]['montant_recharge'] += (float) $row->montant;
+                    $updateActivity($userMeta[$uid], $row->derniere);
+                });
+
+            // Rechargements reçus — GROUP BY account_wallet (une seule requête)
+            $rcvQ = DB::table('wallet_reloads')
+                ->whereIn('account_wallet', $allWalletRefs)
+                ->whereBetween('created_at', [$start, $end])
+                ->whereRaw("UPPER(status) = 'SUCCESS'");
+
+            if (Schema::hasColumn('wallet_reloads', 'deleted_at')) {
+                $rcvQ->whereNull('deleted_at');
+            }
+
+            $rcvQ->selectRaw(
+                "account_wallet,
+                 COUNT(*) AS cnt,
+                 COALESCE(SUM({$receivedAmount}), 0) AS montant_recu,
+                 MAX(created_at) AS derniere"
+            )->groupBy('account_wallet')
+                ->get()
+                ->each(function ($row) use (&$userMeta, $walletIdToUser, $walletRefToUser, $updateActivity): void {
+                    $key = (string) $row->account_wallet;
+                    $uid = $walletRefToUser[$key] ?? $walletIdToUser[(int) $row->account_wallet] ?? null;
+                    if ($uid === null || ! isset($userMeta[$uid])) {
+                        return;
+                    }
+                    $userMeta[$uid]['rechargements_recus'] += (int) $row->cnt;
+                    $userMeta[$uid]['montant_recu'] += (float) $row->montant_recu;
+                    $updateActivity($userMeta[$uid], $row->derniere);
+                });
+        }
+
+        // Transactions envoyées — une requête GROUP BY par table de service
+        foreach (collect(self::SERVICES)->except('rechargements') as $table) {
+            if (! Schema::hasTable($table) || ! Schema::hasColumn($table, 'wallet_id')) {
+                continue;
+            }
+
+            $q = DB::table($table)
+                ->whereIn($table.'.wallet_id', $allWalletIds)
+                ->whereBetween($table.'.created_at', [$start, $end]);
+
+            if (Schema::hasColumn($table, 'deleted_at')) {
+                $q->whereNull($table.'.deleted_at');
+            }
+
+            if (Schema::hasColumn($table, 'status')) {
+                $q->whereRaw("UPPER({$table}.status) = 'SUCCESS'");
+            }
+
+            $q->selectRaw("{$table}.wallet_id, COUNT(*) AS cnt, MAX({$table}.created_at) AS derniere")
+                ->groupBy($table.'.wallet_id')
+                ->get()
+                ->each(function ($row) use (&$userMeta, $walletIdToUser, $updateActivity): void {
+                    $uid = $walletIdToUser[(int) $row->wallet_id] ?? null;
+                    if ($uid === null || ! isset($userMeta[$uid])) {
+                        return;
+                    }
+                    $userMeta[$uid]['transactions'] += (int) $row->cnt;
+                    $updateActivity($userMeta[$uid], $row->derniere);
+                });
+        }
+
+        // Transactions reçues — une requête GROUP BY par table réceptrice
+        foreach (self::RECEIVER_COLUMNS as $table => $candidates) {
+            if (! Schema::hasTable($table) || ! Schema::hasColumn($table, 'wallet_id')) {
+                continue;
+            }
+
+            $receiverColumn = collect($candidates)
+                ->first(fn (string $col) => Schema::hasColumn($table, $col));
+
+            if (! $receiverColumn) {
+                continue;
+            }
+
+            $q = DB::table($table)
+                ->whereIn($table.'.'.$receiverColumn, $allWalletRefs)
+                ->whereBetween($table.'.created_at', [$start, $end]);
+
+            if (Schema::hasColumn($table, 'deleted_at')) {
+                $q->whereNull($table.'.deleted_at');
+            }
+
+            if (Schema::hasColumn($table, 'status')) {
+                $q->whereRaw("UPPER({$table}.status) = 'SUCCESS'");
+            }
+
+            $q->selectRaw(
+                "{$table}.{$receiverColumn} AS ref_col,
+                 COUNT(*) AS cnt,
+                 MAX({$table}.created_at) AS derniere"
+            )->groupBy($table.'.'.$receiverColumn)
+                ->get()
+                ->each(function ($row) use (&$userMeta, $walletIdToUser, $walletRefToUser, $updateActivity): void {
+                    $key = (string) $row->ref_col;
+                    $uid = $walletRefToUser[$key] ?? $walletIdToUser[(int) $row->ref_col] ?? null;
+                    if ($uid === null || ! isset($userMeta[$uid])) {
+                        return;
+                    }
+                    $userMeta[$uid]['transactions_recues'] += (int) $row->cnt;
+                    $updateActivity($userMeta[$uid], $row->derniere);
+                });
+        }
+
+        // Transactions validées — spécifique distributeurs / sous_distributeurs
+        if (in_array($actor, ['distributeurs', 'sous_distributeurs'], true)) {
+            $actorIds = array_keys($userMeta);
+
+            foreach (['wallet_transactions'] as $table) {
+                if (
+                    ! Schema::hasTable($table)
+                    || ! Schema::hasColumn($table, 'updated_by')
+                    || ! Schema::hasColumn($table, 'updated_at')
+                    || ! Schema::hasColumn($table, 'wallet_id')
+                ) {
+                    continue;
+                }
+
+                $q = DB::table($table)
+                    ->whereIn($table.'.updated_by', $actorIds)
+                    ->whereBetween($table.'.updated_at', [$start, $end])
+                    ->whereNotIn($table.'.wallet_id', $allWalletIds);
+
+                if (Schema::hasColumn($table, 'status')) {
+                    $q->whereRaw("UPPER({$table}.status) = 'SUCCESS'");
+                }
+
+                if (Schema::hasColumn($table, 'deleted_at')) {
+                    $q->whereNull($table.'.deleted_at');
+                }
+
+                $q->selectRaw("updated_by, COUNT(*) AS cnt, MAX(updated_at) AS derniere")
+                    ->groupBy('updated_by')
+                    ->get()
+                    ->each(function ($row) use (&$userMeta, $updateActivity): void {
+                        $uid = (int) $row->updated_by;
+                        if (! isset($userMeta[$uid])) {
+                            return;
+                        }
+                        $userMeta[$uid]['transactions'] += (int) $row->cnt;
+                        $updateActivity($userMeta[$uid], $row->derniere);
+                    });
+            }
+        }
+
+        return collect($userMeta)
+            ->map(function (array $user) {
+                $user['total_operations'] = $user['rechargements_envoyes']
+                    + $user['rechargements_recus']
+                    + $user['transactions']
+                    + $user['transactions_recues'];
+
+                return $user;
             })
             ->filter(fn (array $user) => $user['total_operations'] > 0)
             ->sortByDesc('total_operations')
@@ -813,6 +1029,24 @@ class DailyReportController extends Controller
             ->sortByDesc('date')
             ->values()
             ->all();
+        $validatedTransactions = in_array($actor, ['distributeurs', 'sous_distributeurs'], true)
+            ? $this->actorValidatedTransactions(
+                (int) $supervisor->id,
+                $walletIds,
+                $start,
+                $end
+            )
+            : [];
+        $transactions = collect($transactions)
+            ->merge(collect($validatedTransactions)->where('direction_compte', 'sortie'))
+            ->sortByDesc('date')
+            ->values()
+            ->all();
+        $receivedTransactions = collect($receivedTransactions)
+            ->merge(collect($validatedTransactions)->where('direction_compte', 'entree'))
+            ->sortByDesc('date')
+            ->values()
+            ->all();
         $balancesAtDate = $this->supervisorBalancesAtDate($wallets, $end);
         $reconciliation = $this->supervisorReconciliation(
             $wallets,
@@ -821,6 +1055,10 @@ class DailyReportController extends Controller
             $transactions,
             $receivedTransactions,
             $balancesAtDate
+        );
+        $transactions = $this->applyAuditedTransactionBalances(
+            $transactions,
+            $reconciliation['mouvements_audites']
         );
         $receivedTransactions = $this->applyAuditedBalances(
             $receivedTransactions,
@@ -1085,17 +1323,30 @@ class DailyReportController extends Controller
             $runningBalance = null;
             $walletEvents = $walletEvents
                 ->map(function (array $event) use (&$runningBalance) {
-                    $isCompensation = mb_strtolower(trim((string) ($event['type_transaction'] ?? '')))
-                        === 'compense';
-
-                    if (
+                    $normalizedType = mb_strtolower(trim((string) ($event['type_transaction'] ?? '')));
+                    $isCompensation = $normalizedType === 'compense';
+                    $isDistributorValidation = str_starts_with(
+                        $normalizedType,
+                        'validation distributeur'
+                    ) || str_starts_with(
+                        $normalizedType,
+                        'validation retrait distributeur'
+                    );
+                    $canReconstructBalance = (
                         $isCompensation
                         && $event['direction'] === 'entree'
+                    ) || $isDistributorValidation;
+
+                    if (
+                        $canReconstructBalance
                         && $runningBalance !== null
                         && ($event['avant'] === null || $event['apres'] === null)
                     ) {
                         $event['avant'] = $runningBalance;
-                        $event['apres'] = round($runningBalance + (float) $event['montant'], 2);
+                        $event['apres'] = round(
+                            $runningBalance + (float) $event['variation_attendue'],
+                            2
+                        );
                         $event['solde_reconstitue'] = true;
                     }
 
@@ -1248,6 +1499,29 @@ class DailyReportController extends Controller
                 ...$row,
                 'solde_receveur_avant' => $movement['avant'],
                 'solde_receveur_apres' => $movement['apres'],
+                'solde_reconstitue' => (bool) ($movement['solde_reconstitue'] ?? false),
+            ];
+        })->all();
+    }
+
+    private function applyAuditedTransactionBalances(array $rows, array $auditedMovements): array
+    {
+        $movements = collect($auditedMovements)
+            ->where('direction', 'sortie')
+            ->keyBy('reference');
+
+        return collect($rows)->map(function (array $row) use ($movements) {
+            $reference = $row['service'].' #'.$row['id'];
+            $movement = $movements->get($reference);
+
+            if (! $movement) {
+                return $row;
+            }
+
+            return [
+                ...$row,
+                'solde_superviseur_avant' => $movement['avant'],
+                'solde_superviseur_apres' => $movement['apres'],
                 'solde_reconstitue' => (bool) ($movement['solde_reconstitue'] ?? false),
             ];
         })->all();
@@ -1703,25 +1977,26 @@ class DailyReportController extends Controller
             $receiverBalanceBefore = $this->tableColumnExpression($table, 'amount_solde_before_drawal');
             $receiverBalanceAfter = $this->tableColumnExpression($table, 'amount_solde_drawal');
 
-            if (
-                $table === 'wallet_transactions'
-                && Schema::hasColumn($table, 'type_transaction')
-                && Schema::hasColumn($table, 'amount_solde_before_drawal')
-                && Schema::hasColumn($table, 'amount_solde_drawal')
-            ) {
-                $isWithdrawal = "LOWER(TRIM({$table}.type_transaction)) = 'retrait'";
-                $senderBalanceBefore = "CASE WHEN {$isWithdrawal}
-                    THEN {$table}.amount_solde_before_drawal
-                    ELSE {$table}.balance_before END";
-                $senderBalanceAfter = "CASE WHEN {$isWithdrawal}
-                    THEN {$table}.amount_solde_drawal
+            // wallet_transactions: Retrait PENDING ne stocke pas amount_solde (reste à 0 par défaut).
+            // On expose NULL pour éviter les fausses anomalies "Solde Observé = 0".
+            if ($table === 'wallet_transactions'
+                && Schema::hasColumn($table, 'status')
+                && Schema::hasColumn($table, 'amount_solde')) {
+                $senderBalanceAfter = "CASE WHEN UPPER(TRIM({$table}.status)) = 'PENDING'
+                    THEN NULL
                     ELSE {$table}.amount_solde END";
-                $receiverBalanceBefore = "CASE WHEN {$isWithdrawal}
-                    THEN {$table}.amount_solde - {$amountReceived}
-                    ELSE {$table}.amount_solde_before_drawal END";
-                $receiverBalanceAfter = "CASE WHEN {$isWithdrawal}
-                    THEN {$table}.amount_solde
-                    ELSE {$table}.amount_solde_drawal END";
+            }
+
+            // Certains chemins de création Depot n'enregistrent pas balance_before (reste 0).
+            // On expose NULL pour éviter les ruptures de continuité fictives.
+            if ($table === 'wallet_transactions'
+                && Schema::hasColumn($table, 'balance_before')
+                && Schema::hasColumn($table, 'status')) {
+                $senderBalanceBefore = "CASE WHEN {$table}.balance_before = 0
+                    AND UPPER(TRIM({$table}.status)) = 'SUCCESS'
+                    AND {$table}.amount_solde > 0
+                    THEN NULL
+                    ELSE {$table}.balance_before END";
             }
 
             $operationType = Schema::hasColumn($table, 'type_transaction')
@@ -1791,6 +2066,115 @@ class DailyReportController extends Controller
         }
 
         return $transactions->sortByDesc('date')->values()->all();
+    }
+
+    private function actorValidatedTransactions(
+        int $actorId,
+        array $actorWalletIds,
+        Carbon $start,
+        Carbon $end
+    ): array {
+        if ($actorWalletIds === []) {
+            return [];
+        }
+
+        $movements = collect();
+        $actorWalletId = (int) $actorWalletIds[0];
+
+        // Transfers::updateTransaction() modifie le wallet du validateur alors que
+        // la transaction reste rattachée au wallet du demandeur.
+        foreach (['transactions' => 'wallet_transactions'] as $service => $table) {
+            if (
+                ! Schema::hasTable($table)
+                || ! Schema::hasColumn($table, 'updated_by')
+                || ! Schema::hasColumn($table, 'updated_at')
+            ) {
+                continue;
+            }
+
+            $query = DB::table($table)
+                ->where($table.'.updated_by', $actorId)
+                ->whereBetween($table.'.updated_at', [$start, $end]);
+
+            if (Schema::hasColumn($table, 'wallet_id')) {
+                $query
+                    ->leftJoin(
+                        'wallets as validation_source_wallets',
+                        $table.'.wallet_id',
+                        '=',
+                        'validation_source_wallets.id'
+                    )
+                    ->leftJoin(
+                        'sid_users as validation_source_users',
+                        'validation_source_wallets.sid_user_id',
+                        '=',
+                        'validation_source_users.id'
+                    )
+                    ->whereNotIn($table.'.wallet_id', $actorWalletIds)
+                    ->select($table.'.*')
+                    ->addSelect(DB::raw(
+                        'COALESCE(validation_source_users.is_under_distributer, 0) '
+                        .'AS source_is_under_distributor'
+                    ));
+            } else {
+                $query->select($table.'.*');
+            }
+
+            if (Schema::hasColumn($table, 'status')) {
+                $query->whereRaw("UPPER({$table}.status) = 'SUCCESS'");
+            }
+
+            if (Schema::hasColumn($table, 'deleted_at')) {
+                $query->whereNull($table.'.deleted_at');
+            }
+
+            foreach ($query->get() as $row) {
+                $operationType = $row->type_transaction
+                    ?? $row->choose_transaction
+                    ?? null;
+                $normalizedType = mb_strtolower(trim((string) $operationType));
+                $isWithdrawal = $normalizedType === 'retrait'
+                    || (string) ($row->choose_transaction ?? '') === '2';
+                $amountReceived = (float) ($row->amount_received ?? $row->amount ?? 0);
+                $costsAmount = (float) ($row->costs_amount ?? 0);
+                $sourceIsUnderDistributor = (bool) ($row->source_is_under_distributor ?? false);
+                $walletVariation = $isWithdrawal
+                    ? $amountReceived + ($sourceIsUnderDistributor ? 0.0 : $costsAmount)
+                    : $amountReceived;
+
+                if (abs($walletVariation) < self::AUDIT_TOLERANCE) {
+                    continue;
+                }
+
+                $movements->push([
+                    'id' => (int) $row->id,
+                    'supervisor_wallet_id' => $actorWalletId,
+                    'service' => $service.'_validation',
+                    'date' => $row->updated_at,
+                    'montant' => $walletVariation,
+                    'montant_recu' => $walletVariation,
+                    'statut' => $row->status ?? 'SUCCESS',
+                    'type_operation' => $isWithdrawal
+                        ? 'Validation retrait distributeur'
+                        : 'Validation distributeur',
+                    'type_received' => $operationType,
+                    'reference_operation' => $service.' #'.$row->id,
+                    'direction_compte' => $isWithdrawal ? 'sortie' : 'entree',
+                    'description' => $row->description ?? null,
+                    'devise_receveur' => '—',
+                    'beneficiaire' => $isWithdrawal
+                        ? 'Retrait validé par le distributeur'
+                        : 'Transaction validée par le distributeur',
+                    'expediteur' => 'Validation distributeur',
+                    'solde_superviseur_avant' => null,
+                    'solde_superviseur_apres' => null,
+                    'solde_receveur_avant' => null,
+                    'solde_receveur_apres' => null,
+                ]);
+            }
+        }
+
+        return $movements->sortByDesc('date')->values()->all();
     }
 
     private function transactionAccountDirection($operationType, $balanceBefore = null, $balanceAfter = null): string

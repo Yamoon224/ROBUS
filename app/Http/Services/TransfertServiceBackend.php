@@ -1133,11 +1133,9 @@ class TransfertServiceBackend
         $choose_type_transaction,
         $amount_solde,
         $amount_drawal,
-        $amount_before_drawal
+        $amount_before_drawal,
+        $amount_before_receive
     ) {
-
-        $wallet = sabdy()->wallet->first();
-
         return WalletTransaction::create(
             [
                 'wallet_id' => $walletUser->wallet->id,
@@ -1149,7 +1147,7 @@ class TransfertServiceBackend
                 'created_by' => Auth::guard('web')->user()->id,
                 'provider_id' => $provider->id,
                 'code_validated' => null,
-                'balance_before' => $wallet->amount,
+                'balance_before' => $amount_before_receive,
                 'amount_received'  => $commission_send,
                 'choose_type_transaction' => $choose_type_transaction,
                 'type_transaction' => 'Compense',
@@ -1613,7 +1611,7 @@ class TransfertServiceBackend
             'provider_id'  => $provider,
             'balance_before' => sabdy()->wallet->amount,
             'num_wallet' => strtoupper($compte_number_robus),
-            'choose_type_transaction' => 1,
+            // 'choose_type_transaction' => 1,
             'costs_amount' => $amount_drawal_percent,
             'type_transaction' => 'Retrait',
             'choose_type_transaction' => 2,
