@@ -664,7 +664,6 @@ class TransactionCiv extends Component
                                 $this->emit('error', 'Votre plafond quotidien est atteint  !!');
                             }
                         } else {
-
                             $this->resetTransactionField();
                             $this->emit('modal-hide-transfers');
                             $this->emit('error', 'Niveau de pourcentage introuvable !!');
@@ -709,7 +708,6 @@ class TransactionCiv extends Component
                         if (sabdy()->country->name_groupe == 'CIV') {
                             $percent_robus = app(CommissionServicePercentBackend::class)->getRobusPercentageMobile();
                         } elseif (sabdy()->country->name_groupe == 'MAG') {
-
                             $percent_robus = app(CommissionServicePercentBackend::class)->getRobusPercentageMobileMaroc();
                         } else {
 
@@ -718,7 +716,6 @@ class TransactionCiv extends Component
                             $this->emit('error', 'Pas de transfert Mobile Money!');
                         }
                     } else {
-
 
                         $this->validate([
                             'transaction_amount_money' => 'required',
@@ -742,7 +739,6 @@ class TransactionCiv extends Component
                     }
 
                     $reel_amount =  $this->search_amount($this->transaction_amount_money);
-
 
                     if ($percent_robus !== null) {
 

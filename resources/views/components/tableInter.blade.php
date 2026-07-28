@@ -315,12 +315,10 @@
                     <td class="w-56">
                         <div class="flex justify-center items-center">
                             @if ($item->status == 'PENDING')
-                                @if (Auth::guard('web')->user()->hasPermissionTo('modifier-cautions'))
                                     <span
                                         class="alert alert-pending  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                                         En attente
                                     </span>
-                                @endif
                             @elseif (
                                 $item->status == 'SUCCESS' &&
                                     ($item->provider_id == 48 ||

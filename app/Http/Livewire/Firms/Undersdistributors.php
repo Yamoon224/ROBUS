@@ -6,7 +6,6 @@ use App\Events\AdminNotifEvent;
 use App\Events\CreateReloadEvent;
 use App\Http\Controllers\Admin\MailController;
 use App\Mail\UvSend;
-use App\Models\Custumers\Country;
 use App\Models\Invoices\InvoiceReload;
 use App\Models\Invoices\InvoiceTransaction;
 use App\Models\Payments\PaymentReload;
@@ -101,7 +100,8 @@ class Undersdistributors extends Component
                 ->where('country_id', $country_id)
                 ->first();
 
-            if ($wallet_search === null || !$wallet_search->sidUser ||
+            if (
+                $wallet_search === null || !$wallet_search->sidUser ||
                 ($wallet_search->sidUser->is_under_distributer === '1' && $wallet_search->sidUser->company_id == $company_id)
             ) {
                 $this->cancelReload();
@@ -192,10 +192,12 @@ class Undersdistributors extends Component
                             $amount_solde_drawal = (float)$walletAmountSend->amount +  (float)$valeur_receive;
 
                             $amount_drawal =      $amount_solde_drawal;
+                            $amount_before_drawal =  (float)$walletAmountSend->amount;
+
 
                             $amount_solde = (float)sabdy()->wallet->amount - (float)$this->relaod_uv_amout;
 
-                            $walletReloads =  $this->createWAlletReloadRobus($walletUser, $this->relaod_uv_amout, $provider, $this->account_reload_uv, $valeur_receive, $amount_solde, $amount_drawal);
+                            $walletReloads =  $this->createWAlletReloadRobus($walletUser, $this->relaod_uv_amout, $provider, $this->account_reload_uv, $valeur_receive, $amount_solde, $amount_drawal , $amount_before_drawal);
 
                             if ($walletReloads != null) {
 
@@ -233,7 +235,7 @@ class Undersdistributors extends Component
     }
 
 
-    private function createWAlletReloadRobus($walletUser, $relaod_uv_amout, $provider, $account_reload_uv, $valeur_receive, $amount_solde, $amount_drawal)
+    private function createWAlletReloadRobus($walletUser, $relaod_uv_amout, $provider, $account_reload_uv, $valeur_receive, $amount_solde, $amount_drawal, $amount_before_drawal)
     {
 
         $reload_unders =  WalletReload::create([
@@ -249,8 +251,10 @@ class Undersdistributors extends Component
             'type_received' => 'Transfert',
             'phone'  =>  null,
             'status'  => "SUCCESS",
+            'amount_solde_drawal' => $amount_drawal ?? null,
             'amount_solde'  => $amount_solde ?? null,
-            'amount_solde_drawal' => $amount_drawal ?? null
+            'balance_before' => firm()->wallet->amount ?? null,
+            'amount_solde_before_drawal' => $amount_before_drawal ?? null,
         ]);
 
 
@@ -347,15 +351,14 @@ class Undersdistributors extends Component
 
     private function convertAdminCommission($amount, $wallet)
     {
-        $country_civ = Country::find(107);
+        $sourceCurrencyValue = (float) firm()->country->currencie->value;
+        $destinationCurrencyValue = (float) $wallet->country->currencie->value;
 
-        if ($country_civ->currencie->value >  $wallet->country->currencie->value) {
-            return $amount / $wallet->country->currencie->value;
-        } elseif ($country_civ->currencie->value ==  $wallet->country->currencie->value) {
+        if ($sourceCurrencyValue === $destinationCurrencyValue) {
             return $amount;
-        } else {
-            return $amount / $wallet->country->currencie->value;
         }
+
+        return ((float) $amount * $sourceCurrencyValue) / $destinationCurrencyValue;
     }
 
 
@@ -463,6 +466,7 @@ class Undersdistributors extends Component
         $transaction_amount_month = $this->getDaysTransaction(WalletReload::class);
         $companyId = firm()->company->id;
         $currentUserId = firm()->id;
+        $companyWallet = $walletUser->wallet()->first();
 
         return view('livewire.firms.undersdistributors', [
             "users" => SidUser::where('is_under_distributer', true)
@@ -475,6 +479,8 @@ class Undersdistributors extends Component
             'pending_success' => $transaction_padding,
             'sum_amount' => $transaction_amount,
             'usersCountry' => $walletUser->country->currencie->name,
+            'walletSolde' => (float) ($companyWallet->amount ?? 0),
+            'walletNumber' => $companyWallet->wallet_id ?? null,
             'sum_transaction_month' => $transaction_amount_month,
         ]);
     }

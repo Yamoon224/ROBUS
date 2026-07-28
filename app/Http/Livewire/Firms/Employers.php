@@ -128,7 +128,7 @@ class Employers extends Component
                     [
                         'company_id' => firm()->company->id,
                         'categorie_id'  => $this->categorieId_add,
-                        'is_accepted_companie'  =>true,
+                        'is_accepted_companie'  => true,
                     ]
                 );
 
@@ -392,9 +392,10 @@ class Employers extends Component
                 $valuer_receive = $reel_amount - ($percentRobus->percent->percent * $reel_amount);
 
                 $amountDrawal = (float)$walletAmountSend->amount +  (float) $valuer_receive;
+               
+                $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valuer_receive;
 
-
-                $walletTransaction = $this->createWalletTransaction2($reel_amount, $this->transaction_description_robus, $percentRobus, $this->wallet_id_employer, $this->choose_type_payement_emp, $amountSolde, $amountDrawal);
+                $walletTransaction = $this->createWalletTransaction2($reel_amount, $this->transaction_description_robus, $percentRobus, $this->wallet_id_employer, $this->choose_type_payement_emp, $amountSolde, $amountDrawal , $amount_solde_drawal);
 
 
                 if ($walletTransaction != null) {
@@ -438,7 +439,9 @@ class Employers extends Component
         $amountDrawal = $amountSoldeDrawal;
         $convertedAmountReceived = $this->convertAdminCommission($amountReceived, $walletAmountSend);
         $adminCiv = $this->getAdminValeurProperty();
-        $walletTransaction = $this->createWalletTransaction($walletUserEmployer, $convertedAmountReceived, $percentRobus, $amountSolde, $amountDrawal);
+        $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$finalAmountReceived;
+
+        $walletTransaction = $this->createWalletTransaction($walletUserEmployer, $convertedAmountReceived, $percentRobus, $amountSolde, $amountDrawal,  $amount_solde_drawal);
 
         if ($walletTransaction != null) {
 
@@ -455,14 +458,13 @@ class Employers extends Component
         }
     }
 
-    private function createWalletTransaction($walletUserEmployer, $convertedAmountReceived, $percentRobus, $amountSolde, $amountDrawal)
+    private function createWalletTransaction($walletUserEmployer, $convertedAmountReceived, $percentRobus, $amountSolde, $amountDrawal, $amount_before_drawal)
     {
 
         return WalletTransaction::create([
             'wallet_id' => firm()->wallet->id,
             'amount' => $this->amount_payment,
             'description' => $this->transaction_description_robus ?? null,
-            // 'transaction_cost_id' => $percentRobus->percent->id,
             'phone' => $this->transaction_phone ?? null,
             'costs_amount' => (float)$percentRobus->percent->percent * (float)$this->amount_payment,
             'amount_received' => $convertedAmountReceived,
@@ -474,19 +476,19 @@ class Employers extends Component
             'type_received' => 'Transfert',
             'status' => 'SUCCESS',
             'amount_solde' => $amountSolde,
-            'amount_solde_drawal' => $amountDrawal
+            'amount_solde_drawal' => $amountDrawal,
+            'amount_solde_before_drawal' => $amount_before_drawal ?? null,
+            'choose_transaction' => 1
         ]);
     }
 
-    private function createWalletTransaction2($amount_payment, $transaction_description_robus, $percentRobus, $wallet_id_employer, $choose_type_payement_emp, $amountSolde, $amountDrawal)
+    private function createWalletTransaction2($amount_payment, $transaction_description_robus, $percentRobus, $wallet_id_employer, $choose_type_payement_emp, $amountSolde, $amountDrawal, $amount_before_drawal)
     {
 
         return WalletTransaction::create([
             'wallet_id' => firm()->wallet->id,
             'amount' => $amount_payment,
             'description' => $transaction_description_robus ?? null,
-            // 'transaction_cost_id' => $percentRobus->percent->id,
-            // 'phone' => $transaction_phone ?? null,
             'costs_amount' => (float)$percentRobus->percent->percent * (float)$amount_payment,
             'amount_received' => $amount_payment - ($percentRobus->percent->percent * $amount_payment),
             'num_wallet' => $wallet_id_employer,
@@ -497,7 +499,9 @@ class Employers extends Component
             'type_received' => 'Transfert',
             'status' => 'SUCCESS',
             'amount_solde' => $amountSolde,
-            'amount_solde_drawal' => $amountDrawal
+            'amount_solde_drawal' => $amountDrawal,
+            'amount_solde_before_drawal' => $amount_before_drawal ?? null,
+            'choose_transaction' =>  1
         ]);
     }
 
@@ -696,20 +700,17 @@ class Employers extends Component
         }
     }
 
-    private function convertAdminCommission($amount, $wallet)
+   private function convertAdminCommission($amount, $wallet)
     {
+        $sourceCurrencyValue = (float) firm()->country->currencie->value;
+        $destinationCurrencyValue = (float) $wallet->country->currencie->value;
 
-        $country_civ = Country::find(107);
-        // $robus_currency = sabdy()->country->currencie->value;
-        if ($country_civ->currencie->value >  $wallet->country->currencie->value) {
-            return $amount / $wallet->country->currencie->value;
-        } elseif ($country_civ->currencie->value ==  $wallet->country->currencie->value) {
+        if ($sourceCurrencyValue === $destinationCurrencyValue) {
             return $amount;
-        } else {
-            return $amount / $wallet->country->currencie->value;
         }
-    }
 
+        return ((float) $amount * $sourceCurrencyValue) / $destinationCurrencyValue;
+    }
 
     public function getTransactionCount($walletModel, $status, $wallet_transactions, $transaction_days, $walletMy, $wallet_status)
     {
@@ -892,6 +893,7 @@ class Employers extends Component
         $transaction_amount_month = $this->getDaysTransaction(WalletTransaction::class);
         $companyId = firm()->company->id;
         $currentUserId = firm()->id;
+        $companyWallet = Wallet::where('sid_user_id', $currentUserId)->first();
 
         if ($this->categorieId != '') {
 
@@ -911,7 +913,7 @@ class Employers extends Component
                 ->paginate(30),
             "countries" => Country::where('status', true)->orderBy("name", 'desc')->get(),
             "categories" => Categorie::where('sid_user_id', $currentUserId)->orderBy("name", 'desc')->get(),
-            "wallet_amount" => Wallet::where('sid_user_id', $currentUserId)->first(),
+            "wallet_amount" => $companyWallet,
             "account_valeurs" => $account_employers,
             "amount_valeurs" => $amount_categories,
             'amount_transaction_nat_val_percent' => $this->commission_transaction_val_admin_receive,
@@ -921,6 +923,8 @@ class Employers extends Component
             'pending_success' => $transaction_padding,
             'sum_amount' => $transaction_amount,
             'usersCountry' => $walletUser->country->currencie->name,
+            'walletSolde' => (float) ($companyWallet->amount ?? 0),
+            'walletNumber' => $companyWallet->wallet_id ?? null,
             'sum_transaction_month' => $transaction_amount_month,
         ]);
     }

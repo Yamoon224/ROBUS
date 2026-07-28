@@ -342,7 +342,7 @@ function paymentId($id)
     return WalletReload::find($id);
 }
 
-function firm()
+function firm(): ?SidUser
 {
     return Auth::guard('company')->user();
 }
