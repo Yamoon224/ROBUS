@@ -5,9 +5,11 @@
 
         <div class="intro-y block sm:flex items-center h-10">
             <h2 class="text-lg font-medium truncate mr-5">
-                Les Activites du compte Aujourdh'ui
+                Les Activites du compte Aujourd'hui
             </h2>
         </div>
+    @include('components.solde_firm')
+
         <div class="grid grid-cols-12 gap-6 mt-6">
             <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_table_factures">
                 <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"

@@ -174,7 +174,7 @@ class HomeCompany extends Component
         //  SUm gain 
         $sum_gain = $payement_gain_days + $transaction_gain_days + $phonecredit_gain_days + $inter_gain_days + $bank_gain_days + $deposit_gain_days;
 
-        $walletUser = Auth::guard('company')->user();
+        $walletUser = firm();
         $state_transaction_year =  app(HomeService::class)->getMastersGainProperty(WalletTransaction::class);
         $transaction_amount_month = app(HomeService::class)->getDaysTransactionCompanieGain(WalletTransaction::class);
         
@@ -186,8 +186,10 @@ class HomeCompany extends Component
         $employers =  SidUser::where('is_custumers', true)->where('company_id', firm()->company_id)->count();
         $underDistributors =  SidUser::where('is_under_distributer', true)->where('company_id', firm()->company_id)->count();
         $gainReloadEmployer =  $this->getRealodsAdminDays(WalletTransaction::class);
+        $companyWallet = $walletUser->wallet()->first();
 
         return view('livewire.home-company', [
+            'walletNumber' => $companyWallet->wallet_id ?? null,
             'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
             'sum_error' =>  $transaction_error,
             'sum_success' =>  $transaction_success,
