@@ -333,7 +333,7 @@
 
                                                                     @if ($item->image)
                                                                         <img src="{{ asset_url($item->image) ?? asset_url('image_inters/' . $item->image) }}"
-                                                                            alt="QR Code Djamo"
+                                                                            alt="Image front"
                                                                             class="qr-blur w-20 h-20 object-contain rounded-lg border border-gray-300 shadow-sm">
                                                                     @else
                                                                         <span class="text-gray-400 italic">Aucune image
@@ -371,6 +371,26 @@
                                                                         Nom banque : {{ $item->name ?? null }}
 
                                                                     </p>
+                                                                @endif
+                                                                @if ($item->image || $item->image_bakend)
+                                                                    <div class="flex gap-2 mt-3">
+                                                                        @if ($item->image)
+                                                                            <div class="flex flex-col items-center">
+                                                                                <span class="text-xs text-gray-500 mb-1">Recto</span>
+                                                                                <img src="{{ asset_url($item->image) }}"
+                                                                                    alt="Pièce Recto"
+                                                                                    class="qr-blur w-20 h-20 object-contain rounded-lg border border-gray-300 shadow-sm">
+                                                                            </div>
+                                                                        @endif
+                                                                        @if ($item->image_bakend)
+                                                                            <div class="flex flex-col items-center">
+                                                                                <span class="text-xs text-gray-500 mb-1">Verso</span>
+                                                                                <img src="{{ asset_url($item->image_bakend) }}"
+                                                                                    alt="Pièce Verso"
+                                                                                    class="qr-blur w-20 h-20 object-contain rounded-lg border border-gray-300 shadow-sm">
+                                                                            </div>
+                                                                        @endif
+                                                                    </div>
                                                                 @endif
                                                             @endif
                                                         @elseif ($item->provider_type == 6)
@@ -618,6 +638,26 @@
                                                                     Date validité :
                                                                     {{ $item->validated_date ?? null }}
                                                                 </p>
+                                                                @if ($item->image || $item->image_bakend)
+                                                                    <div class="flex gap-2 mt-3">
+                                                                        @if ($item->image)
+                                                                            <div class="flex flex-col items-center">
+                                                                                <span class="text-xs text-gray-500 mb-1">Recto</span>
+                                                                                <img src="{{ asset_url($item->image) }}"
+                                                                                    alt="Pièce Recto"
+                                                                                    class="w-20 h-20 object-contain rounded-lg border border-gray-300 shadow-sm">
+                                                                            </div>
+                                                                        @endif
+                                                                        @if ($item->image_bakend)
+                                                                            <div class="flex flex-col items-center">
+                                                                                <span class="text-xs text-gray-500 mb-1">Verso</span>
+                                                                                <img src="{{ asset_url($item->image_bakend) }}"
+                                                                                    alt="Pièce Verso"
+                                                                                    class="w-20 h-20 object-contain rounded-lg border border-gray-300 shadow-sm">
+                                                                            </div>
+                                                                        @endif
+                                                                    </div>
+                                                                @endif
                                                             @endif
                                                         @elseif ($item->provider_type == 6)
                                                             <div

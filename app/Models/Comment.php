@@ -23,4 +23,9 @@ class Comment extends Model
     {
         return $this->belongsTo(SidUser::class, 'sid_user_id', 'id')->withTrashed();
     }
+
+    public function targetUser()
+    {
+        return $this->belongsTo(SidUser::class, 'target_sid_user_id', 'id')->withTrashed();
+    }
 }

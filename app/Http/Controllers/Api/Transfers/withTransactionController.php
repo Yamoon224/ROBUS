@@ -463,7 +463,7 @@ class withTransactionController extends Controller
                         $totalAmountRecevedCustumer = (float) $totalAmountReceivedCfa - (float) $level->amount;
 
                         if ($country_robus->currencie->value > robus()->country->currencie->value) {
-                                $totalAmountRecevedUser = $totalAmountRecevedCustumer / robus()->country->currencie->value;
+                                $totalAmountRecevedUser = $totalAmountRecevedCustumer / $country_robus->currencie->value;
                         } else if ($country_robus->currencie->value == robus()->country->currencie->value) {
                                 $totalAmountRecevedUser = $totalAmountRecevedCustumer;
                         } else {

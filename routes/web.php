@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PixelPaymentController;
+use App\Http\Controllers\PublicCommentController;
 use App\Models\Wallets\Wallet;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
@@ -48,6 +49,21 @@ Auth::routes(['register' => false]);
 
 Route::get('/refresh-csrf', function () {
     return csrf_token();
+});
+
+// Public QR comment routes (no auth required)
+Route::get('/avis/{walletId}', [PublicCommentController::class, 'show'])->name('public.comment.show');
+Route::post('/avis/{walletId}', [PublicCommentController::class, 'store'])->name('public.comment.store');
+
+// QR comment print/PDF (auth required)
+Route::middleware(['auth:web'])->get('/qr-avis/{walletId}/print', [PublicCommentController::class, 'print'])->name('qr.comment.print');
+
+// Website QR Code (auth required)
+Route::middleware(['auth:web'])->group(function () {
+    Route::get('/qr-website', function () {
+        return view('pages.admin.website_qr');
+    })->name('qr.website');
+    Route::get('/qr-website/print', [PublicCommentController::class, 'websitePrint'])->name('qr.website.print');
 });
 
 //User Admin
@@ -204,6 +220,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/show/{id}', [UserController::class, 'show'])->name('custumers.show');
             Route::get('/edit/{id}', [UserController::class, 'show_edit'])->name('custumers.show_edit');
             Route::post('update/{id}/store', [UserController::class, 'edit_custumers'])->name('custumers.edit_custumers');
+            Route::get('/show_company/{id}', [UserController::class, 'show_company'])->name('company.show');
             Route::get('/show_company/{id}', [UserController::class, 'show_company'])->name('company.show');
             Route::get('/show_comzone/{id}', [UserController::class, 'show_comzone'])->name('comzone.show_comzone');
             Route::post('/update_custumers/{id}', [UserController::class, 'update_custumers'])->name('custumers.update_custumers');

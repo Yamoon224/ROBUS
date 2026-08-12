@@ -53,6 +53,11 @@ class SidUser extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
+    public function publicReviews()
+    {
+        return $this->hasMany(Comment::class, 'target_sid_user_id')->where('is_public', true);
+    }
+
 
     public function withMerchants()
     {

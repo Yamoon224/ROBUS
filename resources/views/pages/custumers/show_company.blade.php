@@ -597,6 +597,9 @@
                 <!-- END: Pagination -->
             </div>
         </div>
+         <div id="reload" class="tab-pane" role="tabpanel" aria-labelledby="reload-tab">
+            @livewire('transaction-details.reload-transactions', ['walletAllReloads' => $user->id])
+        </div>
         <div id="reloads" class="tab-pane " role="tabpanel" aria-labelledby="reloads-tab">
             <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
                 <div class="hidden md:block mx-auto text-slate-500"></div>

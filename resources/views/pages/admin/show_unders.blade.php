@@ -1211,6 +1211,61 @@
             @livewire('transaction-details.versments', ['walletVersements' => $user->id])
         </div>
 
+        {{-- ── Onglet Avis clients ── --}}
+        <div id="avis" class="tab-pane" role="tabpanel" aria-labelledby="avis-tab">
+            <div class="intro-y box mt-5 p-5">
+                <div class="flex items-center border-b border-slate-200/60 pb-4 mb-5">
+                    <h2 class="font-medium text-base mr-auto">
+                        Avis clients —
+                        <span style="color:#f59e0b;font-weight:700;">
+                            {{ $comments->count() }} avis{{ $comments->count() > 1 ? '' : '' }}
+                        </span>
+                    </h2>
+                </div>
+
+                @if($comments->isEmpty())
+                    <div class="flex flex-col items-center justify-center py-16 text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-3 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                        <p class="text-sm">Aucun avis client pour le moment.</p>
+                        <p class="text-xs mt-1">Les avis apparaîtront ici une fois que des clients auront scanné le QR code.</p>
+                    </div>
+                @else
+                    <div class="space-y-4">
+                        @foreach($comments as $review)
+                        <div style="border:1px solid #e2e8f0;border-radius:10px;padding:16px 18px;background:#fafbff;">
+                            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
+                                <div style="display:flex;align-items:center;gap:10px;">
+                                    <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;">
+                                        {{ strtoupper(substr($review->commenter_name ?? 'A', 0, 1)) }}
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;font-size:13px;color:#1e293b;">
+                                            {{ $review->commenter_name ?? 'Anonyme' }}
+                                        </div>
+                                        <div style="font-size:11px;color:#94a3b8;margin-top:1px;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" style="width:11px;height:11px;display:inline;vertical-align:middle;margin-right:2px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            {{ $review->created_at ? \Carbon\Carbon::parse($review->created_at)->diffForHumans() : '' }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <span style="font-size:10px;background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;padding:2px 8px;border-radius:20px;font-weight:600;">
+                                    Avis client
+                                </span>
+                            </div>
+                            <p style="font-size:13px;color:#374151;line-height:1.6;margin:0;padding-left:48px;">
+                                {{ $review->description }}
+                            </p>
+                        </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+
     </div>
 
 @endsection

@@ -28,6 +28,7 @@ use App\Models\Operator;
 use App\Models\OperatorService;
 use App\Models\Sid\SidUser;
 use App\Models\Visite;
+use App\Models\Comment;
 use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletBank;
 use App\Models\Wallets\WalletDeposit;
@@ -1753,8 +1754,14 @@ class AdminController extends Controller
         // Execeptions
         $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
 
+        $comments = Comment::where('target_sid_user_id', $user->id)
+            ->where('is_public', true)
+            ->latest()
+            ->get();
+
         return view('pages.admin.show_unders', compact(
             'user',
+            'comments',
             'gain_xbets',
             'gain_versment',
             'gain_bank_sends',

@@ -4,6 +4,11 @@
             aria-controls="doc" aria-selected="true" role="tab"> <i class="w-4 h-4 mr-2"
                 data-feather="shield"></i> Documents </a>
     </li>
+      <li id="reload-tab" class="nav-item" role="presentation">
+             <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#reload"
+                 aria-controls="reload" aria-selected="true" role="tab"> <i class="w-4 h-4 mr-2"
+                     data-feather="shield"></i>UV </a>
+         </li>
     <li id="transfers-tab" class="nav-item" role="presentation">
         <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#transfers"
             aria-controls="transfers" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"

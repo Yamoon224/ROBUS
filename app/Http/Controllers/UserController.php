@@ -159,7 +159,7 @@ class UserController extends Controller
     }
     public function browse_company()
     {
-        if (Auth::guard('web')->user()->hasPermissionTo('voir-clients')) {
+        if (Auth::guard('web')->user()->hasPermissionTo('voir-sous-distributeurs')) {
 
             return view('pages.custumers.browse_company');
         } else {
@@ -381,7 +381,7 @@ class UserController extends Controller
 
     public function show_company(Request $request, int $id)
     {
-        if (Auth::guard('web')->user()->hasPermissionTo('voir-clients')) {
+        if (Auth::guard('web')->user()->hasPermissionTo('voir-sous-distributeurs')) {
 
 
             $user = SidUser::whereId($id)->first();

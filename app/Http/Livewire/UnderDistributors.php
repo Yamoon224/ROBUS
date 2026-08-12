@@ -11,6 +11,8 @@ use App\Models\Operator;
 use App\Models\OperatorService;
 use App\Models\Sid\SidUser;
 use App\Notifications\UserNotification;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Encoding\Encoding;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -501,9 +503,43 @@ class UnderDistributors extends Component
         }
     }
 
+    public function generateCommentQr($userId)
+    {
+        $user = SidUser::with('wallet')->find($userId);
+
+        if (!$user || !$user->wallet) {
+            $this->emit('error', 'Utilisateur introuvable.');
+            return;
+        }
+
+        $wallet = $user->wallet;
+        $url = url('/avis/' . $wallet->wallet_id);
+        $logoPath = public_path('dist/images/logo_orange.png');
+
+        try {
+            $result = Builder::create()
+                ->data($url)
+                ->encoding(new Encoding('UTF-8'))
+                ->size(300)
+                ->margin(10)
+                ->logoPath($logoPath)
+                ->logoResizeToWidth(70)
+                ->logoResizeToHeight(70)
+                ->build();
+
+            $qrPath = 'qrcodes/comment_' . $wallet->id . '.png';
+            $result->saveToFile(public_path($qrPath));
+            $wallet->update(['qr_comment' => $qrPath]);
+
+            $this->emit('success', 'QR Code d\'avis généré avec succès !');
+        } catch (\Throwable $th) {
+            $this->emit('error', 'Erreur lors de la génération du QR code.');
+        }
+    }
+
     public function render()
     {
-        $usersQuery = SidUser::where('is_under_distributer', true);
+        $usersQuery = SidUser::where('is_under_distributer', true)->withCount('publicReviews');
         $queryComzone = SidUser::where('is_com_zone', true);
 
         if (sabdy()->is_com_zone) {

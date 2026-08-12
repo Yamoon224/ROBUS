@@ -168,58 +168,58 @@
                         <td class="w-80">
 
                             @if (Auth::guard('web')->user()->hasPermissionTo('voir-activites'))
-                                @if ($item->is_under_distributer)
-                                <div class="flex items-center justify-between mb-6">
-                                    <div class="text-slate-500 text-xs flex items-center">
-                                        <i class="fas fa-lock w-3 h-3 mr-2"></i>
-                                        Commissions
-                                    </div>
+                            @if ($item->is_under_distributer)
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="text-slate-500 text-xs flex items-center">
+                                    <i class="fas fa-lock w-3 h-3 mr-2"></i>
+                                    Commissions
+                                </div>
 
-                                    <div class="dropdown relative">
-                                        <a class="dropdown-toggle block" href="javascript:;" data-tw-toggle="dropdown">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="w-5 h-5 text-slate-500 hover:text-slate-700" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <circle cx="12" cy="12" r="1" />
-                                                <circle cx="19" cy="12" r="1" />
-                                                <circle cx="5" cy="12" r="1" />
-                                            </svg>
-                                        </a>
+                                <div class="dropdown relative">
+                                    <a class="dropdown-toggle block" href="javascript:;" data-tw-toggle="dropdown">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            class="w-5 h-5 text-slate-500 hover:text-slate-700" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <circle cx="12" cy="12" r="1" />
+                                            <circle cx="19" cy="12" r="1" />
+                                            <circle cx="5" cy="12" r="1" />
+                                        </svg>
+                                    </a>
 
-                                        <div class="dropdown-menu dropdown-large">
-                                            <div
-                                                class="dropdown-content grid grid-cols-2 gap-2 p-3 max-h-72 overflow-y-auto">
+                                    <div class="dropdown-menu dropdown-large">
+                                        <div
+                                            class="dropdown-content grid grid-cols-2 gap-2 p-3 max-h-72 overflow-y-auto">
 
-                                                @php
-                                                $limitedOperators = $operatorsCommissions->take(50);
-                                                @endphp
+                                            @php
+                                            $limitedOperators = $operatorsCommissions->take(50);
+                                            @endphp
 
-                                                @foreach ($limitedOperators as $operator)
-                                                <label
-                                                    class="flex items-center px-2 py-1 hover:bg-slate-50 rounded cursor-pointer">
-                                                    <input
-                                                        wire:click.debounce.150ms="editUpdateCommission({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
-                                                        type="checkbox"
-                                                        class="h-4 w-4 text-blue-600 border-slate-300 rounded"
-                                                        @checked(in_array($operator->id, $old_operators))>
+                                            @foreach ($limitedOperators as $operator)
+                                            <label
+                                                class="flex items-center px-2 py-1 hover:bg-slate-50 rounded cursor-pointer">
+                                                <input
+                                                    wire:click.debounce.150ms="editUpdateCommission({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
+                                                    type="checkbox"
+                                                    class="h-4 w-4 text-blue-600 border-slate-300 rounded"
+                                                    @checked(in_array($operator->id, $old_operators))>
 
-                                                    <span class="ml-2 text-sm text-slate-700 truncate">
-                                                        {{ $operator->name ?? 'Non renseigné' }}
-                                                    </span>
-                                                </label>
-                                                @endforeach
+                                                <span class="ml-2 text-sm text-slate-700 truncate">
+                                                    {{ $operator->name ?? 'Non renseigné' }}
+                                                </span>
+                                            </label>
+                                            @endforeach
 
-                                                @if ($operatorsCommissions->count() > 50)
-                                                <div class="col-span-2 text-center pt-2 border-t text-xs text-gray-500">
-                                                    {{ $operatorsCommissions->count() - 50 }} autres non
-                                                    affichés
-                                                </div>
-                                                @endif
+                                            @if ($operatorsCommissions->count() > 50)
+                                            <div class="col-span-2 text-center pt-2 border-t text-xs text-gray-500">
+                                                {{ $operatorsCommissions->count() - 50 }} autres non
+                                                affichés
                                             </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
-                                @endif
+                            </div>
+                            @endif
                             @endif
 
                             @if ($item->is_active == '1' && $item->status == '1')
@@ -567,6 +567,41 @@
 
                                     @include('components.tableDeleted')
 
+                                </div>
+
+                                {{-- Compteur avis --}}
+                                <div class="mt-3 flex items-center gap-1.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" style="width:13px;height:13px;color:#f59e0b;flex-shrink:0;" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                    </svg>
+                                    <span style="font-size:11px;font-weight:600;color:#374151;" class="mr-6">
+                                        {{ $item->public_reviews_count ?? 0 }} avis client{{ ($item->public_reviews_count ?? 0) > 1 ? 's' : '' }}
+                                    </span>
+                                </div>
+
+                                {{-- QR Code Avis --}}
+                                <div class="mt-4 border-t border-slate-200 pt-3">
+                                    @if ($item->wallet && $item->wallet->qr_comment)
+                                    {{-- Bouton Imprimer / PDF --}}
+                                    <a href="{{ route('qr.comment.print', $item->wallet->wallet_id) }}" target="_blank"
+                                        style="display:flex; align-items:center; justify-content:center; width:100%; padding:8px 12px; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; font-size:11px; font-weight:600; border-radius:8px; text-decoration:none; gap:6px; border:none; box-shadow:0 2px 8px rgba(22,163,74,0.30); letter-spacing:0.3px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" style="width:15px;height:15px;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                        </svg>
+                                        Imprimer / PDF
+                                    </a>
+                                    @else
+                                    {{-- Bouton Générer QR Avis --}}
+                                    <button wire:click="generateCommentQr({{ $item->id }})"
+                                        wire:loading.attr="disabled"
+                                        style="display:flex; align-items:center; justify-content:center; width:100%; padding:8px 12px; background:linear-gradient(135deg,#4f46e5,#6366f1); color:#fff; font-size:11px; font-weight:600; border-radius:8px; border:none; gap:6px; cursor:pointer; box-shadow:0 2px 8px rgba(79,70,229,0.30); letter-spacing:0.3px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" style="width:15px;height:15px;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                                        </svg>
+                                        <span wire:loading.remove wire:target="generateCommentQr({{ $item->id }})">Générer QR Avis</span>
+                                        <span wire:loading wire:target="generateCommentQr({{ $item->id }})">Génération...</span>
+                                    </button>
+                                    @endif
                                 </div>
                             </div>
                         </td>

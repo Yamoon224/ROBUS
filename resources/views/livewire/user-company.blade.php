@@ -265,7 +265,7 @@
                                             </svg>
                                         </a>
                                     @endif
-                                    @if (Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur'))
+                                    @if (Auth::guard('web')->user()->hasPermissionTo('voir-sous-distributeurs'))
                                         <a class="mr-1 mb-2 "
                                             href="{{ route('company.show', ['id' => $item->id]) }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
