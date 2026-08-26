@@ -138,6 +138,18 @@
             $('#remonte-ccommission-modal').removeClass('show');
             $('#remonte-ccommission-modal').addClass('hide');
 
+            $('#create-pixel-innove-modal').removeClass('show');
+            $('#create-pixel-innove-modal').addClass('hide');
+
+            $('#update-pixel-innove-modal').removeClass('show');
+            $('#update-pixel-innove-modal').addClass('hide');
+
+            $('#disabled-pixel-innove-modal').removeClass('show');
+            $('#disabled-pixel-innove-modal').addClass('hide');
+
+            $('#delete-pixel-innove-modal').removeClass('show');
+            $('#delete-pixel-innove-modal').addClass('hide');
+
             $('#create-reload-company-modal').removeClass('show');
             $('#create-reload-company-modal').addClass('hide');
 
@@ -178,6 +190,10 @@
 
             $('#disabled-countrieIntegrate-modal').removeClass('show');
             $('#disabled-countrieIntegrate-modal').addClass('hide');
+
+
+            $('#disabled-countriePixel-modal').removeClass('show');
+            $('#disabled-countriePixel-modal').addClass('hide');
 
             $('#disabled-company-admin-modal').removeClass('show');
             $('#disabled-company-admin-modal').addClass('hide');
@@ -706,6 +722,11 @@
         Livewire.on('show-disabled-countrieIntegrate-modal', () => {
             $('#disabled-countrieIntegrate-modal').removeClass('hide');
             $('#disabled-countrieIntegrate-modal').addClass('show');
+        });
+
+        Livewire.on('show-disabled-countriePixel-modal', () => {
+            $('#disabled-countriePixel-modal').removeClass('hide');
+            $('#disabled-countriePixel-modal').addClass('show');
         });
 
         Livewire.on('show-disabled-App-modal', () => {
@@ -2984,6 +3005,26 @@
         Livewire.on('update-provider-modal', () => {
             $('#update-provider-modal').removeClass('hide');
             $('#update-provider-modal').addClass('show');
+        });
+
+        Livewire.on('show-create-pixel-innove-modal', () => {
+            $('#create-pixel-innove-modal').removeClass('hide');
+            $('#create-pixel-innove-modal').addClass('show');
+        });
+
+        Livewire.on('show-update-pixel-innove-modal', () => {
+            $('#update-pixel-innove-modal').removeClass('hide');
+            $('#update-pixel-innove-modal').addClass('show');
+        });
+
+        Livewire.on('show-disabled-pixel-innove-modal', () => {
+            $('#disabled-pixel-innove-modal').removeClass('hide');
+            $('#disabled-pixel-innove-modal').addClass('show');
+        });
+
+        Livewire.on('show-delete-pixel-innove-modal', () => {
+            $('#delete-pixel-innove-modal').removeClass('hide');
+            $('#delete-pixel-innove-modal').addClass('show');
         });
 
         Livewire.on('delete-provider-modal', () => {

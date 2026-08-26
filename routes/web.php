@@ -307,6 +307,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/add',  [ServiceController::class, 'add'])->name('services.add');
             Route::post('/store',  [ServiceController::class, 'store'])->name('services.store');
             Route::get('/browse',  [ServiceController::class, 'browse'])->name('services.browse');
+            Route::get('/pixel-innove',  [ServiceController::class, 'browse_pixel_innove'])->name('services.pixel_innove');
             Route::get('/show/{id}',  [ServiceController::class, 'edit'])->name('services.edit');
             Route::post('/update/{id}',  [ServiceController::class, 'update'])->name('services.update');
             Route::get('/offers',  [ServiceController::class, 'browse_offers'])->name('services.offers.browse');
@@ -619,8 +620,16 @@ Route::post('/payment/callbackWebhook', [PaystackWebhookController::class, 'paym
     ->name('payment.callbackWebhook');
 
 
-Route::get('/payment_pixelInnov/callback', [PixelPaymentController::class, 'paymentCallback'])
-    ->name('paymentInnov.callback');
+// IPN Pixel Innov — appelé serveur→serveur par Pixel Innov (sans CSRF)
+Route::post('/payment_pixelInnov/callback', [PixelPaymentController::class, 'paymentCallback'])
+    ->name('pixelInnov.callback')
+    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+
+// Redirections navigateur après paiement
+Route::get('/payment_pixelInnov/success', [PixelPaymentController::class, 'redirectSuccess'])
+    ->name('pixelInnov.redirect.success');
+Route::get('/payment_pixelInnov/error', [PixelPaymentController::class, 'redirectError'])
+    ->name('pixelInnov.redirect.error');
 
 // Pages de résultat de paiement
 Route::get('/payment/success/{reference}', [PaystackWebhookController::class, 'paymentSuccess'])
@@ -678,8 +687,8 @@ Route::get('clear-route-robus', function () {
 
     Artisan::call('optimize:clear');
     Artisan::call('config:clear');
-    Artisan::call('route:clear');
-    Artisan::call('cache:clear');
+    // Artisan::call('route:clear');
+    // Artisan::call('cache:clear');
 
     Artisan::call('config:cache');
     Artisan::call('route:cache');

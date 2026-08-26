@@ -11,6 +11,7 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
 
             <div class="hidden md:block mx-auto text-slate-500"></div>
+            <a class="btn btn-primary mt-3 mr-2" href="{{ route('services.pixel_innove') }}">Pixel Innove</a>
             <a class="btn btn-primary mt-3" href="{{ route('services.offers.browse') }}">Liste des offres</a>
             <div class="hidden md:block ml-8 text-slate-500">
             </div>

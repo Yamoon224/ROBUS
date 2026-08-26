@@ -29,33 +29,6 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
-                <div class="col-span-12 mt-3">
-                    <label class="form-label" for="countries">Moyen de paiement {{ $countrieId }} </label>
-
-                    @php
-                        $operatorIds = $operators->pluck('id');
-                        $old_operators = \App\Models\PaymentService::where('country_id', $countrieId)
-                            ->pluck('operator_payment_id')
-                            ->toArray();
-                    @endphp
-
-                    <select id="operator_id" wire:model="operator_id" data-placeholder="Sélectionne les opérateurs"
-                        class="tom-select w-full @error('operator_id') is-invalid @enderror" multiple
-                        data-selected="{{ json_encode($old_operators) }}">
-                        <option disabled selected></option>
-                        @foreach ($operators as $operator)
-                            <option value="{{ $operator->id }}" @if (in_array($operator->id, $old_operators)) selected @endif>
-                                {{ $operator->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('operator_id')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-
-                </div>
                 <div class="col-span-12">
                     <label for="modal-form-1" class="form-label">Plafond avec piece<span class="text-danger">
                             *</span></label>

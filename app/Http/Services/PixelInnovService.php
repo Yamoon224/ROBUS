@@ -7,143 +7,79 @@ use Illuminate\Support\Facades\Log;
 
 class PixelInnovService
 {
-    private $secretKey;
-    private $baseUrl = 'https://proxy-coreapi.pixelinnov.net/api_v1';
-    
+    private string $apiKey;
+    private string $baseUrl;
+
     public function __construct()
     {
-        $this->secretKey = "PIX_26cdfbc9-469c-4ac2-a914-138bdc9f50ae";
-        
-        if (!$this->secretKey) {
-            Log::error('Clé secrète Paystack non configurée');
-            throw new \Exception('Paystack secret key is not configured');
-        }
+        $this->apiKey  = config('services.pixel_innov.api_key', '');
+        $this->baseUrl = config('services.pixel_innov.sandbox', false)
+            ? 'https://standbox-api.pixelinnov.net/api_v1'
+            : 'https://proxy-coreapi.pixelinnov.net/api_v1';
     }
-    
+
     /**
-     * Initialiser une transaction
+     * Initialiser une transaction (tous providers, tous pays)
+     * Le service_id dans $data détermine le provider et le pays
      */
-    public function initializeTransaction(array $data)
+    public function initializeTransaction(array $data): array
     {
-        // try {
-        // 7 wave
-        // 5 Mtn
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->timeout(30)->post($this->baseUrl . '/transaction/airtime', $data);
-            
-            $result = $response->json();
-          
-            
+        try {
+            $response = Http::withHeaders(['Content-Type' => 'application/json'])
+                ->timeout(30)
+                ->post($this->baseUrl . '/transaction/airtime', array_merge($data, [
+                    'api_key' => $this->apiKey,
+                ]));
+
+            $result = $response->json() ?? [];
+
+            Log::info('Pixel Innov — init transaction', [
+                'http'           => $response->status(),
+                'statut_code'    => $result['statut_code'] ?? null,
+                'transaction_id' => $result['data']['transaction_id'] ?? null,
+                'state'          => $result['data']['state'] ?? null,
+                'service_id'     => $data['service_id'] ?? null,
+            ]);
+
             return $result;
-            
-        // } catch (\Exception $e) {
-        //     Log::error('Erreur PixelInnov initialization', [
-        //         'error' => $e->getMessage(),
-        //         'data' => $data
-        //     ]);
-        //     return [
-        //         'status' => false, 
-        //         'message' => 'Erreur de connexion à Paystack: ' . $e->getMessage()
-        //     ];
-        // }
-    }
-    
-    /**
-     * Vérifier une transaction
-     */
-    public function verifyTransaction(string $reference)
-    {
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->secretKey,
-                'Cache-Control' => 'no-cache',
-            ])->timeout(30)->get($this->baseUrl . '/transaction/verify/' . $reference);
-            
-            $result = $response->json();
-            
-            Log::info('PixelInnov verification response', [
-                'reference' => $reference,
-                'status' => $response->status(),
-                'data' => $result
-            ]);
-            
-            return $result;
-            
         } catch (\Exception $e) {
-            Log::error('Erreur PixelInnov verification', [
-                'reference' => $reference,
-                'error' => $e->getMessage()
-            ]);
-            return [
-                'status' => false, 
-                'message' => 'Erreur de vérification: ' . $e->getMessage()
-            ];
+            Log::error('Pixel Innov — erreur init', ['error' => $e->getMessage()]);
+            return ['statut_code' => 500, 'message' => $e->getMessage()];
         }
     }
-    
+
     /**
-     * Créer un bénéficiaire de transfert
+     * Vérifier le statut d'une transaction côté Pixel Innov
+     * POST /transaction/status  { api_key, transaction_ids }
      */
-    public function createTransferRecipient(array $data)
+    public function checkTransactionStatus(string $transactionId): array
     {
         try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->secretKey,
-                'Content-Type' => 'application/json',
-            ])->post($this->baseUrl . '/transferrecipient', $data);
-            
-            return $response->json();
-            
+            $response = Http::withHeaders(['Content-Type' => 'application/json'])
+                ->timeout(15)
+                ->post($this->baseUrl . '/transaction/status', [
+                    'api_key'         => $this->apiKey,
+                    'transaction_ids' => $transactionId,
+                ]);
+
+            return $response->json() ?? [];
         } catch (\Exception $e) {
-            Log::error('Erreur création bénéficiaire PixelInnov', [
-                'error' => $e->getMessage(),
-                'data' => $data
-            ]);
-            return ['status' => false, 'message' => $e->getMessage()];
+            Log::error('Pixel Innov — erreur status', ['error' => $e->getMessage()]);
+            return ['statut_code' => 500, 'message' => $e->getMessage()];
         }
     }
-    
+
     /**
-     * Effectuer un transfert
+     * Vérifier le hash IPN : SHA256(api_key + transaction_id)
      */
-    public function initiateTransfer(array $data)
+    public function verifyIpnHash(string $transactionId, string $receivedHash): bool
     {
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->secretKey,
-                'Content-Type' => 'application/json',
-            ])->post($this->baseUrl . '/transfer', $data);
-            
-            return $response->json();
-            
-        } catch (\Exception $e) {
-            Log::error('Erreur transfert PixelInnov', [
-                'error' => $e->getMessage(),
-                'data' => $data
-            ]);
-            return ['status' => false, 'message' => $e->getMessage()];
-        }
+        $expected = hash('sha256', $this->apiKey . $transactionId);
+        return hash_equals($expected, $receivedHash);
     }
-    
-    /**
-     * Liste des banques
-     */
-    public function listBanks(string $country = 'nigeria')
+
+    public function getApiKey(): string
     {
-        try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->secretKey,
-            ])->get($this->baseUrl . '/bank', [
-                'country' => $country,
-                'perPage' => 100
-            ]);
-            
-            return $response->json();
-            
-        } catch (\Exception $e) {
-            Log::error('Erreur liste banques PixelInnov', ['error' => $e->getMessage()]);
-            return ['status' => false, 'message' => $e->getMessage()];
-        }
+        return $this->apiKey;
     }
 }

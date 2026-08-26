@@ -103,13 +103,17 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
         });
 
         Route::prefix('pixelInnov')->group(function () {
-            // Initialiser un paiement Paystack (nécessite authentification)
+            // Lister les services disponibles (par pays et/ou type d'opération)
+            Route::get('/services', [PixelPaymentController::class, 'listServices'])
+                ->name('pixelInnov.services');
+
+            // Initialiser un paiement (Orange, MTN, Moov, Wave…)
             Route::post('/initialize', [PixelPaymentController::class, 'initializePayment'])
                 ->name('pixelInnov.initialize');
 
-            // Vérifier transaction avec POST (alternative)
-            Route::post('/verify/{reference}', [PixelPaymentController::class, 'verifyTransaction'])
-                ->name('pixelInnov.verify.post');
+            // Vérifier le statut d'une transaction
+            Route::post('/status', [PixelPaymentController::class, 'checkStatus'])
+                ->name('pixelInnov.status');
         });
         // User and Under distributors APIS
         Route::prefix('user')->group(function () {

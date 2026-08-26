@@ -2,8 +2,7 @@
 
     <!-- inject:js -->
     {{-- <script src="{{ asset_url('/js/app.js') }}"></script> --}}
-    <link rel="stylesheet" href="{{ asset_url('/css/app.css') }}">
-    <link rel="stylesheet" href="{{ asset_url('css/appModal.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset_url('/css/app.css') }}"> --}}
 
     <div class="intro-y col-span-12 lg:col-span-12">
         @if (sabdyHomeVerify())

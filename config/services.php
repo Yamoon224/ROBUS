@@ -47,4 +47,9 @@ return [
         'secret' => env('COM_ZONE_CRON_SECRET'),
     ],
 
+    'pixel_innov' => [
+        'api_key' => env('PIXEL_INNOV_API_KEY', ''),
+        'sandbox' => env('PIXEL_INNOV_SANDBOX', false),
+    ],
+
 ];

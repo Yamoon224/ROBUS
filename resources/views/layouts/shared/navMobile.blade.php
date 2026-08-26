@@ -299,10 +299,16 @@
             <li>
 
                 <a href="{{ route('services.browse') }}"
-                    class="menu {{ $route == 'services.browse' || $route == 'services.offers.browse' ? 'menu--active' : '' }}">
+                    class="menu {{ $route == 'services.browse' || $route == 'services.offers.browse' || $route == 'services.pixel_innove' ? 'menu--active' : '' }}">
                     <div class="menu__icon"><i data-feather="package" class="block mx-auto"></i>
                     </div>
                     <div class="menu__title"> Services mobile </div>
+                </a>
+                <a href="{{ route('services.pixel_innove') }}"
+                    class="menu {{ $route == 'services.pixel_innove' ? 'menu--active' : '' }}">
+                    <div class="menu__icon"><i data-feather="grid" class="block mx-auto"></i>
+                    </div>
+                    <div class="menu__title"> Pixel Innove </div>
                 </a>
             </li>
         @endif

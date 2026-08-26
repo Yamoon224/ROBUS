@@ -23,6 +23,7 @@ class Countries extends Component
     public $countireCode;
     public $countrieStatus;
     public $countrieIntegrate;
+    public $countriePixel;
     public $countrieId;
     public $countrie_indic;
     public $currencie;
@@ -59,6 +60,7 @@ class Countries extends Component
         $this->currencie = $check->currencie->id ?? 1;
         $this->countrieStatus = $check->robus;
         $this->countrieIntegrate = $check->is_integrate;
+        $this->countriePixel = $check->is_pixel;
         $this->silver_no_identity = $check->silver_ceiling_no_identity;
         $this->ceiling = $check->silver_ceiling;
         $this->name_groupe = $check->name_groupe;
@@ -136,7 +138,7 @@ class Countries extends Component
         }
     }
 
-   public function disableIntegrate()
+    public function disableIntegrate()
     {
         $check = Country::find($this->countrieId);
         if (!empty($check)) {
@@ -151,6 +153,24 @@ class Countries extends Component
             ]);
             $this->emit('modal-hide', 'hide');
             $this->emit('success', $check->is_integrate == 1 ? 'Pays acceptée pour integration !' : 'Pays non acceptée pour integration !!');
+        }
+    }
+
+    public function disablePixelInnov()
+    {
+        $check = Country::find($this->countrieId);
+        if (!empty($check)) {
+            if ($check->is_pixel == 0) $check->update(
+                [
+                    'is_pixel' => 1
+
+                ]
+            );
+            else $check->update([
+                'is_pixel' => 0
+            ]);
+            $this->emit('modal-hide', 'hide');
+            $this->emit('success', $check->is_pixel == 1 ? 'Pays acceptée pour integration !' : 'Pays non acceptée pour integration !!');
         }
     }
 

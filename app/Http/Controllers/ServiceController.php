@@ -29,6 +29,15 @@ class ServiceController extends Controller
         return view('pages.services.browse');
     }
 
+    public function browse_pixel_innove()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-operateurs')) {
+            abort(403);
+        }
+
+        return view('pages.services.pixel_innove');
+    }
+
     public function  browse_visitores()
     {
         if (!Auth::guard('web')->user()->hasPermissionTo('voir-operateurs')) {
