@@ -98,10 +98,10 @@ class UserControllerAMeliorer extends Controller
 
     /**
      * @OA\GET(
-     *      path="/user/dashboard",
+     *      path="/user/messages",
      *      tags={"Dashbord"},
-     *      summary="DashBord user",
-     *      description="Tableau de bord du clients",
+     *      summary="Messages / Notifications user",
+     *      description="Notifications de l'interface du client",
      * @OA\Response(
      *          response=200,
      *          description="success",

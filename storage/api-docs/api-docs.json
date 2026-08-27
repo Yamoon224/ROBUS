@@ -4,421 +4,17 @@
         "title": "Api Robus Documentation",
         "description": "Documentation differente foction Api Robus",
         "contact": {
-            "email": "sabdydev@gmail.com"
+            "email": "sabdydev@gmaii.com"
         },
         "version": "1.0.0"
     },
     "servers": [
         {
-            "url": "http://localhost:9870/api/v1",
+            "url": "https://robus.home.ci",
             "description": "API Server Robus"
         }
     ],
     "paths": {
-        "/auth/signUp": {
-            "post": {
-                "tags": [
-                    "Phone register"
-                ],
-                "summary": "inform your phone",
-                "description": "Renseignez votre numero de telephone le pays et la villes",
-                "operationId": "031282f1836555606e1874c40a1d7253",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "": {
-                                        "properties": {
-                                            "Countrie": {
-                                                "type": "number"
-                                            },
-                                            "Phone": {
-                                                "type": "number"
-                                            },
-                                            "Citie": {
-                                                "type": "integer"
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "phone": "0546963728",
-                                    "Pays": "107",
-                                    "Ville": "09"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "phone": {
-                                            "type": "number",
-                                            "example": "0678787878"
-                                        },
-                                        "created_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "phone is required"
-                    },
-                    "333": {
-                        "description": "User already exists"
-                    },
-                    "433": {
-                        "description": "Bad Request"
-                    },
-                    "404": {
-                        "description": "not found"
-                    }
-                }
-            }
-        },
-        "/auth/active_account": {
-            "post": {
-                "tags": [
-                    "Phone register"
-                ],
-                "summary": "Update Account",
-                "description": "Validation du code Otp et renseignement des informations du clients",
-                "operationId": "68f7aed19b624d2e7dcac34c57c97ce2",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "": {
-                                        "properties": {
-                                            "OTP": {
-                                                "type": "number"
-                                            },
-                                            "Firstname": {
-                                                "type": "string"
-                                            },
-                                            "Lastname": {
-                                                "type": "string"
-                                            },
-                                            "Password": {
-                                                "type": "password"
-                                            },
-                                            "Zone": {
-                                                "type": "string"
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "Fisrtname": "0546963728",
-                                    "Lastname": "107",
-                                    "Password": "password",
-                                    "Zone": "cocody"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "Otp": {
-                                            "type": "number",
-                                            "example": "1234"
-                                        },
-                                        "firstname": {
-                                            "type": "string",
-                                            "example": "Sabdy"
-                                        },
-                                        "lastname": {
-                                            "type": "string",
-                                            "example": "Dev"
-                                        },
-                                        "password": {
-                                            "type": "password",
-                                            "example": "password"
-                                        },
-                                        "zone": {
-                                            "type": "string",
-                                            "example": "Cocody"
-                                        },
-                                        "created_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "333": {
-                        "description": "Code does not match."
-                    },
-                    "433": {
-                        "description": "Bad Request"
-                    },
-                    "404": {
-                        "description": "not found"
-                    }
-                }
-            }
-        },
-        "/auth/login": {
-            "post": {
-                "tags": [
-                    "Connexion"
-                ],
-                "summary": "Connexion",
-                "description": "Se connectez a son mot de passe et numero",
-                "operationId": "2c02e8c76cc44396eac845de170b7d19",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "": {
-                                        "properties": {
-                                            "phone": {
-                                                "type": "number"
-                                            },
-                                            "Password": {
-                                                "type": "password"
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "phone": "0546963728",
-                                    "Password": "password"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "phone": {
-                                            "type": "number",
-                                            "example": "060546963728"
-                                        },
-                                        "password": {
-                                            "type": "password",
-                                            "example": "password"
-                                        },
-                                        "created_at_token": {
-                                            "type": "string",
-                                            "example": "gbcwdqdffs125225gs"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "301": {
-                        "description": "Unauthenticated"
-                    },
-                    "333": {
-                        "description": "Code does not match."
-                    },
-                    "433": {
-                        "description": "Bad Request"
-                    },
-                    "404": {
-                        "description": "not found"
-                    }
-                }
-            }
-        },
-        "/auth/resendCode": {
-            "post": {
-                "tags": [
-                    "Phone register"
-                ],
-                "summary": "Resend",
-                "description": "Renvoyer le code OTP",
-                "operationId": "e3ea59c53689a27d7f1f78b6a8aa1061",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "": {
-                                        "properties": {
-                                            "phone": {
-                                                "type": "number"
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "phone": "0546963728"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "phone": {
-                                            "type": "number",
-                                            "example": "060546963728"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "301": {
-                        "description": "Unauthenticated"
-                    },
-                    "333": {
-                        "description": "Code does not match."
-                    },
-                    "433": {
-                        "description": "Bad Request"
-                    },
-                    "404": {
-                        "description": "not found"
-                    }
-                }
-            }
-        },
-        "/auth/password/create": {
-            "post": {
-                "tags": [
-                    "Forget password"
-                ],
-                "summary": "Forget Password",
-                "description": "Mot de passe oublier",
-                "operationId": "55d3fb75e449d82ca5a0c2bc734ca7d0",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "": {
-                                        "properties": {
-                                            "email": {
-                                                "type": "string"
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "email": "sabdydev@gmail.com"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "email": {
-                                            "type": "string",
-                                            "example": "sabdydev@gmail.com"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "301": {
-                        "description": "Unauthenticated"
-                    },
-                    "333": {
-                        "description": "Code does not match."
-                    },
-                    "433": {
-                        "description": "Bad Request"
-                    },
-                    "404": {
-                        "description": "not found"
-                    }
-                }
-            }
-        },
-        "/auth/logout": {
-            "post": {
-                "tags": [
-                    "Connexion"
-                ],
-                "summary": "Deconnexion",
-                "description": "Se deconnectez",
-                "operationId": "34d46a8e84fb61c29ece3333abc0e09f",
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {}
-                        }
-                    }
-                }
-            }
-        },
         "/cities": {
             "get": {
                 "tags": [
@@ -426,6 +22,7 @@
                 ],
                 "summary": "Get List Of Cities",
                 "description": "Returns all cities and search cities",
+                "operationId": "fa7960739caf6c91222158bc0c42179c",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -448,6 +45,118 @@
                 }
             }
         },
+        "/user/comment/show/{id}": {
+            "get": {
+                "tags": [
+                    "comment User"
+                ],
+                "summary": "Show details comment card",
+                "description": "Details sur les commentaire ",
+                "operationId": "6f9722143c81e7583729b3eb435cc25b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "number",
+                                            "example": 1
+                                        },
+                                        "phone": {
+                                            "type": "string",
+                                            "example": "+22309898989"
+                                        },
+                                        "email": {
+                                            "type": "number",
+                                            "format": "double",
+                                            "example": "uba@gmail.com"
+                                        },
+                                        "images": {
+                                            "type": "string",
+                                            "example": "public/image/piece.jpg"
+                                        },
+                                        "Status": {
+                                            "type": "string",
+                                            "example": "pending"
+                                        },
+                                        "updated_at": {
+                                            "type": "string",
+                                            "example": "2022-08-11T09:25:53.000000Z"
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "example": "2022-08-11T09:25:53.000000Z"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/converters": {
+            "get": {
+                "tags": [
+                    "converters"
+                ],
+                "summary": "Get list of converters of currency",
+                "description": "Returns all currency converters",
+                "operationId": "cb9e255839ad98ffb1045257dee46228",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "rate": {
+                                                "type": "number",
+                                                "format": "float"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
         "/countries": {
             "get": {
                 "tags": [
@@ -455,6 +164,7 @@
                 ],
                 "summary": "Get List Of Countires",
                 "description": "Returns all countries in search countries",
+                "operationId": "8aa94d2d0812c32abd1551219f5b603f",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -484,6 +194,37 @@
                 ],
                 "summary": "Get List Of Countires",
                 "description": "Returns all currencies in search currencies",
+                "operationId": "ed430f93f99fdd352d0c1162feaac1ee",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                }
+            }
+        },
+        "/faqs": {
+            "get": {
+                "tags": [
+                    "Faqs"
+                ],
+                "summary": "Get List Of Fasq",
+                "description": "Returns all Faqs",
+                "operationId": "8c835b3456e57264382491dc55e2db1f",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -513,6 +254,37 @@
                 ],
                 "summary": "Get List Of Docuements validated",
                 "description": "Returns all validated account",
+                "operationId": "5c8fa73620c2c76831a0c25e39af98bc",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                }
+            }
+        },
+        "/user/notifications": {
+            "get": {
+                "tags": [
+                    "provides"
+                ],
+                "summary": "Get List of notifications",
+                "description": "Returns all Notifications User",
+                "operationId": "aaf2a80b4ec19fbb026209b792dbfa79",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -542,6 +314,7 @@
                 ],
                 "summary": "Get List Of Providers",
                 "description": "Returns all provides",
+                "operationId": "30cfa8952a9fe49ae91e117a8f7bafcf",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -571,6 +344,7 @@
                 ],
                 "summary": "Get List Of Internationnal providers",
                 "description": "Returns all Internationnal providers",
+                "operationId": "cd41e40a3b8ffde339ec4925108f9553",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -600,6 +374,7 @@
                 ],
                 "summary": "Get List Of Paiment providers",
                 "description": "Returns all Payment providers",
+                "operationId": "2301d9443fd48e61ec169b8b028b8f00",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -629,6 +404,7 @@
                 ],
                 "summary": "Get List Of Phone credit providers",
                 "description": "Returns all Phone credit providers",
+                "operationId": "7b3d633fcad799c5b1b5e4b3799dc985",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -658,6 +434,7 @@
                 ],
                 "summary": "Get List Of Reload card providers",
                 "description": "Returns all Reload card providers",
+                "operationId": "57b5df075e20729f4b1e2ab67e2af1e4",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -687,6 +464,7 @@
                 ],
                 "summary": "Get List Of Reload  providers",
                 "description": "Returns all Reload  providers",
+                "operationId": "d209d393cda2e6a5f736b8a4e1bb930d",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -716,6 +494,7 @@
                 ],
                 "summary": "Get List Of Transaction  providers",
                 "description": "Returns all Transaction  providers",
+                "operationId": "669c0e79a54e66f89d18a843d3e944f4",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -745,6 +524,7 @@
                 ],
                 "summary": "Get List Of Virement  providers",
                 "description": "Returns all Virement  providers",
+                "operationId": "ab62db94e1567d475f6757df28eea8dd",
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -763,95 +543,6 @@
                     },
                     "404": {
                         "description": "not found"
-                    }
-                }
-            }
-        },
-        "/user/order_cards/store": {
-            "post": {
-                "tags": [
-                    "order card User"
-                ],
-                "summary": "Create new order card",
-                "description": "Faire des commandes de carte depuis son dashbord. \r\n     *       .    \r\n     *         ",
-                "operationId": "ec77505eabef5182356b3feb2bb92824",
-                "parameters": [
-                    {
-                        "name": "email",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "": {
-                                        "properties": {
-                                            "phone": {
-                                                "type": "number"
-                                            },
-                                            "email": {
-                                                "type": "number"
-                                            },
-                                            "identity_doc": {
-                                                "type": "string"
-                                            },
-                                            "identity_id": {
-                                                "type": "string"
-                                            },
-                                            "identity_form": {
-                                                "type": "string"
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "phone": "09090909",
-                                    "email": "uba@gmail.com",
-                                    "identity_doc": "/public/images/piece.jpg"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "success Pour un exemple sur une demande de rechargement de commande de carte",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "phone": {
-                                            "type": "string",
-                                            "example": "0708090708"
-                                        },
-                                        "email": {
-                                            "type": "string",
-                                            "example": "ibe@gmail.com"
-                                        },
-                                        "status": {
-                                            "type": "string",
-                                            "example": "Pending"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "341": {
-                        "description": "Error updalod image."
                     }
                 }
             }
@@ -919,17 +610,17 @@
                 }
             }
         },
-        "/user/inters/store": {
-            "post": {
+        "/user/djamo/delete/{id}": {
+            "delete": {
                 "tags": [
-                    "Inter transfer User"
+                    "Push User"
                 ],
-                "summary": "Create new inter  transfer user",
-                "description": "Faire des tarnsfers a l'internationnal \r\n     *       Selon les id des providers nous faisons nos verifications.\r\n     *        Si provider_id =  9 (Robus)  nous verifions si le clients le numero n'est pas du clients pour eviter les rechargement de son compte.\r\n     *                  Le client saisie le numero robus(9 chiffres) number_compte , sont montant(amount) et le pays,\r\n     *                  le numero doit etre de robus. \r\n     *        Si provider_id =  1 (MTN) ou 4(Orange)  ou 3(Moov)  ou 6(Wave) le clients saisie le numero de telephone a l'internationnal , le montant et selectionnez le pays.\r\n     *        Le cas ou c'est un numero, le numero doit etre pour un client et qui est de robus.\r\n     *        Le clients ne peux s'auto envoyer de l'argent donc se recharger.\r\n     *        le clients doit avoir le moment necessaire avec la commissions pour faire des transactions dans le cas contraire un warring.    \r\n     *         ",
-                "operationId": "62a6005b37c2e3e9988e40742d360be1",
+                "summary": "Delete Push",
+                "description": "Supprimer les Rechargement credit",
+                "operationId": "94f1f2aefc8ecf6dd4cc88a79a85d810",
                 "parameters": [
                     {
-                        "name": "provider",
+                        "name": "id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -944,110 +635,18 @@
                                 "properties": {
                                     "": {
                                         "properties": {
-                                            "provider": {
+                                            "phone_credit_id": {
                                                 "type": "number"
-                                            },
-                                            "number_compte": {
-                                                "type": "string"
-                                            },
-                                            "amount": {
-                                                "type": "number"
-                                            },
-                                            "country": {
-                                                "type": "integer"
-                                            },
-                                            "description": {
-                                                "type": "string"
                                             }
                                         },
                                         "type": "object"
                                     }
                                 },
-                                "type": "object",
-                                "example": {
-                                    "provider": "9",
-                                    "number_compte": "CIAZE3SD",
-                                    "amount": "1000",
-                                    "country": 107
-                                }
+                                "type": "object"
                             }
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": "success Pour un exemple sur une Paiement en CIV avec un numero robus",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "provider": {
-                                            "type": "string",
-                                            "example": "9"
-                                        },
-                                        "wallet_id": {
-                                            "type": "string",
-                                            "example": "CIAZE3SD"
-                                        },
-                                        "description": {
-                                            "type": "string",
-                                            "example": "Demande de transfers a l'inter"
-                                        },
-                                        "amount": {
-                                            "type": "number",
-                                            "example": "1000"
-                                        },
-                                        "status": {
-                                            "type": "string",
-                                            "example": "Pending"
-                                        },
-                                        "update_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "333": {
-                        "description": "The number is not found or is not custumers."
-                    },
-                    "341": {
-                        "description": "Check your balance."
-                    },
-                    "433": {
-                        "description": "Bad Request"
-                    },
-                    "404": {
-                        "description": "not found"
-                    }
-                }
-            }
-        },
-        "/user/inter/show/{id}": {
-            "get": {
-                "tags": [
-                    "Inter transfer User"
-                ],
-                "summary": "Show details inter",
-                "description": "Details sur les paiements a l'internationnal  donc la facture",
-                "operationId": "8c615100493e1074abb27d8aec3798dd",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "success",
@@ -1055,58 +654,9 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "provider": {
-                                            "type": "string",
-                                            "example": "9"
-                                        },
-                                        "amount": {
-                                            "type": "number",
-                                            "format": "double",
-                                            "example": "1000"
-                                        },
-                                        "reference": {
-                                            "type": "string",
-                                            "example": "robus_1205255111_test"
-                                        },
-                                        "decription": {
-                                            "type": "string",
-                                            "example": "Demande de transfers"
-                                        },
-                                        "country": {
-                                            "type": "string",
-                                            "example": "CIV"
-                                        },
-                                        "number_compte": {
-                                            "type": "string",
-                                            "example": "CIAZE3SD"
-                                        },
-                                        "phone": {
-                                            "type": "number",
-                                            "example": "1234567898"
-                                        },
-                                        "devise": {
-                                            "type": "string",
-                                            "example": "FRCFA"
-                                        },
-                                        "Status": {
-                                            "type": "string",
-                                            "example": "pending"
-                                        },
-                                        "date_treatment": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        },
-                                        "updated_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        },
-                                        "created_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
+                                        "msg": {
+                                            "type": "integer",
+                                            "example": "delete virement success"
                                         }
                                     },
                                     "type": "object"
@@ -1174,17 +724,17 @@
                 }
             }
         },
-        "/user/payments/store": {
-            "post": {
+        "/user/onexbet/delete/{id}": {
+            "delete": {
                 "tags": [
-                    "Paiement  User"
+                    "1xbet User"
                 ],
-                "summary": "Create new paiement user",
-                "description": "Faire des paiements des factures des \r\n     *       Selon les id des providers nous faisons nos verifications.\r\n     *        Si provider_id =  8 (CIE) ou 10 (SODECI)  ou 7 (CANAL) \r\n     *        Si provider = 8 : Le client fais le choix du type de facture :\r\n     *              si facture_choix_type : 1 le client doit saisie son numero de la facture(id_invoice) max 11 ,\r\n     *              le nom de la facture , le montant et faire le choix du type de paiement : \r\n     *              si  facture_choix_type : 2 le client doit saisie son numero de la facture(id_invoice) max 9\r\n     *        Si le provider = 10 Pour la facture de SODECI , selon le choix du type de paiement , le client doit saisie : \r\n     *              le numero du contrat (max : 9), le nom de la facture et le montant.\r\n     *        Si le provider = 7 (CANAL +) selon le choix du paiement(paiementChoix_phone) :\r\n     *                  si paiementChoix_phone = 1 (Numero de telephone) , le client doit saisie son numero a 10 chiffres max , selectionnez l'offre et saisie le montant.\r\n     *                  si paiementChoix_phone = 2 (Numero du decodeur) , le client doit saisie son numero du decodeur a 14 chiffres max , selectionnez l'offre et saisie le montant.\r\n     *         Selon ses selection, nous verifions le solde du clients avec nos commissions et le debiter.\r\n     *         ",
-                "operationId": "dc5030b9b0993fb0f4126462e98ae4e8",
+                "summary": "Delete 1xbet",
+                "description": "Supprimer les 1xbet ",
+                "operationId": "40c72f5d6dcfc4ac1718bc7db07201d2",
                 "parameters": [
                     {
-                        "name": "provider",
+                        "name": "id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -1199,119 +749,18 @@
                                 "properties": {
                                     "": {
                                         "properties": {
-                                            "provider": {
+                                            "phone_credit_id": {
                                                 "type": "number"
-                                            },
-                                            "paiementChoix_phone": {
-                                                "type": "number"
-                                            },
-                                            "phone": {
-                                                "type": "number"
-                                            },
-                                            "amount": {
-                                                "type": "number"
-                                            },
-                                            "offre": {
-                                                "type": "string"
                                             }
                                         },
                                         "type": "object"
                                     }
                                 },
-                                "type": "object",
-                                "example": {
-                                    "provider": "18",
-                                    "paiementChoix_phone": "054963721",
-                                    "Phone": "0549637210",
-                                    "offer": "2",
-                                    "amount": "1000"
-                                }
+                                "type": "object"
                             }
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": "success Pour un exemple sur Le paiement d'une facture de canal +",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "provider": {
-                                            "type": "string",
-                                            "example": "7"
-                                        },
-                                        "description": {
-                                            "type": "string",
-                                            "example": "Paiement de facture de canal"
-                                        },
-                                        "amount": {
-                                            "type": "number",
-                                            "example": "1000"
-                                        },
-                                        "id_invoice": {
-                                            "type": "number",
-                                            "example": "12345678908"
-                                        },
-                                        "paiementChoix_phone": {
-                                            "type": "number",
-                                            "example": "1"
-                                        },
-                                        "offer": {
-                                            "type": "number",
-                                            "example": "2(ACESS +)"
-                                        },
-                                        "status": {
-                                            "type": "string",
-                                            "example": "Pending"
-                                        },
-                                        "update_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "333": {
-                        "description": "virements does not match."
-                    },
-                    "341": {
-                        "description": "Check your balance."
-                    },
-                    "433": {
-                        "description": "Bad Request"
-                    },
-                    "404": {
-                        "description": "not found"
-                    }
-                }
-            }
-        },
-        "/user/payment/show/{id}": {
-            "get": {
-                "tags": [
-                    "Paiement  User"
-                ],
-                "summary": "Show details paiement",
-                "description": "Details sur les paiements des factures donc la facture",
-                "operationId": "d0e262aa108f2f82642d781ffd8a081d",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "success",
@@ -1319,78 +768,9 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "provider": {
-                                            "type": "string",
-                                            "example": "UBA CIV"
-                                        },
-                                        "amount": {
-                                            "type": "number",
-                                            "format": "double",
-                                            "example": "1000"
-                                        },
-                                        "reference": {
-                                            "type": "string",
-                                            "example": "robus_1205255111_test"
-                                        },
-                                        "decription": {
-                                            "type": "string",
-                                            "example": "Transaction"
-                                        },
-                                        "number_decoder": {
-                                            "type": "string",
-                                            "example": "1234567898"
-                                        },
-                                        "id_invoice": {
-                                            "type": "string",
-                                            "example": "123456789821"
-                                        },
-                                        "offer": {
+                                        "msg": {
                                             "type": "integer",
-                                            "example": "2"
-                                        },
-                                        "number_contract": {
-                                            "type": "number",
-                                            "example": "12345678981"
-                                        },
-                                        "number_phone": {
-                                            "type": "number",
-                                            "example": "1234567898"
-                                        },
-                                        "paiementChoix_phone": {
-                                            "type": "number",
-                                            "example": "1"
-                                        },
-                                        "paiementChoix_type": {
-                                            "type": "number",
-                                            "example": "2"
-                                        },
-                                        "factureChoix_type": {
-                                            "type": "number",
-                                            "example": "1"
-                                        },
-                                        "devise": {
-                                            "type": "string",
-                                            "example": "FRCFA"
-                                        },
-                                        "Status": {
-                                            "type": "string",
-                                            "example": "pending"
-                                        },
-                                        "date_treatment": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        },
-                                        "updated_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        },
-                                        "created_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
+                                            "example": "delete virement success"
                                         }
                                     },
                                     "type": "object"
@@ -1458,192 +838,6 @@
                 }
             }
         },
-        "/user/phone_credits/store": {
-            "post": {
-                "tags": [
-                    "Phone credit User"
-                ],
-                "summary": "Create new phone credit user",
-                "description": "Faire des achats de credit telephonique \r\n     *       Selon les id des providers nous faisons nos verifications.\r\n     *        Si provider_id =  18 (MTN) ou 19(Orange)  ou 20(Moov) nous verifions si le clients est en CIV alors nous faisons la verification selon les numero prefix des differents operateurs donc les 10 chiffres obligatoires\r\n     *        Sinon il sais le numero de son pays.\r\n     *        Egalement nous avons tenier compte du faite que le client ne peux envoyer que aux autre dans son pays dans le cas de transaction car c'est pas l'internationnal.\r\n     *        Le cas ou c'est un numero, le numero doit etre pour un client et qui est de robus.\r\n     *        Le clients ne peux s'auto envoyer de l'argent donc se recharger.\r\n     *        le clients doit avoir le moment necessaire avec la commissions pour faire des transactions dans le cas contraire un warring.    \r\n     *         ",
-                "operationId": "a51abd93dec1d58ba26b302ff22fe9d9",
-                "parameters": [
-                    {
-                        "name": "provider",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "": {
-                                        "properties": {
-                                            "provider": {
-                                                "type": "number"
-                                            },
-                                            "phone": {
-                                                "type": "number"
-                                            },
-                                            "amount": {
-                                                "type": "number"
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "provider": "18",
-                                    "phone": "0546963728",
-                                    "amount": "1000"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "success Pour un exemple sur une transaction en CIV avec un numero robus",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "provider": {
-                                            "type": "string",
-                                            "example": "MTN"
-                                        },
-                                        "description": {
-                                            "type": "string",
-                                            "example": "Demande de credit telephonique"
-                                        },
-                                        "amount": {
-                                            "type": "number",
-                                            "example": "1000"
-                                        },
-                                        "phone": {
-                                            "type": "number",
-                                            "example": "0546963728"
-                                        },
-                                        "status": {
-                                            "type": "string",
-                                            "example": "Pending"
-                                        },
-                                        "update_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "405": {
-                        "description": "Verify your number."
-                    },
-                    "341": {
-                        "description": "Check your balance."
-                    },
-                    "333": {
-                        "description": "virements does not match."
-                    },
-                    "433": {
-                        "description": "Bad Request"
-                    },
-                    "404": {
-                        "description": "not found"
-                    }
-                }
-            }
-        },
-        "/user/phone_credit/show/{id}": {
-            "get": {
-                "tags": [
-                    "Phone credit User"
-                ],
-                "summary": "Show details Phone credit",
-                "description": "Details sur les rechargement de credit donc la facture",
-                "operationId": "120afa208a96427190b826d4348a1e40",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "provider": {
-                                            "type": "string",
-                                            "example": "ROBUS"
-                                        },
-                                        "amount": {
-                                            "type": "number",
-                                            "format": "double",
-                                            "example": "1000"
-                                        },
-                                        "reference": {
-                                            "type": "string",
-                                            "example": "robus_1205255111_test"
-                                        },
-                                        "decription": {
-                                            "type": "string",
-                                            "example": "Transaction"
-                                        },
-                                        "phone": {
-                                            "type": "number",
-                                            "example": "2585858595"
-                                        },
-                                        "devise": {
-                                            "type": "string",
-                                            "example": "FRCFA"
-                                        },
-                                        "Status": {
-                                            "type": "string",
-                                            "example": "pending"
-                                        },
-                                        "date_treatment": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        },
-                                        "updated_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        },
-                                        "created_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/user/phone_credit/delete/{id}": {
             "delete": {
                 "tags": [
@@ -1701,17 +895,17 @@
                 }
             }
         },
-        "/user/reload_cards/store": {
-            "post": {
+        "/user/push/delete/{id}": {
+            "delete": {
                 "tags": [
-                    "Reload card User"
+                    "Push User"
                 ],
-                "summary": "Create new reload card",
-                "description": "Faire des rechargements de carte depuis son dashbord\r\n     *         Pour les differents providers dans notre Robus. \r\n     *        Selon les id des providers nous faisons nos verifications.\r\n     *        Si provider_id =  14 (Ecobank CI)ou 13(UBA CI)  ou 15(BSIC) ou 16(BNI) ou 17(UBA BF)\r\n     *        le clients doit avoir le moment necessaire avec la commissions pour faire des transactions dans le cas contraire un warring.    \r\n     *         ",
-                "operationId": "d49c28ffb9bfb3054c643905e861c68f",
+                "summary": "Delete Push",
+                "description": "Supprimer les Rechargement credit",
+                "operationId": "a043630c7b201cbd9e8d62a425814ded",
                 "parameters": [
                     {
-                        "name": "provider",
+                        "name": "id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -1726,111 +920,18 @@
                                 "properties": {
                                     "": {
                                         "properties": {
-                                            "provider": {
+                                            "phone_credit_id": {
                                                 "type": "number"
-                                            },
-                                            "num_carte": {
-                                                "type": "number"
-                                            },
-                                            "amount": {
-                                                "type": "number"
-                                            },
-                                            "name": {
-                                                "type": "string"
-                                            },
-                                            "description": {
-                                                "type": "string"
                                             }
                                         },
                                         "type": "object"
                                     }
                                 },
-                                "type": "object",
-                                "example": {
-                                    "provider": "13",
-                                    "amount": "1000",
-                                    "numero carte": "1234567898",
-                                    "name": "Dupond Falco",
-                                    "description": "Une demande de rechargement de carte"
-                                }
+                                "type": "object"
                             }
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": "success Pour un exemple sur une demande de rechargement de carte UBA CIV",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "provider": {
-                                            "type": "string",
-                                            "example": "Robus"
-                                        },
-                                        "number compte": {
-                                            "type": "string",
-                                            "example": "1234567898 (10 chiffres sous le dos de la carte)"
-                                        },
-                                        "description": {
-                                            "type": "string",
-                                            "example": "Demande de rechargement de carte"
-                                        },
-                                        "amount": {
-                                            "type": "number",
-                                            "example": "1000"
-                                        },
-                                        "status": {
-                                            "type": "string",
-                                            "example": "Pending"
-                                        },
-                                        "update_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "341": {
-                        "description": "Check your balance."
-                    },
-                    "333": {
-                        "description": "virements does not match."
-                    },
-                    "433": {
-                        "description": "Bad Request"
-                    },
-                    "404": {
-                        "description": "not found"
-                    }
-                }
-            }
-        },
-        "/user/reload_card/show/{id}": {
-            "get": {
-                "tags": [
-                    "Reload card User"
-                ],
-                "summary": "Show details reload card",
-                "description": "Details sur les rechargement de carte donc la facture",
-                "operationId": "05f3e5df4d40af8891196f99a0585b68",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "success",
@@ -1838,50 +939,9 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "provider": {
-                                            "type": "string",
-                                            "example": "UBA CIV"
-                                        },
-                                        "amount": {
-                                            "type": "number",
-                                            "format": "double",
-                                            "example": "1000"
-                                        },
-                                        "reference": {
-                                            "type": "string",
-                                            "example": "robus_1205255111_test"
-                                        },
-                                        "decription": {
-                                            "type": "string",
-                                            "example": "Transaction"
-                                        },
-                                        "num_carte": {
-                                            "type": "string",
-                                            "example": "1234567898"
-                                        },
-                                        "devise": {
-                                            "type": "string",
-                                            "example": "FRCFA"
-                                        },
-                                        "Status": {
-                                            "type": "string",
-                                            "example": "pending"
-                                        },
-                                        "date_treatment": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        },
-                                        "updated_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        },
-                                        "created_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
+                                        "msg": {
+                                            "type": "integer",
+                                            "example": "delete virement success"
                                         }
                                     },
                                     "type": "object"
@@ -1949,204 +1009,6 @@
                 }
             }
         },
-        "/user/reloads/store": {
-            "post": {
-                "tags": [
-                    "Reload User"
-                ],
-                "summary": "Create new reload",
-                "description": "Faire des transactions bancaire  depuis son dashbord\r\n     *         Pour les differents providers dans notre Robus. \r\n     *        Selon les id des providers nous faisons nos verifications.\r\n     *        si  Provider_id = 9 : nous somme dans le cas d'un compte robus ou le client doit saisie le numero  8 chiffres de Robus.\r\n     *        Si provider_id =  4 (Orange)ou 3(MOOV)  ou 1(MTN) nous verifions si le clients est en CIV alors nous faisons la verification selon les numero prefix des differents operateurs\r\n     *        Sinon il sais le numero de son pays.\r\n     *        Egalement nous avons tenier compte du faite que le client ne peux envoyer que aux autre dans son pays dans le cas de transaction car c'est pas l'internationnal.\r\n     *        Le cas ou c'est un numero, le numero doit etre pour un client et qui est de robus.\r\n     *        Le clients ne peux s'auto envoyer de l'argent donc se recharger.\r\n     *        le clients doit avoir le moment necessaire avec la commissions pour faire des transactions dans le cas contraire un warring.    \r\n     *         ",
-                "operationId": "6ae387722cde7d49a46c3101c44ebaf5",
-                "parameters": [
-                    {
-                        "name": "provider",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "": {
-                                        "properties": {
-                                            "provider": {
-                                                "type": "number"
-                                            },
-                                            "num_wallet": {
-                                                "type": "string"
-                                            },
-                                            "amount": {
-                                                "type": "number"
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "provider": "9",
-                                    "amount": "1000",
-                                    "numero compte": "CIAZE3SD",
-                                    "description": "Une demande de transaction"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "success Pour un exemple sur une transaction en CIV avec un numero robus",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "provider": {
-                                            "type": "string",
-                                            "example": "Robus"
-                                        },
-                                        "number compte": {
-                                            "type": "string",
-                                            "example": "CIAZE3SD"
-                                        },
-                                        "description": {
-                                            "type": "string",
-                                            "example": "Demande de transaction"
-                                        },
-                                        "amount": {
-                                            "type": "number",
-                                            "example": "1000"
-                                        },
-                                        "phone": {
-                                            "type": "number",
-                                            "example": "0545657676"
-                                        },
-                                        "status": {
-                                            "type": "string",
-                                            "example": "Pending"
-                                        },
-                                        "update_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "405": {
-                        "description": "Verify your number."
-                    },
-                    "341": {
-                        "description": "Check your balance."
-                    },
-                    "333": {
-                        "description": "virements does not match."
-                    },
-                    "433": {
-                        "description": "Bad Request"
-                    },
-                    "404": {
-                        "description": "not found"
-                    },
-                    "406": {
-                        "description": "Is not Custumers"
-                    }
-                }
-            }
-        },
-        "/user/reloads/show/{id}": {
-            "get": {
-                "tags": [
-                    "Reload User"
-                ],
-                "summary": "Show details reload",
-                "description": "Details sur les rechargement donc la facture",
-                "operationId": "bde49397ac2490c82e5e3f45381c0674",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "provider": {
-                                            "type": "string",
-                                            "example": "ROBUS"
-                                        },
-                                        "amount": {
-                                            "type": "number",
-                                            "format": "double",
-                                            "example": "1000"
-                                        },
-                                        "reference": {
-                                            "type": "string",
-                                            "example": "robus_1205255111_test"
-                                        },
-                                        "decription": {
-                                            "type": "string",
-                                            "example": "Transaction"
-                                        },
-                                        "num_wallet": {
-                                            "type": "string",
-                                            "example": "CI123RDF"
-                                        },
-                                        "phone": {
-                                            "type": "number",
-                                            "example": "2585858595"
-                                        },
-                                        "devise": {
-                                            "type": "string",
-                                            "example": "FRCFA"
-                                        },
-                                        "Status": {
-                                            "type": "string",
-                                            "example": "pending"
-                                        },
-                                        "date_treatment": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        },
-                                        "updated_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        },
-                                        "created_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/user/reload/delete/{id}": {
             "delete": {
                 "tags": [
@@ -2194,197 +1056,6 @@
                                         "msg": {
                                             "type": "integer",
                                             "example": "delete virement success"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/user/transactions/store": {
-            "post": {
-                "tags": [
-                    "Transactions User"
-                ],
-                "summary": "Create new virement Bank",
-                "description": "Faire des transactions bancaire  depuis son dashbord\r\n     *         Pour les differents providers dans notre Robus. \r\n     *        Selon les id des providers nous faisons nos verifications.\r\n     *        si  Provider_id = 9 : nous somme dans le cas d'un compte robus ou le client doit saisie le numero  8 chiffres de Robus.\r\n     *        Si provider_id =  4 (Orange)ou 3(MOOV)  ou 1(MTN) nous verifions si le clients est en CIV alors nous faisons la verification selon les numero prefix des differents operateurs\r\n     *        Sinon il sais le numero de son pays.\r\n     *        Egalement nous avons tenier compte du faite que le client ne peux envoyer que aux autre dans son pays dans le cas de transaction car c'est pas l'internationnal.\r\n     *        Le cas ou c'est un numero, le numero doit etre pour un client et qui est de robus.\r\n     *        Le clients ne peux s'auto envoyer de l'argent donc se recharger.\r\n     *        le clients doit avoir le moment necessaire avec la commissions pour faire des transactions dans le cas contraire un warring.    \r\n     *         ",
-                "operationId": "da6f1ee163f5ac3c3dd4df5123603831",
-                "parameters": [
-                    {
-                        "name": "provider",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "": {
-                                        "properties": {
-                                            "provider": {
-                                                "type": "number"
-                                            },
-                                            "num_wallet": {
-                                                "type": "string"
-                                            },
-                                            "amount": {
-                                                "type": "number"
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "provider": "9",
-                                    "amount": "1000",
-                                    "numero compte": "CIAZE3SD",
-                                    "description": "Une demande de transaction"
-                                }
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "success Pour un exemple sur une transaction en CIV avec un numero robus",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "provider": {
-                                            "type": "string",
-                                            "example": "Robus"
-                                        },
-                                        "number compte": {
-                                            "type": "string",
-                                            "example": "CIAZE3SD"
-                                        },
-                                        "description": {
-                                            "type": "string",
-                                            "example": "Demande de transaction"
-                                        },
-                                        "amount": {
-                                            "type": "number",
-                                            "example": "1000"
-                                        },
-                                        "status": {
-                                            "type": "string",
-                                            "example": "Pending"
-                                        },
-                                        "update_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "405": {
-                        "description": "Verify your number."
-                    },
-                    "341": {
-                        "description": "Check your balance."
-                    },
-                    "333": {
-                        "description": "virements does not match."
-                    },
-                    "433": {
-                        "description": "Bad Request"
-                    },
-                    "404": {
-                        "description": "not found"
-                    }
-                }
-            }
-        },
-        "/user/transaction/show/{id}": {
-            "get": {
-                "tags": [
-                    "Transactions User"
-                ],
-                "summary": "Show details transactions",
-                "description": "Details sur les transactions donc la facture",
-                "operationId": "277e649b89c5d2c6b29703fe0b5950d0",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "provider": {
-                                            "type": "string",
-                                            "example": "ROBUS"
-                                        },
-                                        "amount": {
-                                            "type": "number",
-                                            "format": "double",
-                                            "example": "1000"
-                                        },
-                                        "reference": {
-                                            "type": "string",
-                                            "example": "robus_1205255111_test"
-                                        },
-                                        "decription": {
-                                            "type": "string",
-                                            "example": "Transaction"
-                                        },
-                                        "num_wallet": {
-                                            "type": "string",
-                                            "example": "CI123RDF"
-                                        },
-                                        "phone": {
-                                            "type": "number",
-                                            "example": "2585858595"
-                                        },
-                                        "devise": {
-                                            "type": "string",
-                                            "example": "FRCFA"
-                                        },
-                                        "Status": {
-                                            "type": "string",
-                                            "example": "pending"
-                                        },
-                                        "date_treatment": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        },
-                                        "updated_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        },
-                                        "created_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
                                         }
                                     },
                                     "type": "object"
@@ -2452,17 +1123,17 @@
                 }
             }
         },
-        "/user/virements/store": {
-            "post": {
+        "/user/tresort_money/delete/{id}": {
+            "delete": {
                 "tags": [
-                    "Virements User"
+                    "Push User"
                 ],
-                "summary": "Create new virement Bank",
-                "description": "Faire des virements bancaire  depuis son dashbord\r\n     *         Pour les differents providers dans notre Robus.          \r\n     *        Selon les id des providers nous faisons nos verifications.\r\n     *        si  Provider_id = 11 (ECOBANK) Le client saisie le numero du compte et les infos du formulaires\r\n     *        Si provider_id =  12 (NSIA)  Le client saisie le numero du compte et les infos du formulaires\r\n     *        le clients doit avoir le moment necessaire avec la commissions pour faire des virements dans le cas contraire un warring.    ",
-                "operationId": "d4f83ced02738d517dc1bdd0b64f2f14",
+                "summary": "Delete Push",
+                "description": "Supprimer les Rechargement credit",
+                "operationId": "b05bc1832c94a1e0f07f696d6142a3f4",
                 "parameters": [
                     {
-                        "name": "provider",
+                        "name": "id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -2477,40 +1148,14 @@
                                 "properties": {
                                     "": {
                                         "properties": {
-                                            "provider": {
-                                                "type": "number"
-                                            },
-                                            "phone": {
-                                                "type": "string"
-                                            },
-                                            "firstname": {
-                                                "type": "string"
-                                            },
-                                            "lastname": {
-                                                "type": "string"
-                                            },
-                                            "amount": {
-                                                "type": "number"
-                                            },
-                                            "number_compte": {
-                                                "type": "number"
-                                            },
-                                            "Commissions": {
+                                            "phone_credit_id": {
                                                 "type": "number"
                                             }
                                         },
                                         "type": "object"
                                     }
                                 },
-                                "type": "object",
-                                "example": {
-                                    "provider": "11",
-                                    "amount": "1000",
-                                    "firstname": "sabdy",
-                                    "lastname": "Dev",
-                                    "phone": "0546963728",
-                                    "number_compte": "12345657897"
-                                }
+                                "type": "object"
                             }
                         }
                     }
@@ -2522,76 +1167,32 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "provider": {
-                                            "type": "string",
-                                            "example": "NSIA Banque"
-                                        },
-                                        "phone": {
-                                            "type": "number",
-                                            "example": "2585858595"
-                                        },
-                                        "firstname": {
-                                            "type": "string",
-                                            "example": "Dupom"
-                                        },
-                                        "lastname": {
-                                            "type": "string",
-                                            "example": "Falcodo"
-                                        },
-                                        "number compte": {
-                                            "type": "string",
-                                            "example": "1234567894"
-                                        },
-                                        "amount": {
-                                            "type": "number",
-                                            "example": "1000"
-                                        },
-                                        "commissions": {
-                                            "type": "number",
-                                            "format": "float",
-                                            "example": "0.01"
-                                        },
-                                        "update_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
+                                        "msg": {
+                                            "type": "integer",
+                                            "example": "delete virement success"
                                         }
                                     },
                                     "type": "object"
                                 }
                             }
                         }
-                    },
-                    "341": {
-                        "description": "Check your balance."
-                    },
-                    "333": {
-                        "description": "virements does not match."
-                    },
-                    "433": {
-                        "description": "Bad Request"
-                    },
-                    "404": {
-                        "description": "not found"
                     }
                 }
             }
         },
-        "/user/virements/show/{id}": {
-            "get": {
+        "/user/versements/delete/{id}": {
+            "delete": {
                 "tags": [
-                    "Virements User"
+                    "Paiement User"
                 ],
-                "summary": "Show details virement",
-                "description": "Details sur les virements donc la facture",
-                "operationId": "47e68c9306319950c5e2d7ba5744472f",
+                "summary": "Delete payment",
+                "description": "Supprimer les paiements",
+                "operationId": "a3a2913c5d58f589e73ae726bee8e1d9",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "ID du versement à supprimer",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -2600,73 +1201,26 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "success",
+                        "description": "Versement supprimé avec succès",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
-                                        },
-                                        "provider": {
+                                        "msg": {
                                             "type": "string",
-                                            "example": "NSIA"
-                                        },
-                                        "amount": {
-                                            "type": "number",
-                                            "format": "double",
-                                            "example": "1000"
-                                        },
-                                        "reference": {
-                                            "type": "string",
-                                            "example": "nsia_1205255111_test"
-                                        },
-                                        "decription": {
-                                            "type": "string",
-                                            "example": "Virement bancaire"
-                                        },
-                                        "number_compte": {
-                                            "type": "integer",
-                                            "example": "1234567894"
-                                        },
-                                        "firstname": {
-                                            "type": "string",
-                                            "example": "Dupom"
-                                        },
-                                        "lastname": {
-                                            "type": "string",
-                                            "example": "Falcado"
-                                        },
-                                        "phone": {
-                                            "type": "number",
-                                            "example": "2585858595"
-                                        },
-                                        "devise": {
-                                            "type": "string",
-                                            "example": "FRCFA"
-                                        },
-                                        "Status": {
-                                            "type": "string",
-                                            "example": "pending"
-                                        },
-                                        "date_treatment": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        },
-                                        "updated_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
-                                        },
-                                        "created_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
+                                            "example": "delete virement success"
                                         }
                                     },
                                     "type": "object"
                                 }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Versement non trouvé"
+                    },
+                    "401": {
+                        "description": "Non authentifié"
                     }
                 }
             }
@@ -2728,6 +1282,63 @@
                 }
             }
         },
+        "/user/wave/delete/{id}": {
+            "delete": {
+                "tags": [
+                    "1xbet User"
+                ],
+                "summary": "Delete 1xbet",
+                "description": "Supprimer les 1xbet ",
+                "operationId": "65b3fb2b1ffc711294b06ff1ec037777",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "": {
+                                        "properties": {
+                                            "wave_id": {
+                                                "type": "number"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "msg": {
+                                            "type": "integer",
+                                            "example": "delete virement success"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/user/dashboard": {
             "get": {
                 "tags": [
@@ -2735,7 +1346,7 @@
                 ],
                 "summary": "DashBord user",
                 "description": "Tableau de bord du clients",
-                "operationId": "a09cc4096bdcd3b75ca7b020535c1948",
+                "operationId": "92b1845fb3d00df2dea01fd13b5faba5",
                 "responses": {
                     "200": {
                         "description": "success",
@@ -2880,83 +1491,138 @@
                 }
             }
         },
-        "/user/info/update": {
-            "post": {
+        "/pixelInnov/services": {
+            "get": {
                 "tags": [
-                    "Dashbord"
+                    "Pixel Innov"
                 ],
-                "summary": "Update Info user",
-                "description": "Mettre a jour les informations du client",
-                "operationId": "f3f186112ff9a19f16a9ca223cd38eb9",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "": {
-                                        "properties": {
-                                            "Firstname": {
-                                                "type": "string"
-                                            },
-                                            "Lastname": {
-                                                "type": "string"
-                                            },
-                                            "Phone": {
-                                                "type": "number"
-                                            },
-                                            "email": {
-                                                "type": "string"
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                },
-                                "type": "object",
-                                "example": {
-                                    "Firstname": "Sabdy",
-                                    "Lastname": "Devops",
-                                    "Phone": "050646963728",
-                                    "email": "sabdydev@gmail.com",
-                                    "image": "src/demane/demo/saby.jpeg"
-                                }
-                            }
+                "summary": "Lister les moyens de paiement disponibles",
+                "description": "Retourne les services Pixel Innov actifs filtrés par le pays du client authentifié. Le filtre pays est automatique : si `country_id` n'est pas précisé, le pays du compte connecté est utilisé. Vous pouvez surcharger avec `country_id` ou `country_iso2`.",
+                "operationId": "d67d94b9be29cf91bc6e84eff878112c",
+                "parameters": [
+                    {
+                        "name": "country_id",
+                        "in": "query",
+                        "description": "ID interne du pays (surcharge la détection automatique du pays du client)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "country_iso2",
+                        "in": "query",
+                        "description": "Code ISO2 du pays (ex: SN, CI, ML, BF, BJ, TG, CM, GN) — utilisé si `country_id` n'est pas fourni",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "SN",
+                                "CI",
+                                "ML",
+                                "BF",
+                                "BJ",
+                                "TG",
+                                "CM",
+                                "GN"
+                            ],
+                            "example": "SN"
+                        }
+                    },
+                    {
+                        "name": "operation_type",
+                        "in": "query",
+                        "description": "Type d'opération à filtrer",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Cash In",
+                                "Cash Out"
+                            ],
+                            "example": "Cash In"
                         }
                     }
-                },
+                ],
                 "responses": {
                     "200": {
-                        "description": "success",
+                        "description": "Liste des services disponibles pour le pays du client",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
                                         },
-                                        "firstname": {
+                                        "country_filter": {
+                                            "description": "Code ISO2 du pays utilisé pour le filtrage (auto-détecté ou manuel)",
                                             "type": "string",
-                                            "example": "Sabdy"
+                                            "example": "SN"
                                         },
-                                        "lastname": {
-                                            "type": "string",
-                                            "example": "devops"
-                                        },
-                                        "phone": {
-                                            "type": "number",
-                                            "example": "0506469637"
-                                        },
-                                        "email": {
-                                            "type": "string",
-                                            "example": "sabdydev@gmail.com"
-                                        },
-                                        "image": {
-                                            "type": "string",
-                                            "example": "src/demane/demo/saby.jpeg"
-                                        },
-                                        "update_at": {
-                                            "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Orange Money Sénégal"
+                                                    },
+                                                    "service_id": {
+                                                        "type": "integer",
+                                                        "example": 12
+                                                    },
+                                                    "operation_type": {
+                                                        "type": "string",
+                                                        "example": "Cash In"
+                                                    },
+                                                    "provider": {
+                                                        "type": "string",
+                                                        "example": "Orange"
+                                                    },
+                                                    "country": {
+                                                        "type": "string",
+                                                        "example": "Sénégal"
+                                                    },
+                                                    "country_iso2": {
+                                                        "type": "string",
+                                                        "example": "SN"
+                                                    },
+                                                    "currency": {
+                                                        "type": "string",
+                                                        "example": "XOF"
+                                                    },
+                                                    "amount_min": {
+                                                        "type": "integer",
+                                                        "example": 200
+                                                    },
+                                                    "amount_max": {
+                                                        "type": "integer",
+                                                        "example": 2000000
+                                                    },
+                                                    "fixed_fee_pct": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 0.5
+                                                    },
+                                                    "commission_pct": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 1
+                                                    },
+                                                    "total_fee_pct": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "example": 1.5
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
                                         }
                                     },
                                     "type": "object"
@@ -2964,74 +1630,109 @@
                             }
                         }
                     },
-                    "333": {
-                        "description": "Code does not match."
-                    },
-                    "433": {
-                        "description": "Bad Request"
-                    },
-                    "404": {
-                        "description": "not found"
+                    "401": {
+                        "description": "Non authentifié"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
-        "/user/info/active_compte": {
+        "/pixelInnov/initialize": {
             "post": {
                 "tags": [
-                    "Dashbord"
+                    "Pixel Innov"
                 ],
-                "summary": "Active your compte",
-                "description": "Charger les documents pour la verification du compte",
-                "operationId": "c9098e54da52b4d4dbd4a14ed50350c7",
+                "summary": "Initialiser un paiement mobile money",
+                "description": "Démarre une transaction de dépôt (Cash In) ou de retrait (Cash Out) via Pixel Innov. Le `pixel_service_id` doit correspondre à un service actif disponible dans le pays du client (voir `GET /pixelInnov/services`).",
+                "operationId": "99970bb80882bf1ff66044dbf29cd911",
                 "requestBody": {
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
+                                "required": [
+                                    "pixel_service_id",
+                                    "amount",
+                                    "destination"
+                                ],
                                 "properties": {
-                                    "": {
-                                        "properties": {
-                                            "Image front": {
-                                                "type": "file"
-                                            },
-                                            "Image Back": {
-                                                "type": "file"
-                                            }
-                                        },
-                                        "type": "object"
+                                    "pixel_service_id": {
+                                        "description": "ID interne du service Pixel Innov (obtenu via GET /pixelInnov/services)",
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "amount": {
+                                        "description": "Montant en devise locale (XOF, XAF ou GNF selon le pays)",
+                                        "type": "integer",
+                                        "example": 5000
+                                    },
+                                    "destination": {
+                                        "description": "Numéro de téléphone du client au format international (sans +)",
+                                        "type": "string",
+                                        "example": "221771234567"
+                                    },
+                                    "custom_data": {
+                                        "description": "Référence libre optionnelle (facture, commande…)",
+                                        "type": "string",
+                                        "example": "REF-2024-001"
                                     }
                                 },
-                                "type": "object",
-                                "example": {
-                                    "front": "src/sabdy/front_saby.jpeg",
-                                    "back": "src/sabdy/back_saby.jpeg"
-                                }
+                                "type": "object"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200": {
-                        "description": "success",
+                        "description": "Paiement initié — le client doit valider sur son téléphone",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "id": {
-                                            "type": "number",
-                                            "example": 1
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
                                         },
-                                        "front": {
-                                            "type": "file",
-                                            "example": "src/demane/demo/saby.jpeg"
-                                        },
-                                        "back": {
-                                            "type": "file",
-                                            "example": "src/demane/demo/saby.jpeg"
-                                        },
-                                        "update_at": {
+                                        "message": {
                                             "type": "string",
-                                            "example": "2022-08-11T09:25:53.000000Z"
+                                            "example": "Un lien de validation a été envoyé par SMS au client."
+                                        },
+                                        "transaction_id": {
+                                            "type": "string",
+                                            "example": "PIX_abc123"
+                                        },
+                                        "sms_link": {
+                                            "type": "string",
+                                            "example": "https://pay.orange.sn/…",
+                                            "nullable": true
+                                        },
+                                        "state": {
+                                            "type": "string",
+                                            "example": "PENDING1"
+                                        },
+                                        "provider": {
+                                            "type": "string",
+                                            "example": "Orange"
+                                        },
+                                        "country": {
+                                            "type": "string",
+                                            "example": "Sénégal"
+                                        },
+                                        "amount": {
+                                            "type": "number",
+                                            "example": 5000
+                                        },
+                                        "fees": {
+                                            "type": "number",
+                                            "example": 75
+                                        },
+                                        "amount_received": {
+                                            "type": "number",
+                                            "example": 4925
                                         }
                                     },
                                     "type": "object"
@@ -3039,20 +1740,115 @@
                             }
                         }
                     },
-                    "333": {
-                        "description": "Code does not match."
+                    "400": {
+                        "description": "Échec de l'initialisation côté Pixel Innov"
                     },
-                    "433": {
-                        "description": "Bad Request"
+                    "401": {
+                        "description": "Non authentifié"
+                    },
+                    "422": {
+                        "description": "Données invalides ou montant hors limites"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/pixelInnov/status": {
+            "post": {
+                "tags": [
+                    "Pixel Innov"
+                ],
+                "summary": "Vérifier le statut d'une transaction",
+                "description": "Interroge à la fois la base locale et l'API Pixel Innov pour retourner l'état en temps réel d'une transaction initiée.",
+                "operationId": "489ee906d0a49ba977c7a8a417668ae1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "transaction_id"
+                                ],
+                                "properties": {
+                                    "transaction_id": {
+                                        "description": "Identifiant de transaction retourné par /pixelInnov/initialize",
+                                        "type": "string",
+                                        "example": "PIX_abc123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Statut de la transaction",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "local_status": {
+                                            "description": "Statut en base : PENDING | SUCCESS | ERROR",
+                                            "type": "string",
+                                            "example": "SUCCESS"
+                                        },
+                                        "remote_state": {
+                                            "description": "État retourné en temps réel par Pixel Innov",
+                                            "type": "string",
+                                            "example": "SUCCESS",
+                                            "nullable": true
+                                        },
+                                        "transaction_id": {
+                                            "type": "string",
+                                            "example": "PIX_abc123"
+                                        },
+                                        "amount": {
+                                            "type": "number",
+                                            "example": 5000
+                                        },
+                                        "fees": {
+                                            "type": "number",
+                                            "example": 75
+                                        },
+                                        "created_at": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Non authentifié"
                     },
                     "404": {
-                        "description": "not found"
+                        "description": "Transaction introuvable"
+                    },
+                    "422": {
+                        "description": "transaction_id manquant"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/projects": {
             "get": {
+                "operationId": "35784db4e52882d2ff6599ea623179a7",
                 "responses": {
                     "200": {
                         "description": "Display a listing of projects."
@@ -3062,6 +1858,75 @@
         }
     },
     "components": {
+        "responses": {
+            "200": {
+                "description": "success",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "example": 1
+                                },
+                                "phone": {
+                                    "type": "number",
+                                    "example": "0678787878"
+                                },
+                                "created_at": {
+                                    "type": "string",
+                                    "example": "2022-08-11T09:25:53.000000Z"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "401": {
+                "description": "phone is required"
+            },
+            "333": {
+                "description": "User already exists"
+            },
+            "433": {
+                "description": "Bad Request"
+            },
+            "404": {
+                "description": "not found"
+            },
+            "301": {
+                "description": "Unauthenticated"
+            },
+            "341": {
+                "description": "Error updalod image."
+            },
+            "405": {
+                "description": "Verify your number."
+            },
+            "406": {
+                "description": "Is not Custumers"
+            }
+        },
+        "parameters": {
+            "email": {
+                "name": "email",
+                "in": "path",
+                "required": true,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "provider": {
+                "name": "provider",
+                "in": "path",
+                "required": true,
+                "schema": {
+                    "type": "integer"
+                }
+            }
+        },
+        "requestBodies": {},
         "securitySchemes": {
             "bearerAuth": {
                 "type": "http",
@@ -3071,5 +1936,11 @@
                 "scheme": "bearer"
             }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "Pixel Innov",
+            "description": "Paiements mobile money multi-pays via l'API Pixel Innov (Orange, MTN, Moov, Wave…)"
+        }
+    ]
 }

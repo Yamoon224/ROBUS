@@ -331,23 +331,47 @@ $isAdminOrSupervisor = $user && ($user->is_admin || $user->is_supervisor);
         @endif
 
         <li class="side-nav__devider my-4"></li>
-        @if (Auth::guard('web')->user()->hasPermissionTo('service-web'))
-        <li>
 
-            <a href="{{ route('services.browse') }}"
-                class="side-menu {{ $route == 'services.browse' || $route == 'services.offers.browse' || $route == 'services.pixel_innove' ? 'side-menu--active' : '' }}">
-                <div class="side-menu__icon"><i data-feather="package" class="block mx-auto"></i>
+        <li>
+            <a href="javascript:;" class="side-menu {{ request()->is('services*')  ? 'side-menu--active' : '' }}">
+                <div class="side-menu__icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" icon-name="clipboard" data-lucide="clipboard"
+                        class="lucide lucide-clipboard block mx-auto">
+                        <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"></path>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                    </svg>
                 </div>
-                <div class="side-menu__title"> Services mobile </div>
-            </a>
-            <a href="{{ route('services.pixel_innove') }}"
-                class="side-menu {{ $route == 'services.pixel_innove' ? 'side-menu--active' : '' }}">
-                <div class="side-menu__icon"><i data-feather="grid" class="block mx-auto"></i>
+                <div class="side-menu__title">
+                    Services mobile
+                    <div class="side-menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
                 </div>
-                <div class="side-menu__title"> Pixel Innove </div>
             </a>
+            <ul
+                class="{{ request()->is('services*') || request()->is('winnings*') || request()->is('historicals*') ? 'side-menu__sub-open' : '' }}">
+
+
+                @if (Auth::guard('web')->user()->hasPermissionTo('service-web'))
+                <li>
+
+                    <a href="{{ route('services.browse') }}"
+                        class="side-menu {{ $route == 'services.browse' || $route == 'services.offers.browse' || $route == 'services.pixel_innove' ? 'side-menu--active' : '' }}">
+                        <div class="side-menu__icon"><i data-feather="package" class="block mx-auto"></i>
+                        </div>
+                        <div class="side-menu__title"> Services mobile </div>
+                    </a>
+                    <a href="{{ route('services.pixel_innove') }}"
+                        class="side-menu {{ $route == 'services.pixel_innove' ? 'side-menu--active' : '' }}">
+                        <div class="side-menu__icon"><i data-feather="grid" class="block mx-auto"></i>
+                        </div>
+                        <div class="side-menu__title"> Pixel Innove </div>
+                    </a>
+                </li>
+                @endif
+
+            </ul>
         </li>
-        @endif
+
         <li class="side-nav__devider my-4"></li>
         @if (Auth::guard('web')->user()->hasPermissionTo('visiteurs'))
         <li>
@@ -935,8 +959,10 @@ $isAdminOrSupervisor = $user && ($user->is_admin || $user->is_supervisor);
             <a href="{{ route('qr.website') }}"
                 class="side-menu {{ $route == 'qr.website' ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
                     </svg>
                 </div>
                 <div class="side-menu__title"> QR Code Site Web </div>

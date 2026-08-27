@@ -900,44 +900,6 @@ class withTransactionController extends Controller
                         'message' =>  $walletPush->choose_type_transaction == 1 ? ('Votre demande de transaction bank Send a bien été prise en compte.') : ('Votre demande de transaction bank Send a bien été prise en compte.')
                 ], 200);
         }
-        /**
-         * Delete 1xbet
-         * @OA\Delete (
-         *      path="/user/onexbet/delete/{id}",
-         *      tags={"1xbet User"},
-         *      summary="Delete 1xbet",
-         *      description="Supprimer les 1xbet ", 
-         *     @OA\Parameter(
-         *         in="path",
-         *         name="id",
-         *         required=true,
-         *         @OA\Schema(type="integer")
-         *     ),
-         *     @OA\Response(
-         *         response=200,
-         *         description="success",
-         *         @OA\JsonContent(
-         *             @OA\Property(property="msg", type="integer", example="delete virement success")
-         *         )
-         *     ),
-         *  @OA\RequestBody(
-         *         @OA\MediaType(
-         *             mediaType="application/json",
-         *             @OA\Schema(
-         *                 @OA\Property(
-         *                      type="object",
-         *                      @OA\Property(
-         *                          property="phone_credit_id",
-         *                          type="number"
-         *                      ),
-         *                 ),
-         *                
-         *             )
-         *         )
-         *      ),
-         * )
-         */
-
         public function delete_wallet_Push(Request $request)
         {
 

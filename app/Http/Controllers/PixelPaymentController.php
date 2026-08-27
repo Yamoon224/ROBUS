@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Services\PercentRobusAuthService;
 use App\Http\Services\PixelInnovService;
+use App\Models\Custumers\Country;
 use App\Models\PixelInnoveService;
 use App\Models\Providers\Provider;
 use App\Models\Wallets\Wallet;
@@ -13,6 +14,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * @OA\Tag(
+ *     name="Pixel Innov",
+ *     description="Paiements mobile money multi-pays via l'API Pixel Innov (Orange, MTN, Moov, Wave…)"
+ * )
+ */
 class PixelPaymentController extends Controller
 {
     // Limites par code pays ISO2 (source : docs.pixpay.sn)
@@ -34,20 +41,95 @@ class PixelPaymentController extends Controller
         $this->percentRobus = $percentRobus;
     }
 
+    private static function countryCode($country): ?string
+    {
+        return $country && $country->code ? strtoupper($country->code) : null;
+    }
+
     // =========================================================================
     // LISTE DES SERVICES DISPONIBLES
-    // Permet au client (mobile/web) d'afficher les options de paiement
     // =========================================================================
 
     /**
-     * GET /api/v1/pixelInnov/services
-     * Filtres optionnels : ?country_id=1 &operation_type=Cash In
+     * @OA\Get(
+     *     path="/pixelInnov/services",
+     *     tags={"Pixel Innov"},
+     *     summary="Lister les moyens de paiement disponibles",
+     *     description="Retourne les services Pixel Innov actifs filtrés par le pays du client authentifié. Le filtre pays est automatique : si `country_id` n'est pas précisé, le pays du compte connecté est utilisé. Vous pouvez surcharger avec `country_id` ou `country_iso2`.",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="country_id",
+     *         in="query",
+     *         required=false,
+     *         description="ID interne du pays (surcharge la détection automatique du pays du client)",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="country_iso2",
+     *         in="query",
+     *         required=false,
+     *         description="Code ISO2 du pays (ex: SN, CI, ML, BF, BJ, TG, CM, GN) — utilisé si `country_id` n'est pas fourni",
+     *         @OA\Schema(type="string", example="SN", enum={"SN","CI","ML","BF","BJ","TG","CM","GN"})
+     *     ),
+     *     @OA\Parameter(
+     *         name="operation_type",
+     *         in="query",
+     *         required=false,
+     *         description="Type d'opération à filtrer",
+     *         @OA\Schema(type="string", enum={"Cash In","Cash Out"}, example="Cash In")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Liste des services disponibles pour le pays du client",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="country_filter", type="string", example="SN",
+     *                 description="Code ISO2 du pays utilisé pour le filtrage (auto-détecté ou manuel)"),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=3),
+     *                     @OA\Property(property="name", type="string", example="Orange Money Sénégal"),
+     *                     @OA\Property(property="service_id", type="integer", example=12),
+     *                     @OA\Property(property="operation_type", type="string", example="Cash In"),
+     *                     @OA\Property(property="provider", type="string", example="Orange"),
+     *                     @OA\Property(property="country", type="string", example="Sénégal"),
+     *                     @OA\Property(property="country_iso2", type="string", example="SN"),
+     *                     @OA\Property(property="currency", type="string", example="XOF"),
+     *                     @OA\Property(property="amount_min", type="integer", example=200),
+     *                     @OA\Property(property="amount_max", type="integer", example=2000000),
+     *                     @OA\Property(property="fixed_fee_pct", type="number", format="float", example=0.5),
+     *                     @OA\Property(property="commission_pct", type="number", format="float", example=1.0),
+     *                     @OA\Property(property="total_fee_pct", type="number", format="float", example=1.5)
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Non authentifié")
+     * )
      */
     public function listServices(Request $request)
     {
+        $user = robus();
+
+        // Résoudre le country_id effectif :
+        // 1. Priorité au paramètre explicite country_id
+        // 2. Sinon résoudre via country_iso2 passé en paramètre
+        // 3. Sinon utiliser le pays du compte authentifié (auto-détection)
+        $countryId = $request->country_id;
+
+        if (!$countryId && $request->country_iso2) {
+            $countryId = Country::where('code', strtoupper($request->country_iso2))->value('id');
+        }
+
+        if (!$countryId && $user && $user->country_id) {
+            $countryId = $user->country_id;
+        }
+
         $services = PixelInnoveService::with(['country', 'provider', 'providerType'])
             ->where('status', true)
-            ->when($request->country_id, fn($q) => $q->where('country_id', $request->country_id))
+            ->when($countryId, fn($q) => $q->where('country_id', $countryId))
             ->when($request->operation_type, fn($q) => $q->where('operation_type', $request->operation_type))
             ->orderBy('name')
             ->get()
@@ -58,16 +140,26 @@ class PixelPaymentController extends Controller
                 'operation_type'   => $s->operation_type,
                 'provider'         => $s->provider->name ?? null,
                 'country'          => $s->country->name ?? null,
-                'country_iso2'     => $s->country->iso2 ?? null,
-                'currency'         => self::AMOUNT_LIMITS[$s->country->iso2 ?? '']['currency'] ?? 'XOF',
-                'amount_min'       => self::AMOUNT_LIMITS[$s->country->iso2 ?? '']['min'] ?? 200,
-                'amount_max'       => self::AMOUNT_LIMITS[$s->country->iso2 ?? '']['max'] ?? 1_500_000,
+                'country_iso2'     => self::countryCode($s->country),
+                'currency'         => self::AMOUNT_LIMITS[self::countryCode($s->country) ?? '']['currency'] ?? 'XOF',
+                'amount_min'       => self::AMOUNT_LIMITS[self::countryCode($s->country) ?? '']['min'] ?? 200,
+                'amount_max'       => self::AMOUNT_LIMITS[self::countryCode($s->country) ?? '']['max'] ?? 1_500_000,
                 'fixed_fee_pct'    => (float) $s->fixed_fee,
                 'commission_pct'   => (float) $s->commission_percent,
                 'total_fee_pct'    => (float) $s->fixed_fee + (float) $s->commission_percent,
             ]);
 
-        return response()->json(['status' => true, 'data' => $services]);
+        // Déterminer le code ISO2 effectivement utilisé pour le filtrage
+        $isoUsed = null;
+        if ($countryId) {
+            $isoUsed = Country::where('id', $countryId)->value('code');
+        }
+
+        return response()->json([
+            'status'         => true,
+            'country_filter' => $isoUsed,
+            'data'           => $services,
+        ]);
     }
 
     // =========================================================================
@@ -75,13 +167,46 @@ class PixelPaymentController extends Controller
     // =========================================================================
 
     /**
-     * POST /api/v1/pixelInnov/initialize
-     *
-     * Body :
-     *   pixel_service_id  (int)    ID interne de notre table pixel_innove_services
-     *   amount            (int)    Montant en devise locale
-     *   destination       (string) Numéro de téléphone du client
-     *   custom_data       (string) Optionnel — référence libre
+     * @OA\Post(
+     *     path="/pixelInnov/initialize",
+     *     tags={"Pixel Innov"},
+     *     summary="Initialiser un paiement mobile money",
+     *     description="Démarre une transaction de dépôt (Cash In) ou de retrait (Cash Out) via Pixel Innov. Le `pixel_service_id` doit correspondre à un service actif disponible dans le pays du client (voir `GET /pixelInnov/services`).",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"pixel_service_id","amount","destination"},
+     *             @OA\Property(property="pixel_service_id", type="integer", example=3,
+     *                 description="ID interne du service Pixel Innov (obtenu via GET /pixelInnov/services)"),
+     *             @OA\Property(property="amount", type="integer", example=5000,
+     *                 description="Montant en devise locale (XOF, XAF ou GNF selon le pays)"),
+     *             @OA\Property(property="destination", type="string", example="221771234567",
+     *                 description="Numéro de téléphone du client au format international (sans +)"),
+     *             @OA\Property(property="custom_data", type="string", example="REF-2024-001",
+     *                 description="Référence libre optionnelle (facture, commande…)")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Paiement initié — le client doit valider sur son téléphone",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Un lien de validation a été envoyé par SMS au client."),
+     *             @OA\Property(property="transaction_id", type="string", example="PIX_abc123"),
+     *             @OA\Property(property="sms_link", type="string", nullable=true, example="https://pay.orange.sn/…"),
+     *             @OA\Property(property="state", type="string", example="PENDING1"),
+     *             @OA\Property(property="provider", type="string", example="Orange"),
+     *             @OA\Property(property="country", type="string", example="Sénégal"),
+     *             @OA\Property(property="amount", type="number", example=5000),
+     *             @OA\Property(property="fees", type="number", example=75),
+     *             @OA\Property(property="amount_received", type="number", example=4925)
+     *         )
+     *     ),
+     *     @OA\Response(response=400, description="Échec de l'initialisation côté Pixel Innov"),
+     *     @OA\Response(response=401, description="Non authentifié"),
+     *     @OA\Response(response=422, description="Données invalides ou montant hors limites")
+     * )
      */
     public function initializePayment(Request $request)
     {
@@ -118,7 +243,7 @@ class PixelPaymentController extends Controller
         }
 
         // Valider le montant selon les limites du pays
-        $iso2   = $pixelConfig->country->iso2 ?? '';
+        $iso2   = self::countryCode($pixelConfig->country) ?? '';
         $limits = self::AMOUNT_LIMITS[$iso2] ?? ['min' => 200, 'max' => 1_500_000];
         $amount = (float) $request->amount;
 
@@ -217,8 +342,39 @@ class PixelPaymentController extends Controller
     // =========================================================================
 
     /**
-     * POST /api/v1/pixelInnov/status
-     * Body : { transaction_id: "PIX_xxxxx" }
+     * @OA\Post(
+     *     path="/pixelInnov/status",
+     *     tags={"Pixel Innov"},
+     *     summary="Vérifier le statut d'une transaction",
+     *     description="Interroge à la fois la base locale et l'API Pixel Innov pour retourner l'état en temps réel d'une transaction initiée.",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"transaction_id"},
+     *             @OA\Property(property="transaction_id", type="string", example="PIX_abc123",
+     *                 description="Identifiant de transaction retourné par /pixelInnov/initialize")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Statut de la transaction",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="local_status", type="string", example="SUCCESS",
+     *                 description="Statut en base : PENDING | SUCCESS | ERROR"),
+     *             @OA\Property(property="remote_state", type="string", nullable=true, example="SUCCESS",
+     *                 description="État retourné en temps réel par Pixel Innov"),
+     *             @OA\Property(property="transaction_id", type="string", example="PIX_abc123"),
+     *             @OA\Property(property="amount", type="number", example=5000),
+     *             @OA\Property(property="fees", type="number", example=75),
+     *             @OA\Property(property="created_at", type="string", format="date-time")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Non authentifié"),
+     *     @OA\Response(response=404, description="Transaction introuvable"),
+     *     @OA\Response(response=422, description="transaction_id manquant")
+     * )
      */
     public function checkStatus(Request $request)
     {

@@ -139,7 +139,9 @@ return [
              * @note This option overwrites `paths.excludes`
              * @see \OpenApi\scan
             */
-            'exclude' => [],
+            'exclude' => [
+                base_path('app/Http/Controllers/Api/UserControllerAMeliorer.php'),
+            ],
         ],
 
         /*
