@@ -64,6 +64,13 @@ class PixelInnoveServices extends Component
         $this->resetPage();
     }
 
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->filterCountryId = '';
+        $this->resetPage();
+    }
+
     public function updatedProviderTypeId()
     {
         $this->providerId = '';

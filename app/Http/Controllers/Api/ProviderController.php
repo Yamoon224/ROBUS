@@ -68,6 +68,15 @@ class ProviderController extends Controller
         $this->initializeAppStatus($this->authService);
     }
 
+    private function withPixelInnovCashInProviders($providers, int $countryId)
+    {
+        return $this->percentRobus->getPixelInnovCashInProviders($countryId)
+            ->merge($providers)
+            ->unique('id')
+            ->sortBy('name')
+            ->values();
+    }
+
 
     public function index()
     {
@@ -82,7 +91,10 @@ class ProviderController extends Controller
             // 1️⃣ Cas où l'app est indisponible
             if (!$appStatusResult['success']) {
 
-                $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
+                $walletTransactionDepot = $this->withPixelInnovCashInProviders(
+                    $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1),
+                    $countrieId
+                );
                 $walletTransactionDrawal = $this->percentRobus->getProvidersDrawalByType(new Provider, $countrieId, 29);
                 $walletTransactionReload = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 30);
 
@@ -168,11 +180,11 @@ class ProviderController extends Controller
 
                 ];
 
-                $providerCacheKey = "providers_country_{$countrieId}";
+                $providerCacheKey = "providers_country_{$countrieId}_v2";
 
                 $providers = [];
 
-                $providerCacheKey = "providers_country_{$countrieId}";
+                $providerCacheKey = "providers_country_{$countrieId}_v2";
                 $providers        = Cache::get($providerCacheKey, []);
 
 
@@ -182,7 +194,10 @@ class ProviderController extends Controller
                         if (is_array($type)) {
                             $providers[$alias] = $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, $type);
                         } elseif ($alias === 'depot') {
-                            $providers[$alias] = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, $type);
+                            $providers[$alias] = $this->withPixelInnovCashInProviders(
+                                $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, $type),
+                                $countrieId
+                            );
                         } elseif ($alias === 'money') {
                             $providers[$alias] = $this->percentRobus->getProvidersMoneyByType(new Provider, $countrieId, $type);
                         } else {
@@ -199,7 +214,10 @@ class ProviderController extends Controller
                             if (is_array($type)) {
                                 $providers[$alias] = $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, $type);
                             } elseif ($alias === 'depot') {
-                                $providers[$alias] = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, $type);
+                                $providers[$alias] = $this->withPixelInnovCashInProviders(
+                                    $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, $type),
+                                    $countrieId
+                                );
                             } elseif ($alias === 'money') {
                                 $providers[$alias] = $this->percentRobus->getProvidersMoneyByType(new Provider, $countrieId, $type);
                             } else {
@@ -386,7 +404,10 @@ class ProviderController extends Controller
 
         $countrieId = integrate()->country->id;
         $dashboard_data = [];
-        $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
+        $walletTransactionDepot = $this->withPixelInnovCashInProviders(
+            $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1),
+            $countrieId
+        );
         $walletTransactionMoney = $this->percentRobus->getProvidersMoneyByType(new Provider, $countrieId, 1);
         $walletPayment = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 2);
         $walletPaymentInter = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 7);

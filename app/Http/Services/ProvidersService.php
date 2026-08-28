@@ -297,6 +297,25 @@ class ProvidersService
             ->get();
     }
 
+    public static function getPixelInnovCashInProviders($countryId)
+    {
+        return Provider::query()
+            ->join('pixel_innove_services', 'pixel_innove_services.provider_id', 'providers.id')
+            ->where('pixel_innove_services.country_id', $countryId)
+            ->where('pixel_innove_services.operation_type', 'Cash In')
+            ->where('pixel_innove_services.status', true)
+            ->where('providers.status', true)
+            ->select(
+                'providers.*',
+                'pixel_innove_services.id as pixel_service_id',
+                'pixel_innove_services.service_id as pixel_gateway_service_id',
+                'pixel_innove_services.operation_type as pixel_operation_type'
+            )
+            ->distinct()
+            ->orderBy('providers.name', 'asc')
+            ->get();
+    }
+
       public static function getProvidersDrawalByType($query, $countryId, $providerType)
     {
 
