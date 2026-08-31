@@ -300,14 +300,15 @@ class PixelPaymentController extends Controller
         // Appel Pixel Innov
         $pixelService = app(PixelInnovService::class);
 
+        $publicBase = rtrim(config('services.pixel_innov.public_url'), '/');
         $pixelPayload = [
             'amount'             => (int) $amount,
             'destination'        => $request->destination,
             'service_id'         => $pixelConfig->service_id,
-            'ipn_url'            => route('pixelInnov.callback'),
+            'ipn_url'            => $publicBase . '/payment_pixelInnov/callback',
             'custom_data'        => $customData,
-            'redirect_url'       => route('pixelInnov.redirect.success'),
-            'redirect_error_url' => route('pixelInnov.redirect.error'),
+            'redirect_url'       => $publicBase . '/payment_pixelInnov/success',
+            'redirect_error_url' => $publicBase . '/payment_pixelInnov/error',
         ];
 
         // Orange Money Cash Out exige un OTP côté Pixel Innov
@@ -317,19 +318,49 @@ class PixelPaymentController extends Controller
 
         $response = $pixelService->initializeTransaction($pixelPayload);
 
-        // Échec côté Pixel Innov
-        if (($response['statut_code'] ?? null) !== 200 || empty($response['data']['transaction_id'])) {
-            $reload->update(['status' => 'ERROR']);
-            Log::warning('Pixel Innov — init échouée', ['response' => $response, 'reload_id' => $reload->id]);
-            return response()->json([
-                'status'  => false,
-                'message' => $response['message'] ?? 'Échec de l\'initialisation Pixel Innov',
-            ], 400);
+        // Conserver le transaction_id même en cas d'échec (pour réconciliation)
+        $pixelTxId = $response['data']['transaction_id'] ?? null;
+        if ($pixelTxId) {
+            $reload->update(['reference' => $pixelTxId]);
         }
 
-        $transactionId = $response['data']['transaction_id'];
+        $isFailed = ($response['statut_code'] ?? null) !== 200
+            || empty($pixelTxId)
+            || ($response['data']['state'] ?? null) === 'FAILED';
+
+        if ($isFailed) {
+            $reload->update(['status' => 'ERROR']);
+            Log::warning('Pixel Innov — init échouée', [
+                'response'       => $response,
+                'reload_id'      => $reload->id,
+                'transaction_id' => $pixelTxId,
+                'state'          => $response['data']['state'] ?? null,
+                'wallet_before'  => $response['data']['p_last_wallet_amount'] ?? null,
+            ]);
+
+            // Chercher un message utile dans la réponse Pixel Innov
+            $pixelMsg    = trim((string) ($response['message'] ?? ''));
+            $dataMsg     = trim((string) ($response['data']['response'] ?? ''));
+            $walletBefore = $response['data']['p_last_wallet_amount'] ?? null;
+            $state        = $response['data']['state'] ?? null;
+
+            if ($pixelMsg !== '') {
+                $reason = $pixelMsg;
+            } elseif ($dataMsg !== '') {
+                $reason = $dataMsg;
+            } elseif ($state === 'FAILED' && $walletBefore === 0) {
+                $reason = 'Solde marchand PixPay insuffisant. Veuillez contacter Robus.';
+            } elseif ($state === 'FAILED') {
+                $reason = 'Transaction rejetée par l\'opérateur mobile.';
+            } else {
+                $reason = 'Échec de l\'initialisation. Veuillez réessayer.';
+            }
+
+            return response()->json(['status' => false, 'message' => $reason], 400);
+        }
+
+        $transactionId = $pixelTxId;
         $smsLink       = $response['data']['sms_link'] ?? null;
-        $reload->update(['reference' => $transactionId]);
 
         Log::info('Pixel Innov — paiement initié', [
             'transaction_id' => $transactionId,

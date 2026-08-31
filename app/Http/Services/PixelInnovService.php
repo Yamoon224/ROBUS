@@ -34,11 +34,12 @@ class PixelInnovService
             $result = $response->json() ?? [];
 
             Log::info('Pixel Innov — init transaction', [
+                'payload_sent'   => array_merge($data, ['api_key' => substr($this->apiKey, 0, 6) . '***']),
                 'http'           => $response->status(),
+                'full_response'  => $result,
                 'statut_code'    => $result['statut_code'] ?? null,
                 'transaction_id' => $result['data']['transaction_id'] ?? null,
                 'state'          => $result['data']['state'] ?? null,
-                'service_id'     => $data['service_id'] ?? null,
             ]);
 
             return $result;

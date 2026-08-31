@@ -48,8 +48,9 @@ return [
     ],
 
     'pixel_innov' => [
-        'api_key' => env('PIXEL_INNOV_API_KEY', ''),
-        'sandbox' => env('PIXEL_INNOV_SANDBOX', false),
+        'api_key'    => env('PIXEL_INNOV_API_KEY', ''),
+        'sandbox'    => env('PIXEL_INNOV_SANDBOX', false),
+        'public_url' => env('PIXEL_INNOV_PUBLIC_URL', env('APP_URL')),
     ],
 
 ];
