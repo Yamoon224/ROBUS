@@ -107,6 +107,10 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('/services', [PixelPaymentController::class, 'listServices'])
                 ->name('pixelInnov.services');
 
+            // Calculer les frais avant initialisation
+            Route::post('/calculate', [PixelPaymentController::class, 'calculateAmount'])
+                ->name('pixelInnov.calculate');
+
             // Initialiser un paiement (Orange, MTN, Moov, Wave…)
             Route::post('/initialize', [PixelPaymentController::class, 'initializePayment'])
                 ->name('pixelInnov.initialize');

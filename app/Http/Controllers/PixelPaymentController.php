@@ -146,6 +146,7 @@ class PixelPaymentController extends Controller
                 'service_id'       => $s->service_id,
                 'operation_type'   => $s->operation_type,
                 'provider'         => $s->provider->name ?? null,
+                'image'         => $s->provider->image ?? null,
                 'country'          => $s->country->name ?? null,
                 'country_iso2'     => self::countryCode($s->country),
                 'currency'         => self::AMOUNT_LIMITS[self::countryCode($s->country) ?? '']['currency'] ?? 'XOF',
@@ -221,6 +222,7 @@ class PixelPaymentController extends Controller
             'pixel_service_id' => 'required|integer|exists:pixel_innove_services,service_id',
             'amount'           => 'required|numeric|min:1',
             'destination'      => 'required|string|min:8|max:15',
+            'om_otp'           => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -298,7 +300,7 @@ class PixelPaymentController extends Controller
         // Appel Pixel Innov
         $pixelService = app(PixelInnovService::class);
 
-        $response = $pixelService->initializeTransaction([
+        $pixelPayload = [
             'amount'             => (int) $amount,
             'destination'        => $request->destination,
             'service_id'         => $pixelConfig->service_id,
@@ -306,7 +308,14 @@ class PixelPaymentController extends Controller
             'custom_data'        => $customData,
             'redirect_url'       => route('pixelInnov.redirect.success'),
             'redirect_error_url' => route('pixelInnov.redirect.error'),
-        ]);
+        ];
+
+        // Orange Money Cash Out exige un OTP côté Pixel Innov
+        if ($request->filled('om_otp')) {
+            $pixelPayload['om_otp'] = $request->om_otp;
+        }
+
+        $response = $pixelService->initializeTransaction($pixelPayload);
 
         // Échec côté Pixel Innov
         if (($response['statut_code'] ?? null) !== 200 || empty($response['data']['transaction_id'])) {
@@ -342,6 +351,103 @@ class PixelPaymentController extends Controller
             'fees'           => $fees,
             'amount_received'=> $amountReceived,
         ], 200);
+    }
+
+    // =========================================================================
+    // CALCUL DES FRAIS AVANT INITIALISATION
+    // =========================================================================
+
+    /**
+     * @OA\Post(
+     *     path="/pixelInnov/calculate",
+     *     tags={"Pixel Innov"},
+     *     summary="Calculer les frais et le montant reçu pour un service donné",
+     *     description="Retourne les frais et le montant net qui sera crédité/envoyé pour un montant et un service Pixel Innov donnés, sans initier de transaction.",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"pixel_service_id","amount"},
+     *             @OA\Property(property="pixel_service_id", type="integer", example=6,
+     *                 description="service_id du service Pixel Innov (obtenu via GET /pixelInnov/services)"),
+     *             @OA\Property(property="amount", type="integer", example=5000,
+     *                 description="Montant saisi par l'utilisateur en devise locale")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Calcul des frais",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="status", type="boolean", example=true),
+     *             @OA\Property(property="amount", type="number", example=5000),
+     *             @OA\Property(property="fixed_fee_pct", type="number", example=0.5),
+     *             @OA\Property(property="commission_pct", type="number", example=1.9),
+     *             @OA\Property(property="total_fee_pct", type="number", example=2.4),
+     *             @OA\Property(property="fees", type="number", example=120),
+     *             @OA\Property(property="amount_received", type="number", example=4880),
+     *             @OA\Property(property="currency", type="string", example="XOF"),
+     *             @OA\Property(property="provider", type="string", example="Mtn"),
+     *             @OA\Property(property="operation_type", type="string", example="Cash In")
+     *         )
+     *     ),
+     *     @OA\Response(response=422, description="Données invalides ou montant hors limites"),
+     *     @OA\Response(response=404, description="Service introuvable")
+     * )
+     */
+    public function calculateAmount(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'pixel_service_id' => 'required|integer|exists:pixel_innove_services,service_id',
+            'amount'           => 'required|numeric|min:1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false, 'message' => 'Données invalides', 'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $pixelConfig = PixelInnoveService::with(['country', 'provider'])
+            ->where('service_id', $request->pixel_service_id)
+            ->where('status', true)
+            ->first();
+
+        if (!$pixelConfig) {
+            return response()->json(['status' => false, 'message' => 'Service introuvable ou inactif'], 404);
+        }
+
+        $iso2   = self::countryCode($pixelConfig->country) ?? '';
+        $limits = self::AMOUNT_LIMITS[$iso2] ?? ['min' => 200, 'max' => 1_500_000, 'currency' => 'XOF'];
+        $amount = (float) $request->amount;
+
+        if ($amount < $limits['min'] || $amount > $limits['max']) {
+            return response()->json([
+                'status'  => false,
+                'message' => "Montant invalide. Min : {$limits['min']}, Max : {$limits['max']} {$limits['currency']}.",
+                'amount_min' => $limits['min'],
+                'amount_max' => $limits['max'],
+                'currency'   => $limits['currency'],
+            ], 422);
+        }
+
+        $fixedFeePct    = (float) $pixelConfig->fixed_fee;
+        $commissionPct  = (float) $pixelConfig->commission_percent;
+        $totalFeePct    = $fixedFeePct + $commissionPct;
+        $fees           = round($amount * $totalFeePct / 100, 2);
+        $amountReceived = round($amount - $fees, 2);
+
+        return response()->json([
+            'status'          => true,
+            'amount'          => $amount,
+            'fixed_fee_pct'   => $fixedFeePct,
+            'commission_pct'  => $commissionPct,
+            'total_fee_pct'   => $totalFeePct,
+            'fees'            => $fees,
+            'amount_received' => $amountReceived,
+            'currency'        => $limits['currency'],
+            'provider'        => $pixelConfig->provider->name ?? null,
+            'operation_type'  => $pixelConfig->operation_type,
+        ]);
     }
 
     // =========================================================================
