@@ -301,7 +301,7 @@ class ProvidersService
     {
         return Provider::query()
             ->join('pixel_innove_services', 'pixel_innove_services.provider_id', 'providers.id')
-            ->where('pixel_innove_services.country_id', $countryId)
+            ->where('pixel_innove_services.country_payid', $countryId)
             ->where('pixel_innove_services.operation_type', 'Cash In')
             ->where('pixel_innove_services.status', true)
             ->where('providers.status', true)

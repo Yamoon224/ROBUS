@@ -23,6 +23,21 @@ class TresortMoneys extends Component
         $this->walletTresorts =  $walletTresorts;
     }
 
+    public function gotoPagePaie($page)
+    {
+        $this->setPage($page);
+    }
+
+    public function nextPagePaie()
+    {
+        $this->setPage($this->page + 1);
+    }
+
+    public function previousPagePaie()
+    {
+        $this->setPage(max($this->page - 1, 1));
+    }
+
     public function render()
     {
 

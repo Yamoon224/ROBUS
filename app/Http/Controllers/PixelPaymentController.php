@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Models\Wallets\WalletCommission;
 
 /**
  * @OA\Tag(
@@ -38,7 +39,7 @@ class PixelPaymentController extends Controller
         'BJ' => ['min' => 200,   'max' => 1_500_000, 'currency' => 'XOF'],
         'TG' => ['min' => 500,   'max' => 1_500_000, 'currency' => 'XOF'],
         'CM' => ['min' => 500,   'max' => 1_500_000, 'currency' => 'XAF'],
-        'GN' => ['min' => 1_000, 'max' => 15_000_000,'currency' => 'GNF'],
+        'GN' => ['min' => 1_000, 'max' => 15_000_000, 'currency' => 'GNF'],
     ];
 
     protected PercentRobusAuthService $percentRobus;
@@ -227,7 +228,9 @@ class PixelPaymentController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'status' => false, 'message' => 'Données invalides', 'errors' => $validator->errors(),
+                'status' => false,
+                'message' => 'Données invalides',
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -252,9 +255,10 @@ class PixelPaymentController extends Controller
         }
 
         // Valider le montant selon les limites du pays
-        $iso2   = self::countryCode($pixelConfig->country) ?? '';
-        $limits = self::AMOUNT_LIMITS[$iso2] ?? ['min' => 200, 'max' => 1_500_000];
-        $amount = (float) $request->amount;
+        $iso2          = self::countryCode($pixelConfig->country) ?? '';
+        $limits        = self::AMOUNT_LIMITS[$iso2] ?? ['min' => 200, 'max' => 1_500_000];
+        $amount        = (float) $request->amount;
+        $operationType = $pixelConfig->operation_type; // 'Cash In' ou 'Cash Out'
 
         if ($amount < $limits['min'] || $amount > $limits['max']) {
             return response()->json([
@@ -267,6 +271,19 @@ class PixelPaymentController extends Controller
         $totalFeePct    = (float) $pixelConfig->fixed_fee + (float) $pixelConfig->commission_percent;
         $fees           = round($amount * $totalFeePct / 100, 2);
         $amountReceived = $amount - $fees;
+        $amountPay = $amount + $fees;
+
+        // ── Cash Out (Robus → Mobile money) : vérifier le solde avant tout ──
+        if ($operationType === 'Cash In') {
+            if ((float) $wallet->amount < $amountPay) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Solde insuffisant pour effectuer ce Cash Out.',
+                ], 422);
+            }
+        }
+
+
         $customData     = $request->custom_data ?? ('ROBUS_' . $user->id . '_' . now()->timestamp);
 
         // Enregistrement en base AVANT l'appel API (idempotence)
@@ -284,18 +301,32 @@ class PixelPaymentController extends Controller
             'status'          => 'PENDING',
             'payment_method'  => 'pixel_innov_' . strtolower($pixelConfig->provider->name ?? 'unknown'),
             'metadata'        => json_encode([
-                'user_id'          => $user->id,
-                'pixel_service_id' => $pixelConfig->id,
+                'user_id'            => $user->id,
+                'pixel_service_id'   => $pixelConfig->id,
                 'pixel_service_name' => $pixelConfig->name,
-                'service_id'       => $pixelConfig->service_id,
-                'provider'         => $pixelConfig->provider->name ?? null,
-                'country'          => $pixelConfig->country->name ?? null,
-                'country_iso2'     => $iso2,
-                'operation_type'   => $pixelConfig->operation_type,
-                'destination'      => $request->destination,
-                'custom_data'      => $customData,
+                'service_id'         => $pixelConfig->service_id,
+                'provider'           => $pixelConfig->provider->name ?? null,
+                'country'            => $pixelConfig->country->name ?? null,
+                'country_iso2'       => $iso2,
+                'operation_type'     => $operationType,
+                'destination'        => $request->destination,
+                'custom_data'        => $customData,
             ]),
         ]);
+
+        // ── Cash In : débiter le wallet immédiatement avant l'appel Pixel Innov ──
+        if ($operationType === 'Cash In') {
+            DB::beginTransaction();
+            try {
+                $wallet->decrement('amount', $amountPay);
+                DB::commit();
+            } catch (\Throwable $e) {
+                DB::rollBack();
+                $reload->update(['status' => 'ERROR']);
+                Log::error('Pixel Innov — Cash In : erreur débit wallet', ['error' => $e->getMessage()]);
+                return response()->json(['status' => false, 'message' => 'Erreur lors du débit du wallet.'], 500);
+            }
+        }
 
         // Appel Pixel Innov
         $pixelService = app(PixelInnovService::class);
@@ -311,7 +342,6 @@ class PixelPaymentController extends Controller
             'redirect_error_url' => $publicBase . '/payment_pixelInnov/error',
         ];
 
-        // Orange Money Cash Out exige un OTP côté Pixel Innov
         if ($request->filled('om_otp')) {
             $pixelPayload['om_otp'] = $request->om_otp;
         }
@@ -330,17 +360,26 @@ class PixelPaymentController extends Controller
 
         if ($isFailed) {
             $reload->update(['status' => 'ERROR']);
+
+            // ── Cash Out : rembourser le wallet si Pixel Innov a refusé dès l'init ──
+            if ($operationType === 'Cash in') {
+                $wallet->increment('amount', $amountPay);
+                Log::info('Pixel Innov — Cash in init échouée, wallet remboursé', [
+                    'reload_id'       => $reload->id,
+                    'amount_refunded' => $amountPay,
+                ]);
+            }
+
             Log::warning('Pixel Innov — init échouée', [
                 'response'       => $response,
                 'reload_id'      => $reload->id,
                 'transaction_id' => $pixelTxId,
                 'state'          => $response['data']['state'] ?? null,
-                'wallet_before'  => $response['data']['p_last_wallet_amount'] ?? null,
+                'operation_type' => $operationType,
             ]);
 
-            // Chercher un message utile dans la réponse Pixel Innov
-            $pixelMsg    = trim((string) ($response['message'] ?? ''));
-            $dataMsg     = trim((string) ($response['data']['response'] ?? ''));
+            $pixelMsg     = trim((string) ($response['message'] ?? ''));
+            $dataMsg      = trim((string) ($response['data']['response'] ?? ''));
             $walletBefore = $response['data']['p_last_wallet_amount'] ?? null;
             $state        = $response['data']['state'] ?? null;
 
@@ -380,7 +419,7 @@ class PixelPaymentController extends Controller
             'country'        => $pixelConfig->country->name ?? null,
             'amount'         => $amount,
             'fees'           => $fees,
-            'amount_received'=> $amountReceived,
+            'amount_received' => $amountReceived,
         ], 200);
     }
 
@@ -434,7 +473,9 @@ class PixelPaymentController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'status' => false, 'message' => 'Données invalides', 'errors' => $validator->errors(),
+                'status' => false,
+                'message' => 'Données invalides',
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -540,10 +581,41 @@ class PixelPaymentController extends Controller
         $pixelService = app(PixelInnovService::class);
         $remote = $pixelService->checkTransactionStatus($request->transaction_id);
 
+        $remoteState = strtoupper($remote['data']['state'] ?? '');
+        $synced      = false;
+
+        // Synchronisation automatique si la transaction n'est pas encore SUCCESS localement
+        // mais que Pixel Innov confirme SUCCESS ou SUCCESSFUL (IPN manqué ou mal traité).
+        if (!in_array($reload->status, ['SUCCESS'])) {
+            if (in_array($remoteState, ['SUCCESS', 'SUCCESSFUL'])) {
+                DB::beginTransaction();
+                try {
+                    $this->handleSuccess($reload, $remote['data'] ?? []);
+                    DB::commit();
+                    $synced = true;
+                    Log::info('Pixel Innov — statut synchronisé manuellement (IPN manqué)', [
+                        'transaction_id' => $request->transaction_id,
+                        'remote_state'   => $remoteState,
+                    ]);
+                } catch (\Throwable $e) {
+                    DB::rollBack();
+                    Log::error('Pixel Innov — erreur sync manuelle', [
+                        'transaction_id' => $request->transaction_id,
+                        'error'          => $e->getMessage(),
+                    ]);
+                }
+            } elseif (in_array($remoteState, ['FAILED', 'FAIL', 'ERROR', 'CANCELLED']) && $reload->status !== 'ERROR') {
+                $reload->update(['status' => 'ERROR']);
+                $synced = true;
+            }
+            $reload->refresh();
+        }
+
         return response()->json([
             'status'         => true,
             'local_status'   => $reload->status,
-            'remote_state'   => $remote['data']['state'] ?? null,
+            'remote_state'   => $remoteState ?: null,
+            'synced'         => $synced,
             'transaction_id' => $request->transaction_id,
             'amount'         => $reload->amount,
             'fees'           => $reload->fees,
@@ -577,12 +649,17 @@ class PixelPaymentController extends Controller
         // Vérification du hash SHA256(api_key + transaction_id)
         $pixelService = app(PixelInnovService::class);
         if (!$pixelService->verifyIpnHash($transactionId, $hash)) {
-            Log::warning('Pixel Innov — hash invalide', ['transaction_id' => $transactionId]);
+            Log::warning('Pixel Innov — hash invalide', [
+                'transaction_id' => $transactionId,
+                'hash_received'  => $hash,
+                'hash_expected'  => hash('sha256', config('services.pixel_innov.api_key') . $transactionId),
+            ]);
             return response()->json(['status' => 'invalid_hash'], 401);
         }
 
         DB::beginTransaction();
         try {
+
             $reload = WalletReload::where('reference', $transactionId)->lockForUpdate()->first();
 
             if (!$reload) {
@@ -591,15 +668,28 @@ class PixelPaymentController extends Controller
                 return response()->json(['status' => 'not_found'], 404);
             }
 
-            // Idempotence sous verrou SQL pour éviter un double crédit si Pixel renvoie deux IPN.
-            if (in_array(strtoupper($reload->status), ['SUCCESS', 'ERROR'])) {
+            // Idempotence : ne pas re-traiter une transaction déjà créditée (SUCCESS).
+            // On ne bloque pas sur ERROR pour pouvoir récupérer si un SUCCESSFUL arrive après un PENDING mal traité.
+            if (strtoupper($reload->status) === 'SUCCESS') {
                 DB::rollBack();
                 return response()->json(['status' => 'already_processed'], 200);
             }
 
-            strtoupper($state) === 'SUCCESS'
-                ? $this->handleSuccess($reload, $request->all())
-                : $this->handleFailure($reload, $request->all());
+            $stateUpper = strtoupper($state);
+
+            if (in_array($stateUpper, ['SUCCESS', 'SUCCESSFUL'])) {
+                $this->handleSuccess($reload, $request->all());
+            } elseif (in_array($stateUpper, ['FAILED', 'FAIL', 'ERROR', 'CANCELLED'])) {
+                $this->handleFailure($reload, $request->all());
+            } else {
+                // État intermédiaire (PENDING, PENDING1, PROCESSING…) : on attend le prochain IPN.
+                DB::rollBack();
+                Log::info('Pixel Innov — IPN état intermédiaire ignoré', [
+                    'transaction_id' => $transactionId,
+                    'state'          => $state,
+                ]);
+                return response()->json(['status' => 'pending'], 200);
+            }
 
             DB::commit();
             return response()->json(['status' => 'ok'], 200);
@@ -639,29 +729,161 @@ class PixelPaymentController extends Controller
 
     private function handleSuccess(WalletReload $reload, array $ipnData): void
     {
-        $wallet = $reload->wallet;
-        $walletDetails = Wallet::whereId($reload->wallet_id)->first();
-        $countryNameGroup = $walletDetails->country->name_groupe ?? null;
+        $metadata      = json_decode($reload->metadata ?? '{}', true);
+        $operationType = $metadata['operation_type'] ?? 'Cash In';
 
-        if (in_array($countryNameGroup, ['CIV', 'AFL', 'AFC', 'AFE'])) {
-            $commissionRobus = ReloadCost::whereId(2)->first();
-        } elseif (in_array($countryNameGroup, ['URP', 'USA', 'MAG', 'ASIE'])) {
-            $commissionRobus = ReloadCost::whereId(3)->first();
+        if ($operationType === 'Cash Out') {
+            // Mobile débité par Pixel → créditer le wallet Robus
+            $this->creditWalletFromMobilePayment($reload, $ipnData);
         } else {
-            $commissionRobus = ReloadCost::whereId($reload->reload_cost_id)->first();
+            // Wallet Robus déjà débité à l'init → juste marquer SUCCESS
+            $this->markCashInCompleted($reload, $ipnData);
+        }
+    }
+
+    // Cash Out (Robus → Mobile) : wallet déjà débité à l'init, on enregistre les frais et on marque SUCCESS
+    private function markCashInCompleted(WalletReload $reload, array $ipnData): void
+    {
+        $wallet = $reload->wallet;
+
+        // Récupérer pixelConfig depuis les métadonnées (enregistrées à l'init)
+        $metadata      = json_decode($reload->metadata ?? '{}', true);
+        $pixelConfigId = $metadata['pixel_service_id'] ?? null;
+        $pixelConfig   = $pixelConfigId ? PixelInnoveService::find($pixelConfigId) : null;
+
+        if (!$pixelConfig) {
+            throw new \Exception('Configuration Pixel Innov introuvable (pixel_service_id absent des métadonnées)');
         }
 
-        if (!$commissionRobus) {
-            throw new \Exception('Coût Robus introuvable');
+        // benefice = montant + frais Pixel côté IPN
+        $pixelFee = (float) ($ipnData['fee'] ?? $ipnData['comission'] ?? 0);
+        $benefice  = (float) ($ipnData['benefice'] ?? ((float) $reload->amount + $pixelFee));
+
+        // Frais depuis la config du service Pixel Innov (identiques à ceux calculés à l'init)
+        $fixedFeePct     = (float) $pixelConfig->fixed_fee;
+        $commissionPct   = (float) $pixelConfig->commission_percent;
+        $totalFeePct     = $fixedFeePct + $commissionPct;
+        $totalCommission = round((float) $reload->amount * $totalFeePct / 100, 2);
+        $totalAdminCommission = round((float) $reload->amount * $commissionPct / 100, 2);
+        $totalBanqueCommission = round((float) $reload->amount * $fixedFeePct / 100, 2);
+        $amountReceived  = (float) $reload->amount - $totalCommission;
+
+        $countryCiv    = Country::find(107);
+        $robusCurrency = $wallet->country->currencie->value ?? 1;
+        $walletAdmin      = WalletAdmin::find(1);
+        $adminSingle      = SidUser::whereIsAdmin(true)->where('country_id', 107)->first();
+        $walletCommission = WalletCommission::find(1);
+
+        if ($countryCiv && $countryCiv->currencie->value == $wallet->country->currencie->value) {
+            $amountTotalConversion      = $benefice;
+            $amountCommissionConversion = $totalCommission;
+            $amountCommissionAdminConversion = $totalAdminCommission;
+            $amountCommissionBanqueConversion = $totalBanqueCommission;
+        } else {
+            $amountTotalConversion      = $benefice * (float) $robusCurrency;
+            $amountCommissionConversion = $totalCommission * (float) $robusCurrency;
+            $amountCommissionAdminConversion = $totalAdminCommission * (float) $robusCurrency;
+            $amountCommissionBanqueConversion = $totalBanqueCommission * (float) $robusCurrency;
         }
 
-        $totalPercent = (float) $commissionRobus->percent + (float) $commissionRobus->percent_admin;
-        $totalCommission = $totalPercent * (float) $reload->amount;
-        $amountReceived = (float) $reload->amount - (float) $totalCommission;
+        $reload->update([
+            'status'           => 'SUCCESS',
+            'gateway_response' => $ipnData['response'] ?? null,
+            'raw_response'     => json_encode($ipnData),
+            'verified'         => true,
+            'verified_at'      => now(),
+            'paid_at'          => !empty($ipnData['created_at']) ? Carbon::parse($ipnData['created_at']) : now(),
+            'description'      => 'Cash In Pixel Innov — mobile money crédité',
+            'type_transaction' => 'Cash In',
+            'fees'             => $totalCommission,
+            'costs_amount'     => $totalCommission,
+            'cost_conversion'  => $amountCommissionConversion,
+            'amount_conversion' => $amountTotalConversion,
+            'amount_received'  => $amountReceived,
+            'reload_cost_id'   => $reload->reload_cost_id,
+        ]);
 
-        $walletAdmin = WalletAdmin::find(1);
+        PaymentReload::create([
+            'wallet_reload_id'          => $reload->id,
+            'sid_user_id'               => $wallet->sid_user_id,
+            'type'                      => 'debit',
+            'transaction_id'            => $ipnData['transaction_id'],
+            'pay_amount'                => $reload->amount,
+            'fee_amount'                => $totalCommission,
+            'received_amount'           => $amountReceived,
+            'balance_before'            => $wallet->amount,
+            'balance_after'             => $wallet->amount,
+            'description'               => 'Cash In Pixel Innov — ' . $ipnData['transaction_id'],
+            'reference'                 => $ipnData['transaction_id'],
+            'operator_transaction_name' => 'Pixel Innov',
+            'status'                    => 'completed',
+            'created_at'                => now(),
+            'updated_at'                => now(),
+        ]);
+
+        if ($walletCommission) {
+            $walletAdmin->increment('amount', $amountTotalConversion);
+            LedgerEntry::create([
+                'transaction_id' => (string) Str::uuid(),
+                'admin_com_id'   => null,
+                'debit'          => 0,
+                'credit'         => $amountCommissionAdminConversion,
+                'description'    => 'Commission administrateur',
+                'is_uv'          => true,
+            ]);
+
+            $walletCommission->decrement('amount', $amountTotalConversion);
+
+            LedgerEntry::create([
+                'transaction_id' => (string) Str::uuid(),
+                'admin_com_id' => null,
+                'debit' => $amountCommissionBanqueConversion,
+                'credit' => 0,
+                'description' => "Commission banque",
+                'is_comission' => true,
+            ]);
+        } else {
+            $adminSingle->wallet->increment('amount', $amountTotalConversion);
+        }
+
+
+        Log::info('Pixel Innov — Cash In SUCCESS (mobile money crédité)', [
+            'transaction_id' => $ipnData['transaction_id'] ?? null,
+            'wallet_id'      => $reload->wallet_id,
+            'amount_sent'    => $reload->amount,
+            'commission'     => $totalCommission,
+            'amount_received' => $amountReceived,
+        ]);
+    }
+
+    // Cash In (Mobile → Robus) : mobile débité par Pixel → créditer le wallet Robus avec commissions
+    private function creditWalletFromMobilePayment(WalletReload $reload, array $ipnData): void
+    {
+        $wallet = $reload->wallet;
+
+        // Récupérer pixelConfig depuis les métadonnées (enregistrées à l'init)
+        $metadata      = json_decode($reload->metadata ?? '{}', true);
+        $pixelConfigId = $metadata['pixel_service_id'] ?? null;
+        $pixelConfig   = $pixelConfigId ? PixelInnoveService::find($pixelConfigId) : null;
+
+        if (!$pixelConfig) {
+            throw new \Exception('Configuration Pixel Innov introuvable (pixel_service_id absent des métadonnées)');
+        }
+
+        // benefice = montant + frais Pixel (ce que le client a réellement payé depuis son mobile)
+        $pixelFee = (float) ($ipnData['fee'] ?? $ipnData['comission'] ?? 0);
+        $benefice  = (float) ($ipnData['benefice'] ?? ((float) $reload->amount + $pixelFee));
+
+        // Frais depuis la config du service Pixel Innov (identiques à ceux calculés à l'init)
+        $fixedFeePct     = (float) $pixelConfig->fixed_fee;
+        $commissionPct   = (float) $pixelConfig->commission_percent;
+        $totalFeePct     = $fixedFeePct + $commissionPct;
+        $totalCommission = round((float) $reload->amount * $totalFeePct / 100, 2);
+        $amountReceived  = (float) $reload->amount - $totalCommission;
+
+        $walletAdmin      = WalletAdmin::find(1);
         $walletCommission = Wallet::where('wallet_id', 'CI44RTZU')->first();
-        $adminSingle = SidUser::whereIsAdmin(true)->where('country_id', 107)->first();
+        $adminSingle      = SidUser::whereIsAdmin(true)->where('country_id', 107)->first();
 
         if (!$wallet) {
             throw new \Exception('Wallet client introuvable');
@@ -675,14 +897,16 @@ class PixelPaymentController extends Controller
             throw new \Exception('Wallet commission introuvable');
         }
 
-        $countryCiv = Country::find(107);
+        $countryCiv    = Country::find(107);
         $robusCurrency = $wallet->country->currencie->value ?? 1;
 
+        // La vérification du solde utilise benefice (montant + frais Pixel)
+        // car c'est le montant total engagé dans la transaction côté client
         if ($countryCiv && $countryCiv->currencie->value == $wallet->country->currencie->value) {
-            $amountTotalConversion = (float) $reload->amount;
+            $amountTotalConversion      = $benefice;
             $amountCommissionConversion = $totalCommission;
         } else {
-            $amountTotalConversion = (float) $reload->amount * (float) $robusCurrency;
+            $amountTotalConversion      = $benefice * (float) $robusCurrency;
             $amountCommissionConversion = $totalCommission * (float) $robusCurrency;
         }
 
@@ -702,7 +926,7 @@ class PixelPaymentController extends Controller
             'balance_before'   => $wallet->amount,
             'amount_solde'     => (float) $wallet->amount + (float) $amountReceived,
             'amount_received'  => $amountReceived,
-            'reload_cost_id'   => $commissionRobus->id,
+            'reload_cost_id'   => $reload->reload_cost_id,
             'amount_solde_drawal' => $walletCommission->amount ?? null,
             'amount_solde_before_drawal' => $walletCommission
                 ? (float) $walletCommission->amount - (float) $amountTotalConversion
@@ -713,7 +937,7 @@ class PixelPaymentController extends Controller
             'fees'             => $totalCommission,
             'costs_amount'     => $totalCommission,
             'cost_conversion'  => $amountCommissionConversion,
-            'amount_conversion'=> $amountTotalConversion,
+            'amount_conversion' => $amountTotalConversion,
         ]);
 
         PaymentReload::create([
@@ -766,7 +990,7 @@ class PixelPaymentController extends Controller
             'amount' => DB::raw('amount+' . $amountReceived),
         ]);
 
-        Log::info('Pixel Innov — SUCCESS, wallet crédité', [
+        Log::info('Pixel Innov — Cash In SUCCESS, wallet Robus crédité', [
             'transaction_id'  => $ipnData['transaction_id'],
             'wallet_id'       => $reload->wallet_id,
             'amount_credited' => $amountReceived,
@@ -777,6 +1001,9 @@ class PixelPaymentController extends Controller
 
     private function handleFailure(WalletReload $reload, array $ipnData): void
     {
+        $metadata      = json_decode($reload->metadata ?? '{}', true);
+        $operationType = $metadata['operation_type'] ?? 'Cash Out';
+
         $reload->update([
             'status'           => 'ERROR',
             'gateway_response' => $ipnData['error'] ?? $ipnData['response'] ?? null,
@@ -785,9 +1012,24 @@ class PixelPaymentController extends Controller
             'verified_at'      => now(),
         ]);
 
+        // Cash Out (Robus → Mobile) : rembourser le wallet car Pixel Innov n'a pas crédité le mobile
+        if ($operationType === 'Cash Out') {
+            $wallet = $reload->wallet;
+            if ($wallet) {
+                $wallet->increment('amount', $reload->amount);
+                Log::info('Pixel Innov — Cash Out FAILED, wallet remboursé', [
+                    'transaction_id'  => $ipnData['transaction_id'] ?? null,
+                    'wallet_id'       => $reload->wallet_id,
+                    'amount_refunded' => $reload->amount,
+                ]);
+            }
+        }
+        // Cash In (Mobile → Robus) : wallet jamais touché, rien à rembourser
+
         Log::info('Pixel Innov — FAILED', [
-            'transaction_id' => $ipnData['transaction_id'],
+            'transaction_id' => $ipnData['transaction_id'] ?? null,
             'error'          => $ipnData['error'] ?? null,
+            'operation_type' => $operationType,
         ]);
     }
 
