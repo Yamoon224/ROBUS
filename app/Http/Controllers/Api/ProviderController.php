@@ -89,25 +89,25 @@ class ProviderController extends Controller
 
             $cacheKey = "dashboard_data_user_" . robus()->id . "_country_" . $countrieId;
             // 1️⃣ Cas où l'app est indisponible
-            if (!$appStatusResult['success']) {
+            // if (!$appStatusResult['success']) {
 
-                $walletTransactionDepot = $this->withPixelInnovCashInProviders(
-                    $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1),
-                    $countrieId
-                );
-                $walletTransactionDrawal = $this->percentRobus->getProvidersDrawalByType(new Provider, $countrieId, 29);
-                $walletTransactionReload = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 30);
+            //     $walletTransactionDepot = $this->withPixelInnovCashInProviders(
+            //         $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1),
+            //         $countrieId
+            //     );
+            //     $walletTransactionDrawal = $this->percentRobus->getProvidersDrawalByType(new Provider, $countrieId, 29);
+            //     $walletTransactionReload = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 30);
 
-                $dashboard_data['Transfert national'] = [
-                    "Dépôts" => ProviderSingleCollection::collection($walletTransactionDepot),
-                ];
+            //     $dashboard_data['Transfert national'] = [
+            //         "Dépôts" => ProviderSingleCollection::collection($walletTransactionDepot),
+            //     ];
 
-                (robus()->is_under_distributer || robus()->is_api) ?  $dashboard_data['Retrait'] =  ProviderSingleCollection::collection($walletTransactionDrawal) : [];
+            //     (robus()->is_under_distributer || robus()->is_api) ?  $dashboard_data['Retrait'] =  ProviderSingleCollection::collection($walletTransactionDrawal) : [];
 
-                (robus()->is_custumers) ? $dashboard_data['Achat UV'] = ProviderSingleCollection::collection($walletTransactionReload) : [];
+            //     (robus()->is_custumers) ? $dashboard_data['Achat UV'] = ProviderSingleCollection::collection($walletTransactionReload) : [];
 
-                return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
-            }
+            //     return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
+            // }
 
             // 2️⃣ Récupération des assignations et mapping restrictions
 
@@ -231,8 +231,8 @@ class ProviderController extends Controller
                         Cache::put($providerCacheKey, $providers, 1800);
                     }
                 }
-
-
+                $zoneProviders = ProvidersService::getPixelInnovZoneProviders($countrieId);
+                
                 // 4️⃣ Construire le dashboard de manière dynamique
                 if (robus()->is_under_distributer || robus()->is_api) {
 
@@ -254,7 +254,7 @@ class ProviderController extends Controller
                                 $dashboard_data['Xbets'] = $xbets;
                             }
                         }
-                        
+
                         if (!empty($activeButtons['showXbetsButton']) && !empty($providers['xbet'])) {
                             $dashboard_data['Xbets'] = ProviderSingleCollection::collection($providers['xbet']);
                         }
@@ -281,6 +281,8 @@ class ProviderController extends Controller
                         if (!empty($activeButtons['showRetraitButton'])) {
                             $dashboard_data['Retrait'] = ProviderSingleCollection::collection($providers['retrait']);
                         }
+
+
                     } else {
 
                         if (!empty($activeButtons['showXbetsButton'])) {
@@ -332,6 +334,10 @@ class ProviderController extends Controller
                             "Bank Send" =>  ProviderSingleCollection::collection($providers['interBankSend']),
                         ];
                     }
+                }
+
+                if ($zoneProviders->isNotEmpty()) {
+                    $dashboard_data['Transfert mobile Zone'] = ProviderSingleCollection::collection($zoneProviders);
                 }
 
                 return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);

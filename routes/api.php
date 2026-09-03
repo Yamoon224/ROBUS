@@ -107,6 +107,10 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('/services', [PixelPaymentController::class, 'listServices'])
                 ->name('pixelInnov.services');
 
+            // Services de transfert mobile zone (XOF ou XAF) groupés par pays
+            Route::get('/zone-services', [PixelPaymentController::class, 'listZoneServices'])
+                ->name('pixelInnov.zone-services');
+
             // Calculer les frais avant initialisation
             Route::post('/calculate', [PixelPaymentController::class, 'calculateAmount'])
                 ->name('pixelInnov.calculate');

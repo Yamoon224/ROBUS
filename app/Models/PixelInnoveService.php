@@ -24,6 +24,8 @@ class PixelInnoveService extends Model
         'fixed_fee' => 'decimal:2',
         'commission_percent' => 'decimal:2',
         'status' => 'boolean',
+        'is_xof' => 'boolean',
+        'is_xaf' => 'boolean',
     ];
 
     public function country()

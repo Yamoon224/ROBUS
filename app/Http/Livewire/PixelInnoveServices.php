@@ -17,6 +17,9 @@ class PixelInnoveServices extends Component
 
     public $search = '';
     public $filterCountryId = '';
+    public $filterIsXof = '';
+    public $filterIsXaf = '';
+
     public $countryId = '';
     public $providerTypeId = '';
     public $providerId = '';
@@ -24,6 +27,8 @@ class PixelInnoveServices extends Component
     public $serviceId = '';
     public $fixedFee = '';
     public $commissionPercent = '1.90';
+    public $isXof = false;
+    public $isXaf = false;
     public $pixelServiceId;
     public $pixelStatus;
 
@@ -42,6 +47,8 @@ class PixelInnoveServices extends Component
             ],
             'fixedFee' => ['nullable', 'numeric', 'min:0'],
             'commissionPercent' => ['required', 'numeric', 'min:0'],
+            'isXof' => ['boolean'],
+            'isXaf' => ['boolean'],
         ];
     }
 
@@ -59,6 +66,22 @@ class PixelInnoveServices extends Component
         $this->resetPage();
     }
 
+    public function updatedFilterIsXof()
+    {
+        if ($this->filterIsXof) {
+            $this->filterIsXaf = '';
+        }
+        $this->resetPage();
+    }
+
+    public function updatedFilterIsXaf()
+    {
+        if ($this->filterIsXaf) {
+            $this->filterIsXof = '';
+        }
+        $this->resetPage();
+    }
+
     public function updatedSearch()
     {
         $this->resetPage();
@@ -68,7 +91,23 @@ class PixelInnoveServices extends Component
     {
         $this->search = '';
         $this->filterCountryId = '';
+        $this->filterIsXof = '';
+        $this->filterIsXaf = '';
         $this->resetPage();
+    }
+
+    public function updatedIsXof($value)
+    {
+        if ($value) {
+            $this->isXaf = false;
+        }
+    }
+
+    public function updatedIsXaf($value)
+    {
+        if ($value) {
+            $this->isXof = false;
+        }
     }
 
     public function updatedProviderTypeId()
@@ -116,6 +155,8 @@ class PixelInnoveServices extends Component
             'service_id' => $this->serviceId,
             'fixed_fee' => $this->fixedFee ?: null,
             'commission_percent' => $this->commissionPercent,
+            'is_xof' => (bool) $this->isXof,
+            'is_xaf' => (bool) $this->isXaf,
             'created_by' => Auth::guard('web')->id(),
             'status' => true,
         ]);
@@ -137,6 +178,8 @@ class PixelInnoveServices extends Component
         $this->serviceId = $service->service_id;
         $this->fixedFee = $service->fixed_fee;
         $this->commissionPercent = $service->commission_percent;
+        $this->isXof = (bool) $service->is_xof;
+        $this->isXaf = (bool) $service->is_xaf;
         $this->pixelStatus = $service->status;
 
         $this->emit($state);
@@ -169,6 +212,8 @@ class PixelInnoveServices extends Component
             'service_id' => $this->serviceId,
             'fixed_fee' => $this->fixedFee ?: null,
             'commission_percent' => $this->commissionPercent,
+            'is_xof' => (bool) $this->isXof,
+            'is_xaf' => (bool) $this->isXaf,
             'updated_by' => Auth::guard('web')->id(),
         ]);
 
@@ -205,6 +250,8 @@ class PixelInnoveServices extends Component
         $this->serviceId = '';
         $this->fixedFee = '';
         $this->commissionPercent = '1.90';
+        $this->isXof = false;
+        $this->isXaf = false;
         $this->pixelServiceId = null;
         $this->pixelStatus = null;
         $this->resetValidation();
@@ -215,6 +262,12 @@ class PixelInnoveServices extends Component
         $services = PixelInnoveService::with(['country', 'providerType', 'provider'])
             ->when($this->filterCountryId !== '', fn($q) =>
                 $q->where('country_id', $this->filterCountryId)
+            )
+            ->when($this->filterIsXof !== '', fn($q) =>
+                $q->where('is_xof', true)
+            )
+            ->when($this->filterIsXaf !== '', fn($q) =>
+                $q->where('is_xaf', true)
             )
             ->when($this->search !== '', function ($query) {
                 $query->where(function ($q) {

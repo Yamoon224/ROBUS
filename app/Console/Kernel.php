@@ -26,8 +26,11 @@ class Kernel extends ConsoleKernel
         // $schedule->command('queue:work --stop-when-empty')->everyMinute();
         $schedule->job(new CheckAppCompanyStatus)
         ->everyMinute()
-        ->withoutOverlapping();  
-    
+        ->withoutOverlapping();
+
+        $schedule->command('pixel:sync-pending')
+            ->everyFiveMinutes()
+            ->withoutOverlapping();
     }
 
     /**

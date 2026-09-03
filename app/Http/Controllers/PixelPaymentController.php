@@ -131,7 +131,10 @@ class PixelPaymentController extends Controller
             $countryId = Country::where('code', strtoupper($request->country_iso2))->value('id');
         }
 
-        if (!$countryId && $user && $user->country_id) {
+        // show_all=true : désactive le filtrage automatique par pays (pour l'envoi international)
+        $showAll = $request->boolean('show_all', false);
+
+        if (!$showAll && !$countryId && $user && $user->country_id) {
             $countryId = $user->country_id;
         }
 
@@ -151,10 +154,12 @@ class PixelPaymentController extends Controller
                 'country'          => $s->country->name ?? null,
                 'country_iso2'     => self::countryCode($s->country),
                 'currency'         => self::AMOUNT_LIMITS[self::countryCode($s->country) ?? '']['currency'] ?? 'XOF',
-                'amount_min'       => self::AMOUNT_LIMITS[self::countryCode($s->country) ?? '']['min'] ?? 200,
+                'amount_min'       => self::AMOUNT_LIMITS[self::countryCode($s->country) ?? '']['min'] ?? 100,
                 'amount_max'       => self::AMOUNT_LIMITS[self::countryCode($s->country) ?? '']['max'] ?? 1_500_000,
                 'fixed_fee_pct'    => (float) $s->fixed_fee,
                 'commission_pct'   => (float) $s->commission_percent,
+                'is_xof'   =>  $s->is_xof,
+                'is_xaf'   =>  $s->is_xaf,
                 'total_fee_pct'    => (float) $s->fixed_fee + (float) $s->commission_percent,
             ]);
 
@@ -168,6 +173,82 @@ class PixelPaymentController extends Controller
             'status'         => true,
             'country_filter' => $isoUsed,
             'data'           => $services,
+        ]);
+    }
+
+    // =========================================================================
+    // SERVICES TRANSFERT MOBILE ZONE (XOF / XAF) — groupés par pays
+    // =========================================================================
+
+    public function listZoneServices(Request $request)
+    {
+        $user = robus();
+
+        // Déterminer la zone de l'utilisateur depuis son code pays
+        $userCountryCode = self::countryCode($user?->country);
+        $userZone = self::AMOUNT_LIMITS[$userCountryCode ?? '']['currency'] ?? null;
+
+        // Zone inconnue → pas de transfert zone disponible
+        if (!in_array($userZone, ['XOF', 'XAF'])) {
+            return response()->json([
+                'status'       => true,
+                'zone'         => null,
+                'user_country' => ['code' => $userCountryCode, 'name' => $user?->country?->name],
+                'countries'    => [],
+            ]);
+        }
+
+        $isXof = $userZone === 'XOF';
+
+        // Récupérer les services actifs de la zone, en excluant le pays de l'utilisateur
+        $userCountryId = $user?->country_id;
+        $services = PixelInnoveService::with(['country', 'provider'])
+            ->where('status', true)
+            ->where($isXof ? 'is_xof' : 'is_xaf', true)
+            ->when($userCountryId, fn($q) => $q->where('country_id', '!=', $userCountryId))
+            ->when($request->operation_type, fn($q) => $q->where('operation_type', $request->operation_type))
+            ->orderBy('name')
+            ->get();
+
+        // Grouper par pays
+        $grouped = $services->groupBy(fn($s) => $s->country_id);
+
+        $countries = $grouped->map(function ($items) use ($userCountryCode) {
+            $first = $items->first();
+            $iso2  = self::countryCode($first->country);
+            $limits = self::AMOUNT_LIMITS[$iso2 ?? ''] ?? ['min' => 200, 'max' => 1_500_000, 'currency' => 'XOF'];
+
+            $providers = $items->map(fn($s) => [
+                'id'             => $s->id,
+                'name'           => $s->name,
+                'service_id'     => $s->service_id,
+                'operation_type' => $s->operation_type,
+                'provider'       => $s->provider->name ?? null,
+                'image'          => $s->provider->image ?? null,
+                'fixed_fee_pct'  => (float) $s->fixed_fee,
+                'commission_pct' => (float) $s->commission_percent,
+                'total_fee_pct'  => (float) $s->fixed_fee + (float) $s->commission_percent,
+            ])->values();
+
+            return [
+                'country_id'   => $first->country_id,
+                'country'      => $first->country->name ?? null,
+                'country_iso2' => $iso2,
+                'currency'     => $limits['currency'],
+                'amount_min'   => $limits['min'],
+                'amount_max'   => $limits['max'],
+                'providers'    => $providers,
+            ];
+        })->values();
+
+        return response()->json([
+            'status'       => true,
+            'zone'         => $userZone,
+            'user_country' => [
+                'code' => $userCountryCode,
+                'name' => $user?->country?->name,
+            ],
+            'countries' => $countries,
         ]);
     }
 
@@ -399,7 +480,11 @@ class PixelPaymentController extends Controller
         }
 
         $transactionId = $pixelTxId;
-        $smsLink       = $response['data']['sms_link'] ?? null;
+        // Wave peut retourner le lien dans sms_link, sms_link1 ou sms_link2
+        $smsLink = $response['data']['sms_link']
+            ?? $response['data']['sms_link1']
+            ?? $response['data']['sms_link2']
+            ?? null;
 
         Log::info('Pixel Innov — paiement initié', [
             'transaction_id' => $transactionId,
@@ -489,7 +574,7 @@ class PixelPaymentController extends Controller
         }
 
         $iso2   = self::countryCode($pixelConfig->country) ?? '';
-        $limits = self::AMOUNT_LIMITS[$iso2] ?? ['min' => 200, 'max' => 1_500_000, 'currency' => 'XOF'];
+        $limits = self::AMOUNT_LIMITS[$iso2] ?? ['min' => 100, 'max' => 1_500_000, 'currency' => 'XOF'];
         $amount = (float) $request->amount;
 
         if ($amount < $limits['min'] || $amount > $limits['max']) {
@@ -1046,7 +1131,9 @@ class PixelPaymentController extends Controller
             return 'Un lien de validation a été envoyé par SMS au client. Il doit cliquer dessus pour confirmer.';
         }
         if (str_contains($name, 'wave')) {
-            return 'Une notification Wave a été envoyée au client pour validation.';
+            return $smsLink
+                ? 'Appuyez sur le lien ci-dessous pour ouvrir l\'application Wave et confirmer votre paiement.'
+                : 'Ouvrez l\'application Wave et confirmez le paiement en attente.';
         }
         if (str_contains($name, 'mtn')) {
             return 'Le client doit valider la transaction via son application MTN MoMo ou l\'invite USSD.';

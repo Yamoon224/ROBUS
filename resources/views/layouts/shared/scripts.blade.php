@@ -10,7 +10,7 @@
 <script src="{{ asset_url('dist/plugins/toastr/js/toastr.min.js') }}"></script>
 <script src="{{ asset_url('dist/plugins/toastr/js/toastr.init.js') }}"></script>
 {{-- <script type="module"  src="{{ asset('bootstrap/ssr/app2.mjs') }}"></script> --}}
-<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
+{{-- <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script> --}}
 {{-- <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js"></script> --}}
 {{-- <script nomodule src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine-ie11.min.js" defer></script> --}}
 {{-- <script src="//cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script> --}}
