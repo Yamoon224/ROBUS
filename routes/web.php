@@ -625,6 +625,11 @@ Route::post('/payment_pixelInnov/callback', [PixelPaymentController::class, 'pay
     ->name('pixelInnov.callback')
     ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
 
+// IPN Pixel Innov — Transfert Mobile Zone (deux legs)
+Route::post('/payment_pixelInnov/mobile-transfer/callback', [PixelPaymentController::class, 'mobileTransferCallback'])
+    ->name('pixelInnov.mobile-transfer.callback')
+    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+
 // Redirections navigateur après paiement
 Route::get('/payment_pixelInnov/success', [PixelPaymentController::class, 'redirectSuccess'])
     ->name('pixelInnov.redirect.success');
@@ -676,6 +681,7 @@ Route::get('/process-queue', function () {
 
 Route::get('clear-route-robus',  function () {
     Artisan::call('config:cache');
+    Artisan::call('cache:clear');
     return "Config setting update";
 });
 

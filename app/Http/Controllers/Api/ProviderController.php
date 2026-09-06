@@ -70,11 +70,11 @@ class ProviderController extends Controller
 
     private function withPixelInnovCashInProviders($providers, int $countryId)
     {
-        return $this->percentRobus->getPixelInnovCashInProviders($countryId)
-            ->merge($providers)
-            ->unique('id')
-            ->sortBy('name')
-            ->values();
+        // Les providers de base restent Via Robus (is_pixel_innov=false).
+        // Les providers Pixel Innov sont ajoutés comme entrées séparées (is_pixel_innov=true).
+        $pixelProviders = $this->percentRobus->getPixelInnovCashInProviders($countryId);
+
+        return $providers->concat($pixelProviders)->sortBy('name')->values();
     }
 
 
@@ -191,15 +191,20 @@ class ProviderController extends Controller
                 if (empty($providers)) {
                     // Cache vide → charger tous les providers depuis la BDD
                     foreach ($providerTypes as $key => [$type, $alias]) {
-                        if (is_array($type)) {
-                            $providers[$alias] = $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, $type);
-                        } elseif ($alias === 'depot') {
+                        if ($alias === 'transaction') {
                             $providers[$alias] = $this->withPixelInnovCashInProviders(
-                                $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, $type),
+                                $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, $type),
                                 $countrieId
                             );
                         } elseif ($alias === 'money') {
-                            $providers[$alias] = $this->percentRobus->getProvidersMoneyByType(new Provider, $countrieId, $type);
+                            $providers[$alias] = $this->withPixelInnovCashInProviders(
+                                $this->percentRobus->getProvidersMoneyByType(new Provider, $countrieId, $type),
+                                $countrieId
+                            );
+                        } elseif ($alias === 'depot') {
+                            $providers[$alias] = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, $type);
+                        } elseif (is_array($type)) {
+                            $providers[$alias] = $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, $type);
                         } else {
                             $providers[$alias] = $this->percentRobus->getProvidersByType(new Provider, $countrieId, $type);
                         }
@@ -211,15 +216,20 @@ class ProviderController extends Controller
                     $updated = false;
                     foreach ($providerTypes as $key => [$type, $alias]) {
                         if (!isset($providers[$alias])) {
-                            if (is_array($type)) {
-                                $providers[$alias] = $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, $type);
-                            } elseif ($alias === 'depot') {
+                            if ($alias === 'transaction') {
                                 $providers[$alias] = $this->withPixelInnovCashInProviders(
-                                    $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, $type),
+                                    $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, $type),
                                     $countrieId
                                 );
                             } elseif ($alias === 'money') {
-                                $providers[$alias] = $this->percentRobus->getProvidersMoneyByType(new Provider, $countrieId, $type);
+                                $providers[$alias] = $this->withPixelInnovCashInProviders(
+                                    $this->percentRobus->getProvidersMoneyByType(new Provider, $countrieId, $type),
+                                    $countrieId
+                                );
+                            } elseif ($alias === 'depot') {
+                                $providers[$alias] = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, $type);
+                            } elseif (is_array($type)) {
+                                $providers[$alias] = $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, $type);
                             } else {
                                 $providers[$alias] = $this->percentRobus->getProvidersByType(new Provider, $countrieId, $type);
                             }
@@ -309,6 +319,7 @@ class ProviderController extends Controller
                 } else {
                     // Cas normal hors distributeur/API
                     if (robus()->country->code == 'CI') {
+
                         $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($providers['transaction']);
                         $dashboard_data['Factures'] = ProviderSingleCollection::collection($providers['payment']);
                         $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($providers['bank']);
@@ -322,6 +333,8 @@ class ProviderController extends Controller
                             "Bank Send" =>  ProviderSingleCollection::collection($providers['interBankSend']),
                         ];
                     } else {
+
+
                         $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($providers['transaction']);
                         $dashboard_data['Xbets'] = ProviderSingleCollection::collection($providers['xbet']);
                         $dashboard_data['Achat UV'] = ProviderSingleCollection::collection($providers['relaodUv']);

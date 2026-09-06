@@ -39,6 +39,7 @@ class WalletSingleCollection extends JsonResource
                 'image' => optional($this->sidUser)->image,
                 'email' => optional($this->sidUser)->email,
                 'country' => optional($this->country)->name,
+                'country_iso2' => optional($this->country)->code ? strtoupper(optional($this->country)->code) : null,
                 'country_image' => optional($this->country)->image,
                 'indicative' => optional($this->country)->indecative,
                 'citie' => optional($this->sidUser->city)->name,

@@ -122,6 +122,25 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             // Vérifier le statut d'une transaction
             Route::post('/status', [PixelPaymentController::class, 'checkStatus'])
                 ->name('pixelInnov.status');
+
+            // ── Transfert Mobile Zone (deux legs : Cash Out expéditeur + Cash In destinataire) ──
+            Route::prefix('mobile-transfer')->group(function () {
+                // Lister tous les pays/opérateurs disponibles (non filtré par zone)
+                Route::get('/services', [PixelPaymentController::class, 'listMobileTransferServices'])
+                    ->name('pixelInnov.mobile-transfer.services');
+
+                // Calculer les frais combinés (sender + recipient)
+                Route::post('/calculate', [PixelPaymentController::class, 'calculateMobileZoneTransfer'])
+                    ->name('pixelInnov.mobile-transfer.calculate');
+
+                // Initialiser le transfert (débite l'expéditeur puis envoie au destinataire)
+                Route::post('/initialize', [PixelPaymentController::class, 'initializeMobileZoneTransfer'])
+                    ->name('pixelInnov.mobile-transfer.initialize');
+
+                // Vérifier le statut d'un transfert mobile zone
+                Route::post('/status', [PixelPaymentController::class, 'checkMobileZoneTransferStatus'])
+                    ->name('pixelInnov.mobile-transfer.status');
+            });
         });
         // User and Under distributors APIS
         Route::prefix('user')->group(function () {
