@@ -355,6 +355,16 @@ class PixelPaymentController extends Controller
         $amountReceived = $amount - $fees;
         $amountPay = $amount + $fees;
 
+        // Vérifier que le montant reçu après frais est >= au minimum requis
+        if ($operationType === 'Cash In' && $amountReceived < $limits['min']) {
+            $currency    = $limits['currency'] ?? 'XOF';
+            $minRequired = (int) ceil($limits['min'] / (1 - $totalFeePct / 100));
+            return response()->json([
+                'status'  => false,
+                'message' => "Après déduction des frais ({$totalFeePct}%), le destinataire recevrait " . number_format($amountReceived, 0) . " {$currency}, en dessous du minimum autorisé de {$limits['min']} {$currency}. Veuillez saisir au moins {$minRequired} {$currency}.",
+            ], 422);
+        }
+
         // ── Cash Out (Robus → Mobile money) : vérifier le solde avant tout ──
         if ($operationType === 'Cash In') {
             if ((float) $wallet->amount < $amountPay) {
@@ -415,7 +425,7 @@ class PixelPaymentController extends Controller
 
         $publicBase = rtrim(config('services.pixel_innov.public_url'), '/');
         $pixelPayload = [
-            'amount'             => (int) $amount,
+            'amount'             => (int) $amountReceived,
             'destination'        => $request->destination,
             'service_id'         => $pixelConfig->service_id,
             'ipn_url'            => $publicBase . '/payment_pixelInnov/callback',
@@ -443,10 +453,10 @@ class PixelPaymentController extends Controller
         if ($isFailed) {
             $reload->update(['status' => 'ERROR']);
 
-            // ── Cash Out : rembourser le wallet si Pixel Innov a refusé dès l'init ──
-            if ($operationType === 'Cash in') {
+            // ── Cash In : rembourser le wallet si Pixel Innov a refusé dès l'init ──
+            if ($operationType === 'Cash In') {
                 $wallet->increment('amount', $amountPay);
-                Log::info('Pixel Innov — Cash in init échouée, wallet remboursé', [
+                Log::info('Pixel Innov — Cash In init échouée, wallet remboursé', [
                     'reload_id'       => $reload->id,
                     'amount_refunded' => $amountPay,
                 ]);
@@ -890,6 +900,7 @@ class PixelPaymentController extends Controller
             'cost_conversion'  => $amountCommissionConversion,
             'amount_conversion' => $amountTotalConversion,
             'amount_received'  => $amountReceived,
+            'balance_before'  => $reload->amount_solde - ($reload->amount + $reload->fees),
             'reload_cost_id'   => $reload->reload_cost_id,
         ]);
 
@@ -1308,6 +1319,21 @@ class PixelPaymentController extends Controller
         $amountReceived  = round($amountToSend - $recipientFee, 2);
         $totalFee        = round($senderFee + $recipientFee, 2);
 
+        $recipientLimits = self::AMOUNT_LIMITS[$recipientIso2] ?? ['min' => 200, 'max' => 1_500_000, 'currency' => 'XOF'];
+
+        // Vérifier que le montant reçu par le destinataire après frais est >= au minimum requis
+        if ($amountReceived < $recipientLimits['min']) {
+            $senderCurrency    = self::AMOUNT_LIMITS[$senderIso2]['currency'] ?? 'XOF';
+            $recipientCurrency = $recipientLimits['currency'] ?? 'XOF';
+            // Résoudre : amount * (1 - senderFeePct/100) * (1 - recipientFeePct/100) >= recipientLimits['min']
+            $factor      = (1 - $senderFeePct / 100) * (1 - $recipientFeePct / 100);
+            $minRequired = (int) ceil($recipientLimits['min'] / $factor);
+            return response()->json([
+                'status'  => false,
+                'message' => "Après déduction des frais, le destinataire recevrait " . number_format($amountReceived, 0) . " {$recipientCurrency}, en dessous du minimum autorisé de {$recipientLimits['min']} {$recipientCurrency}. Veuillez saisir au moins {$minRequired} {$senderCurrency}.",
+            ], 422);
+        }
+
         $currency  = self::AMOUNT_LIMITS[$senderIso2]['currency'] ?? 'XOF';
         $customRef = 'ROBUS_MZ_' . $user->id . '_' . now()->timestamp;
 
@@ -1526,7 +1552,7 @@ class PixelPaymentController extends Controller
             $customRef    = $transfer->metadata['custom_ref'] ?? ('ROBUS_MZ_' . $transfer->id);
 
             $cashInPayload = [
-                'amount'             => (int) $transfer->amount_to_send,
+                'amount'             => (int) $transfer->amount_received,
                 'destination'        => $transfer->recipient_phone,
                 'service_id'         => $recipientService->service_id,
                 'ipn_url'            => $publicBase . '/payment_pixelInnov/mobile-transfer/callback',
