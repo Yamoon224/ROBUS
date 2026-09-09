@@ -19,6 +19,8 @@ class PixelInnoveServices extends Component
     public $filterCountryId = '';
     public $filterIsXof = '';
     public $filterIsXaf = '';
+    public $filterIsCdf = '';
+    public $filterIsGmd = '';
 
     public $countryId = '';
     public $providerTypeId = '';
@@ -29,6 +31,8 @@ class PixelInnoveServices extends Component
     public $commissionPercent = '1.90';
     public $isXof = false;
     public $isXaf = false;
+    public $isCdf = false;
+    public $isGmd = false;
     public $pixelServiceId;
     public $pixelStatus;
 
@@ -49,6 +53,8 @@ class PixelInnoveServices extends Component
             'commissionPercent' => ['required', 'numeric', 'min:0'],
             'isXof' => ['boolean'],
             'isXaf' => ['boolean'],
+            'isCdf' => ['boolean'],
+            'isGmd' => ['boolean'],
         ];
     }
 
@@ -69,7 +75,7 @@ class PixelInnoveServices extends Component
     public function updatedFilterIsXof()
     {
         if ($this->filterIsXof) {
-            $this->filterIsXaf = '';
+            $this->clearZoneFilters('filterIsXof');
         }
         $this->resetPage();
     }
@@ -77,7 +83,23 @@ class PixelInnoveServices extends Component
     public function updatedFilterIsXaf()
     {
         if ($this->filterIsXaf) {
-            $this->filterIsXof = '';
+            $this->clearZoneFilters('filterIsXaf');
+        }
+        $this->resetPage();
+    }
+
+    public function updatedFilterIsCdf()
+    {
+        if ($this->filterIsCdf) {
+            $this->clearZoneFilters('filterIsCdf');
+        }
+        $this->resetPage();
+    }
+
+    public function updatedFilterIsGmd()
+    {
+        if ($this->filterIsGmd) {
+            $this->clearZoneFilters('filterIsGmd');
         }
         $this->resetPage();
     }
@@ -93,20 +115,36 @@ class PixelInnoveServices extends Component
         $this->filterCountryId = '';
         $this->filterIsXof = '';
         $this->filterIsXaf = '';
+        $this->filterIsCdf = '';
+        $this->filterIsGmd = '';
         $this->resetPage();
     }
 
     public function updatedIsXof($value)
     {
         if ($value) {
-            $this->isXaf = false;
+            $this->clearSelectedZones('isXof');
         }
     }
 
     public function updatedIsXaf($value)
     {
         if ($value) {
-            $this->isXof = false;
+            $this->clearSelectedZones('isXaf');
+        }
+    }
+
+    public function updatedIsCdf($value)
+    {
+        if ($value) {
+            $this->clearSelectedZones('isCdf');
+        }
+    }
+
+    public function updatedIsGmd($value)
+    {
+        if ($value) {
+            $this->clearSelectedZones('isGmd');
         }
     }
 
@@ -157,6 +195,8 @@ class PixelInnoveServices extends Component
             'commission_percent' => $this->commissionPercent,
             'is_xof' => (bool) $this->isXof,
             'is_xaf' => (bool) $this->isXaf,
+            'is_cdf' => (bool) $this->isCdf,
+            'is_gmd' => (bool) $this->isGmd,
             'created_by' => Auth::guard('web')->id(),
             'status' => true,
         ]);
@@ -180,6 +220,8 @@ class PixelInnoveServices extends Component
         $this->commissionPercent = $service->commission_percent;
         $this->isXof = (bool) $service->is_xof;
         $this->isXaf = (bool) $service->is_xaf;
+        $this->isCdf = (bool) $service->is_cdf;
+        $this->isGmd = (bool) $service->is_gmd;
         $this->pixelStatus = $service->status;
 
         $this->emit($state);
@@ -214,6 +256,8 @@ class PixelInnoveServices extends Component
             'commission_percent' => $this->commissionPercent,
             'is_xof' => (bool) $this->isXof,
             'is_xaf' => (bool) $this->isXaf,
+            'is_cdf' => (bool) $this->isCdf,
+            'is_gmd' => (bool) $this->isGmd,
             'updated_by' => Auth::guard('web')->id(),
         ]);
 
@@ -252,6 +296,8 @@ class PixelInnoveServices extends Component
         $this->commissionPercent = '1.90';
         $this->isXof = false;
         $this->isXaf = false;
+        $this->isCdf = false;
+        $this->isGmd = false;
         $this->pixelServiceId = null;
         $this->pixelStatus = null;
         $this->resetValidation();
@@ -268,6 +314,12 @@ class PixelInnoveServices extends Component
             )
             ->when($this->filterIsXaf !== '', fn($q) =>
                 $q->where('is_xaf', true)
+            )
+            ->when($this->filterIsCdf !== '', fn($q) =>
+                $q->where('is_cdf', true)
+            )
+            ->when($this->filterIsGmd !== '', fn($q) =>
+                $q->where('is_gmd', true)
             )
             ->when($this->search !== '', function ($query) {
                 $query->where(function ($q) {
@@ -303,5 +355,23 @@ class PixelInnoveServices extends Component
         $providerSlug = strtoupper(str_replace(' ', '_', $providerName));
 
         return trim($prefix . '_' . $providerSlug . '_' . $countryCode, '_');
+    }
+
+    private function clearZoneFilters(string $except): void
+    {
+        foreach (['filterIsXof', 'filterIsXaf', 'filterIsCdf', 'filterIsGmd'] as $property) {
+            if ($property !== $except) {
+                $this->{$property} = '';
+            }
+        }
+    }
+
+    private function clearSelectedZones(string $except): void
+    {
+        foreach (['isXof', 'isXaf', 'isCdf', 'isGmd'] as $property) {
+            if ($property !== $except) {
+                $this->{$property} = false;
+            }
+        }
     }
 }

@@ -304,7 +304,9 @@ class ProvidersService
             ->where('pixel_innove_services.country_id', $countryId)
             ->where(function ($q) {
                 $q->where('pixel_innove_services.is_xof', true)
-                  ->orWhere('pixel_innove_services.is_xaf', true);
+                  ->orWhere('pixel_innove_services.is_xaf', true)
+                  ->orWhere('pixel_innove_services.is_cdf', true)
+                  ->orWhere('pixel_innove_services.is_gmd', true);
             })
             ->where('pixel_innove_services.status', true)
             ->where('providers.status', true)

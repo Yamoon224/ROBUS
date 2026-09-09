@@ -41,6 +41,8 @@ class PixelPaymentController extends Controller
         'TG' => ['min' => 500,   'max' => 1_500_000, 'currency' => 'XOF'],
         'CM' => ['min' => 500,   'max' => 1_500_000, 'currency' => 'XAF'],
         'GN' => ['min' => 1_000, 'max' => 15_000_000, 'currency' => 'GNF'],
+        'CD' => ['min' => 500,   'max' => 1_500_000, 'currency' => 'CDF'],
+        'GM' => ['min' => 100,   'max' => 1_500_000, 'currency' => 'GMD'],
     ];
 
     protected PercentRobusAuthService $percentRobus;
@@ -161,6 +163,8 @@ class PixelPaymentController extends Controller
                 'commission_pct'   => (float) $s->commission_percent,
                 'is_xof'   =>  $s->is_xof,
                 'is_xaf'   =>  $s->is_xaf,
+                'is_cdf'   =>  $s->is_cdf,
+                'is_gmd'   =>  $s->is_gmd,
                 'total_fee_pct'    => (float) $s->fixed_fee + (float) $s->commission_percent,
             ]);
 
@@ -189,8 +193,10 @@ class PixelPaymentController extends Controller
         $userCountryCode = self::countryCode($user?->country);
         $userZone = self::AMOUNT_LIMITS[$userCountryCode ?? '']['currency'] ?? null;
 
+        $zoneColumn = $this->currencyZoneColumn($userZone);
+
         // Zone inconnue → pas de transfert zone disponible
-        if (!in_array($userZone, ['XOF', 'XAF'])) {
+        if (!$zoneColumn) {
             return response()->json([
                 'status'       => true,
                 'zone'         => null,
@@ -199,13 +205,11 @@ class PixelPaymentController extends Controller
             ]);
         }
 
-        $isXof = $userZone === 'XOF';
-
         // Récupérer les services actifs de la zone, en excluant le pays de l'utilisateur
         $userCountryId = $user?->country_id;
         $services = PixelInnoveService::with(['country', 'provider'])
             ->where('status', true)
-            ->where($isXof ? 'is_xof' : 'is_xaf', true)
+            ->where($zoneColumn, true)
             ->when($userCountryId, fn($q) => $q->where('country_id', '!=', $userCountryId))
             ->when($request->operation_type, fn($q) => $q->where('operation_type', $request->operation_type))
             ->orderBy('name')
@@ -1722,5 +1726,16 @@ class PixelPaymentController extends Controller
         }
 
         return 'Transaction initiée. Le client doit la valider sur son téléphone.';
+    }
+
+    private function currencyZoneColumn(?string $currency): ?string
+    {
+        return match ($currency) {
+            'XOF' => 'is_xof',
+            'XAF' => 'is_xaf',
+            'CDF' => 'is_cdf',
+            'GMD' => 'is_gmd',
+            default => null,
+        };
     }
 }

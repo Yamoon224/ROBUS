@@ -5,7 +5,7 @@
         $cashInCount    = $visibleServices->where('operation_type', 'Cash In')->count();
         $cashOutCount   = $visibleServices->where('operation_type', 'Cash Out')->count();
         $selectedCountry = $filterCountryId !== '' ? $countries->firstWhere('id', (int) $filterCountryId) : null;
-        $activeZone = $filterIsXof ? 'XOF' : ($filterIsXaf ? 'XAF' : null);
+        $activeZone = $filterIsXof ? 'XOF' : ($filterIsXaf ? 'XAF' : ($filterIsCdf ? 'CDF' : ($filterIsGmd ? 'GMD' : null)));
     @endphp
 
     {{-- ── En-tête ──────────────────────────────────────────────────────── --}}
@@ -100,6 +100,20 @@
                             </svg>
                             Zone XAF
                         </span>
+                    @elseif($activeZone === 'CDF')
+                        <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                            <svg class="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                            Zone CDF
+                        </span>
+                    @elseif($activeZone === 'GMD')
+                        <span class="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2.5 py-1 text-xs font-semibold text-rose-700">
+                            <svg class="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                            Zone GMD
+                        </span>
                     @endif
                     @if($search !== '')
                         <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">
@@ -155,11 +169,11 @@
                 </select>
             </div>
 
-            {{-- Groupe segmenté Tous / XOF / XAF --}}
-            <div class="flex overflow-hidden rounded-lg border border-slate-200">
+            {{-- Groupe segmenté Tous / zones --}}
+            <div class="flex flex-wrap overflow-hidden rounded-lg border border-slate-200">
                 <button type="button" wire:click="resetFilters"
                     class="inline-flex h-10 items-center gap-1.5 border-r border-slate-200 px-4 text-xs font-semibold transition-colors
-                        {{ !$filterIsXof && !$filterIsXaf ? 'bg-slate-800 text-blue-800' : 'bg-white text-slate-500 hover:bg-slate-50' }}">
+                        {{ !$filterIsXof && !$filterIsXaf && !$filterIsCdf && !$filterIsGmd ? 'bg-slate-800 text-blue-800' : 'bg-white text-slate-500 hover:bg-slate-50' }}">
                     <svg class="h-3.5 w-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
                     </svg>
@@ -172,14 +186,26 @@
                     Zone XOF
                 </button>
                 <button type="button" wire:click="$set('filterIsXaf', {{ $filterIsXaf ? 'false' : 'true' }})"
-                    class="inline-flex h-10 items-center gap-1.5 px-4 text-xs font-semibold transition-colors
+                    class="inline-flex h-10 items-center gap-1.5 border-r border-slate-200 px-4 text-xs font-semibold transition-colors
                         {{ $filterIsXaf ? 'bg-blue-500 text-blue-800' : 'bg-white text-slate-500 hover:bg-blue-50 hover:text-blue-700' }}">
                     <span class="h-2 w-2 rounded-full {{ $filterIsXaf ? 'bg-white' : 'bg-blue-400' }}"></span>
                     Zone XAF
                 </button>
+                <button type="button" wire:click="$set('filterIsCdf', {{ $filterIsCdf ? 'false' : 'true' }})"
+                    class="inline-flex h-10 items-center gap-1.5 border-r border-slate-200 px-4 text-xs font-semibold transition-colors
+                        {{ $filterIsCdf ? 'bg-amber-500 text-blue-800' : 'bg-white text-slate-500 hover:bg-amber-50 hover:text-amber-700' }}">
+                    <span class="h-2 w-2 rounded-full {{ $filterIsCdf ? 'bg-white' : 'bg-amber-400' }}"></span>
+                    Zone CDF
+                </button>
+                <button type="button" wire:click="$set('filterIsGmd', {{ $filterIsGmd ? 'false' : 'true' }})"
+                    class="inline-flex h-10 items-center gap-1.5 px-4 text-xs font-semibold transition-colors
+                        {{ $filterIsGmd ? 'bg-rose-500 text-blue-800' : 'bg-white text-slate-500 hover:bg-rose-50 hover:text-rose-700' }}">
+                    <span class="h-2 w-2 rounded-full {{ $filterIsGmd ? 'bg-white' : 'bg-rose-400' }}"></span>
+                    Zone GMD
+                </button>
             </div>
 
-            @if($search !== '' || $filterCountryId !== '')
+            @if($search !== '' || $filterCountryId !== '' || $filterIsXof || $filterIsXaf || $filterIsCdf || $filterIsGmd)
                 <button type="button" wire:click="resetFilters"
                     class="btn btn-outline-secondary h-10 inline-flex shrink-0 items-center gap-2 text-xs">
                     <svg class="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -191,7 +217,7 @@
         </div>
 
         {{-- Barre résumé filtres actifs --}}
-        @if($search !== '' || $filterCountryId !== '' || $filterIsXof || $filterIsXaf)
+        @if($search !== '' || $filterCountryId !== '' || $filterIsXof || $filterIsXaf || $filterIsCdf || $filterIsGmd)
             <div class="flex flex-wrap items-center gap-2 border-t border-slate-100 bg-slate-50 px-4 py-4">
                 <span class="text-xs text-slate-400">Filtres actifs :</span>
 
@@ -240,6 +266,30 @@
                         <span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
                         Zone XAF
                         <button wire:click="$set('filterIsXaf', false)" class="ml-0.5 text-blue-400 hover:text-blue-700">
+                            <svg class="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </span>
+                @endif
+
+                @if($filterIsCdf)
+                    <span class="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                        <span class="h-1.5 w-1.5 rounded-full bg-amber-500"></span>
+                        Zone CDF
+                        <button wire:click="$set('filterIsCdf', false)" class="ml-0.5 text-amber-400 hover:text-amber-700">
+                            <svg class="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </span>
+                @endif
+
+                @if($filterIsGmd)
+                    <span class="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-semibold text-rose-700">
+                        <span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span>
+                        Zone GMD
+                        <button wire:click="$set('filterIsGmd', false)" class="ml-0.5 text-rose-400 hover:text-rose-700">
                             <svg class="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                             </svg>
@@ -325,7 +375,13 @@
                                     @if($item->is_xaf)
                                         <span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-700">XAF</span>
                                     @endif
-                                    @if(!$item->is_xof && !$item->is_xaf)
+                                    @if($item->is_cdf)
+                                        <span class="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">CDF</span>
+                                    @endif
+                                    @if($item->is_gmd)
+                                        <span class="inline-flex items-center rounded-full bg-rose-100 px-2.5 py-1 text-xs font-semibold text-rose-700">GMD</span>
+                                    @endif
+                                    @if(!$item->is_xof && !$item->is_xaf && !$item->is_cdf && !$item->is_gmd)
                                         <span class="text-xs text-slate-300">—</span>
                                     @endif
                                 </div>

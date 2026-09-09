@@ -123,7 +123,7 @@
         <div class="mb-1 flex items-center gap-2 mt-6 ml-6">
             <span class="h-5 w-1 rounded-full bg-indigo-500"></span>
             <span class="text-sm font-semibold text-slate-700">Zone monétaire</span>
-            <span class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500">Transfert Zone CFA</span>
+            <span class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500">Transfert Zone</span>
         </div>
         <p class="mb-4 mt-1 text-xs text-slate-400  ml-6">
             Un seul choix possible — activez la zone pour afficher ce service dans l'application mobile.
@@ -132,7 +132,7 @@
         <div class="grid grid-cols-12 gap-4  ml-6 mb-6">
 
             {{-- XOF --}}
-            <div class="col-span-12 lg:col-span-4">
+            <div class="col-span-12 md:col-span-6 xl:col-span-3">
                 <label class="form-label font-medium">
                     Zone XOF
                     <span class="ml-1 text-xs font-normal text-slate-400">UEMOA</span>
@@ -150,7 +150,7 @@
             </div>
 
             {{-- XAF --}}
-            <div class="col-span-12 lg:col-span-4">
+            <div class="col-span-12 md:col-span-6 xl:col-span-3">
                 <label class="form-label font-medium">
                     Zone XAF
                     <span class="ml-1 text-xs font-normal text-slate-400">CEMAC</span>
@@ -164,6 +164,42 @@
                 @enderror
                 <div class="alert {{ $isXaf ? 'alert-success' : 'alert-secondary' }} show mb-0 mt-3 py-2 text-xs" role="alert">
                     {{ $isXaf ? 'Actif — CM · CG · GA · CF · TD · GQ' : 'Inactif pour les pays XAF' }}
+                </div>
+            </div>
+
+            {{-- CDF --}}
+            <div class="col-span-12 md:col-span-6 xl:col-span-3">
+                <label class="form-label font-medium">
+                    Zone CDF
+                    <span class="ml-1 text-xs font-normal text-slate-400">RDC</span>
+                </label>
+                <div class="form-switch mt-2">
+                    <input id="switch_cdf" type="checkbox" wire:model="isCdf" class="form-check-input">
+                    <label class="input-switch-label" for="switch_cdf"></label>
+                </div>
+                @error('isCdf')
+                    <p class="mt-1 text-xs text-danger">{{ $message }}</p>
+                @enderror
+                <div class="alert {{ $isCdf ? 'alert-success' : 'alert-secondary' }} show mb-0 mt-3 py-2 text-xs" role="alert">
+                    {{ $isCdf ? 'Actif — CD' : 'Inactif pour les pays CDF' }}
+                </div>
+            </div>
+
+            {{-- GMD --}}
+            <div class="col-span-12 md:col-span-6 xl:col-span-3">
+                <label class="form-label font-medium">
+                    Zone GMD
+                    <span class="ml-1 text-xs font-normal text-slate-400">Gambie</span>
+                </label>
+                <div class="form-switch mt-2">
+                    <input id="switch_gmd" type="checkbox" wire:model="isGmd" class="form-check-input">
+                    <label class="input-switch-label" for="switch_gmd"></label>
+                </div>
+                @error('isGmd')
+                    <p class="mt-1 text-xs text-danger">{{ $message }}</p>
+                @enderror
+                <div class="alert {{ $isGmd ? 'alert-success' : 'alert-secondary' }} show mb-0 mt-3 py-2 text-xs" role="alert">
+                    {{ $isGmd ? 'Actif — GM' : 'Inactif pour les pays GMD' }}
                 </div>
             </div>
 

@@ -26,6 +26,8 @@ class PixelInnoveService extends Model
         'status' => 'boolean',
         'is_xof' => 'boolean',
         'is_xaf' => 'boolean',
+        'is_cdf' => 'boolean',
+        'is_gmd' => 'boolean',
     ];
 
     public function country()
