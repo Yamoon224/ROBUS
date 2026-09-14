@@ -23,6 +23,7 @@ use App\Http\Resources\UserSingleCollection;
 use App\Http\Resources\VirementSingleCollection;
 use App\Http\Resources\WalletSingleCollection;
 use App\Http\Resources\WaveSingleCollection;
+use App\Http\Resources\PixelMobileZoneSingleCollection;
 use App\Http\Services\AuthenticationService;
 use App\Http\Services\OperatorRestrictionService;
 use App\Http\Services\RobusTransactionService;
@@ -50,6 +51,7 @@ use App\Models\Wallets\WalletDjamo;
 use App\Models\Wallets\WalletTresortMoney;
 use App\Models\Wallets\WalletVersement;
 use App\Models\Wallets\WalletBankSend;
+use App\Models\PixelMobileZoneTransfer;
 use App\Models\Wallets\WalletXbet;
 use App\Models\WithMerchant;
 use App\Notifications\AdminNotification;
@@ -397,6 +399,10 @@ class UserController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate($perPage, ['*'], 'page', $page);
 
+        $mobileZoneTransfers = PixelMobileZoneTransfer::where('wallet_id', $wallet_solde->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+
         $walletOrderCarte = $this->transactionAccount->getTransactionsPaginatedWallet(BankCard::class, $wallet_solde->id, $page, $perPage);
 
 
@@ -447,6 +453,7 @@ class UserController extends Controller
         $dashboard_data['Commande de carte'] = $transformPaginate($walletOrderCarte, ReloadCartCollection::class);
         $dashboard_data['Transfers inter'] = $transformPaginate($walletInter, InterTransactionSingleCollection::class);
         $dashboard_data['Bank send'] = $transformPaginate($walletBankSend, WithBankSendSingleCollection::class);
+        $dashboard_data['Envoi Mobile Zone'] = $transformPaginate($mobileZoneTransfers, PixelMobileZoneSingleCollection::class);
 
         return response()->json([
             'success' => true,
