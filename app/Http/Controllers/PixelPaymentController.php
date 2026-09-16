@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Services\PercentRobusAuthService;
 use App\Http\Services\PixelInnovService;
+use App\Http\Services\OperatorRestrictionService;
 use App\Models\Costs\ReloadCost;
 use App\Models\Custumers\Country;
 use App\Models\LedgerEntry;
@@ -869,6 +870,62 @@ class PixelPaymentController extends Controller
         return is_array($metadata) ? $metadata : [];
     }
 
+    private function pixelInnovUnderCommission(WalletReload $reload, PixelInnoveService $pixelConfig, float $conversionRate = 1): array
+    {
+        $walletOwner = $reload->wallet?->sid_user_id
+            ? SidUser::with('wallet')->find($reload->wallet->sid_user_id)
+            : null;
+
+        if (!$walletOwner || !($walletOwner->is_under_distributer || $walletOwner->is_api)) {
+            return [null, 0.0, 0.0];
+        }
+
+        $activeCButtons = app(OperatorRestrictionService::class)->getActiveCButtons($walletOwner->id);
+        if (empty($activeCButtons['showRemonterPixelInnovCButton'])) {
+            return [$walletOwner, 0.0, 0.0];
+        }
+
+        $commissionPct = (float) ($pixelConfig->commission_under_pct ?? 0);
+        if ($commissionPct <= 0) {
+            return [$walletOwner, 0.0, 0.0];
+        }
+
+        $commission = round((float) $reload->amount * $commissionPct / 100, 2);
+
+        return [$walletOwner, $commission, round($commission * $conversionRate, 2)];
+    }
+
+    private function creditPixelInnovUnderCommission(
+        WalletReload $reload,
+        ?SidUser $walletOwner,
+        float $commission,
+        float $commissionConversion,
+        string $description
+    ): void {
+        if ($commission <= 0 || !$walletOwner?->wallet) {
+            return;
+        }
+
+        $walletOwner->wallet->increment('amount', $commissionConversion);
+        $reload->update(['commissions' => $commission]);
+
+        LedgerEntry::create([
+            'transaction_id' => (string) Str::uuid(),
+            'admin_com_id'   => null,
+            'debit'          => 0,
+            'credit'         => $commissionConversion,
+            'description'    => $description . ' #' . $reload->id,
+            'is_uv'          => true,
+        ]);
+
+        Log::info('Pixel Innov — commission sous-distributeur versée', [
+            'wallet_reload_id' => $reload->id,
+            'user_id'          => $walletOwner->id,
+            'amount'           => $commission,
+            'amount_conv'      => $commissionConversion,
+        ]);
+    }
+
     private function handleSuccess(WalletReload $reload, array $ipnData): void
     {
         $metadata      = $this->reloadMetadata($reload);
@@ -921,12 +978,17 @@ class PixelPaymentController extends Controller
             $amountCommissionConversion = $totalCommission;
             $amountCommissionAdminConversion = $totalAdminCommission;
             $amountCommissionBanqueConversion = $totalBanqueCommission;
+            $conversionRate = 1;
         } else {
             $amountTotalConversion      = $benefice * (float) $robusCurrency;
             $amountCommissionConversion = $totalCommission * (float) $robusCurrency;
             $amountCommissionAdminConversion = $totalAdminCommission * (float) $robusCurrency;
             $amountCommissionBanqueConversion = $totalBanqueCommission * (float) $robusCurrency;
+            $conversionRate = (float) $robusCurrency;
         }
+
+        [$walletOwner, $underCommission, $underCommissionConversion] = $this->pixelInnovUnderCommission($reload, $pixelConfig, $conversionRate);
+        $amountCommissionAdminConversion = max(0, $amountCommissionAdminConversion - $underCommissionConversion);
 
         $reload->update([
             'status'           => 'SUCCESS',
@@ -942,6 +1004,7 @@ class PixelPaymentController extends Controller
             'cost_conversion'  => $amountCommissionConversion,
             'amount_conversion' => $amountTotalConversion,
             'amount_received'  => $amountReceived,
+            'commissions'      => $underCommission,
             'balance_before'  => $reload->amount_solde - ($reload->amount + $reload->fees),
             'reload_cost_id'   => $reload->reload_cost_id,
         ]);
@@ -989,6 +1052,13 @@ class PixelPaymentController extends Controller
             $adminSingle->wallet->increment('amount', $amountTotalConversion);
         }
 
+        $this->creditPixelInnovUnderCommission(
+            $reload,
+            $walletOwner,
+            $underCommission,
+            $underCommissionConversion,
+            'Commission sous-distributeur Pixel Innov Cash In'
+        );
 
         Log::info('Pixel Innov — Cash In SUCCESS (mobile money crédité)', [
             'transaction_id' => $ipnData['transaction_id'] ?? null,
@@ -1048,14 +1118,19 @@ class PixelPaymentController extends Controller
         if ($countryCiv && $countryCiv->currencie->value == $wallet->country->currencie->value) {
             $amountTotalConversion      = $benefice;
             $amountCommissionConversion = $totalCommission;
+            $conversionRate = 1;
         } else {
             $amountTotalConversion      = $benefice * (float) $robusCurrency;
             $amountCommissionConversion = $totalCommission * (float) $robusCurrency;
+            $conversionRate = (float) $robusCurrency;
         }
 
         if ($amountTotalConversion <= 0) {
             throw new \Exception('Montant final invalide');
         }
+
+        [$walletOwner, $underCommission, $underCommissionConversion] = $this->pixelInnovUnderCommission($reload, $pixelConfig, $conversionRate);
+        $amountCommissionConversion = max(0, $amountCommissionConversion - $underCommissionConversion);
 
         $reload->update([
             'status'           => 'SUCCESS',
@@ -1081,6 +1156,7 @@ class PixelPaymentController extends Controller
             'costs_amount'     => $totalCommission,
             'cost_conversion'  => $amountCommissionConversion,
             'amount_conversion' => $amountTotalConversion,
+            'commissions'      => $underCommission,
         ]);
 
         PaymentReload::create([
@@ -1117,6 +1193,14 @@ class PixelPaymentController extends Controller
         ]);
 
         $walletAdmin->increment('amount', $amountCommissionConversion);
+
+        $this->creditPixelInnovUnderCommission(
+            $reload,
+            $walletOwner,
+            $underCommission,
+            $underCommissionConversion,
+            'Commission sous-distributeur Pixel Innov Achat UV'
+        );
 
         LedgerEntry::create([
             'transaction_id' => (string) Str::uuid(),

@@ -142,6 +142,7 @@ class ProviderController extends Controller
                     'RETRAIT XBETS' => 'showXbetsRetraitButton',
                     '1XBET' => 'showXbetsButton',
                     'VERSEMENT' => 'showVersementButton',
+                    'PIXEL INNOV' => 'showPixelButton',
                 ];
 
                 $activeButtons = [];
@@ -242,6 +243,8 @@ class ProviderController extends Controller
                     }
                 }
                 $zoneProviders = ProvidersService::getPixelInnovZoneProviders($countrieId);
+                $canShowPixelInnov = !(robus()->is_under_distributer || robus()->is_api)
+                    || !empty($activeButtons['showPixelButton']);
                 
                 // 4️⃣ Construire le dashboard de manière dynamique
                 if (robus()->is_under_distributer || robus()->is_api) {
@@ -282,9 +285,13 @@ class ProviderController extends Controller
                             $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($providers['reloadCard']);
                         }
                         if (!empty($activeButtons['showMoneyButton'])) {
+                            $moneyProviders = !empty($activeButtons['showPixelButton'])
+                                ? $providers['money']
+                                : $providers['money']->filter(fn($provider) => empty($provider->pixel_service_id))->values();
+
                             $dashboard_data['Transfert national'] = [
                                 "Dépôts" => !empty($activeButtons['showDepotButton']) ? ProviderSingleCollection::collection($providers['depot']) : [],
-                                "Mobile Money" => !empty($activeButtons['showMobileButton']) ? ProviderSingleCollection::collection($providers['money']) : [],
+                                "Mobile Money" => !empty($activeButtons['showMobileButton']) ? ProviderSingleCollection::collection($moneyProviders) : [],
                                 "Tresort Money" => !empty($activeButtons['showTresortButton']) ? ProviderSingleCollection::collection($providers['tresort']) : [],
                             ];
                         }
@@ -349,7 +356,7 @@ class ProviderController extends Controller
                     }
                 }
 
-                if ($zoneProviders->isNotEmpty()) {
+                if ($canShowPixelInnov && $zoneProviders->isNotEmpty()) {
                     $dashboard_data['Transfert mobile Zone'] = ProviderSingleCollection::collection($zoneProviders);
                 }
 

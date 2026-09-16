@@ -20,6 +20,7 @@ use App\Models\Wallets\WalletPush;
 use App\Models\Wallets\WalletBankSend;
 use App\Models\Wallets\WalletTresortMoney;
 use App\Models\Wallets\WalletVersement;
+use App\Models\PixelMobileZoneTransfer;
 
 class HistoricalController extends Controller
 {
@@ -289,6 +290,64 @@ class HistoricalController extends Controller
             viewPath: 'pages.historicals.transactionsDays.pdf_tresort_transactions',
             fileName: 'reporting_tresort_money.pdf',
         );
+    }
+
+    public function reporting_pixel_mobile_zone_historical()
+    {
+        $walletUser = Auth::guard('web')->user();
+        $today = Carbon::now()->toDateString();
+
+        $query = PixelMobileZoneTransfer::with([
+            'senderService.provider',
+            'senderService.country',
+            'recipientService.provider',
+            'recipientService.country',
+            'wallet.sidUser.country',
+            'wallet.sidUser.city',
+        ])
+            ->join('wallets', 'pixel_mobile_zone_transfers.wallet_id', '=', 'wallets.id')
+            ->whereDate('pixel_mobile_zone_transfers.created_at', $today)
+            ->when($walletUser->is_under_distributer || $walletUser->is_api, function ($query) use ($walletUser) {
+                return $query->where('wallets.sid_user_id', $walletUser->id);
+            })
+            ->when($walletUser->is_distributer, function ($query) use ($walletUser) {
+                return $query->whereHas('wallet.sidUser', function ($userQuery) use ($walletUser) {
+                    $userQuery->where('distributer_id', $walletUser->id);
+                });
+            })
+            ->when($walletUser->is_com_zone, function ($query) use ($walletUser) {
+                return $query->whereIn('wallets.sid_user_id', function ($subQuery) use ($walletUser) {
+                    $subQuery->select('id')
+                        ->from('sid_users')
+                        ->where('com_zone_id', $walletUser->id);
+                });
+            });
+
+        $pixel_mobile_zone_historicals = (clone $query)
+            ->select('pixel_mobile_zone_transfers.*')
+            ->orderBy('pixel_mobile_zone_transfers.created_at', 'desc')
+            ->get();
+
+        $account_penddings = (clone $query)
+            ->whereIn('pixel_mobile_zone_transfers.status', ['PENDING', 'PROCESSING'])
+            ->count();
+        $account_success = (clone $query)
+            ->where('pixel_mobile_zone_transfers.status', 'SUCCESS')
+            ->count();
+        $account_errors = (clone $query)
+            ->whereIn('pixel_mobile_zone_transfers.status', ['FAILED', 'ERROR', 'REFUNDED'])
+            ->count();
+        $totalAmount = (clone $query)->sum('pixel_mobile_zone_transfers.amount');
+
+        $pdf = Pdf::loadView('pages.historicals.pdf_pixel_mobile_zone', compact(
+            'pixel_mobile_zone_historicals',
+            'account_penddings',
+            'account_success',
+            'account_errors',
+            'totalAmount'
+        ))->setOptions(['defaultFont' => 'sans-serif']);
+
+        return $pdf->download('reporting_pixel_mobile_zone.pdf');
     }
 
     public function reporting_transfer_historical_company()

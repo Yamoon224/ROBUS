@@ -460,6 +460,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('djamos/reporting_djamo_historical', [HistoricalController::class, 'reporting_djamo_historical'])->name('djamos.historical.reporting_djamo_historical');
             Route::get('banksends/reporting_banksend_historical', [HistoricalController::class, 'reporting_banksend_historical'])->name('bankSends.historical.reporting_bankSend_historical');
             Route::get('tresort_money/reporting_tresort_historical', [HistoricalController::class, 'reporting_tresort_historical'])->name('tresort_money.historical.reporting_tresort_historical');
+            Route::get('pixel_mobile_zone/reporting_pixel_mobile_zone_historical', [HistoricalController::class, 'reporting_pixel_mobile_zone_historical'])->name('pixel-mobile-zone.historical.reporting_pixel_mobile_zone_historical');
 
             Route::get('/inters_historical', [HistoricalController::class, 'browse_inter'])->name('inters.historical');
             Route::get('/cartes_historical', [HistoricalController::class, 'browse_carte'])->name('cartes.historical');

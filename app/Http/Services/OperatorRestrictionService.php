@@ -26,6 +26,7 @@ class OperatorRestrictionService
         'Active Tresort Money' => 'showRemonterTresortButton',
         'Active Retrait Xbet' => 'showRemonterXbetDrawalButton',
         'Active Versements' => 'showRemonterVersementButton',
+        'Active Pixel Innov' => 'showRemonterPixelButton',
     ];
 
     protected $restrictionCMap = [
@@ -47,6 +48,7 @@ class OperatorRestrictionService
         'Active Retrait Xbet' => 'showRemonterXbetDrawalCButton',
         'Active Wave' => 'showRemonterWaveCButton',
         'Active Versements' => 'showRemonterVersementCButton',
+        'Active Pixel Innov' => 'showRemonterPixelInnovCButton',
     ];
 
 

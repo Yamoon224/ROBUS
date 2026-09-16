@@ -3,6 +3,14 @@
     {{-- ── En-tête de page ── --}}
     <div class="intro-y block sm:flex items-center h-10">
         <h2 class="text-lg font-medium truncate mr-5">Historique Transferts Mobile Zone</h2>
+        <div class="flex items-center sm:ml-auto mt-3 sm:mt-0">
+            <a class="ml-3 flex items-center text-slate-600 dark:text-slate-300 btn btn-primary mr-1 mb-2"
+                href="{{ route('pixel-mobile-zone.historical.reporting_pixel_mobile_zone_historical') }}"
+                style="color: white;">
+                <i data-lucide="file-text" class="hidden sm:block w-4 h-4 mr-2"></i>
+                Telecharger le rapport
+            </a>
+        </div>
     </div>
 
     {{-- ── Cartes statistiques ── --}}
@@ -359,7 +367,7 @@
                                                         </div>
                                                     @elseif ($transfer->status === 'REFUNDED')
                                                         <div class="flex items-center justify-center mt-3">
-                                                            <span class="inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-white  text-indigo-100 bg-indigo-500 rounded">
+                                                            <span class="alert alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded" style="color: white;">
                                                                 Remboursé
                                                             </span>
                                                         </div>

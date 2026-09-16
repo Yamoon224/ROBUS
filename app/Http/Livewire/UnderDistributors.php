@@ -49,7 +49,31 @@ class UnderDistributors extends Component
 
     public function mount()
     {
+        $this->ensurePixelInnovCommissionOperator();
         $this->countries = Country::orderBy('name')->get();
+    }
+
+    private function ensurePixelInnovCommissionOperator(): void
+    {
+        Operator::withTrashed()->updateOrCreate(
+            ['name' => 'Active Pixel Innov'],
+            [
+                'status' => true,
+                'is_commission' => true,
+                'is_under' => false,
+                'deleted_at' => null,
+            ]
+        );
+
+        Operator::withTrashed()->updateOrCreate(
+            ['name' => 'PIXEL INNOV'],
+            [
+                'status' => true,
+                'is_commission' => false,
+                'is_under' => true,
+                'deleted_at' => null,
+            ]
+        );
     }
 
     public function updating($propertyName)
@@ -152,6 +176,7 @@ class UnderDistributors extends Component
     public function activeAll()
     {
 
+        $this->ensurePixelInnovCommissionOperator();
         OperatorService::truncate();
         $utilisateurs = SidUser::where('is_under_distributer', true)->get();
         $operations = Operator::whereIsCommission(true)->get();
@@ -169,6 +194,7 @@ class UnderDistributors extends Component
     public function activeAllOPerators()
     {
 
+        $this->ensurePixelInnovCommissionOperator();
 
         $utilisateurs = SidUser::where('is_under_distributer', true)->get();
         $operations = Operator::whereIsUnder(true)->get();
@@ -539,6 +565,8 @@ class UnderDistributors extends Component
 
     public function render()
     {
+        $this->ensurePixelInnovCommissionOperator();
+
         $usersQuery = SidUser::where('is_under_distributer', true)->withCount('publicReviews');
         $queryComzone = SidUser::where('is_com_zone', true);
 
