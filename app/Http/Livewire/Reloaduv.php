@@ -1276,7 +1276,10 @@ class Reloaduv extends Component
                 )
                     ->orWhere("wallet_reloads.amount", "like",  "%" . $this->searchRealod . "%")
                     ->orWhere("wallet_reloads.phone", "like",  "%" . $this->searchRealod . "%")
-                    ->orWhere("wallet_reloads.account_wallet", "like",  "%" . $this->searchRealod . "%");
+                    ->orWhere("wallet_reloads.account_wallet", "like",  "%" . $this->searchRealod . "%")
+                    ->orWhere("wallet_reloads.reference", "like",  "%" . $this->searchRealod . "%")
+                    ->orWhere("wallet_reloads.payment_method", "like",  "%" . $this->searchRealod . "%")
+                    ->orWhere("wallet_reloads.metadata", "like",  "%" . $this->searchRealod . "%");
             }
 
             if ($this->searchRealodAcompte != "") {
@@ -1370,7 +1373,10 @@ class Reloaduv extends Component
                 )
                     ->orWhere("wallet_reloads.amount", "like",  "%" . $this->searchRealod . "%")
                     ->orWhere("wallet_reloads.phone", "like",  "%" . $this->searchRealod . "%")
-                    ->orWhere("wallet_reloads.account_wallet", "like",  "%" . $this->searchRealod . "%");
+                    ->orWhere("wallet_reloads.account_wallet", "like",  "%" . $this->searchRealod . "%")
+                    ->orWhere("wallet_reloads.reference", "like",  "%" . $this->searchRealod . "%")
+                    ->orWhere("wallet_reloads.payment_method", "like",  "%" . $this->searchRealod . "%")
+                    ->orWhere("wallet_reloads.metadata", "like",  "%" . $this->searchRealod . "%");
 
 
                 // $this->emit('menu-reload-active');

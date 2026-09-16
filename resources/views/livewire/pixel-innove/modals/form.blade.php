@@ -2,11 +2,11 @@
 
     {{-- ── Section Référentiel ─────────────────────────────────────────── --}}
     <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-        <div class="mb-3 flex items-center gap-2">
+        <div class="mb-3 flex items-center gap-2 mt-3">
             <span class="h-5 w-1 rounded-full bg-primary"></span>
             <span class="text-sm font-semibold text-slate-700">Référentiel</span>
         </div>
-        <div class="grid grid-cols-12 gap-3">
+        <div class="grid grid-cols-12 gap-3 ml-3 mr-3 mb-3">
 
             {{-- Pays --}}
             <div class="col-span-12 md:col-span-4">
@@ -60,12 +60,12 @@
     </div>
 
     {{-- ── Section Paramètres Pixel ─────────────────────────────────────── --}}
-    <div class="rounded-xl border border-slate-200 p-4">
+    <div class="rounded-xl border border-slate-200 p-4 mt-3 mb-3">
         <div class="mb-3 flex items-center gap-2">
             <span class="h-5 w-1 rounded-full bg-warning"></span>
             <span class="text-sm font-semibold text-slate-700">Paramètres Pixel</span>
         </div>
-        <div class="grid grid-cols-12 gap-3">
+        <div class="grid grid-cols-12 gap-3 ml-3 mr-3 mb-3">
 
             <div class="col-span-12 md:col-span-3">
                 <label class="form-label text-xs font-medium text-slate-600">
@@ -113,6 +113,55 @@
                 @error('commissionPercent')
                 <p class="mt-1 text-xs text-danger">{{ $message }}</p>
                 @enderror
+            </div>
+
+        </div>
+    </div>
+
+    {{-- ── Section Commissions Mobile Zone ───────────────────────────────── --}}
+    <div class="rounded-xl border border-slate-200 p-4 mt-3 mb-3">
+        <div class="mb-3 flex items-center gap-2 mr-3 ml-3 mt-3 mb-3">
+            <span class="h-5 w-1 rounded-full bg-success"></span>
+            <span class="text-sm font-semibold text-slate-700">Commissions Mobile Zone</span>
+            <span class="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500">optionnel</span>
+        </div>
+        <p class="mb-3 text-xs text-slate-400 mr-3 ml-3">
+            Appliquées uniquement lors des Transferts Mobile Zone. Prélevées sur la commission admin.
+        </p>
+        <div class="grid grid-cols-12 gap-3 mr-3 ml-3 mb-3">
+
+            <div class="col-span-12 md:col-span-6">
+                <label class="form-label text-xs font-medium text-slate-600">
+                    Commission Sous-distributeur
+                </label>
+                <div class="input-group">
+                    <input wire:model.defer="commissionUnderPct" type="number" step="0.01" min="0" max="100"
+                        class="form-control" placeholder="0">
+                    <div class="input-group-text text-xs text-slate-500">%</div>
+                </div>
+                @error('commissionUnderPct')
+                    <p class="mt-1 text-xs text-danger">{{ $message }}</p>
+                @enderror
+                <p class="mt-1 text-xs text-slate-400">
+                    % du montant envoyé versé au sous-distributeur expéditeur
+                </p>
+            </div>
+
+            <div class="col-span-12 md:col-span-6">
+                <label class="form-label text-xs font-medium text-slate-600">
+                    Commission Compagnie
+                </label>
+                <div class="input-group">
+                    <input wire:model.defer="commissionCompaniePct" type="number" step="0.01" min="0" max="100"
+                        class="form-control" placeholder="0">
+                    <div class="input-group-text text-xs text-slate-500">%</div>
+                </div>
+                @error('commissionCompaniePct')
+                    <p class="mt-1 text-xs text-danger">{{ $message }}</p>
+                @enderror
+                <p class="mt-1 text-xs text-slate-400">
+                    % du montant envoyé versé à la compagnie de l'expéditeur
+                </p>
             </div>
 
         </div>

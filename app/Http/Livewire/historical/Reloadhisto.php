@@ -50,7 +50,10 @@ class Reloadhisto extends Component
             })
                 ->orWhere('amount', 'like', '%' . $this->searchRealodHistorical . '%')
                 ->orWhere('phone', 'like', '%' . $this->searchRealodHistorical . '%')
-                ->orWhere('account_wallet', 'like', '%' . $this->searchRealodHistorical . '%');
+                ->orWhere('account_wallet', 'like', '%' . $this->searchRealodHistorical . '%')
+                ->orWhere('reference', 'like', '%' . $this->searchRealodHistorical . '%')
+                ->orWhere('payment_method', 'like', '%' . $this->searchRealodHistorical . '%')
+                ->orWhere('metadata', 'like', '%' . $this->searchRealodHistorical . '%');
         }
 
         // Filtre par statut

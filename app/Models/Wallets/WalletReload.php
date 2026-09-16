@@ -33,6 +33,7 @@ class WalletReload extends Model
     protected $casts = [
         'provider_id' => "integer",
         'reload_cost_id' => "integer",
+        'metadata' => 'array',
         // 'created_at' => 'datetime:d-m-Y H:i:s',
         'deleted_at' => 'datetime:d-m-Y H:i:s',
         'updated_at' => 'datetime:d-m-Y H:i:s',
@@ -81,6 +82,15 @@ class WalletReload extends Model
     {
         return $this->belongsTo(ReloadCost::class, 'reload_cost_id', 'id')->withTrashed();
     }
+
+    public function isPixelInnov()
+    {
+        $metadata = $this->metadata;
+
+        return str_starts_with((string) $this->payment_method, 'pixel_innov_')
+            || (is_array($metadata) && !empty($metadata['pixel_service_id']));
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->useLogName('Robus');

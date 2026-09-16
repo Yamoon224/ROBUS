@@ -1,6 +1,6 @@
 <div wire:ignore.self id="create-pixel-innove-modal" class="modal hide" data-tw-backdrop="static"
     style="margin-top: 0px; margin-left: 0px; padding-left: 0px; z-index: 10000;">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-xl modal-scrollable">
         <div class="modal-content">
 
             <div class="modal-header border-b border-slate-100 px-6 py-4">
@@ -15,7 +15,7 @@
                 </div>
             </div>
 
-            <div class="modal-body px-6 py-5">
+            <div class="modal-body px-6 py-5" style="max-height: 75vh; overflow-y: auto;">
                 @include('livewire.pixel-innove.modals.form')
             </div>
 

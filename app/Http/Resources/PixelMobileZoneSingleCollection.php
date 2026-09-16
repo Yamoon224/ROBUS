@@ -25,7 +25,9 @@ class PixelMobileZoneSingleCollection extends JsonResource
             'sender_fee'               => number_format((float) $this->sender_fee, 2, '.', ''),
             'recipient_fee'            => number_format((float) $this->recipient_fee, 2, '.', ''),
             'total_fee'                => number_format((float) $this->total_fee, 2, '.', ''),
-            'currency'                 => $this->currency ?? 'XOF',
+            'currency'                 => $this->sender_currency ?? $this->currency ?? 'XOF',
+            'sender_currency'          => $this->sender_currency ?? $this->currency ?? 'XOF',
+            'recipient_currency'       => $this->recipient_currency ?? $this->currency ?? 'XOF',
 
             // Expéditeur
             'sender_phone'             => $this->sender_phone,
@@ -54,6 +56,14 @@ class PixelMobileZoneSingleCollection extends JsonResource
                 : null,
             'pixel_wallet_after'       => $this->pixel_wallet_after !== null
                 ? number_format((float) $this->pixel_wallet_after, 2, '.', '') . ' ' . ($this->currency ?? 'XOF')
+                : null,
+
+            // Commissions sous-distributeur / compagnie
+            'commissions'              => $this->commissions !== null
+                ? number_format((float) $this->commissions, 2, '.', '')
+                : null,
+            'commission_companie'      => $this->commission_companie !== null
+                ? number_format((float) $this->commission_companie, 2, '.', '')
                 : null,
 
             // Remboursement

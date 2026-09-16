@@ -27,6 +27,7 @@
                             djamo="{{ json_encode($sum_djamo) }}" 
                             versment="{{ json_encode($sum_versment) }}"
                             bankSend="{{ json_encode($sum_bankSend) }}"
+                            mobileZone="{{ json_encode($sum_mobile_zone) }}"
                             tresort="{{ json_encode($sum_tresortMoney) }}"></canvas>
 
                     </div>
@@ -629,6 +630,43 @@
                         </div>
                     </div>
                 @endif
+                @if ($showPixelMobileZoneButton)
+                    <div class="col-span-12 md:col-span-6 lg:col-span-4 mt-1">
+                        <div class="intro-y box p-5 mt-12 sm:mt-5 ">
+                            <div
+                                class="flex text-slate-500 border-b border-slate-200 dark:border-darkmode-300 border-dashed pb-3 mb-3">
+                                <div>Transfert Mobile Zone</div>
+                                <div class="ml-auto">Date</div>
+                            </div>
+                            @foreach ($Pixel_Mobile_Zone_last as $transfer)
+                                <div class="flex items-center mb-5">
+                                    <div class="flex items-center">
+                                        <div>
+                                            {{ $transfer->senderService->provider->name ?? '-' }}
+                                            ->
+                                            {{ $transfer->recipientService->provider->name ?? '-' }}
+                                        </div>
+                                    </div>
+                                    <div class="ml-auto">{{ $transfer->created_at ?? null }}</div>
+                                </div>
+                            @endforeach
+                            <a href="{{ route('pixel-mobile-zone.historical') }}"
+                                class="btn btn-outline-secondary text-black w-full border-slate-300 border-dashed relative justify-start mb-2">
+                                <span class="truncate mr-5 text-black">Voir plus</span>
+                                <span
+                                    class="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" icon-name="arrow-right"
+                                        data-lucide="arrow-right" class="lucide lucide-arrow-right w-4 h-4">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
+                                    </svg>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                @endif
             @else
                 <div class="col-span-12 md:col-span-6 lg:col-span-4 " style="background-color: #ff0000; color:white;">
 
@@ -1118,6 +1156,42 @@
                         </a>
                     </div>
                 </div>
+
+                <div class="col-span-12 md:col-span-6 lg:col-span-4 mt-1">
+                    <div class="intro-y box p-5 mt-12 sm:mt-5 ">
+                        <div
+                            class="flex text-slate-500 border-b border-slate-200 dark:border-darkmode-300 border-dashed pb-3 mb-3">
+                            <div>Transfert Mobile Zone</div>
+                            <div class="ml-auto">Date</div>
+                        </div>
+                        @foreach ($Pixel_Mobile_Zone_last as $transfer)
+                            <div class="flex items-center mb-5">
+                                <div class="flex items-center">
+                                    <div>
+                                        {{ $transfer->senderService->provider->name ?? '-' }}
+                                        ->
+                                        {{ $transfer->recipientService->provider->name ?? '-' }}
+                                    </div>
+                                </div>
+                                <div class="ml-auto">{{ $transfer->created_at ?? null }}</div>
+                            </div>
+                        @endforeach
+                        <a href="{{ route('pixel-mobile-zone.historical') }}"
+                            class="btn btn-outline-secondary text-black w-full border-slate-300 border-dashed relative justify-start mb-2">
+                            <span class="truncate mr-5 text-black">Voir plus</span>
+                            <span
+                                class="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" icon-name="arrow-right"
+                                    data-lucide="arrow-right" class="lucide lucide-arrow-right w-4 h-4">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </span>
+                        </a>
+                    </div>
+                </div>
             @endif
 
         </div>
@@ -1138,6 +1212,7 @@
             var sumVersment = JSON.parse($('#sum').attr('versment'));
             var sumBankSend = JSON.parse($('#sum').attr('bankSend'));
             var sumTresort = JSON.parse($('#sum').attr('tresort'));
+            var sumMobileZone = JSON.parse($('#sum').attr('mobileZone'));
             var _ctx = $('#sum');
 
             new Chart(_ctx, {
@@ -1157,13 +1232,14 @@
                         'Versement',
                         'Tresort',
                         'Bank Send',
+                        'Mobile Zone',
                     ],
                     datasets: [{
 
                         label: 'Activites',
                         data: [sumVirement, sumDeposit, sumPayment, sumReload,
                             sumTransaction, sumInter, sumPhone, sumXbet, sumPush, sumDjamo, sumVersment,
-                            sumTresort , sumBankSend
+                            sumTresort , sumBankSend, sumMobileZone
                         ],
                         backgroundColor: [
                             '#84cc17', // ✅ sumVirement → vert clair
@@ -1179,6 +1255,7 @@
                             '#a855f7', // ✅ sumVersment → mauve clair
                             '#0ea5e9' ,// ✅ sumTresort → bleu ciel
                             '#a855f7', // ✅ sumVersment → mauve clair
+                            '#22c55e',
 
                         ],
                         borderColor: [
@@ -1195,6 +1272,7 @@
                             '#a855f7', // ✅ sumVersment → mauve clair
                             '#0ea5e9', // ✅ sumTresort → bleu ciel
                             '#a855f7', // ✅ sumVersment → mauve clair
+                            '#22c55e',
                         ],
                         borderWidth: 1,
                     }]

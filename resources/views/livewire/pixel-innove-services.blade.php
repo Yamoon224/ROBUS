@@ -317,6 +317,8 @@
                         <th class="whitespace-nowrap px-5 py-4 text-center">Zone</th>
                         <th class="whitespace-nowrap px-5 py-4 text-right">Frais fixe</th>
                         <th class="whitespace-nowrap px-5 py-4 text-right">Commission</th>
+                        <th class="whitespace-nowrap px-5 py-4 text-right">Ss-dist.</th>
+                        <th class="whitespace-nowrap px-5 py-4 text-right">Compagnie</th>
                         <th class="whitespace-nowrap px-5 py-4 text-center">Statut</th>
                         <th class="whitespace-nowrap px-5 py-4 text-right">Actions</th>
                     </tr>
@@ -395,6 +397,22 @@
                                 <span class="font-semibold text-primary">{{ number_format((float) $item->commission_percent, 2, ',', ' ') }} %</span>
                             </td>
 
+                            <td class="px-5 py-4 text-right align-middle text-sm">
+                                @if((float) ($item->commission_under_pct ?? 0) > 0)
+                                    <span class="font-medium text-success">{{ number_format((float) $item->commission_under_pct, 2, ',', ' ') }} %</span>
+                                @else
+                                    <span class="text-slate-300">—</span>
+                                @endif
+                            </td>
+
+                            <td class="px-5 py-4 text-right align-middle text-sm">
+                                @if((float) ($item->commission_companie_pct ?? 0) > 0)
+                                    <span class="font-medium text-warning">{{ number_format((float) $item->commission_companie_pct, 2, ',', ' ') }} %</span>
+                                @else
+                                    <span class="text-slate-300">—</span>
+                                @endif
+                            </td>
+
                             <td class="px-5 py-4 text-center align-middle">
                                 <button
                                     type="button"
@@ -433,7 +451,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="px-5 py-14 text-center">
+                            <td colspan="11" class="px-5 py-14 text-center">
                                 <div class="mx-auto flex max-w-sm flex-col items-center">
                                     <div class="flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-slate-400">
                                         <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

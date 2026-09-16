@@ -18,6 +18,7 @@ use App\Models\Wallets\WalletDjamo;
 use App\Models\Wallets\WalletBankSend;
 use App\Models\Wallets\WalletTresortMoney;
 use App\Models\WithMerchant;
+use App\Models\PixelMobileZoneTransfer;
 use Illuminate\Support\Carbon;
 use Livewire\Component;
 use App\Models\OperatorService;
@@ -50,6 +51,7 @@ class Historique extends Component
     public $showTresortMoneyButton = false;
     public $showBankSendButton= false;
     public $showWaveButton = false;
+    public $showPixelMobileZoneButton = false;
     public $operators;
     public $operatorsCompagnie;
     public $operatorsTransaction;
@@ -94,6 +96,7 @@ class Historique extends Component
             'Historiques Push' => 'showPushButton',
             'Historiques Bank send' => 'showBankSendButton',
             'Historiques Tresort Money' => 'showTresortMoneyButton',
+            'Historiques Mobile Zone' => 'showPixelMobileZoneButton',
         ];
 
         foreach ($this->operatorsTransaction as $operator) {
@@ -168,6 +171,11 @@ class Historique extends Component
         $djamo_padding = app(HistoriqueService::class)->getTransactionCountHisto(WalletDjamo::class, 'PENDING', 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by', 'wallet_djamos.status',  'wallet_djamos.is_web', false);
         $djamo_success = app(HistoriqueService::class)->getTransactionCountHisto(WalletDjamo::class, 'SUCCESS',  'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by', 'wallet_djamos.status',  'wallet_djamos.is_web', false);
 
+        $pixelMobileZoneQuery = $this->pixelMobileZoneBaseQuery();
+        $pixel_mobile_zone_error = (clone $pixelMobileZoneQuery)->whereIn('pixel_mobile_zone_transfers.status', ['FAILED', 'ERROR', 'REFUNDED'])->count();
+        $pixel_mobile_zone_padding = (clone $pixelMobileZoneQuery)->whereIn('pixel_mobile_zone_transfers.status', ['PENDING', 'PROCESSING'])->count();
+        $pixel_mobile_zone_success = (clone $pixelMobileZoneQuery)->where('pixel_mobile_zone_transfers.status', 'SUCCESS')->count();
+
         // Amount transactions days
         $payement_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount',  'wallet_payments.is_web', false);
         $transaction_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount',  'wallet_transactions.is_web', false);
@@ -184,15 +192,19 @@ class Historique extends Component
         $versement_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletVersement::class, 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by',  'wallet_versements.status',  'wallet_versements.amount',  'wallet_versements.is_web', false);
         $djamo_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletDjamo::class, 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by',  'wallet_djamos.status',  'wallet_djamos.amount',  'wallet_djamos.is_web', false);
         $bankSend_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletBankSend::class, 'wallet_bank_sends.wallet_id', 'wallet_bank_sends.created_at', 'wallet_bank_sends.updated_by',  'wallet_bank_sends.status',  'wallet_bank_sends.amount',  'wallet_bank_sends.is_web', false);
+        $pixel_mobile_zone_amount = (clone $pixelMobileZoneQuery)
+            ->whereDate('pixel_mobile_zone_transfers.created_at', Carbon::today())
+            ->where('pixel_mobile_zone_transfers.status', 'SUCCESS')
+            ->sum('pixel_mobile_zone_transfers.amount');
 
 
 
         return view('livewire.historique', [
 
             'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
-            'sum_error' => $payment_error  + $transaction_error + $bank_error  +  $deposit_error +  $reload_error + $phone_credit_error +   $inter_error + $xbet_error + $push_error + $versment_error + $tresort_error + $djamo_error  + $bank_send_error,
-            'sum_success' => $payment_success  + $transaction_success + $bank_success  +  $deposit_success +  $reload_success + $phone_credit_success +   $inter_success +  $xbet_success + $push_success + $versement_success + $tresort_success + $djamo_success  + $bank_send_success,
-            'pending_success' => $payment_padding  + $transaction_padding + $bank_padding  +  $deposit_padding +  $reload_padding + $phone_credit_padding +   $inter_padding  + $xbet_padding + $push_padding + $tresort_padding + $djamo_padding + $versement_padding  + $bank_send_padding,
+            'sum_error' => $payment_error  + $transaction_error + $bank_error  +  $deposit_error +  $reload_error + $phone_credit_error +   $inter_error + $xbet_error + $push_error + $versment_error + $tresort_error + $djamo_error  + $bank_send_error + $pixel_mobile_zone_error,
+            'sum_success' => $payment_success  + $transaction_success + $bank_success  +  $deposit_success +  $reload_success + $phone_credit_success +   $inter_success +  $xbet_success + $push_success + $versement_success + $tresort_success + $djamo_success  + $bank_send_success + $pixel_mobile_zone_success,
+            'pending_success' => $payment_padding  + $transaction_padding + $bank_padding  +  $deposit_padding +  $reload_padding + $phone_credit_padding +   $inter_padding  + $xbet_padding + $push_padding + $tresort_padding + $djamo_padding + $versement_padding  + $bank_send_padding + $pixel_mobile_zone_padding,
             'wallet_Banks_last' => WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
                 ->where('wallet_banks.is_web', false)
                 ->when(sabdy()->is_admin, function ($query) {
@@ -421,6 +433,18 @@ class Historique extends Component
                 ->when(sabdy()->is_com_zone, fn ($query) => $this->scopeComZoneLinkedUsers($query))
                 ->select('wallet_djamos.*')->limit(5)->orderBy('wallet_djamos.created_at', 'desc')->get(),
 
+            'Pixel_Mobile_Zone_last' => (clone $pixelMobileZoneQuery)
+                ->with([
+                    'senderService.provider',
+                    'senderService.country',
+                    'recipientService.provider',
+                    'recipientService.country',
+                ])
+                ->select('pixel_mobile_zone_transfers.*')
+                ->limit(5)
+                ->orderBy('pixel_mobile_zone_transfers.created_at', 'desc')
+                ->get(),
+
                 
             'usersCountry' =>  $walletUser->country->currencie->name,
             'sum_bank' =>  $bank_amount,
@@ -429,6 +453,7 @@ class Historique extends Component
             'sum_tresortMoney' =>  $tresort_amount,
             'sum_djamo' =>  $djamo_amount,
             'sum_bankSend' =>  $bankSend_amount,
+            'sum_mobile_zone' => $pixel_mobile_zone_amount,
             'sum_deposit' => $deposit_amount,
             'sum_payment' => $payement_amount,
             'sum_reload' => $reload_amount,
@@ -455,6 +480,7 @@ class Historique extends Component
             'showPushButton' => $this->showPushButton,
             'showBankSendButton' => $this->showBankSendButton,
             'showTresortMoneyButton' => $this->showTresortMoneyButton,
+            'showPixelMobileZoneButton' => $this->showPixelMobileZoneButton,
             'sum_under_distributers' => $this->historiqueService->getSDistributeurSumAdmin(),
             'sum_custumers' => $this->historiqueService->getCustumersSumAdmin(),
 
@@ -468,6 +494,20 @@ class Historique extends Component
                 ->from('sid_users')
                 ->where('com_zone_id', sabdy()->id);
         });
+    }
+
+    private function pixelMobileZoneBaseQuery()
+    {
+        return PixelMobileZoneTransfer::join('wallets', 'pixel_mobile_zone_transfers.wallet_id', '=', 'wallets.id')
+            ->when(sabdy()->is_under_distributer || sabdy()->is_api, function ($query) {
+                return $query->where('wallets.sid_user_id', sabdy()->id);
+            })
+            ->when(sabdy()->is_distributer, function ($query) {
+                return $query->whereHas('wallet.sidUser', function ($userQuery) {
+                    $userQuery->where('distributer_id', sabdy()->id);
+                });
+            })
+            ->when(sabdy()->is_com_zone, fn ($query) => $this->scopeComZoneLinkedUsers($query));
     }
 
 }

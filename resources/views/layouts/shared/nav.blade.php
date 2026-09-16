@@ -155,6 +155,14 @@ $isAdminOrSupervisor = $user && ($user->is_admin || $user->is_supervisor);
                         <div class="side-menu__title"> Historique transactions </div>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('pixel-mobile-zone.historical') }}"
+                        class="side-menu {{ $route == 'pixel-mobile-zone.historical' ? 'side-menu--active' : '' }}">
+                        <div class="side-menu__icon"> <i data-feather="repeat" class="block mx-auto"></i>
+                        </div>
+                        <div class="side-menu__title"> Mobile Zone </div>
+                    </a>
+                </li>
                 @endif
                 {{-- @if (Auth::guard('web')->user()->hasPermissionTo('gain-commissions')) --}}
                 <li>

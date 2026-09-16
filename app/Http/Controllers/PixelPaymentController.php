@@ -206,11 +206,12 @@ class PixelPaymentController extends Controller
             ]);
         }
 
-        // Récupérer les services actifs de la zone, en excluant le pays de l'utilisateur
+        // Récupérer tous les services actifs (toutes zones), en excluant le pays de l'utilisateur
+        // Les transferts cross-zone (XAF→XOF, XOF→XAF…) sont autorisés :
+        // l'API key correcte est sélectionnée dynamiquement via setXaf() lors de l'initiation.
         $userCountryId = $user?->country_id;
         $services = PixelInnoveService::with(['country', 'provider'])
             ->where('status', true)
-            ->where($zoneColumn, true)
             ->when($userCountryId, fn($q) => $q->where('country_id', '!=', $userCountryId))
             ->when($request->operation_type, fn($q) => $q->where('operation_type', $request->operation_type))
             ->orderBy('name')
@@ -243,6 +244,10 @@ class PixelPaymentController extends Controller
                     'fixed_fee_pct'            => (float) $s->fixed_fee,
                     'commission_pct'           => (float) $s->commission_percent,
                     'total_fee_pct'            => (float) $s->fixed_fee + (float) $s->commission_percent,
+                    'is_xof'                   => (bool) $s->is_xof,
+                    'is_xaf'                   => (bool) $s->is_xaf,
+                    'is_cdf'                   => (bool) $s->is_cdf,
+                    'is_gmd'                   => (bool) $s->is_gmd,
                 ];
             })->values();
 
@@ -438,8 +443,8 @@ class PixelPaymentController extends Controller
             }
         }
 
-        // Appel Pixel Innov
-        $pixelService = app(PixelInnovService::class);
+        // Appel Pixel Innov — clé sélectionnée selon is_xaf du service
+        $pixelService = app(PixelInnovService::class)->setXaf($pixelConfig->is_xaf ?? false);
 
         $publicBase = rtrim(config('services.pixel_innov.public_url'), '/');
         $pixelPayload = [
@@ -696,7 +701,7 @@ class PixelPaymentController extends Controller
         }
 
         // Vérification distante via Pixel Innov
-        $pixelService = app(PixelInnovService::class);
+        $pixelService = app(PixelInnovService::class)->setXaf($pixelConfig->is_xaf ?? false);
         $remote = $pixelService->checkTransactionStatus($request->transaction_id);
 
         $remoteState = strtoupper($remote['data']['state'] ?? '');
@@ -764,13 +769,15 @@ class PixelPaymentController extends Controller
             return response()->json(['status' => 'invalid_payload'], 400);
         }
 
-        // Vérification du hash SHA256(api_key + transaction_id)
+        // Vérification du hash — on teste les deux clés (XOF et XAF) car le service
+        // n'est pas encore chargé à ce stade.
         $pixelService = app(PixelInnovService::class);
-        if (!$pixelService->verifyIpnHash($transactionId, $hash)) {
+        $hashValid = $pixelService->setXaf(false)->verifyIpnHash($transactionId, $hash)
+                  || $pixelService->setXaf(true)->verifyIpnHash($transactionId, $hash);
+        if (!$hashValid) {
             Log::warning('Pixel Innov — hash invalide', [
                 'transaction_id' => $transactionId,
                 'hash_received'  => $hash,
-                'hash_expected'  => hash('sha256', config('services.pixel_innov.api_key') . $transactionId),
             ]);
             return response()->json(['status' => 'invalid_hash'], 401);
         }
@@ -785,6 +792,12 @@ class PixelPaymentController extends Controller
                 Log::error('Pixel Innov — WalletReload introuvable', ['transaction_id' => $transactionId]);
                 return response()->json(['status' => 'not_found'], 404);
             }
+
+            // Re-sélectionner la clé correcte maintenant qu'on connaît le service
+            $reloadMeta      = $this->reloadMetadata($reload);
+            $reloadServiceId = $reloadMeta['pixel_service_id'] ?? null;
+            $reloadService   = $reloadServiceId ? \App\Models\PixelInnoveService::find($reloadServiceId) : null;
+            $pixelService->setXaf($reloadService->is_xaf ?? false);
 
             // Idempotence : ne pas re-traiter une transaction déjà créditée (SUCCESS).
             // On ne bloque pas sur ERROR pour pouvoir récupérer si un SUCCESSFUL arrive après un PENDING mal traité.
@@ -845,9 +858,20 @@ class PixelPaymentController extends Controller
     // MÉTHODES PRIVÉES
     // =========================================================================
 
+    private function reloadMetadata(WalletReload $reload): array
+    {
+        if (is_array($reload->metadata)) {
+            return $reload->metadata;
+        }
+
+        $metadata = json_decode($reload->metadata ?? '{}', true);
+
+        return is_array($metadata) ? $metadata : [];
+    }
+
     private function handleSuccess(WalletReload $reload, array $ipnData): void
     {
-        $metadata      = json_decode($reload->metadata ?? '{}', true);
+        $metadata      = $this->reloadMetadata($reload);
         $operationType = $metadata['operation_type'] ?? 'Cash In';
 
         if ($operationType === 'Cash Out') {
@@ -865,7 +889,7 @@ class PixelPaymentController extends Controller
         $wallet = $reload->wallet;
 
         // Récupérer pixelConfig depuis les métadonnées (enregistrées à l'init)
-        $metadata      = json_decode($reload->metadata ?? '{}', true);
+        $metadata      = $this->reloadMetadata($reload);
         $pixelConfigId = $metadata['pixel_service_id'] ?? null;
         $pixelConfig   = $pixelConfigId ? PixelInnoveService::find($pixelConfigId) : null;
 
@@ -981,7 +1005,7 @@ class PixelPaymentController extends Controller
         $wallet = $reload->wallet;
 
         // Récupérer pixelConfig depuis les métadonnées (enregistrées à l'init)
-        $metadata      = json_decode($reload->metadata ?? '{}', true);
+        $metadata      = $this->reloadMetadata($reload);
         $pixelConfigId = $metadata['pixel_service_id'] ?? null;
         $pixelConfig   = $pixelConfigId ? PixelInnoveService::find($pixelConfigId) : null;
 
@@ -1120,7 +1144,7 @@ class PixelPaymentController extends Controller
 
     private function handleFailure(WalletReload $reload, array $ipnData): void
     {
-        $metadata      = json_decode($reload->metadata ?? '{}', true);
+        $metadata      = $this->reloadMetadata($reload);
         $operationType = $metadata['operation_type'] ?? 'Cash Out';
 
         $reload->update([
@@ -1131,19 +1155,23 @@ class PixelPaymentController extends Controller
             'verified_at'      => now(),
         ]);
 
-        // Cash Out (Robus → Mobile) : rembourser le wallet car Pixel Innov n'a pas crédité le mobile
-        if ($operationType === 'Cash Out') {
+        // Cash Out (Mobile → Robus = Dépôt) : wallet jamais débité, rien à rembourser.
+        // Les LedgerEntry ne sont créées que sur SUCCESS (markCashInCompleted / creditWalletFromMobilePayment),
+        // donc aucune écriture comptable à inverser ici.
+
+        // Cash In (Robus → Mobile = Retrait) : wallet débité à l'init, rembourser maintenant
+        if ($operationType === 'Cash In') {
             $wallet = $reload->wallet;
             if ($wallet) {
-                $wallet->increment('amount', $reload->amount);
-                Log::info('Pixel Innov — Cash Out FAILED, wallet remboursé', [
+                $refundAmount = (float) $reload->amount + (float) ($reload->fees ?? $reload->costs_amount ?? 0);
+                $wallet->increment('amount', $refundAmount);
+                Log::info('Pixel Innov — Cash In IPN FAILED, wallet remboursé', [
                     'transaction_id'  => $ipnData['transaction_id'] ?? null,
                     'wallet_id'       => $reload->wallet_id,
-                    'amount_refunded' => $reload->amount,
+                    'amount_refunded' => $refundAmount,
                 ]);
             }
         }
-        // Cash In (Mobile → Robus) : wallet jamais touché, rien à rembourser
 
         Log::info('Pixel Innov — FAILED', [
             'transaction_id' => $ipnData['transaction_id'] ?? null,
@@ -1190,6 +1218,10 @@ class PixelPaymentController extends Controller
                     'fixed_fee_pct'            => (float) $s->fixed_fee,
                     'commission_pct'           => (float) $s->commission_percent,
                     'total_fee_pct'            => (float) $s->fixed_fee + (float) $s->commission_percent,
+                    'is_xof'                   => (bool) $s->is_xof,
+                    'is_xaf'                   => (bool) $s->is_xaf,
+                    'is_cdf'                   => (bool) $s->is_cdf,
+                    'is_gmd'                   => (bool) $s->is_gmd,
                 ];
             })->values();
 
@@ -1366,7 +1398,8 @@ class PixelPaymentController extends Controller
             ], 422);
         }
 
-        $currency  = self::AMOUNT_LIMITS[$senderIso2]['currency'] ?? 'XOF';
+        $senderCurrencyCode    = self::AMOUNT_LIMITS[$senderIso2]['currency'] ?? 'XOF';
+        $recipientCurrencyCode = self::AMOUNT_LIMITS[$recipientIso2]['currency'] ?? 'XOF';
         $customRef = 'ROBUS_MZ_' . $user->id . '_' . now()->timestamp;
 
         // Enregistrement du transfert AVANT l'appel API
@@ -1383,7 +1416,9 @@ class PixelPaymentController extends Controller
             'total_fee'                  => $totalFee,
             'amount_to_send'             => $amountToSend,
             'amount_received'            => $amountReceived,
-            'currency'                   => $currency,
+            'currency'                   => $senderCurrencyCode,
+            'sender_currency'            => $senderCurrencyCode,
+            'recipient_currency'         => $recipientCurrencyCode,
             'sender_status'              => 'PENDING',
             'recipient_status'           => 'PENDING',
             'status'                     => 'PENDING',
@@ -1397,7 +1432,8 @@ class PixelPaymentController extends Controller
         ]);
 
         // Appel Pixel Innov — leg 1 : Cash Out depuis le mobile de l'expéditeur
-        $pixelService = app(PixelInnovService::class);
+        // Clé sélectionnée selon is_xaf du service expéditeur
+        $pixelService = app(PixelInnovService::class)->setXaf($senderService->is_xaf ?? false);
         $publicBase   = rtrim(config('services.pixel_innov.public_url'), '/');
 
         $cashOutPayload = [
@@ -1462,7 +1498,8 @@ class PixelPaymentController extends Controller
             'amount'         => $amount,
         ]);
 
-        // ── Déclencher le Cash In immédiatement (sans attendre le callback IPN) ──
+        // ── Déclencher le Cash In immédiatement — switcher vers la clé du service destinataire ──
+        $pixelService->setXaf($recipientService->is_xaf ?? false);
         $cashInPayload = [
             'amount'             => (int) $transfer->amount_received,
             'destination'        => $request->recipient_phone,
@@ -1572,8 +1609,11 @@ class PixelPaymentController extends Controller
             return response()->json(['status' => 'invalid_payload'], 400);
         }
 
+        // Tester les deux clés (XOF et XAF) — le service n'est pas encore connu
         $pixelService = app(PixelInnovService::class);
-        if (!$pixelService->verifyIpnHash($transactionId, $hash)) {
+        $hashValid = $pixelService->setXaf(false)->verifyIpnHash($transactionId, $hash)
+                  || $pixelService->setXaf(true)->verifyIpnHash($transactionId, $hash);
+        if (!$hashValid) {
             return response()->json(['status' => 'invalid_hash'], 401);
         }
 
@@ -1615,7 +1655,8 @@ class PixelPaymentController extends Controller
             if ($isCashOut) {
                 $this->handleMobileTransferCashOutIpn($transfer, $transactionId, $stateUpper, $request->all(), $pixelService);
             } elseif ($isCashIn) {
-                $this->handleMobileTransferCashInIpn($transfer, $transactionId, $stateUpper, $request->all());
+                $publicBase = rtrim(config('services.pixel_innov.public_url'), '/');
+                $this->handleMobileTransferCashInIpn($transfer, $transactionId, $stateUpper, $request->all(), $pixelService, $publicBase);
             } elseif ($isRefund) {
                 $refundState = in_array($stateUpper, ['SUCCESS', 'SUCCESSFUL']) ? 'SUCCESS' : 'FAILED';
                 $transfer->update(['refund_status' => $refundState]);
@@ -1646,7 +1687,9 @@ class PixelPaymentController extends Controller
         array $ipnData,
         PixelInnovService $pixelService
     ): void {
-        if ($transfer->sender_status === 'SUCCESS') {
+        // Re-fetch avec lock pour bloquer les IPN concurrents
+        $transfer = PixelMobileZoneTransfer::lockForUpdate()->find($transfer->id);
+        if (!$transfer || $transfer->sender_status === 'SUCCESS') {
             return; // idempotence
         }
 
@@ -1676,6 +1719,8 @@ class PixelPaymentController extends Controller
                 return;
             }
 
+            // Utiliser la clé du service destinataire pour le Cash In
+            $pixelService->setXaf($recipientService->is_xaf ?? false);
             $publicBase   = rtrim(config('services.pixel_innov.public_url'), '/');
             $customRef    = $transfer->metadata['custom_ref'] ?? ('ROBUS_MZ_' . $transfer->id);
 
@@ -1740,10 +1785,18 @@ class PixelPaymentController extends Controller
         PixelMobileZoneTransfer $transfer,
         string $transactionId,
         string $state,
-        array $ipnData
+        array $ipnData,
+        PixelInnovService $pixelService,
+        string $publicBase
     ): void {
-        if ($transfer->recipient_status === 'SUCCESS') {
+        // Re-fetch avec lock pour bloquer les IPN concurrents
+        $transfer = PixelMobileZoneTransfer::lockForUpdate()->find($transfer->id);
+        if (!$transfer || $transfer->recipient_status === 'SUCCESS') {
             return; // idempotence
+        }
+        // Si déjà FAILED et remboursement déjà initié, ne pas re-déclencher
+        if ($transfer->recipient_status === 'FAILED' && !empty($transfer->refund_transaction_id)) {
+            return;
         }
 
         if (in_array($state, ['SUCCESS', 'SUCCESSFUL'])) {
@@ -1769,32 +1822,161 @@ class PixelPaymentController extends Controller
                 'status'                 => 'FAILED',
                 'raw_response_recipient' => $ipnData,
             ]);
-            Log::warning('Mobile Zone Transfer — Cash In FAILED', [
+
+            Log::warning('Mobile Zone Transfer — Cash In FAILED via IPN, remboursement automatique', [
                 'transfer_id'    => $transfer->id,
                 'transaction_id' => $transactionId,
             ]);
+
+            // Rembourser l'expéditeur car Cash In échoué après Cash Out réussi
+            $this->refundSender($transfer, $pixelService, $publicBase);
         }
     }
 
     private function creditMobileTransferCommission(PixelMobileZoneTransfer $transfer): void
     {
-        try {
-            $walletAdmin = WalletAdmin::find(1);
-            if ($walletAdmin && $transfer->total_fee > 0) {
-                $walletAdmin->increment('amount', $transfer->total_fee);
-                LedgerEntry::create([
-                    'transaction_id' => (string) Str::uuid(),
-                    'admin_com_id'   => null,
-                    'debit'          => 0,
-                    'credit'         => $transfer->total_fee,
-                    'description'    => 'Commission Transfert Mobile Zone #' . $transfer->id,
-                    'is_uv'          => true,
-                ]);
-            }
-        } catch (\Throwable $e) {
-            Log::error('Mobile Zone Transfer — erreur commission', [
-                'transfer_id' => $transfer->id,
-                'error'       => $e->getMessage(),
+        $walletAdmin      = WalletAdmin::lockForUpdate()->find(1);
+        $walletCommission = WalletCommission::lockForUpdate()->find(1);
+
+        if ((float) $transfer->total_fee <= 0) {
+            return;
+        }
+
+        if (!$walletAdmin || !$walletCommission) {
+            throw new \Exception('Wallet admin ou wallet commission introuvable pour Mobile Zone');
+        }
+
+        $transfer->loadMissing(['senderService', 'recipientService', 'wallet.country.currencie']);
+
+        $senderService    = $transfer->senderService;
+        $recipientService = $transfer->recipientService;
+
+        if (!$senderService || !$recipientService) {
+            throw new \Exception('Services Pixel Innov Mobile Zone introuvables pour la commission');
+        }
+
+        // ── Commissions admin + banque ────────────────────────────────────────
+        $senderAdminCommission    = round((float) $transfer->amount      * (float) $senderService->commission_percent    / 100, 2);
+        $senderBankCommission     = round((float) $transfer->amount      * (float) $senderService->fixed_fee             / 100, 2);
+        $recipientAdminCommission = round((float) $transfer->amount_to_send * (float) $recipientService->commission_percent / 100, 2);
+        $recipientBankCommission  = round((float) $transfer->amount_to_send * (float) $recipientService->fixed_fee          / 100, 2);
+
+        $adminCommission = round($senderAdminCommission + $recipientAdminCommission, 2);
+        $bankCommission  = round($senderBankCommission  + $recipientBankCommission,  2);
+        $totalCommission = round($adminCommission + $bankCommission, 2);
+
+        if ($totalCommission <= 0) {
+            $totalCommission = (float) $transfer->total_fee;
+            $adminCommission = $totalCommission;
+            $bankCommission  = 0;
+        }
+
+        // ── Conversion monétaire ──────────────────────────────────────────────
+        $countryCiv       = Country::find(107);
+        $walletCurrValue  = $transfer->wallet?->country?->currencie?->value ?? 1;
+        $needsConversion  = $countryCiv
+            && $transfer->wallet?->country?->currencie
+            && (float) $countryCiv->currencie->value !== (float) $transfer->wallet->country->currencie->value;
+        $conversionRate   = $needsConversion ? (float) $walletCurrValue : 1;
+
+        // ── Commissions sous-distributeur et compagnie ────────────────────────
+        $walletOwner      = $transfer->wallet?->sid_user_id
+            ? \App\Models\Sid\SidUser::with('wallet')->find($transfer->wallet->sid_user_id)
+            : null;
+
+        $isUnder    = $walletOwner && ($walletOwner->is_under_distributer || $walletOwner->is_api);
+        $isCompanie = $walletOwner && $walletOwner->is_accepted_companie;
+
+        $underCommission   = 0.0;
+        $companieCommission = 0.0;
+
+        if ($isUnder && (float) ($senderService->commission_under_pct ?? 0) > 0) {
+            $underCommission = round((float) $transfer->amount * (float) $senderService->commission_under_pct / 100, 2);
+        }
+
+        if ($isCompanie && (float) ($senderService->commission_companie_pct ?? 0) > 0) {
+            $companieCommission = round((float) $transfer->amount * (float) $senderService->commission_companie_pct / 100, 2);
+        }
+
+        // Les commissions sous-dist et compagnie sont prélevées sur la part admin
+        $adminCommissionNet = max(0, $adminCommission - $underCommission - $companieCommission);
+
+        $adminCommissionConversion   = round($adminCommissionNet   * $conversionRate, 2);
+        $bankCommissionConversion    = round($bankCommission        * $conversionRate, 2);
+        $underCommissionConversion   = round($underCommission       * $conversionRate, 2);
+        $companieCommissionConversion = round($companieCommission   * $conversionRate, 2);
+        $totalCommissionConversion   = round($totalCommission       * $conversionRate, 2);
+
+        // ── Crédit wallet admin (part nette) ─────────────────────────────────
+        $walletAdmin->increment('amount', $adminCommissionConversion);
+
+        LedgerEntry::create([
+            'transaction_id' => (string) Str::uuid(),
+            'admin_com_id'   => null,
+            'debit'          => 0,
+            'credit'         => $adminCommissionConversion,
+            'description'    => 'Commission administrateur Transfert Mobile Zone #' . $transfer->id,
+            'is_uv'          => true,
+        ]);
+
+        // ── Débit wallet commission (pool global) ─────────────────────────────
+        $walletCommission->decrement('amount', $totalCommissionConversion);
+
+        if ($bankCommissionConversion > 0) {
+            LedgerEntry::create([
+                'transaction_id' => (string) Str::uuid(),
+                'admin_com_id'   => null,
+                'debit'          => $bankCommissionConversion,
+                'credit'         => 0,
+                'description'    => 'Commission banque Transfert Mobile Zone #' . $transfer->id,
+                'is_comission'   => true,
+            ]);
+        }
+
+        // ── Commission sous-distributeur ──────────────────────────────────────
+        if ($underCommission > 0 && $walletOwner?->wallet) {
+            $walletOwner->wallet->increment('amount', $underCommissionConversion);
+
+            LedgerEntry::create([
+                'transaction_id' => (string) Str::uuid(),
+                'admin_com_id'   => null,
+                'debit'          => 0,
+                'credit'         => $underCommissionConversion,
+                'description'    => 'Commission sous-distributeur Transfert Mobile Zone #' . $transfer->id,
+                'is_uv'          => true,
+            ]);
+
+            $transfer->update(['commissions' => $underCommission]);
+
+            Log::info('Mobile Zone Transfer — commission sous-distributeur versée', [
+                'transfer_id'   => $transfer->id,
+                'user_id'       => $walletOwner->id,
+                'amount'        => $underCommission,
+                'amount_conv'   => $underCommissionConversion,
+            ]);
+        }
+
+        // ── Commission compagnie ──────────────────────────────────────────────
+        if ($companieCommission > 0) {
+            // La commission compagnie est tracée sur le transfert ; le versement
+            // effectif se fait via le tableau de bord compagnie (comme pour les
+            // autres services : wallet_with->commission_companie, etc.)
+            $transfer->update(['commission_companie' => $companieCommission]);
+
+            LedgerEntry::create([
+                'transaction_id' => (string) Str::uuid(),
+                'admin_com_id'   => null,
+                'debit'          => 0,
+                'credit'         => $companieCommissionConversion,
+                'description'    => 'Commission compagnie Transfert Mobile Zone #' . $transfer->id,
+                'is_uv'          => true,
+            ]);
+
+            Log::info('Mobile Zone Transfer — commission compagnie enregistrée', [
+                'transfer_id'    => $transfer->id,
+                'company_id'     => $walletOwner->company_id ?? null,
+                'amount'         => $companieCommission,
+                'amount_conv'    => $companieCommissionConversion,
             ]);
         }
     }
@@ -1813,102 +1995,120 @@ class PixelPaymentController extends Controller
             return response()->json(['status' => false, 'errors' => $validator->errors()], 422);
         }
 
-        $transfer    = PixelMobileZoneTransfer::find($request->transfer_id);
-        $pixelService = app(PixelInnovService::class);
         $recovered   = false;
         $cashInError = null;
+        $publicBase  = rtrim(config('services.pixel_innov.public_url'), '/');
 
-        // ── Récupération des transferts bloqués ──────────────────────────────
-        // Cas 1 : Cash Out PENDING/SUCCESS mais Cash In jamais initié (recipient_transaction_id null)
-        $cashOutTxId = $transfer->sender_transaction_id;
-        $needsCashIn = !in_array($transfer->recipient_status, ['SUCCESS', 'PROCESSING'])
-            && empty($transfer->recipient_transaction_id)
-            && $cashOutTxId;
+        DB::beginTransaction();
+        try {
+            // lockForUpdate : empêche deux appels simultanés de déclencher deux Cash In
+            $transfer = PixelMobileZoneTransfer::lockForUpdate()->find($request->transfer_id);
 
-        if ($needsCashIn) {
-            // Vérifier si Cash Out est bien SUCCESS côté Pixel Innov
-            $remoteStatus = $pixelService->checkTransactionStatus($cashOutTxId);
-            $remoteState  = strtoupper($remoteStatus['data']['state'] ?? '');
+            $senderServiceForRecovery = PixelInnoveService::find($transfer->sender_pixel_service_id);
+            $pixelService = app(PixelInnovService::class)->setXaf($senderServiceForRecovery->is_xaf ?? false);
 
-            if (in_array($remoteState, ['SUCCESS', 'SUCCESSFUL'])) {
-                // Cash Out confirmé → déclencher Cash In maintenant
-                if ($transfer->sender_status !== 'SUCCESS') {
-                    $transfer->update(['sender_status' => 'SUCCESS', 'status' => 'PROCESSING']);
-                }
+            // ── Récupération des transferts bloqués ─────────────────────────
+            // Cas 1 : Cash Out SUCCESS mais Cash In jamais initié (recipient_transaction_id null)
+            $cashOutTxId = $transfer->sender_transaction_id;
+            $needsCashIn = !in_array($transfer->recipient_status, ['SUCCESS', 'PROCESSING'])
+                && empty($transfer->recipient_transaction_id)
+                && $cashOutTxId;
 
-                $recipientService = PixelInnoveService::with(['country', 'provider'])
-                    ->find($transfer->recipient_pixel_service_id);
+            if ($needsCashIn) {
+                // Vérifier si Cash Out est bien SUCCESS côté Pixel Innov
+                $remoteStatus = $pixelService->checkTransactionStatus($cashOutTxId);
+                $remoteState  = strtoupper($remoteStatus['data']['state'] ?? '');
 
-                if ($recipientService) {
-                    $publicBase  = rtrim(config('services.pixel_innov.public_url'), '/');
-                    $customRef   = $transfer->metadata['custom_ref'] ?? ('ROBUS_MZ_' . $transfer->id);
-                    $cashInPayload = [
-                        'amount'             => (int) $transfer->amount_received,
-                        'destination'        => $transfer->recipient_phone,
-                        'service_id'         => $recipientService->service_id,
-                        'ipn_url'            => $publicBase . '/payment_pixelInnov/mobile-transfer/callback',
-                        'custom_data'        => $customRef . '_CASHIN',
-                        'redirect_url'       => $publicBase . '/payment_pixelInnov/success',
-                        'redirect_error_url' => $publicBase . '/payment_pixelInnov/error',
-                    ];
+                if (in_array($remoteState, ['SUCCESS', 'SUCCESSFUL'])) {
+                    if ($transfer->sender_status !== 'SUCCESS') {
+                        $transfer->update(['sender_status' => 'SUCCESS', 'status' => 'PROCESSING']);
+                    }
 
-                    $cashInResponse = $pixelService->initializeTransaction($cashInPayload);
-                    $cashInTxId     = $cashInResponse['data']['transaction_id'] ?? null;
-                    $cashInFailed   = ($cashInResponse['statut_code'] ?? null) !== 200
-                        || empty($cashInTxId)
-                        || ($cashInResponse['data']['state'] ?? null) === 'FAILED';
+                    $recipientService = PixelInnoveService::with(['country', 'provider'])
+                        ->find($transfer->recipient_pixel_service_id);
 
-                    if ($cashInFailed) {
-                        $cashInError = trim((string) ($cashInResponse['message'] ?? ''))
-                            ?: trim((string) ($cashInResponse['data']['response'] ?? ''))
-                            ?: 'Échec Cash In';
+                    if ($recipientService) {
+                        $pixelService->setXaf($recipientService->is_xaf ?? false);
+                        $customRef   = $transfer->metadata['custom_ref'] ?? ('ROBUS_MZ_' . $transfer->id);
+                        $cashInPayload = [
+                            'amount'             => (int) $transfer->amount_received,
+                            'destination'        => $transfer->recipient_phone,
+                            'service_id'         => $recipientService->service_id,
+                            'ipn_url'            => $publicBase . '/payment_pixelInnov/mobile-transfer/callback',
+                            'custom_data'        => $customRef . '_CASHIN',
+                            'redirect_url'       => $publicBase . '/payment_pixelInnov/success',
+                            'redirect_error_url' => $publicBase . '/payment_pixelInnov/error',
+                        ];
 
-                        $transfer->update([
-                            'recipient_status'       => 'FAILED',
-                            'status'                 => 'FAILED',
-                            'raw_response_recipient' => $cashInResponse,
-                        ]);
+                        $cashInResponse = $pixelService->initializeTransaction($cashInPayload);
+                        $cashInTxId     = $cashInResponse['data']['transaction_id'] ?? null;
+                        $cashInFailed   = ($cashInResponse['statut_code'] ?? null) !== 200
+                            || empty($cashInTxId)
+                            || ($cashInResponse['data']['state'] ?? null) === 'FAILED';
 
-                        Log::error('Mobile Zone Transfer — récupération Cash In échouée', [
-                            'transfer_id'     => $transfer->id,
-                            'cash_in_error'   => $cashInError,
-                            'cash_in_raw'     => $cashInResponse,
-                            'recipient_phone' => $transfer->recipient_phone,
-                            'amount_sent'     => $transfer->amount_received,
-                        ]);
-                    } else {
-                        $transfer->update([
-                            'recipient_transaction_id' => $cashInTxId,
-                            'recipient_status'         => 'PENDING',
-                            'status'                   => 'PROCESSING',
-                            'raw_response_recipient'   => $cashInResponse,
-                        ]);
-                        $recovered = true;
+                        if ($cashInFailed) {
+                            $cashInError = trim((string) ($cashInResponse['message'] ?? ''))
+                                ?: trim((string) ($cashInResponse['data']['response'] ?? ''))
+                                ?: 'Échec Cash In';
 
-                        Log::info('Mobile Zone Transfer — Cash In déclenché en récupération', [
-                            'transfer_id'    => $transfer->id,
-                            'cash_in_tx_id'  => $cashInTxId,
-                            'amount_sent'    => $transfer->amount_received,
-                        ]);
+                            $transfer->update([
+                                'recipient_status'       => 'FAILED',
+                                'status'                 => 'FAILED',
+                                'raw_response_recipient' => $cashInResponse,
+                            ]);
+
+                            Log::error('Mobile Zone Transfer — récupération Cash In échouée', [
+                                'transfer_id'     => $transfer->id,
+                                'cash_in_error'   => $cashInError,
+                                'recipient_phone' => $transfer->recipient_phone,
+                                'amount_sent'     => $transfer->amount_received,
+                            ]);
+
+                            // Rembourser l'expéditeur — Cash Out réussi mais Cash In impossible
+                            $this->refundSender($transfer, $pixelService, $publicBase);
+                        } else {
+                            $transfer->update([
+                                'recipient_transaction_id' => $cashInTxId,
+                                'recipient_status'         => 'PENDING',
+                                'status'                   => 'PROCESSING',
+                                'raw_response_recipient'   => $cashInResponse,
+                            ]);
+                            $recovered = true;
+
+                            Log::info('Mobile Zone Transfer — Cash In déclenché en récupération', [
+                                'transfer_id'   => $transfer->id,
+                                'cash_in_tx_id' => $cashInTxId,
+                                'amount_sent'   => $transfer->amount_received,
+                            ]);
+                        }
                     }
                 }
+
+                $transfer->refresh();
             }
 
-            $transfer->refresh();
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Mobile Zone Transfer — erreur récupération', [
+                'transfer_id' => $request->transfer_id,
+                'error'       => $e->getMessage(),
+            ]);
+            return response()->json(['status' => false, 'message' => 'Erreur lors de la récupération.'], 500);
         }
 
         return response()->json([
-            'status'              => true,
-            'local_status'        => $transfer->status,
-            'sender_status'       => $transfer->sender_status,
-            'recipient_status'    => $transfer->recipient_status,
-            'transfer_id'         => $transfer->id,
-            'amount'              => $transfer->amount,
-            'fees'                => $transfer->total_fee,
-            'amount_received'     => $transfer->amount_received,
-            'created_at'          => $transfer->created_at,
-            'recovered'           => $recovered,
-            'cash_in_error'       => $cashInError,
+            'status'           => true,
+            'local_status'     => $transfer->status,
+            'sender_status'    => $transfer->sender_status,
+            'recipient_status' => $transfer->recipient_status,
+            'transfer_id'      => $transfer->id,
+            'amount'           => $transfer->amount,
+            'fees'             => $transfer->total_fee,
+            'amount_received'  => $transfer->amount_received,
+            'created_at'       => $transfer->created_at,
+            'recovered'        => $recovered,
+            'cash_in_error'    => $cashInError,
         ]);
     }
 
@@ -1982,6 +2182,9 @@ class PixelPaymentController extends Controller
             $transfer->update(['refund_status' => 'FAILED']);
             return ['initiated' => false, 'error' => 'Service de remboursement introuvable'];
         }
+
+        // Utiliser la clé correspondant au service de remboursement
+        $pixelService->setXaf($refundService->is_xaf ?? false);
 
         $customRef    = $transfer->metadata['custom_ref'] ?? ('ROBUS_MZ_' . $transfer->id);
         $refundPayload = [

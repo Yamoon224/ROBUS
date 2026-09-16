@@ -1,8 +1,7 @@
 <div>
 
     <!-- inject:js -->
-    {{-- <script src="{{ asset_url('/js/app.js') }}"></script> --}}
-    {{-- <link rel="stylesheet" href="{{ asset_url('/css/app.css') }}"> --}}
+   
 
     <div class="intro-y col-span-12 lg:col-span-12">
         @if (sabdyHomeVerify())
@@ -782,7 +781,7 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-12 gap-6 mt-6">
+        {{-- <div class="grid grid-cols-12 gap-6 mt-6">
 
             <!-- BEGIN: Sales Report -->
             <div class="col-span-12 sm:col-span-8 lg:col-span-4 mt-8">
@@ -831,12 +830,12 @@
             </div>
             <!-- END: Sales Report -->
             <!-- END: Sales Report -->
-        </div>
+        </div> --}}
 
     </div>
     @stack('scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> --}}
     <script>
         setInterval(function() {
             const boxes = document.querySelectorAll('.style_app');
@@ -850,7 +849,7 @@
             });
         }, 1000);
     </script>
-    <script>
+    {{-- <script>
         var sumVirement = JSON.parse($('#sum').attr('virement'));
         var sumDeposit = JSON.parse($('#sum').attr('deposit'));
         var sumPayment = JSON.parse($('#sum').attr('payment'));
@@ -1032,5 +1031,5 @@
 
 
         });
-    </script>
+    </script> --}}
 </div>

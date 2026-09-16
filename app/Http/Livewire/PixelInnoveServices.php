@@ -33,6 +33,8 @@ class PixelInnoveServices extends Component
     public $isXaf = false;
     public $isCdf = false;
     public $isGmd = false;
+    public $commissionUnderPct = '0';
+    public $commissionCompaniePct = '0';
     public $pixelServiceId;
     public $pixelStatus;
 
@@ -51,6 +53,8 @@ class PixelInnoveServices extends Component
             ],
             'fixedFee' => ['nullable', 'numeric', 'min:0'],
             'commissionPercent' => ['required', 'numeric', 'min:0'],
+            'commissionUnderPct' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'commissionCompaniePct' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'isXof' => ['boolean'],
             'isXaf' => ['boolean'],
             'isCdf' => ['boolean'],
@@ -186,19 +190,21 @@ class PixelInnoveServices extends Component
         }
 
         PixelInnoveService::create([
-            'country_id' => $this->countryId,
-            'provider_id' => $this->providerId,
-            'name' => $this->buildServiceName($provider->name),
-            'operation_type' => $this->operationType,
-            'service_id' => $this->serviceId,
-            'fixed_fee' => $this->fixedFee ?: null,
-            'commission_percent' => $this->commissionPercent,
-            'is_xof' => (bool) $this->isXof,
-            'is_xaf' => (bool) $this->isXaf,
-            'is_cdf' => (bool) $this->isCdf,
-            'is_gmd' => (bool) $this->isGmd,
-            'created_by' => Auth::guard('web')->id(),
-            'status' => true,
+            'country_id'              => $this->countryId,
+            'provider_id'             => $this->providerId,
+            'name'                    => $this->buildServiceName($provider->name),
+            'operation_type'          => $this->operationType,
+            'service_id'              => $this->serviceId,
+            'fixed_fee'               => $this->fixedFee ?: null,
+            'commission_percent'      => $this->commissionPercent,
+            'commission_under_pct'    => $this->commissionUnderPct ?: 0,
+            'commission_companie_pct' => $this->commissionCompaniePct ?: 0,
+            'is_xof'                  => (bool) $this->isXof,
+            'is_xaf'                  => (bool) $this->isXaf,
+            'is_cdf'                  => (bool) $this->isCdf,
+            'is_gmd'                  => (bool) $this->isGmd,
+            'created_by'              => Auth::guard('web')->id(),
+            'status'                  => true,
         ]);
 
         $this->resetField();
@@ -218,6 +224,8 @@ class PixelInnoveServices extends Component
         $this->serviceId = $service->service_id;
         $this->fixedFee = $service->fixed_fee;
         $this->commissionPercent = $service->commission_percent;
+        $this->commissionUnderPct = $service->commission_under_pct ?? '0';
+        $this->commissionCompaniePct = $service->commission_companie_pct ?? '0';
         $this->isXof = (bool) $service->is_xof;
         $this->isXaf = (bool) $service->is_xaf;
         $this->isCdf = (bool) $service->is_cdf;
@@ -246,19 +254,21 @@ class PixelInnoveServices extends Component
         }
 
         $service->update([
-            'country_id' => $this->countryId,
-            'provider_type_id' => $this->providerTypeId ?: null,
-            'provider_id' => $this->providerId,
-            'name' => $this->buildServiceName($provider->name),
-            'operation_type' => $this->operationType,
-            'service_id' => $this->serviceId,
-            'fixed_fee' => $this->fixedFee ?: null,
-            'commission_percent' => $this->commissionPercent,
-            'is_xof' => (bool) $this->isXof,
-            'is_xaf' => (bool) $this->isXaf,
-            'is_cdf' => (bool) $this->isCdf,
-            'is_gmd' => (bool) $this->isGmd,
-            'updated_by' => Auth::guard('web')->id(),
+            'country_id'              => $this->countryId,
+            'provider_type_id'        => $this->providerTypeId ?: null,
+            'provider_id'             => $this->providerId,
+            'name'                    => $this->buildServiceName($provider->name),
+            'operation_type'          => $this->operationType,
+            'service_id'              => $this->serviceId,
+            'fixed_fee'               => $this->fixedFee ?: null,
+            'commission_percent'      => $this->commissionPercent,
+            'commission_under_pct'    => $this->commissionUnderPct ?: 0,
+            'commission_companie_pct' => $this->commissionCompaniePct ?: 0,
+            'is_xof'                  => (bool) $this->isXof,
+            'is_xaf'                  => (bool) $this->isXaf,
+            'is_cdf'                  => (bool) $this->isCdf,
+            'is_gmd'                  => (bool) $this->isGmd,
+            'updated_by'              => Auth::guard('web')->id(),
         ]);
 
         $this->resetField();
@@ -294,6 +304,8 @@ class PixelInnoveServices extends Component
         $this->serviceId = '';
         $this->fixedFee = '';
         $this->commissionPercent = '1.90';
+        $this->commissionUnderPct = '0';
+        $this->commissionCompaniePct = '0';
         $this->isXof = false;
         $this->isXaf = false;
         $this->isCdf = false;

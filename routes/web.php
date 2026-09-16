@@ -473,6 +473,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/djamo_historical', [HistoricalController::class, 'browse_djamo'])->name('djamos.historical');
             Route::get('/banksend_historical', [HistoricalController::class, 'browse_banksend'])->name('bankSends.historical');
             Route::get('/tresort_historical', [HistoricalController::class, 'browse_tresort'])->name('tresorts.historical');
+            Route::get('/pixel_mobile_zone_historical', [HistoricalController::class, 'browse_pixel_mobile_zone'])->name('pixel-mobile-zone.historical');
         });
 
         // Historique Sous distributer

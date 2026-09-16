@@ -79,6 +79,17 @@ class PixelInnovService
         return hash_equals($expected, $receivedHash);
     }
 
+    /**
+     * Sélectionne la clé API selon le type de devise du service.
+     * is_xaf=true → config pixel_innov_xaf, sinon → config pixel_innov
+     */
+    public function setXaf(bool $isXaf): static
+    {
+        $configKey    = $isXaf ? 'pixel_innov_xaf' : 'pixel_innov';
+        $this->apiKey = config("services.{$configKey}.api_key", '');
+        return $this;
+    }
+
     public function getApiKey(): string
     {
         return $this->apiKey;

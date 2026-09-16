@@ -717,6 +717,15 @@ class HistoricalController extends Controller
         }
     }
 
+    public function browse_pixel_mobile_zone()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+            abort(403);
+        }
+
+        return view('pages.historicals.browse_pixel_mobile_zone');
+    }
+
 
     public function browse_xbets_visitors()
     {

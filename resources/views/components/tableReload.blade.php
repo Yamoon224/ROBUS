@@ -34,6 +34,14 @@
       <tbody>
           @if ($reload_historicals->count() > 0)
               @foreach ($reload_historicals as $item)
+                  @php
+                      $pixelMeta = is_array($item->metadata ?? null)
+                          ? $item->metadata
+                          : (json_decode($item->metadata ?? '[]', true) ?: []);
+                      $isPixelInnov = method_exists($item, 'isPixelInnov')
+                          ? $item->isPixelInnov()
+                          : str_starts_with((string) ($item->payment_method ?? ''), 'pixel_innov_');
+                  @endphp
                   <tr class="intro-x">
                       <td class="text-center w-40">
                           <div
@@ -45,6 +53,17 @@
                                   </div>
                               </div>
                           </div>
+                          @if ($isPixelInnov)
+                              <div class="inline-flex items-center px-2 py-1 rounded text-xs font-semibold bg-success/20 text-success">
+                                  Pixel Innov
+                              </div>
+                              <div class="text-xs text-slate-500 mt-1">
+                                  {{ $pixelMeta['provider'] ?? ($item->provider->name ?? null) }}
+                                  @if (!empty($pixelMeta['country']))
+                                      - {{ $pixelMeta['country'] }}
+                                  @endif
+                              </div>
+                          @endif
 
                       </td>
                       <td class="user-info-card">
@@ -92,6 +111,30 @@
                           <div class="user-name">
                               {{ $item->account_wallet ?? ($item->phone ?? null) }}
                           </div>
+                          @if ($isPixelInnov)
+                              <div class="mt-3 text-xs leading-5 text-slate-600">
+                                  <div>
+                                      <span class="font-semibold">Service Pixel:</span>
+                                      {{ $pixelMeta['pixel_service_name'] ?? '-' }}
+                                  </div>
+                                  <div>
+                                      <span class="font-semibold">Operation:</span>
+                                      {{ $pixelMeta['operation_type'] ?? '-' }}
+                                  </div>
+                                  <div>
+                                      <span class="font-semibold">Destination:</span>
+                                      {{ $pixelMeta['destination'] ?? ($item->phone ?? '-') }}
+                                  </div>
+                                  <div>
+                                      <span class="font-semibold">Ref Pixel:</span>
+                                      {{ $item->reference ?? '-' }}
+                                  </div>
+                                  <div>
+                                      <span class="font-semibold">Gateway service:</span>
+                                      {{ $pixelMeta['service_id'] ?? '-' }}
+                                  </div>
+                              </div>
+                          @endif
                       </td>
 
                       <td class="w-60">
