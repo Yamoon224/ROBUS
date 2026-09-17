@@ -701,8 +701,13 @@ class PixelPaymentController extends Controller
             return response()->json(['status' => false, 'message' => 'Transaction introuvable'], 404);
         }
 
-        // Vérification distante via Pixel Innov
-        $pixelService = app(PixelInnovService::class)->setXaf($pixelConfig->is_xaf ?? false);
+        // Résoudre is_xaf depuis les métadonnées du reload (même logique que paymentCallback)
+        $reloadMeta      = $this->reloadMetadata($reload);
+        $reloadServiceId = $reloadMeta['pixel_service_id'] ?? null;
+        $reloadService   = $reloadServiceId ? PixelInnoveService::find($reloadServiceId) : null;
+
+        // Vérification distante via Pixel Innov — clé XAF ou XOF selon le service
+        $pixelService = app(PixelInnovService::class)->setXaf($reloadService->is_xaf ?? false);
         $remote = $pixelService->checkTransactionStatus($request->transaction_id);
 
         $remoteState = strtoupper($remote['data']['state'] ?? '');
@@ -1968,15 +1973,44 @@ class PixelPaymentController extends Controller
             ? \App\Models\Sid\SidUser::with('wallet')->find($transfer->wallet->sid_user_id)
             : null;
 
-        $isUnder    = $walletOwner && ($walletOwner->is_under_distributer || $walletOwner->is_api);
-        $isCompanie = $walletOwner && $walletOwner->is_accepted_companie;
+        $isUnder = $walletOwner && ($walletOwner->is_under_distributer || $walletOwner->is_api);
 
-        $underCommission   = 0.0;
+        $underCommission    = 0.0;
         $companieCommission = 0.0;
+        $activeButtons      = [];
+        $activeCButtons     = [];
 
-        if ($isUnder && (float) ($senderService->commission_under_pct ?? 0) > 0) {
+        if ($isUnder) {
+            $restrictionSvc = app(OperatorRestrictionService::class);
+            $activeButtons  = $restrictionSvc->getActiveButtons($walletOwner->id);
+
+            // Résoudre la compagnie liée à ce sous-distributeur
+            $accountAccepted    = $walletOwner->is_accepted_companie ?? false;
+            $companyId          = $walletOwner->company_id ?? null;
+            $compagnieSidUserId = null;
+            if ($companyId) {
+                $compagnie = SidUser::whereIsCompany(true)->where('company_id', $companyId)->first();
+                if ($accountAccepted && $compagnie) {
+                    $compagnieSidUserId = $compagnie->id;
+                }
+            }
+            if ($compagnieSidUserId) {
+                $activeCButtons = $restrictionSvc->getActiveCButtons($compagnieSidUserId);
+            }
+        }
+
+        // Commission sous-distributeur : uniquement si showRemonterPixelButton est actif
+        if ($isUnder
+            && !empty($activeButtons['showRemonterPixelButton'])
+            && (float) ($senderService->commission_under_pct ?? 0) > 0
+        ) {
             $underCommission = round((float) $transfer->amount * (float) $senderService->commission_under_pct / 100, 2);
         }
+
+        // Commission compagnie : uniquement si showRemonterPixelInnovCButton est actif
+        $isCompanie = $walletOwner
+            && ($walletOwner->is_accepted_companie ?? false)
+            && !empty($activeCButtons['showRemonterPixelInnovCButton']);
 
         if ($isCompanie && (float) ($senderService->commission_companie_pct ?? 0) > 0) {
             $companieCommission = round((float) $transfer->amount * (float) $senderService->commission_companie_pct / 100, 2);
