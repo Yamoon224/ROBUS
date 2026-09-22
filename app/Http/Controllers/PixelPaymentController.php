@@ -449,7 +449,7 @@ class PixelPaymentController extends Controller
 
         $publicBase = rtrim(config('services.pixel_innov.public_url'), '/');
         $pixelPayload = [
-            'amount'             => (int) $amountReceived,
+            'amount'             => (int) $amount,
             'destination'        => $request->destination,
             'service_id'         => $pixelConfig->service_id,
             'ipn_url'            => $publicBase . '/payment_pixelInnov/callback',
@@ -461,6 +461,7 @@ class PixelPaymentController extends Controller
         if ($request->filled('om_otp')) {
             $pixelPayload['om_otp'] = $request->om_otp;
         }
+        $pixelPayload = $this->withWaveBusinessNameId($pixelPayload, $pixelConfig);
 
         $response = $pixelService->initializeTransaction($pixelPayload);
 
@@ -516,12 +517,7 @@ class PixelPaymentController extends Controller
 
         $transactionId = $pixelTxId;
         // Cherche le lien de paiement dans tous les champs possibles de la réponse
-        $smsLink = $response['data']['sms_link']
-            ?? $response['data']['sms_link1']
-            ?? $response['data']['sms_link2']
-            ?? $response['data']['payment_link']
-            ?? $response['data']['redirect_url']
-            ?? null;
+        $smsLink = $this->extractPixelPaymentLink($response);
 
         Log::info('Pixel Innov — paiement initié', [
             'transaction_id' => $transactionId,
@@ -1537,6 +1533,7 @@ class PixelPaymentController extends Controller
         if ($request->filled('om_otp')) {
             $cashOutPayload['om_otp'] = $request->om_otp;
         }
+        $cashOutPayload = $this->withWaveBusinessNameId($cashOutPayload, $senderService);
 
         $cashOutResponse = $pixelService->initializeTransaction($cashOutPayload);
 
@@ -1575,10 +1572,7 @@ class PixelPaymentController extends Controller
             'pixel_wallet_before'   => $pixelWalletBefore,
         ]);
 
-        $smsLink = $cashOutResponse['data']['sms_link']
-            ?? $cashOutResponse['data']['sms_link1']
-            ?? $cashOutResponse['data']['sms_link2']
-            ?? null;
+        $smsLink = $this->extractPixelPaymentLink($cashOutResponse);
 
         Log::info('Mobile Zone Transfer — Cash Out initié', [
             'transfer_id'    => $transfer->id,
@@ -1598,6 +1592,7 @@ class PixelPaymentController extends Controller
             'redirect_url'       => $publicBase . '/payment_pixelInnov/success',
             'redirect_error_url' => $publicBase . '/payment_pixelInnov/error',
         ];
+        $cashInPayload = $this->withWaveBusinessNameId($cashInPayload, $recipientService);
 
         $cashInResponse  = $pixelService->initializeTransaction($cashInPayload);
         $cashInTxId      = $cashInResponse['data']['transaction_id'] ?? null;
@@ -1822,6 +1817,7 @@ class PixelPaymentController extends Controller
                 'redirect_url'       => $publicBase . '/payment_pixelInnov/success',
                 'redirect_error_url' => $publicBase . '/payment_pixelInnov/error',
             ];
+            $cashInPayload = $this->withWaveBusinessNameId($cashInPayload, $recipientService);
 
             $cashInResponse = $pixelService->initializeTransaction($cashInPayload);
             $cashInTxId     = $cashInResponse['data']['transaction_id'] ?? null;
@@ -2157,6 +2153,7 @@ class PixelPaymentController extends Controller
                             'redirect_url'       => $publicBase . '/payment_pixelInnov/success',
                             'redirect_error_url' => $publicBase . '/payment_pixelInnov/error',
                         ];
+                        $cashInPayload = $this->withWaveBusinessNameId($cashInPayload, $recipientService);
 
                         $cashInResponse = $pixelService->initializeTransaction($cashInPayload);
                         $cashInTxId     = $cashInResponse['data']['transaction_id'] ?? null;
@@ -2257,6 +2254,50 @@ class PixelPaymentController extends Controller
         return 'Transaction initiée. Le client doit la valider sur son téléphone.';
     }
 
+    private function isWaveService(?PixelInnoveService $service): bool
+    {
+        $providerName = strtolower((string) ($service?->provider?->name ?? ''));
+        $serviceName = strtolower((string) ($service?->name ?? ''));
+
+        return str_contains($providerName, 'wave') || str_contains($serviceName, 'wave');
+    }
+
+    private function withWaveBusinessNameId(array $payload, ?PixelInnoveService $service): array
+    {
+        if (!$this->isWaveService($service)) {
+            return $payload;
+        }
+
+        $businessNameId = trim((string) config('services.pixel_innov.wave_business_name_id', ''));
+        if ($businessNameId === '') {
+            Log::warning('Pixel Innov — business_name_id Wave manquant', [
+                'service_id' => $service?->service_id,
+                'provider'   => $service?->provider?->name,
+            ]);
+            return $payload;
+        }
+
+        $payload['business_name_id'] = $businessNameId;
+        return $payload;
+    }
+
+    private function extractPixelPaymentLink(array $response): ?string
+    {
+        $data = $response['data'] ?? [];
+        if (!is_array($data)) {
+            return null;
+        }
+
+        foreach (['sms_link', 'sms_link1', 'sms_link2', 'payment_link', 'payment_url', 'link', 'redirect_url'] as $field) {
+            $value = $data[$field] ?? null;
+            if (is_string($value) && trim($value) !== '') {
+                return trim($value);
+            }
+        }
+
+        return null;
+    }
+
     private function currencyZoneColumn(?string $currency): ?string
     {
         return match ($currency) {
@@ -2314,6 +2355,7 @@ class PixelPaymentController extends Controller
             'redirect_url'       => $publicBase . '/payment_pixelInnov/success',
             'redirect_error_url' => $publicBase . '/payment_pixelInnov/error',
         ];
+        $refundPayload = $this->withWaveBusinessNameId($refundPayload, $refundService);
 
         $refundResponse = $pixelService->initializeTransaction($refundPayload);
         $refundTxId     = $refundResponse['data']['transaction_id'] ?? null;

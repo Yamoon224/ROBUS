@@ -51,12 +51,14 @@ return [
         'api_key'    => env('PIXEL_INNOV_API_KEY', ''),
         'sandbox'    => env('PIXEL_INNOV_SANDBOX', false),
         'public_url' => env('PIXEL_INNOV_PUBLIC_URL', env('APP_URL')),
+        'wave_business_name_id' => env('PIXEL_INNOV_WAVE_BUSINESS_NAME_ID', ''),
     ],
 
     'pixel_innov_xaf' => [
         'api_key'    => env('PIXEL_INNOV_API_KEY_XAF', ''),
         'sandbox'    => env('PIXEL_INNOV_SANDBOX', false),
         'public_url' => env('PIXEL_INNOV_PUBLIC_URL', env('APP_URL')),
+        'wave_business_name_id' => env('PIXEL_INNOV_WAVE_BUSINESS_NAME_ID', ''),
     ],
 
 ];
