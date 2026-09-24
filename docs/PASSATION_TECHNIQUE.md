@@ -15,6 +15,8 @@ ROBUS est une application Laravel 9 / PHP 8 qui expose :
 
 Le code applicatif principal est dans `app/`, les routes dans `routes/`, les vues dans `resources/views/`, les assets publics dans `public/` et les migrations dans `database/migrations/`.
 
+<!-- http://localhost/phpmyadmin/index.php?route=/table/structure&&server=1&db=robus&table=pixel_innove_services -->
+
 ## 2. Stack technique
 
 - Backend : Laravel `^9.19`, PHP `^8.0.2`

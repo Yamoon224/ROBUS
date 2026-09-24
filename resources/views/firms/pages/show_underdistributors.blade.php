@@ -235,6 +235,15 @@
                             <polyline points="12 6 12 12 16 14"></polyline>
                         </svg> Creer : {{ $user->created_at ?? 'Inconnu' }}
                     </div>
+                     <div class="truncate sm:whitespace-normal flex items-center mt-3"> <svg
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" icon-name="clock" data-lucide="clock"
+                            class="lucide lucide-clock w-4 h-4 text-slate-500 ml-auto mr-2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg> Date Mise a jour : {{ $user->updated_at ?? null }}
+                    </div>
                     <div class="truncate sm:whitespace-normal flex items-center mt-3"> <svg
                             xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"

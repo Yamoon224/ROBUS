@@ -18,6 +18,8 @@ class LedgerEntry extends Model
 
     public const CATEGORY_UV_PURCHASE = 'uv_purchase';
 
+    public const CATEGORY_PIXEL_COMMISSION = 'pixel_commission';
+
     public const CATEGORY_STANDARD = 'standard';
 
     protected $table = 'ledger_entries';
@@ -36,6 +38,7 @@ class LedgerEntry extends Model
         'is_comission' => 'boolean',
         'is_uv' => 'boolean',
         'is_wallet' => 'boolean',
+        'is_pixel' => 'boolean',
         'created_at' => 'datetime:d-m-Y H:i:s',
         'updated_at' => 'datetime:d-m-Y H:i:s',
     ];
@@ -51,6 +54,10 @@ class LedgerEntry extends Model
 
     public function getCategoryAttribute(): string
     {
+        if ($this->is_pixel) {
+            return self::CATEGORY_PIXEL_COMMISSION;
+        }
+
         if ($this->is_comission) {
             return self::CATEGORY_COMMISSION;
         }
@@ -77,6 +84,7 @@ class LedgerEntry extends Model
             self::CATEGORY_ADMIN => 'Commission admin',
             self::CATEGORY_UV_COMMISSION => 'Commission achat UV',
             self::CATEGORY_UV_PURCHASE => 'Achat UV',
+            self::CATEGORY_PIXEL_COMMISSION => 'Commission Pixel Innov',
             default => 'Mouvement standard',
         };
     }

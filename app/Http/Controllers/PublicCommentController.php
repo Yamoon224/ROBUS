@@ -12,7 +12,7 @@ class PublicCommentController extends Controller
     public function show($walletId)
     {
         $wallet = Wallet::where('wallet_id', $walletId)
-            ->where('is_under_distributer', true)
+            // ->where('is_under_distributer', true)
             ->with('sidUser')
             ->firstOrFail();
 
@@ -64,6 +64,6 @@ class PublicCommentController extends Controller
             'is_public'           => true,
         ]);
 
-        return back()->with('success', 'Votre avis a été envoyé avec succès. Merci !');
+        return redirect()->away('https://robus.africa/');
     }
 }

@@ -109,8 +109,6 @@ class SidUser extends Authenticatable
     }
 
 
-    
-    
 
     public function walletDrawal()
     {

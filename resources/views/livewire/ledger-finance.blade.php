@@ -197,6 +197,50 @@
             </div>
         </div>
 
+        <div class="col-span-12 sm:col-span-4 lg:col-span-3 intro-y">
+            <div class="amount-balance p-4">
+                <div class="amount-label text-sm text-white">Total Commissions PixelInnov</div>
+                <div class="flex items-baseline justify-between">
+                    <span class="amount-balance-value text-xl font-semibold">
+                        {{ number_format($totalCommissionsPixel, 2) }} FCFA
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-span-12 sm:col-span-4 lg:col-span-3 intro-y">
+            <div class="amount-commission-balance p-4">
+                <div class="amount-label text-sm text-white">Commissions PixelInnov Aujourd'hui</div>
+                <div class="flex items-baseline justify-between">
+                    <span class="amount-balance-value text-xl font-semibold">
+                        {{ number_format($commissionsPixelToday, 2) }} FCFA
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-span-12 sm:col-span-4 lg:col-span-3 intro-y style_facture_home2">
+            <div class="rounded-lg shadow p-4 border-l-4 border-red-500 style_facture_home2">
+                <div class="amount-label text-sm text-white">Total WalletPixelCommission</div>
+                <div class="flex items-baseline justify-between">
+                    <span class="amount-balance-value text-xl font-semibold text-white">
+                        {{ number_format($totalWalletPixelCommission, 2) }} FCFA
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-span-12 sm:col-span-4 lg:col-span-3 intro-y style_facture_home2">
+            <div class="rounded-lg shadow p-4 border-l-4 border-red-500 style_facture_home2">
+                <div class="amount-label text-sm text-white">WalletPixelCommission Aujourd'hui</div>
+                <div class="flex items-baseline justify-between">
+                    <span class="amount-balance-value text-xl font-semibold text-white">
+                        {{ number_format($walletPixelCommissionToday, 2) }} FCFA
+                    </span>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Filtres avancés -->
@@ -267,6 +311,7 @@
                 <option value="admin">Commissions Admin</option>
                 <option value="uv_commission">Commission achat UV</option>
                 <option value="uv_purchase">Montant achat UV</option>
+                <option value="pixel_commission">Commissions PixelInnov</option>
                 <option value="standard">Mouvements standards / objectifs COM ZONE</option>
             </select>
         </div>
@@ -373,6 +418,7 @@
                                                     'admin' => 'bg-orange-100 text-orange-800',
                                                     'uv_commission' => 'bg-blue-100 text-blue-800',
                                                     'uv_purchase' => 'bg-cyan-100 text-cyan-800',
+                                                    'pixel_commission' => 'bg-emerald-100 text-emerald-800',
                                                     default => 'bg-gray-100 text-gray-800',
                                                 };
                                             @endphp

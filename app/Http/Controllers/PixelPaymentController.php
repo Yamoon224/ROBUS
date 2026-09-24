@@ -16,6 +16,8 @@ use App\Models\Sid\SidUser;
 use App\Models\Wallets\WalletAdmin;
 use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletReload;
+use App\Models\Wallets\WalletPixel;
+use App\Models\Wallets\WalletPixelCommission;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -375,6 +377,7 @@ class PixelPaymentController extends Controller
 
         // Calcul des frais depuis la config du service
         $totalFeePct    = (float) $pixelConfig->fixed_fee + (float) $pixelConfig->commission_percent;
+        $totalFeeAdmin    = (float) $pixelConfig->fixed_fee + (float) $pixelConfig->commission_percent;
         $fees           = round($amount * $totalFeePct / 100, 2);
         $amountReceived = $amount - $fees;
         $amountPay = $amount + $fees;
@@ -907,14 +910,13 @@ class PixelPaymentController extends Controller
             return;
         }
 
-        $walletOwner->wallet->increment('amount', $commissionConversion);
         $reload->update(['commissions' => $commission]);
 
         LedgerEntry::create([
             'transaction_id' => (string) Str::uuid(),
             'admin_com_id'   => null,
-            'debit'          => 0,
-            'credit'         => $commissionConversion,
+            'credit'          => 0,
+            'debit'         => $commissionConversion,
             'description'    => $description . ' #' . $reload->id,
             'is_uv'          => true,
         ]);
@@ -924,6 +926,58 @@ class PixelPaymentController extends Controller
             'user_id'          => $walletOwner->id,
             'amount'           => $commission,
             'amount_conv'      => $commissionConversion,
+        ]);
+    }
+
+    private function pixelInnovCommissionWallet(): WalletPixel
+    {
+        $walletPixel = WalletPixel::where('wallet_id', 'PIXELINNOV-COM')->lockForUpdate()->first();
+
+        if ($walletPixel) {
+            return $walletPixel;
+        }
+
+        $walletAdmin = WalletAdmin::find(1);
+
+        if (!$walletAdmin) {
+            throw new \Exception('Wallet admin de référence introuvable pour créer le wallet Pixel Innov');
+        }
+
+        return WalletPixel::create([
+            'wallet_id'    => 'PIXELINNOV-COM',
+            'company_id'   => $walletAdmin->company_id,
+            'currencie_id' => $walletAdmin->currencie_id,
+            'country_id'   => $walletAdmin->country_id,
+            'amount'       => 0,
+            'status'       => true,
+            'created_by'   => $walletAdmin->created_by,
+            'sid_user_id'  => $walletAdmin->sid_user_id,
+        ]);
+    }
+
+    private function pixelInnovWalletCommission(): WalletPixelCommission
+    {
+        $walletPixelCommission = WalletPixelCommission::where('wallet_id', 'PIXELINNOV-SOURCE-COM')->lockForUpdate()->first();
+
+        if ($walletPixelCommission) {
+            return $walletPixelCommission;
+        }
+
+        $walletAdmin = WalletAdmin::find(1);
+
+        if (!$walletAdmin) {
+            throw new \Exception('Wallet admin de référence introuvable pour créer le wallet commission Pixel Innov');
+        }
+
+        return WalletPixelCommission::create([
+            'wallet_id'    => 'PIXELINNOV-SOURCE-COM',
+            'company_id'   => $walletAdmin->company_id,
+            'currencie_id' => $walletAdmin->currencie_id,
+            'country_id'   => $walletAdmin->country_id,
+            'amount'       => 0,
+            'status'       => true,
+            'created_by'   => $walletAdmin->created_by,
+            'sid_user_id'  => $walletAdmin->sid_user_id,
         ]);
     }
 
@@ -964,27 +1018,24 @@ class PixelPaymentController extends Controller
         $commissionPct   = (float) $pixelConfig->commission_percent;
         $totalFeePct     = $fixedFeePct + $commissionPct;
         $totalCommission = round((float) $reload->amount * $totalFeePct / 100, 2);
-        $totalAdminCommission = round((float) $reload->amount * $commissionPct / 100, 2);
-        $totalBanqueCommission = round((float) $reload->amount * $fixedFeePct / 100, 2);
+        $totalAdminCommission = round((float) $reload->amount * $fixedFeePct / 100, 2);
         $amountReceived  = (float) $reload->amount - $totalCommission;
 
         $countryCiv    = Country::find(107);
         $robusCurrency = $wallet->country->currencie->value ?? 1;
-        $walletAdmin      = WalletAdmin::find(1);
+        $walletPixel      = $this->pixelInnovCommissionWallet();
         $adminSingle      = SidUser::whereIsAdmin(true)->where('country_id', 107)->first();
-        $walletCommission = WalletCommission::find(1);
+        $walletPixelCommission = $this->pixelInnovWalletCommission();
 
         if ($countryCiv && $countryCiv->currencie->value == $wallet->country->currencie->value) {
             $amountTotalConversion      = $benefice;
             $amountCommissionConversion = $totalCommission;
             $amountCommissionAdminConversion = $totalAdminCommission;
-            $amountCommissionBanqueConversion = $totalBanqueCommission;
             $conversionRate = 1;
         } else {
             $amountTotalConversion      = $benefice * (float) $robusCurrency;
             $amountCommissionConversion = $totalCommission * (float) $robusCurrency;
             $amountCommissionAdminConversion = $totalAdminCommission * (float) $robusCurrency;
-            $amountCommissionBanqueConversion = $totalBanqueCommission * (float) $robusCurrency;
             $conversionRate = (float) $robusCurrency;
         }
 
@@ -1028,29 +1079,32 @@ class PixelPaymentController extends Controller
             'updated_at'                => now(),
         ]);
 
-        if ($walletCommission) {
-            $walletAdmin->increment('amount', $amountTotalConversion);
+        if ($walletPixelCommission) {
+            $walletPixel->increment('amount', $amountCommissionAdminConversion);
+
             LedgerEntry::create([
                 'transaction_id' => (string) Str::uuid(),
                 'admin_com_id'   => null,
                 'debit'          => 0,
                 'credit'         => $amountCommissionAdminConversion,
-                'description'    => 'Commission administrateur',
-                'is_uv'          => true,
+                'description'    => 'Commission administrateur Pixel',
+                'is_uv'          => false,
+                'is_pixel'          => true,
             ]);
 
-            $walletCommission->decrement('amount', $amountTotalConversion);
+            $walletPixelCommission->decrement('amount', $amountCommissionConversion);
 
             LedgerEntry::create([
                 'transaction_id' => (string) Str::uuid(),
-                'admin_com_id' => null,
-                'debit' => $amountCommissionBanqueConversion,
-                'credit' => 0,
-                'description' => "Commission banque",
-                'is_comission' => true,
+                'admin_com_id'   => null,
+                'debit'          => $amountCommissionConversion,
+                'credit'         => 0,
+                'description'    => 'Wallet commission Pixel Innov',
+                'is_uv'          => false,
+                'is_pixel'       => true,
             ]);
         } else {
-            $adminSingle->wallet->increment('amount', $amountTotalConversion);
+            $adminSingle->wallet->increment('amount', $amountCommissionAdminConversion);
         }
 
         $this->creditPixelInnovUnderCommission(
@@ -1093,7 +1147,8 @@ class PixelPaymentController extends Controller
         $commissionPct   = (float) $pixelConfig->commission_percent;
         $totalFeePct     = $fixedFeePct + $commissionPct;
         $totalCommission = round((float) $reload->amount * $totalFeePct / 100, 2);
-        $amountReceived  = (float) $reload->amount - $totalCommission;
+        $amountReceived  = (float) $reload->amount - $totalFeePct;
+        $totalAdminCommission  = round((float) $reload->amount * $fixedFeePct / 100, 2);;
 
         $walletAdmin      = WalletAdmin::find(1);
         $walletCommission = Wallet::where('wallet_id', 'CI44RTZU')->first();
@@ -1119,10 +1174,12 @@ class PixelPaymentController extends Controller
         if ($countryCiv && $countryCiv->currencie->value == $wallet->country->currencie->value) {
             $amountTotalConversion      = $benefice;
             $amountCommissionConversion = $totalCommission;
+            $amountAdminCommissionConversion = $totalAdminCommission;
             $conversionRate = 1;
         } else {
             $amountTotalConversion      = $benefice * (float) $robusCurrency;
             $amountCommissionConversion = $totalCommission * (float) $robusCurrency;
+            $amountAdminCommissionConversion = $totalAdminCommission * (float) $robusCurrency;
             $conversionRate = (float) $robusCurrency;
         }
 
@@ -1188,12 +1245,13 @@ class PixelPaymentController extends Controller
             'transaction_id' => (string) Str::uuid(),
             'admin_com_id' => null,
             'debit' => 0,
-            'credit' => $amountCommissionConversion,
+            'credit' => $amountAdminCommissionConversion,
             'description' => 'Commission adminstrateur',
-            'is_uv' => true,
+            'is_uv' => false,
+            'is_pixel' => true,
         ]);
 
-        $walletAdmin->increment('amount', $amountCommissionConversion);
+        $walletAdmin->increment('amount', $amountAdminCommissionConversion);
 
         $this->creditPixelInnovUnderCommission(
             $reload,
@@ -1208,8 +1266,9 @@ class PixelPaymentController extends Controller
             'admin_com_id' => null,
             'debit' => $amountTotalConversion,
             'credit' => 0,
-            'description' => 'Wallet retrait',
-            'is_wallet' => true,
+            'description' => 'Wallet retrait Pixel Innov',
+            'is_wallet' => false,
+            'is_pixel' => true,
         ]);
 
         $wallet->update([
@@ -1809,7 +1868,7 @@ class PixelPaymentController extends Controller
             $customRef    = $transfer->metadata['custom_ref'] ?? ('ROBUS_MZ_' . $transfer->id);
 
             $cashInPayload = [
-                'amount'             => (int) $transfer->amount_received,
+                'amount'             => (int) $transfer->amount,
                 'destination'        => $transfer->recipient_phone,
                 'service_id'         => $recipientService->service_id,
                 'ipn_url'            => $publicBase . '/payment_pixelInnov/mobile-transfer/callback',
@@ -1891,7 +1950,7 @@ class PixelPaymentController extends Controller
                 'raw_response_recipient' => $ipnData,
             ]);
 
-            // Créditer la commission sur le wallet admin
+            // Créditer la commission sur le wallet Pixel Innov dédié
             $this->creditMobileTransferCommission($transfer);
 
             Log::info('Mobile Zone Transfer — SUCCESS complet', [
@@ -1920,16 +1979,12 @@ class PixelPaymentController extends Controller
 
     private function creditMobileTransferCommission(PixelMobileZoneTransfer $transfer): void
     {
-        $walletAdmin      = WalletAdmin::lockForUpdate()->find(1);
-        $walletCommission = WalletCommission::lockForUpdate()->find(1);
-
         if ((float) $transfer->total_fee <= 0) {
             return;
         }
 
-        if (!$walletAdmin || !$walletCommission) {
-            throw new \Exception('Wallet admin ou wallet commission introuvable pour Mobile Zone');
-        }
+        $walletPixel           = $this->pixelInnovCommissionWallet();
+        $walletPixelCommission = $this->pixelInnovWalletCommission();
 
         $transfer->loadMissing(['senderService', 'recipientService', 'wallet.country.currencie']);
 
@@ -1941,13 +1996,13 @@ class PixelPaymentController extends Controller
         }
 
         // ── Commissions admin + banque ────────────────────────────────────────
-        $senderAdminCommission    = round((float) $transfer->amount      * (float) $senderService->commission_percent    / 100, 2);
-        $senderBankCommission     = round((float) $transfer->amount      * (float) $senderService->fixed_fee             / 100, 2);
+        $senderAdminCommission    = round((float) $transfer->amount      * (float) $senderService->fixed_fee    / 100, 2);
+        $senderBankCommission     = round((float) $transfer->amount      * (float) $senderService->commission_percent             / 100, 2);
         $recipientAdminCommission = round((float) $transfer->amount_to_send * (float) $recipientService->commission_percent / 100, 2);
         $recipientBankCommission  = round((float) $transfer->amount_to_send * (float) $recipientService->fixed_fee          / 100, 2);
 
-        $adminCommission = round($senderAdminCommission + $recipientAdminCommission, 2);
-        $bankCommission  = round($senderBankCommission  + $recipientBankCommission,  2);
+        $adminCommission = round($senderAdminCommission , 2);
+        $bankCommission  = round($senderBankCommission ,  2);
         $totalCommission = round($adminCommission + $bankCommission, 2);
 
         if ($totalCommission <= 0) {
@@ -2013,16 +2068,14 @@ class PixelPaymentController extends Controller
         }
 
         // Les commissions sous-dist et compagnie sont prélevées sur la part admin
-        $adminCommissionNet = max(0, $adminCommission - $underCommission - $companieCommission);
-
-        $adminCommissionConversion   = round($adminCommissionNet   * $conversionRate, 2);
+        $adminCommissionConversion   = round($adminCommission   * $conversionRate, 2);
         $bankCommissionConversion    = round($bankCommission        * $conversionRate, 2);
         $underCommissionConversion   = round($underCommission       * $conversionRate, 2);
         $companieCommissionConversion = round($companieCommission   * $conversionRate, 2);
         $totalCommissionConversion   = round($totalCommission       * $conversionRate, 2);
 
-        // ── Crédit wallet admin (part nette) ─────────────────────────────────
-        $walletAdmin->increment('amount', $adminCommissionConversion);
+        // ── Crédit wallet Pixel Innov (part admin nette) ─────────────────────
+        $walletPixel->increment('amount', $adminCommissionConversion);
 
         LedgerEntry::create([
             'transaction_id' => (string) Str::uuid(),
@@ -2030,32 +2083,31 @@ class PixelPaymentController extends Controller
             'debit'          => 0,
             'credit'         => $adminCommissionConversion,
             'description'    => 'Commission administrateur Transfert Mobile Zone #' . $transfer->id,
-            'is_uv'          => true,
+            'is_uv'          => false,
+            'is_pixel'       => true,
         ]);
 
-        // ── Débit wallet commission (pool global) ─────────────────────────────
-        $walletCommission->decrement('amount', $totalCommissionConversion);
+        // ── Débit wallet commission Pixel Innov ──────────────────────────────
+        $walletPixelCommission->decrement('amount', $totalCommissionConversion);
 
-        if ($bankCommissionConversion > 0) {
-            LedgerEntry::create([
-                'transaction_id' => (string) Str::uuid(),
-                'admin_com_id'   => null,
-                'debit'          => $bankCommissionConversion,
-                'credit'         => 0,
-                'description'    => 'Commission banque Transfert Mobile Zone #' . $transfer->id,
-                'is_comission'   => true,
-            ]);
-        }
+        LedgerEntry::create([
+            'transaction_id' => (string) Str::uuid(),
+            'admin_com_id'   => null,
+            'debit'          => $totalCommissionConversion,
+            'credit'         => 0,
+            'description'    => 'Wallet commission Pixel Innov Transfert Mobile Zone #' . $transfer->id,
+            'is_uv'          => false,
+            'is_pixel'       => true,
+        ]);
 
         // ── Commission sous-distributeur ──────────────────────────────────────
         if ($underCommission > 0 && $walletOwner?->wallet) {
-            $walletOwner->wallet->increment('amount', $underCommissionConversion);
 
             LedgerEntry::create([
                 'transaction_id' => (string) Str::uuid(),
                 'admin_com_id'   => null,
-                'debit'          => 0,
-                'credit'         => $underCommissionConversion,
+                'debit'          => $underCommissionConversion,
+                'credit'         => 0,
                 'description'    => 'Commission sous-distributeur Transfert Mobile Zone #' . $transfer->id,
                 'is_uv'          => true,
             ]);
@@ -2080,8 +2132,8 @@ class PixelPaymentController extends Controller
             LedgerEntry::create([
                 'transaction_id' => (string) Str::uuid(),
                 'admin_com_id'   => null,
-                'debit'          => 0,
-                'credit'         => $companieCommissionConversion,
+                'credit'          => 0,
+                'debit'         => $companieCommissionConversion,
                 'description'    => 'Commission compagnie Transfert Mobile Zone #' . $transfer->id,
                 'is_uv'          => true,
             ]);

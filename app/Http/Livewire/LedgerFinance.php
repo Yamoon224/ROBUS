@@ -294,11 +294,14 @@ class LedgerFinance extends Component
             $query->where('is_uv', true);
         } elseif ($this->typeFilter === 'uv_purchase') {
             $query->where('is_wallet', true);
+        } elseif ($this->typeFilter === 'pixel_commission') {
+            $query->where('is_pixel', true);
         } elseif ($this->typeFilter === 'standard') {
             $query->where('is_comission', false)
                 ->where('is_admin', false)
                 ->where('is_uv', false)
-                ->where('is_wallet', false);
+                ->where('is_wallet', false)
+                ->where('is_pixel', false);
         }
 
         return $query;
@@ -344,11 +347,17 @@ class LedgerFinance extends Component
              COALESCE(SUM(CASE WHEN is_comission = 1 THEN debit ELSE 0 END), 0) AS total_bank,
              COALESCE(SUM(CASE WHEN is_uv = 1 THEN credit ELSE 0 END), 0) AS total_uv_commission,
              COALESCE(SUM(CASE WHEN is_wallet = 1 THEN debit ELSE 0 END), 0) AS total_uv_purchase,
+             COALESCE(SUM(CASE WHEN is_pixel = 1 THEN credit ELSE 0 END), 0) AS total_pixel_commission,
+             COALESCE(SUM(CASE WHEN is_pixel = 1 THEN debit ELSE 0 END), 0) AS total_pixel_commission_wallet,
              COALESCE(SUM(CASE WHEN is_admin = 1 AND created_at BETWEEN ? AND ? THEN credit ELSE 0 END), 0) AS today_admin,
              COALESCE(SUM(CASE WHEN is_comission = 1 AND created_at BETWEEN ? AND ? THEN debit ELSE 0 END), 0) AS today_bank,
              COALESCE(SUM(CASE WHEN is_uv = 1 AND created_at BETWEEN ? AND ? THEN credit ELSE 0 END), 0) AS today_uv_commission,
-             COALESCE(SUM(CASE WHEN is_wallet = 1 AND created_at BETWEEN ? AND ? THEN debit ELSE 0 END), 0) AS today_uv_purchase',
+             COALESCE(SUM(CASE WHEN is_wallet = 1 AND created_at BETWEEN ? AND ? THEN debit ELSE 0 END), 0) AS today_uv_purchase,
+             COALESCE(SUM(CASE WHEN is_pixel = 1 AND created_at BETWEEN ? AND ? THEN credit ELSE 0 END), 0) AS today_pixel_commission,
+             COALESCE(SUM(CASE WHEN is_pixel = 1 AND created_at BETWEEN ? AND ? THEN debit ELSE 0 END), 0) AS today_pixel_commission_wallet',
             [
+                $todayStart, $todayEnd,
+                $todayStart, $todayEnd,
                 $todayStart, $todayEnd,
                 $todayStart, $todayEnd,
                 $todayStart, $todayEnd,
@@ -366,6 +375,10 @@ class LedgerFinance extends Component
             'totalAchatUV' => (float) $summary->total_uv_purchase,
             'commissionsAdminUVToday' => (float) $summary->today_uv_commission,
             'ByUVToday' => (float) $summary->today_uv_purchase,
+            'totalCommissionsPixel' => (float) $summary->total_pixel_commission,
+            'commissionsPixelToday' => (float) $summary->today_pixel_commission,
+            'totalWalletPixelCommission' => (float) $summary->total_pixel_commission_wallet,
+            'walletPixelCommissionToday' => (float) $summary->today_pixel_commission_wallet,
 
         ]);
     }

@@ -89,25 +89,30 @@ class ProviderController extends Controller
 
             $cacheKey = "dashboard_data_user_" . robus()->id . "_country_" . $countrieId;
             // 1️⃣ Cas où l'app est indisponible
-            // if (!$appStatusResult['success']) {
+            if (!$appStatusResult['success']) {
 
-            //     $walletTransactionDepot = $this->withPixelInnovCashInProviders(
-            //         $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1),
-            //         $countrieId
-            //     );
-            //     $walletTransactionDrawal = $this->percentRobus->getProvidersDrawalByType(new Provider, $countrieId, 29);
-            //     $walletTransactionReload = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 30);
+                $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
 
-            //     $dashboard_data['Transfert national'] = [
-            //         "Dépôts" => ProviderSingleCollection::collection($walletTransactionDepot),
-            //     ];
+                if (robus()->is_custumers) {
+                    $walletTransactionDepot = $this->withPixelInnovCashInProviders(
+                        $walletTransactionDepot,
+                        $countrieId
+                    );
+                }
 
-            //     (robus()->is_under_distributer || robus()->is_api) ?  $dashboard_data['Retrait'] =  ProviderSingleCollection::collection($walletTransactionDrawal) : [];
+                $walletTransactionDrawal = $this->percentRobus->getProvidersDrawalByType(new Provider, $countrieId, 29);
+                $walletTransactionReload = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 30);
 
-            //     (robus()->is_custumers) ? $dashboard_data['Achat UV'] = ProviderSingleCollection::collection($walletTransactionReload) : [];
+                $dashboard_data['Transfert national'] = [
+                    "Dépôts" => ProviderSingleCollection::collection($walletTransactionDepot),
+                ];
 
-            //     return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
-            // }
+                (robus()->is_under_distributer || robus()->is_api) ?  $dashboard_data['Retrait'] =  ProviderSingleCollection::collection($walletTransactionDrawal) : [];
+
+                (robus()->is_custumers) ? $dashboard_data['Achat UV'] = ProviderSingleCollection::collection($walletTransactionReload) : [];
+
+                return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
+            }
 
             // 2️⃣ Récupération des assignations et mapping restrictions
 
@@ -178,14 +183,13 @@ class ProviderController extends Controller
                     'walletXbet' => [13, 'xbet'],
                     'walletInterXbet' => [26, 'interXbet'],
                     'walletUv' => [30, 'relaodUv'],
-
                 ];
 
-                $providerCacheKey = "providers_country_{$countrieId}_v2";
+                $providerCacheKey = "providers_country_{$countrieId}_v3";
 
                 $providers = [];
 
-                $providerCacheKey = "providers_country_{$countrieId}_v2";
+                $providerCacheKey = "providers_country_{$countrieId}_v3";
                 $providers        = Cache::get($providerCacheKey, []);
 
 
