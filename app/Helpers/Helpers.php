@@ -550,6 +550,34 @@ function getReloadMoneysPaiements()
         ->orderBy('name', 'asc')->get();
 }
 
+function getMobileTransferServicesGrouped()
+{
+    return \App\Models\PixelInnoveService::with(['country', 'provider'])
+        ->where('status', true)
+        ->orderBy('name')
+        ->get()
+        ->groupBy('country_id')
+        ->map(function ($items) {
+            $first   = $items->first();
+            $country = optional($first->country);
+            $iso2    = $country->code ? strtoupper($country->code) : '';
+
+            return [
+                'country_id'   => $first->country_id,
+                'country'      => $country->name,
+                'country_iso2' => $iso2,
+                'providers'    => $items->map(fn($s) => [
+                    'id'             => $s->id,
+                    'provider_id'    => $s->provider_id,
+                    'name'           => optional($s->provider)->name ?? $s->name,
+                    'image'          => optional($s->provider)->image,
+                    'service_id'     => $s->service_id,
+                    'operation_type' => $s->operation_type,
+                ])->values(),
+            ];
+        })->values();
+}
+
 function sabdyHomeVerify()
 {
     $allowedRoles = ['root', 'Distributeur', 'superviseur' , 'com_zone'];

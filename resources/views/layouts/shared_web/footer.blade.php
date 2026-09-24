@@ -1,103 +1,264 @@
-<!-- End Main Content -->
-<!--Main Footer-->
-<footer class="robus-footer">
+@php
+    $footerLinks = [
+        [
+            'label' => 'Récharger Visa / MasterCard',
+            'href' => route('web.transactions_reloads'),
+            'icon' => 'bi-credit-card',
+        ],
+        [
+            'label' => 'Récharger une carte Push',
+            'href' => route('web.transactions_pushs'),
+            'icon' => 'bi-lightning-charge',
+        ],
+        [
+            'label' => 'Transfert et paiement',
+            'href' => route('web.transactions_transactions'),
+            'icon' => 'bi-send-check',
+        ],
+        [
+            'label' => 'Compte ROBUS',
+            'href' => route('web.transactions_robus'),
+            'icon' => 'bi-wallet2',
+        ],
+        [
+            'label' => 'Compte 1XBET',
+            'href' => route('web.transactions_xbets'),
+            'icon' => 'bi-trophy',
+        ],
+    ];
+@endphp
 
-    
-    <!--Footer Upper-->
-    <div class="footer-upper">
-        <div class="auto-container">
-            <div class="row clearfix">
-                <!--Two 4th column-->
-                <div class="col-md-4 col-sm-12 col-xs-12">
-                    <div class="sec-title">
-                        <h2>Liens utiles</h2>
-                    </div>
-                    <div class="footer-widget links-widget ">
-                        <ul>
-                            <li><a href="{{ route('web.transactions_reloads') }}" class="style_footer" >Récharger une carte Visa/Master Card</a></li>
-                            <li><a href="{{ route('web.transactions_pushs') }}" class="style_footer" >Récharger une carte Push</a></li>
-                            <li><a href="{{ route('web.transactions_transactions') }}" class="style_footer" >Transfert et paiement de crédit</a></li>
-                            <li><a href="{{ route('web.transactions_robus') }}" class="style_footer" >Récharger mon compte ROBUS</a></li>
-                            <li><a href="{{ route('web.transactions_xbets') }}" class="style_footer" >Récharger mon compte 1XBET</a></li>
-                        </ul>
+<style>
+    .robus-site-footer {
+        position: relative;
+        overflow: hidden;
+        color: #ffffff;
+        background: linear-gradient(135deg, #41113f 0%, #7a155f 48%, #a30071 100%);
+    }
 
-                    </div>
-                </div>
-                <!--Two 4th column End-->
+    .robus-site-footer::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0)),
+            radial-gradient(circle at 82% 18%, rgba(248, 162, 31, 0.28), transparent 32%);
+    }
 
-                <!--Two 4th column-->
-                <div class="col-md-4 col-sm-12 col-xs-12">
-                    <div class="row">
-                        <!--Footer Column-->
+    .robus-footer-main {
+        position: relative;
+        padding: clamp(44px, 6vw, 76px) 0 34px;
+    }
 
-                        <!--Footer Column-->
-                        <div class="col-md-6 col-sm-6 col-xs-12 column">
-                            <div class="footer-widget gallery-widget">
-                                <div class="sec-title">
-                                    <h2>Nos cartes</h2>
-                                </div>
-                                <div class="row">
-                                    @foreach (getReloadCartes() as $carteReloads)
-                                        <div class="col-lg-4 col-md-12 mb-4 mb-lg-0 mb-3 mt-3">
-                                            <div class="bg-image hover-overlay ripple shadow-1-strong rounded"
-                                                data-ripple-color="light">
-                                                <img src="{{ $carteReloads->image ?? null }}" class="card-img-top" />
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
+    .robus-footer-brand {
+        max-width: 380px;
+    }
 
-                    </div>
-                </div>
-                <div class="col-md-4 col-sm-12 col-xs-12">
-                    <div class="row clearfix">
-                        <!--Footer Column-->
+    .robus-footer-logo {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 14px;
+        margin-bottom: 18px;
+        border-radius: 16px;
+        background: #ffffff;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+    }
 
-                        <!--Footer Column-->
-                        <div class="col-md-6 col-sm-6 col-xs-12 column">
-                            <div class="footer-widget gallery-widget">
-                                <div class="sec-title">
-                                    <h2>Nos modes de paiements</h2>
-                                </div>
-                                <div class="row">
-                                    @foreach (getReloadLimitPaiements() as $carteReloads)
-                                        <div class="col-lg-4 col-md-12 mb-4 mb-lg-0 mb-3 mt-3">
-                                            <div class="bg-image hover-overlay ripple shadow-1-strong rounded" style=" height: 2.5rem;"
-                                                data-ripple-color="light">
-                                                <img src="{{ $carteReloads->image ?? null }}" class="card-img-top" />
-                                                <a href="#!" data-mdb-modal-init
-                                                    data-mdb-target="#exampleModal1">
-                                                    <div class="mask"
-                                                        style="background-color: rgba(251, 251, 251, 0.2);"></div>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
+    .robus-footer-logo img {
+        height: 46px;
+        width: auto;
+        object-fit: contain;
+    }
 
-                    </div>
+    .robus-footer-text {
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 0.96rem;
+        line-height: 1.75;
+    }
+
+    .robus-footer-title {
+        margin-bottom: 16px;
+        color: #ffffff;
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .robus-footer-links {
+        display: grid;
+        gap: 9px;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    .robus-footer-links a {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: rgba(255, 255, 255, 0.82);
+        font-weight: 650;
+        text-decoration: none;
+        transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .robus-footer-links a:hover {
+        color: #ffffff;
+        transform: translateX(3px);
+    }
+
+    .robus-footer-links i {
+        color: #f8a21f;
+    }
+
+    .robus-footer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(74px, 1fr));
+        gap: 10px;
+    }
+
+    .robus-footer-logo-card {
+        min-height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 9px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.92);
+    }
+
+    .robus-footer-logo-card img {
+        max-width: 100%;
+        max-height: 38px;
+        object-fit: contain;
+    }
+
+    .robus-footer-contact {
+        display: grid;
+        gap: 12px;
+    }
+
+    .robus-footer-contact a,
+    .robus-footer-contact span {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: rgba(255, 255, 255, 0.84);
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .robus-footer-contact i {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #7a155f;
+        border-radius: 10px;
+        background: #ffffff;
+    }
+
+    .robus-footer-bottom {
+        position: relative;
+        padding: 18px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.14);
+        color: rgba(255, 255, 255, 0.74);
+        font-size: 0.92rem;
+    }
+
+    .robus-footer-bottom a {
+        color: #ffffff;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    @media (max-width: 767.98px) {
+        .robus-footer-brand {
+            max-width: none;
+        }
+
+        .robus-footer-main {
+            padding-top: 40px;
+            padding-left: 14px;
+        }
+
+        .robus-footer-bottom .container {
+            padding-left: 14px;
+        }
+    }
+</style>
+
+<footer class="robus-site-footer">
+    <div class="container robus-footer-main">
+        <div class="row g-4 g-lg-5">
+            <div class="col-lg-4 col-md-6">
+                <div class="robus-footer-brand">
+                    <a href="https://robus.africa/" class="robus-footer-logo" aria-label="Robus Africa">
+                        <img src="https://robus.africa/wp-content/uploads/2023/07/LOGO_ROBUS-web.png"
+                            alt="Robus Africa">
+                    </a>
+                    <p class="robus-footer-text mb-0">
+                        ROBUS accompagne vos rechargements, transferts et paiements avec des parcours simples,
+                        sécurisés et suivis par notre équipe.
+                    </p>
                 </div>
             </div>
 
-        </div>
-    </div>
+            <div class="col-lg-3 col-md-6">
+                <h3 class="robus-footer-title">Services rapides</h3>
+                <ul class="robus-footer-links">
+                    @foreach ($footerLinks as $link)
+                        <li>
+                            <a href="{{ $link['href'] }}">
+                                <i class="bi {{ $link['icon'] }}"></i>
+                                <span>{{ $link['label'] }}</span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
 
-    <!--Footer Bottom-->
-    <div class="footer-bottom">
-        <div class="auto-container">
-            <div class="row clearfix">
-                <!--Copyright-->
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                    <div class="copyright">Copyrights &copy; 2022 Robus. Tous les droits sont réservés.</div>
+            <div class="col-lg-2 col-md-6">
+                <h3 class="robus-footer-title">Nos cartes</h3>
+                <div class="robus-footer-grid">
+                    @foreach (getReloadCartes() as $carteReloads)
+                        <div class="robus-footer-logo-card">
+                            <img src="{{ $carteReloads->image ?? null }}" alt="{{ $carteReloads->name ?? 'Carte ROBUS' }}">
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h3 class="robus-footer-title">Paiement & contact</h3>
+                <div class="robus-footer-grid mb-4">
+                    @foreach (getReloadLimitPaiements() as $carteReloads)
+                        <div class="robus-footer-logo-card">
+                            <img src="{{ $carteReloads->image ?? null }}" alt="{{ $carteReloads->name ?? 'Paiement ROBUS' }}">
+                        </div>
+                    @endforeach
                 </div>
 
+                <div class="robus-footer-contact">
+                    <a href="https://robus.africa/#contacts">
+                        <i class="bi bi-headset"></i>
+                        <span>Contacter ROBUS</span>
+                    </a>
+                    <a href="https://robus.africa/">
+                        <i class="bi bi-globe2"></i>
+                        <span>Robus</span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
+    <div class="robus-footer-bottom">
+        <div class="container d-flex flex-column flex-md-row justify-content-between gap-2">
+            <span>Copyright &copy; {{ date('Y') }} Robus. Tous les droits sont réservés.</span>
+            <a href="https://robus.africa/">ROBUS Africa</a>
+        </div>
+    </div>
 </footer>
-<!--End pagewrapper-->

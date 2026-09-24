@@ -80,9 +80,9 @@ class TransactionWebController extends Controller
 
         $deposit_cost = DepositCost::whereIsWeb(true)->first();
 
-        $carte_percent = $deposit_cost->percent * 100;
+        $carte_percent = $deposit_cost ? $deposit_cost->percent * 100 : 0;
 
-        $robus_percent = $deposit_cost->percent_admin * 100;
+        $robus_percent = $deposit_cost ? $deposit_cost->percent_admin * 100 : 0;
 
         $carte_reloads = Provider::whereStatus(true)->where('provider_type_id',  5)
             ->orderBy('name', 'asc')->where('id' , '!=' , 91)->get();
@@ -124,9 +124,9 @@ class TransactionWebController extends Controller
 
         $deposit_cost = DepositCost::whereIsWeb(true)->first();
 
-        $carte_percent = $deposit_cost->percent * 100;
+        $carte_percent = $deposit_cost ? $deposit_cost->percent * 100 : 0;
 
-        $robus_percent = $deposit_cost->percent_admin * 100;
+        $robus_percent = $deposit_cost ? $deposit_cost->percent_admin * 100 : 0;
 
         $carte_reloads = Provider::whereStatus(true)->where('name',  'PUSH')->first();
 
