@@ -1,0 +1,1 @@
+Débit expéditeur initié mais envoi au destinataire échoué : The receiver phonenumber must be a number. (and 1 more error) Un remboursement est en cours vers votre numéro.

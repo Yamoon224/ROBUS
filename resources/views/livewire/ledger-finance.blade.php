@@ -197,49 +197,7 @@
             </div>
         </div>
 
-        <div class="col-span-12 sm:col-span-4 lg:col-span-3 intro-y">
-            <div class="amount-balance p-4">
-                <div class="amount-label text-sm text-white">Total Commissions PixelInnov</div>
-                <div class="flex items-baseline justify-between">
-                    <span class="amount-balance-value text-xl font-semibold">
-                        {{ number_format($totalCommissionsPixel, 2) }} FCFA
-                    </span>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-span-12 sm:col-span-4 lg:col-span-3 intro-y">
-            <div class="amount-commission-balance p-4">
-                <div class="amount-label text-sm text-white">Commissions PixelInnov Aujourd'hui</div>
-                <div class="flex items-baseline justify-between">
-                    <span class="amount-balance-value text-xl font-semibold">
-                        {{ number_format($commissionsPixelToday, 2) }} FCFA
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 lg:col-span-3 intro-y style_facture_home2">
-            <div class="rounded-lg shadow p-4 border-l-4 border-red-500 style_facture_home2">
-                <div class="amount-label text-sm text-white">Total WalletPixelCommission</div>
-                <div class="flex items-baseline justify-between">
-                    <span class="amount-balance-value text-xl font-semibold text-white">
-                        {{ number_format($totalWalletPixelCommission, 2) }} FCFA
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 lg:col-span-3 intro-y style_facture_home2">
-            <div class="rounded-lg shadow p-4 border-l-4 border-red-500 style_facture_home2">
-                <div class="amount-label text-sm text-white">WalletPixelCommission Aujourd'hui</div>
-                <div class="flex items-baseline justify-between">
-                    <span class="amount-balance-value text-xl font-semibold text-white">
-                        {{ number_format($walletPixelCommissionToday, 2) }} FCFA
-                    </span>
-                </div>
-            </div>
-        </div>
 
     </div>
 

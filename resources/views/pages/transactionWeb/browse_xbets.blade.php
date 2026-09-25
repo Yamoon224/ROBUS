@@ -164,7 +164,7 @@
         'badgeIcon' => 'bi-currency-exchange',
     ])
 
-    {{-- @if ($appStatusResult['success']) --}}
+    @if ($appStatusResult['success'])
         <section class="txn-page contact-info-section style_percent" data-txn-type="xbet">
             <div class="container">
                 <div class="row txn-shell g-4 justify-content-center">
@@ -299,7 +299,7 @@
                 </div>
             </div>
         </section>
-    {{-- @else
+    @else
         <section class="contact-info-section style_percent">
             <div class="container">
                 <div class="row justify-content-center">
@@ -309,7 +309,7 @@
                 </div>
             </div>
         </section>
-    @endif --}}
+    @endif
 @endsection
 
 @push('scripts')

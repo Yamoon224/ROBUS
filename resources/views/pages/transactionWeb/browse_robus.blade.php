@@ -1,366 +1,397 @@
 @extends('layouts.master_web')
 
-@section('title', 'Rechargement ROBUS')
+@section('title', 'Achat UV — ROBUS')
 
 @push('styles')
-<style>
-    /* ===== THEME ROBUS ===== */
-    [data-txn-type="robus"] {
-        --txn-page-bg:
-            radial-gradient(circle at 12% 15%, rgba(99, 102, 241, .10), transparent 30%),
-            radial-gradient(circle at 88% 0%, rgba(139, 92, 246, .08), transparent 28%),
-            linear-gradient(180deg, #f5f3ff 0%, #ffffff 54%, #f8fafc 100%);
-        --txn-head-gradient: linear-gradient(135deg, #1e1b4b 0%, #3730a3 58%, #818cf8 100%);
-        --txn-submit-gradient: linear-gradient(135deg, #1e1b4b 0%, #3730a3 60%, #6366f1 100%);
-        --txn-submit-shadow: rgba(99, 102, 241, .22);
-        --txn-field-bg: #f5f3ff;
-        --txn-field-focus-border: rgba(99, 102, 241, .55);
-        --txn-field-focus-shadow: rgba(99, 102, 241, .12);
-        --txn-section-title-color: #1e1b4b;
-        --txn-icon-color: #6366f1;
-        --txn-icon-bg: rgba(99, 102, 241, .10);
-        --txn-amount-note-bg: rgba(99, 102, 241, .08);
-        --txn-amount-note-color: #4338ca;
-    }
-
-    /* ===== SHARED txn-* STYLES ===== */
-    .txn-page { background: var(--txn-page-bg); padding: 64px 0 76px; }
-    .txn-shell { align-items: flex-start; }
-
-    .txn-form-panel {
-        background: #ffffff;
-        border: 1px solid rgba(15, 23, 42, .08);
-        border-radius: 24px;
-        box-shadow: 0 24px 70px rgba(15, 23, 42, .10);
-        overflow: hidden;
-    }
-
-    .txn-form-head {
-        display: flex; gap: 18px; align-items: center;
-        justify-content: space-between;
-        background: var(--txn-head-gradient);
-        color: #ffffff; padding: 28px;
-    }
-
-    .txn-form-head h2 { color: #ffffff; font-size: 1.35rem; font-weight: 800; line-height: 1.25; margin: 0; }
-    .txn-form-head p { color: rgba(255,255,255,.82); margin: 8px 0 0; }
-
-    .txn-head-icon {
-        width: 58px; height: 58px; border-radius: 18px;
-        display: inline-flex; align-items: center; justify-content: center;
-        background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.20);
-        flex: 0 0 auto;
-    }
-    .txn-head-icon i { color: #ffffff; font-size: 1.55rem; }
-
-    .txn-logo-box {
-        width: 72px; height: 72px; border-radius: 20px;
-        display: inline-flex; align-items: center; justify-content: center;
-        background: #ffffff; border: 1px solid rgba(255,255,255,.24);
-        box-shadow: 0 18px 38px rgba(30,27,75,.22);
-        flex: 0 0 auto; padding: 12px;
-    }
-    .txn-logo-box img { max-width: 100%; max-height: 48px; object-fit: contain; }
-
-    .txn-trust-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
-    .txn-trust-chip {
-        display: inline-flex; align-items: center; gap: 7px;
-        min-height: 34px; padding: 8px 12px; border-radius: 999px;
-        background: rgba(255,255,255,.13); color: rgba(255,255,255,.94);
-        font-size: .82rem; font-weight: 700;
-    }
-
-    .txn-form-body { padding: 28px; }
-
-    .txn-section-title {
-        display: flex; align-items: center; gap: 10px;
-        color: var(--txn-section-title-color);
-        font-size: .95rem; font-weight: 800; margin-bottom: 16px;
-    }
-    .txn-section-title span {
-        width: 32px; height: 32px; display: inline-flex;
-        align-items: center; justify-content: center;
-        border-radius: 11px;
-        color: var(--txn-icon-color); background: var(--txn-icon-bg);
-    }
-
-    .txn-field {
-        height: 100%; padding: 14px;
-        border: 1px solid rgba(15,23,42,.08);
-        border-radius: 18px; background: var(--txn-field-bg);
-    }
-    .txn-field label {
-        display: flex; align-items: center; gap: 8px;
-        color: #334155; font-size: .84rem; font-weight: 800; margin-bottom: 10px;
-    }
-    .txn-field .form-control,
-    .txn-field .form-select {
-        min-height: 48px;
-        border: 1px solid rgba(15,23,42,.10) !important;
-        border-radius: 14px !important;
-        background-color: #ffffff; color: #0f172a;
-        font-weight: 700; box-shadow: none;
-    }
-    .txn-field .form-control:focus,
-    .txn-field .form-select:focus {
-        border-color: var(--txn-field-focus-border) !important;
-        box-shadow: 0 0 0 .2rem var(--txn-field-focus-shadow);
-    }
-    .txn-field .form-control[readonly] {
-        background-color: #f8fafc;
-        color: #64748b;
-        cursor: default;
-    }
-    .txn-field-hint {
-        margin-top: 8px; font-size: .80rem;
-        color: #94a3b8; font-style: italic;
-    }
-
-    .txn-amount-note {
-        display: flex; align-items: center; gap: 10px;
-        margin-top: 12px; padding: 11px 12px; border-radius: 14px;
-        background: var(--txn-amount-note-bg);
-        color: var(--txn-amount-note-color);
-        font-size: .84rem; font-weight: 700;
-    }
-
-    .txn-submit-wrap { display: flex; justify-content: center; }
-    .txn-submit-wrap .txn-submit-btn { width: min(100%, 420px); }
-
-    .txn-submit-btn {
-        display: inline-flex; align-items: center; justify-content: center;
-        gap: 8px; min-height: 58px; height: auto;
-        padding-right: 18px !important; padding-left: 18px !important;
-        border: 0; border-radius: 18px;
-        background: var(--txn-submit-gradient);
-        box-shadow: 0 16px 30px var(--txn-submit-shadow);
-        line-height: 1.25; white-space: normal;
-        overflow-wrap: anywhere; text-align: center;
-    }
-    .txn-submit-btn:disabled { background: #a8b3c7; box-shadow: none; cursor: not-allowed; }
-    .txn-submit-btn .submit-text { display: inline-flex; }
-    .txn-submit-btn .loading-spinner { flex-wrap: wrap; }
-    .txn-submit-btn i { flex: 0 0 auto; }
-    .txn-submit-btn .submit-text,
-    .txn-submit-btn .loading-spinner {
-        align-items: center; justify-content: center;
-        max-width: 100%; min-width: 0; line-height: 1.25;
-    }
-
-    .txn-side-note {
-        margin-top: 16px; padding: 18px; border-radius: 20px;
-        background: #ffffff; border: 1px solid rgba(15,23,42,.08);
-        box-shadow: 0 14px 34px rgba(15,23,42,.07);
-    }
-    .txn-side-note strong { display: block; color: #0f172a; font-size: .95rem; margin-bottom: 6px; }
-    .txn-side-note p { color: #64748b; font-size: .88rem; margin: 0; }
-
-    .txn-page .card { border-radius: 22px !important; }
-
-    @media (max-width: 991.98px) {
-        .txn-page { padding: 46px 0 58px; }
-        .txn-form-head { align-items: flex-start; flex-direction: column; }
-    }
-    @media (max-width: 575.98px) {
-        .txn-form-head, .txn-form-body { padding: 22px; }
-        .txn-submit-btn {
-            min-height: 54px; padding: 13px 14px !important;
-            border-radius: 15px; font-size: .94rem;
-        }
-        .txn-submit-btn .submit-text,
-        .txn-submit-btn .loading-spinner { flex-wrap: wrap; }
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('web/css/achat-uv.css') }}">
 @endpush
 
 @section('content')
     @include('components.hero-section', [
         'backgroundImage' => 'https://robus.home.ci/public/dist/images/transactions.jpeg',
-        'title' => 'Réchargement par ROBUS',
-        'subtitle' => 'Rechargez votre compte ROBUS en toute sécurité',
-        'badgeText' => 'Transaction 100% sécurisée',
-        'badgeIcon' => 'bi-currency-exchange',
+        'title'           => 'Achat UV — ROBUS',
+        'subtitle'        => 'Identifiez votre compte, choisissez votre opérateur et procédez au paiement',
+        'badgeText'       => 'Transaction 100% sécurisée',
+        'badgeIcon'       => 'bi-currency-exchange',
     ])
 
-    {{-- @if ($appStatusResult['success']) --}}
-        <section class="txn-page contact-info-section style_percent" data-txn-type="robus">
-            <div class="container">
-                <div class="row txn-shell g-4 justify-content-center">
-                    <div class="col-lg-8 col-md-11 col-sm-12">
-                        <div class="txn-form-panel">
+    @php
+        $acvFlags = [
+            'CI' => '🇨🇮', 'SN' => '🇸🇳', 'ML' => '🇲🇱', 'BF' => '🇧🇫',
+            'BJ' => '🇧🇯', 'TG' => '🇹🇬', 'CM' => '🇨🇲', 'GM' => '🇬🇲',
+            'GN' => '🇬🇳', 'CD' => '🇨🇩', 'MG' => '🇲🇬', 'GA' => '🇬🇦',
+            'CG' => '🇨🇬',
+        ];
+        $acvCountries = getMobileTransferServicesGrouped()
+            ->filter(fn($c) => collect($c['cash_out_providers'])->isNotEmpty())
+            ->values();
+    @endphp
 
-                            <div class="txn-form-head">
-                                <div>
-                                    <h2>Formulaire de rechargement ROBUS</h2>
-                                    <p>Renseignez votre identifiant ROBUS, votre numéro de téléphone et le montant.
-                                        Le nom du titulaire s'affiche automatiquement.</p>
-                                    <div class="txn-trust-list">
-                                        <span class="txn-trust-chip">
-                                            <i class="bi bi-shield-check"></i> Transaction sécurisée
-                                        </span>
-                                        <span class="txn-trust-chip">
-                                            <i class="bi bi-wallet2"></i> Compte ROBUS
-                                        </span>
-                                        <span class="txn-trust-chip">
-                                            <i class="bi bi-receipt"></i> Demande suivie
-                                        </span>
-                                    </div>
+    <section class="acv-page contact-info-section style_percent" data-txn-type="robus">
+        <div class="container">
+            <div class="row acv-shell g-4 justify-content-center">
+                <div class="col-lg-8 col-md-11 col-sm-12">
+                    <div class="acv-form-panel">
+
+                        {{-- ── En-tête ── --}}
+                        <div class="acv-form-head">
+                            <div class="acv-form-head-content">
+                                <h2>Achat UV — Rechargement ROBUS</h2>
+                                <p>Vérifiez votre compte ROBUS, sélectionnez votre opérateur mobile et effectuez votre paiement.</p>
+                                <div class="acv-trust-list">
+                                    <span class="acv-trust-chip"><i class="bi bi-shield-check"></i> Sécurisé</span>
+                                    <span class="acv-trust-chip"><i class="bi bi-wallet2"></i> Compte ROBUS</span>
+                                    <span class="acv-trust-chip"><i class="bi bi-phone"></i> Mobile Money</span>
                                 </div>
-                                <div class="txn-logo-box">
-                                    <img src="https://robus.home.ci/public/dist/providers/robus.png" alt="ROBUS">
+                            </div>
+                            <div class="acv-head-icon">
+                                <i class="bi bi-wallet2"></i>
+                            </div>
+                        </div>
+
+                        {{-- ── Barre de progression ── --}}
+                        <div class="acv-progress">
+                            <div class="acv-progress-step active" id="acvStep1Ind">
+                                <div class="acv-progress-num">1</div>
+                                <div class="acv-progress-label">Compte ROBUS</div>
+                            </div>
+                            <div class="acv-progress-connector" id="acvProgressLine1"></div>
+                            <div class="acv-progress-step" id="acvStep2Ind">
+                                <div class="acv-progress-num">2</div>
+                                <div class="acv-progress-label">Opérateur</div>
+                            </div>
+                            <div class="acv-progress-connector" id="acvProgressLine2"></div>
+                            <div class="acv-progress-step" id="acvStep3Ind">
+                                <div class="acv-progress-num">3</div>
+                                <div class="acv-progress-label">Montant & envoi</div>
+                            </div>
+                        </div>
+
+                        {{-- ── SECTION 1 : ID ROBUS ── --}}
+                        <div class="acv-section" id="acvSection1" style="padding-bottom:24px">
+
+                            <div style="margin-bottom:14px">
+                                <div style="font-size:.96rem;font-weight:900;color:#1e1b4b;margin-bottom:4px">
+                                    Votre identifiant ROBUS
+                                </div>
+                                <div style="font-size:.78rem;color:#64748b;font-weight:600">
+                                    Saisissez votre ID — le titulaire du compte s'affiche automatiquement
                                 </div>
                             </div>
 
-                            <form method="POST" action="{{ route('web.transactions_robus_store.stores') }}"
-                                enctype="multipart/form-data">
-                                @csrf
+                            <div class="acv-id-field">
+                                <i class="bi bi-person-badge acv-id-icon"></i>
+                                <input type="text" id="acvRobusIdInput" placeholder="Ex : CIZW7480"
+                                       autocomplete="off" oninput="acvOnIdInput(this.value)">
+                                <span id="acvVerifyIcon" class="acv-verify-icon"></span>
+                            </div>
 
-                                <div class="txn-form-body">
-                                    <div class="txn-section-title">
-                                        <span><i class="bi bi-person-vcard"></i></span>
-                                        Informations du compte ROBUS
+                            <div class="acv-name-card" id="acvNameCard" style="display:none">
+                                <i class="bi bi-person-check-fill" style="color:#4338ca;font-size:1.1rem;flex:0 0 auto"></i>
+                                <div>
+                                    <div class="acv-name-lbl">Titulaire du compte</div>
+                                    <div class="acv-name-val" id="acvRobusNameVal"></div>
+                                </div>
+                            </div>
+
+                            <button type="button" class="acv-proceed-btn" id="acvStep1Btn"
+                                    onclick="acvContinueToPayment()" disabled>
+                                <i class="bi bi-check2-circle"></i> Continuer — Choisir l'opérateur
+                            </button>
+                        </div>
+
+                        {{-- ── SECTION 2 : Pays + Opérateur ── --}}
+                        <div id="acvSection2" class="d-none" style="padding-bottom:4px">
+
+                            <div class="acv-divider">
+                                <div class="acv-divider-line"></div>
+                                <span class="acv-divider-badge">
+                                    <span class="acv-divider-num">2</span>
+                                    Mode de paiement
+                                </span>
+                                <div class="acv-divider-line"></div>
+                            </div>
+
+                            <div class="acv-section mb-3">
+                                {{-- Bouton retour --}}
+                                <div style="margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+                                    <div>
+                                        <div style="font-size:.96rem;font-weight:900;color:#1e1b4b" id="acvSection2Title">
+                                            Choisissez un pays
+                                        </div>
+                                        <div style="font-size:.78rem;color:#64748b;font-weight:600">
+                                            Puis sélectionnez votre opérateur mobile
+                                        </div>
                                     </div>
+                                    <button type="button" class="acv-back-btn" onclick="acvBackToStep1()">
+                                        <i class="bi bi-arrow-left"></i> Retour
+                                    </button>
+                                </div>
 
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <div class="txn-field">
-                                                <label for="walletId">
-                                                    <i class="bi bi-person-badge text-primary"></i>
-                                                    ID du compte ROBUS <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="text" name="num_robus" id="walletId"
-                                                    class="form-control" placeholder="Ex: CIZW7480" required>
-                                                <div class="invalid-feedback">Veuillez saisir l'ID du compte ROBUS</div>
+                                {{-- Étape A : grille des pays --}}
+                                <div id="acvCountryStep">
+                                    <div class="acv-country-grid">
+                                        @forelse ($acvCountries as $country)
+                                            @php
+                                                $iso2 = $country['country_iso2'] ?? '';
+                                                $flag = $acvFlags[$iso2] ?? '🌍';
+                                                $cnt  = collect($country['cash_out_providers'])->count();
+                                            @endphp
+                                            <div class="acv-ctry-card"
+                                                 data-country-id="{{ $country['country_id'] }}"
+                                                 data-country-name="{{ $country['country'] ?? $iso2 }}"
+                                                 data-country-flag="{{ $flag }}"
+                                                 onclick="acvPickCountry(this)">
+                                                <span class="acv-ctry-flag">{{ $flag }}</span>
+                                                <span class="acv-ctry-name">{{ $country['country'] ?? $iso2 }}</span>
+                                                <span class="acv-ctry-badge">{{ $cnt }} op.</span>
                                             </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="txn-field">
-                                                <label for="resultSearch">
-                                                    <i class="bi bi-person-circle text-primary"></i>
-                                                    Nom et prénom ROBUS
-                                                </label>
-                                                <input type="text" id="resultSearch"
-                                                    class="form-control" placeholder="Nom et prénom" readonly>
-                                                <p class="txn-field-hint">
-                                                    <i class="bi bi-arrow-left-short"></i>
-                                                    S'affiche automatiquement après saisie de l'ID
-                                                </p>
+                                        @empty
+                                            <div class="acv-empty">
+                                                <i class="bi bi-wifi-off"></i>Aucun pays disponible
                                             </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="txn-field">
-                                                <label for="my_phone">
-                                                    <i class="bi bi-phone text-primary"></i>
-                                                    Numéro de téléphone <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="text" name="my_phone" maxlength="10"
-                                                    class="form-control" id="my_phone"
-                                                    placeholder="Ex: 0101010101" required>
-                                                <div class="invalid-feedback">Veuillez saisir votre numéro de téléphone</div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <div class="txn-field">
-                                                <label for="montant_robus">
-                                                    <i class="bi bi-cash-stack text-primary"></i>
-                                                    Montant (FCFA) <span class="text-danger">*</span>
-                                                </label>
-                                                <input type="number" class="form-control" id="montant_robus"
-                                                    name="amount" min="2000" max="500000"
-                                                    placeholder="Ex: 2400" required>
-                                                <div class="invalid-feedback">
-                                                    Le montant doit être entre 2.000 et 500.000 FCFA
-                                                </div>
-                                                <div class="txn-amount-note">
-                                                    <i class="bi bi-info-circle"></i>
-                                                    <small id="montantInfoRobus">Min: 2.000 FCFA / Max: 500.000 FCFA</small>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12">
-                                            @include('layouts.shared_web.frais', [
-                                                'total_percent'  => $total_percent ?? 0,
-                                                'calcul_valeurs' => $calcul_valeurs ?? 0,
-                                            ])
-                                        </div>
-
-                                        <div class="col-12 txn-submit-wrap">
-                                            <button type="submit"
-                                                class="btn btn-primary btn-lg py-3 fw-bold txn-submit-btn"
-                                                id="submitButtonRobus" disabled>
-                                                <span class="submit-text">
-                                                    <i class="bi bi-send me-2"></i>
-                                                    Procéder à la demande
-                                                </span>
-                                                <span class="loading-spinner" style="display: none;">
-                                                    <i class="bi bi-arrow-repeat me-2"></i>
-                                                    Traitement en cours...
-                                                </span>
-                                            </button>
-                                        </div>
+                                        @endforelse
                                     </div>
                                 </div>
-                            </form>
-                        </div>
 
-                        <div class="txn-side-note">
-                            <strong>Avant d'envoyer votre demande</strong>
-                            <p>Vérifiez l'ID ROBUS et le nom affiché automatiquement. Une erreur d'identifiant
-                                peut empêcher le traitement du rechargement.</p>
-                        </div>
+                                {{-- Étape B : grille des opérateurs --}}
+                                <div id="acvOpStep" class="d-none acv-op-step">
+
+                                    <div class="acv-back-row">
+                                        <button type="button" class="acv-back-btn" onclick="acvBackToCountry()">
+                                            <i class="bi bi-arrow-left"></i> Pays
+                                        </button>
+                                        <span class="acv-back-row-flag" id="acvBackFlag"></span>
+                                        <span class="acv-back-row-country" id="acvBackLabel"></span>
+                                    </div>
+
+                                    <div style="font-size:.76rem;font-weight:700;color:#64748b;
+                                                text-transform:uppercase;letter-spacing:.05em;
+                                                padding:4px 0 8px">
+                                        Choisissez l'opérateur
+                                    </div>
+
+                                    @foreach ($acvCountries as $country)
+                                        <div class="acv-op-group d-none" data-country-id="{{ $country['country_id'] }}">
+                                            <div class="acv-operators">
+                                                @foreach (collect($country['cash_out_providers']) as $op)
+                                                    <div class="acv-op-card"
+                                                         data-provider-id="{{ $op['provider_id'] }}"
+                                                         data-service-id="{{ $op['service_id'] }}"
+                                                         data-op-name="{{ $op['name'] }}"
+                                                         data-op-image="{{ $op['image'] ?? '' }}"
+                                                         data-country="{{ $country['country'] ?? '' }}"
+                                                         data-country-iso2="{{ $country['country_iso2'] ?? '' }}"
+                                                         data-country-indicatif="{{ $country['country_indicatif'] ?? '' }}"
+                                                         onclick="acvSelectOp(this)">
+                                                        <div class="acv-op-logo">
+                                                            @if (!empty($op['image']))
+                                                                <img src="{{ $op['image'] }}" alt="{{ $op['name'] }}"
+                                                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                                                                <i class="bi bi-phone-fill" style="display:none"></i>
+                                                            @else
+                                                                <i class="bi bi-phone-fill"></i>
+                                                            @endif
+                                                        </div>
+                                                        <div class="acv-op-name">{{ $op['name'] }}</div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                {{-- Barre opérateur sélectionné --}}
+                                <div class="acv-op-bar d-none" id="acvOpBar">
+                                    <div class="acv-op-bar-info">
+                                        <div class="acv-op-bar-avatar" id="acvOpBarAvatar">
+                                            <i class="bi bi-phone-fill"></i>
+                                        </div>
+                                        <div style="flex:1;min-width:0">
+                                            <div class="acv-op-bar-lbl">Opérateur sélectionné</div>
+                                            <div class="acv-op-bar-val" id="acvOpBarName">—</div>
+                                            <div style="font-size:.72rem;color:#64748b;font-weight:600" id="acvOpBarCountry"></div>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="acv-proceed-btn"
+                                            id="acvSection2Btn" onclick="acvProceed()" disabled
+                                            style="margin-top:0;flex:0 0 auto;width:auto;padding:10px 20px;font-size:.86rem">
+                                        <i class="bi bi-check2-circle"></i> Continuer
+                                    </button>
+                                </div>
+
+                            </div>{{-- /acv-section --}}
+                        </div>{{-- /acvSection2 --}}
+
+                        {{-- ── SECTION 3 : Formulaire AJAX ── --}}
+                        <div class="acv-form-reveal" id="acvFormReveal">
+
+                            <div class="acv-divider">
+                                <div class="acv-divider-line"></div>
+                                <span class="acv-divider-badge">
+                                    <span class="acv-divider-num">3</span>
+                                    Montant & envoi
+                                </span>
+                                <div class="acv-divider-line"></div>
+                            </div>
+
+                            <div class="acv-form-body">
+
+                                {{-- Carte opérateur en lecture seule --}}
+                                <div class="acv-info-card">
+                                    <div class="acv-info-card-avatar" id="acvFormOpAvatar">
+                                        <i class="bi bi-phone-fill"></i>
+                                    </div>
+                                    <div class="acv-info-card-body">
+                                        <div class="acv-info-card-lbl">Opérateur de paiement</div>
+                                        <div class="acv-info-card-val" id="acvFormOpName">—</div>
+                                        <div class="acv-info-card-sub" id="acvFormOpCountry"></div>
+                                    </div>
+                                    <i class="bi bi-lock-fill" style="color:#94a3b8;font-size:.85rem;flex:0 0 auto"></i>
+                                </div>
+
+                                {{-- Bandeau USSD (conditionnel) --}}
+                                <div id="acvUssdBanner" style="display:none;margin-bottom:14px"></div>
+
+                                {{-- Code OTP (conditionnel — Orange Money) --}}
+                                <div class="d-none" id="acvOtpFieldWrap" style="margin-bottom:14px">
+                                    <div class="acv-compact-field" style="border-color:rgba(249,115,22,.35);background:#fff7ed">
+                                        <i class="bi bi-lock-fill" style="color:#ea580c;flex:0 0 auto"></i>
+                                        <input type="text" id="acvOtp" inputmode="numeric" maxlength="10"
+                                               placeholder="Code OTP (après composition du USSD)">
+                                    </div>
+                                </div>
+
+                                {{-- Numéro de téléphone --}}
+                                <div class="acv-compact-field" id="acvPhoneField" style="margin-bottom:14px">
+                                    <i class="bi bi-telephone-fill acv-cf-icon"></i>
+                                    <input type="text" id="acvPhone" maxlength="15"
+                                           placeholder="Votre numéro mobile"
+                                           oninput="acvClearInvalid('acvPhoneField')">
+                                </div>
+
+                                {{-- ID ROBUS (confirmation lecture seule) --}}
+                                <div class="acv-compact-field" style="margin-bottom:14px;background:#f8fafc;border-color:rgba(99,102,241,.18)">
+                                    <i class="bi bi-person-badge acv-cf-icon"></i>
+                                    <input type="text" id="acvRobusDisplay" readonly
+                                           style="color:#64748b;font-size:.88rem"
+                                           placeholder="ID ROBUS">
+                                </div>
+
+                                {{-- Montant --}}
+                                <div class="acv-amount-field">
+                                    <div class="acv-af-icon"><i class="bi bi-cash-stack"></i></div>
+                                    <input type="number" id="acvAmount" min="2000" max="500000"
+                                           placeholder="Montant (FCFA)"
+                                           oninput="acvOnAmountChange(this.value)">
+                                    <span class="acv-af-badge">FCFA</span>
+                                </div>
+
+                                {{-- Calcul dynamique des frais --}}
+                                <div id="acvFeesWrap" style="display:none;margin-top:12px;margin-bottom:14px">
+                                    <div id="acvFeesPreview"></div>
+                                </div>
+
+                                {{-- Note min/max --}}
+                                <div class="acv-fees-note" id="acvFeesNote" style="margin-top:10px;margin-bottom:16px">
+                                    <i class="bi bi-info-circle-fill" style="flex:0 0 auto"></i>
+                                    <span>
+                                        Frais : <strong>{{ $total_percent ?? 0 }}%</strong>
+                                        — Min : <strong>2 000 FCFA</strong> / Max : <strong>500 000 FCFA</strong>
+                                    </span>
+                                </div>
+
+                                {{-- Erreur --}}
+                                <div class="acv-error-box" id="acvErrorBox" style="display:none"></div>
+
+                                {{-- Bouton --}}
+                                <button type="button" class="acv-submit-btn" id="acvSubmitBtn"
+                                        onclick="acvSubmit()">
+                                    <span class="acv-submit-text">
+                                        <i class="bi bi-send-fill me-2"></i>Procéder au paiement
+                                    </span>
+                                    <span class="acv-loading-spinner d-none">
+                                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                        Traitement en cours…
+                                    </span>
+                                </button>
+
+                                {{-- Lien retour --}}
+                                <div class="text-center mt-2">
+                                    <button type="button" class="btn btn-link btn-sm text-muted p-0"
+                                            onclick="acvBackToStep2()">
+                                        <i class="bi bi-pencil me-1"></i>Modifier l'opérateur
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>{{-- /acvFormReveal --}}
+
+                    </div>{{-- /acv-form-panel --}}
+
+                    <div class="acv-side-note">
+                        <strong>Avant d'envoyer votre demande</strong>
+                        <p>Vérifiez l'ID ROBUS, le nom affiché et le numéro de téléphone. Une erreur d'identifiant peut empêcher le traitement du rechargement.</p>
                     </div>
+                </div>
 
-                    @include('layouts.shared_web.info-open-robus')
+                @include('layouts.shared_web.info-open-robus')
+            </div>
+        </div>
+    </section>
+
+    {{-- ── Modal Confirmation ── --}}
+    <div class="modal fade" id="acvConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius:20px;overflow:hidden;border:0">
+                <div class="modal-header border-0 px-4 pt-4 pb-2"
+                     style="background:var(--acv-head,linear-gradient(135deg,#1e1b4b,#3730a3))">
+                    <h5 class="modal-title text-white fw-bold">
+                        <i class="bi bi-wallet2 me-2"></i>Confirmer le paiement
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4" id="acvConfirmBody"></div>
+                <div class="modal-footer border-0 px-4 pb-4 pt-0 gap-2">
+                    <button type="button" class="btn btn-outline-secondary rounded-3 fw-bold"
+                            data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i> Annuler
+                    </button>
+                    <button type="button" class="btn btn-primary fw-bold rounded-3 px-4"
+                            onclick="acvDoInitialize()">
+                        <i class="bi bi-check2-circle me-1"></i> Confirmer
+                    </button>
                 </div>
             </div>
-        </section>
-    {{-- @else
-        <section class="contact-info-section style_percent">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-md-6 col-sm-10">
-                        @include('layouts.shared_web.close_app')
-                    </div>
+        </div>
+    </div>
+
+    {{-- ── Modal Résultat ── --}}
+    <div class="modal fade" id="acvResultModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius:20px;overflow:hidden;border:0">
+                <div class="modal-header border-0 px-4 pt-4 pb-0">
+                    <h5 class="modal-title fw-bold" id="acvResultTitle"></h5>
+                </div>
+                <div class="modal-body px-4 py-3" id="acvResultBody"></div>
+                <div class="modal-footer border-0 px-4 pb-4 pt-0">
+                    <button type="button" class="btn btn-primary fw-bold rounded-3 w-100"
+                            data-bs-dismiss="modal" onclick="acvAfterResult()">OK</button>
                 </div>
             </div>
-        </section>
-    @endif --}}
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
 <script>
-    const walletInput  = document.querySelector('input[name="num_robus"]');
-    const resultSearch = document.getElementById('resultSearch');
-
-    resultSearch.value = 'Entrez un ID de wallet pour afficher le nom';
-
-    walletInput.addEventListener('input', function () {
-        searchResult();
-    });
-
-    function searchResult() {
-        const walletSearch = walletInput.value;
-        if (walletSearch.trim() !== '') {
-            fetch('{{ route('search.wallets') }}?num_robus=' + walletSearch)
-                .then(response => {
-                    if (!response.ok) throw new Error('Erreur');
-                    return response.json();
-                })
-                .then(data => {
-                    resultSearch.value = data.user_firstname
-                        ? `${data.user_firstname} ${data.user_lastname}`
-                        : 'Aucun utilisateur trouvé';
-                })
-                .catch(() => {
-                    resultSearch.value = 'Numéro wallet incorrect';
-                });
-        } else {
-            resultSearch.value = 'Saisissez l\'ID du wallet';
-        }
-    }
+window._ACV = {
+    searchUrl: "{{ route('search.wallets') }}",
+    calcUrl:   "{{ route('web.pixelInnov.mobile-transfer.pixelInnov.reload.calculate') }}",
+    initUrl:   "{{ route('web.pixelInnov.mobile-transfer.pixelInnov.reload.initialize') }}",
+    statusUrl: "{{ route('web.pixelInnov.mobile-transfer.status') }}",
+    csrf: document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+};
 </script>
+<script src="{{ asset('web/js/achat-uv.js') }}"></script>
 @endpush

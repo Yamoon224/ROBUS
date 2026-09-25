@@ -16,8 +16,6 @@ use App\Models\Sid\SidUser;
 use App\Models\Wallets\WalletAdmin;
 use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletReload;
-use App\Models\Wallets\WalletPixel;
-use App\Models\Wallets\WalletPixelCommission;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -159,7 +157,7 @@ class PixelPaymentController extends Controller
                 'image'         => $s->provider->image ?? null,
                 'country'          => $s->country->name ?? null,
                 'country_iso2'     => self::countryCode($s->country),
-                'country_indicatif'=> optional($s->country)->indecative,
+                'country_indicatif' => optional($s->country)->indecative,
                 'currency'         => self::AMOUNT_LIMITS[self::countryCode($s->country) ?? '']['currency'] ?? 'XOF',
                 'amount_min'       => self::AMOUNT_LIMITS[self::countryCode($s->country) ?? '']['min'] ?? 100,
                 'amount_max'       => self::AMOUNT_LIMITS[self::countryCode($s->country) ?? '']['max'] ?? 1_500_000,
@@ -546,6 +544,223 @@ class PixelPaymentController extends Controller
         ], 200);
     }
 
+    public function initializeWebPayment(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'robus_id'         => 'required|string|exists:wallets,wallet_id',
+            'pixel_service_id' => 'required|integer|exists:pixel_innove_services,service_id',
+            'amount'           => 'required|numeric|min:1',
+            'destination'      => 'required|string|min:8|max:15',
+            'om_otp'           => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Données invalides',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $wallet = Wallet::where('wallet_id', $request->robus_id)->with('sidUser')->first();
+        if (!$wallet || !$wallet->sidUser) {
+            return response()->json(['status' => false, 'message' => 'Portefeuille introuvable'], 404);
+        }
+
+        // Récupérer la config du service (provider + pays + frais)
+        $pixelConfig = PixelInnoveService::with(['country', 'provider'])
+            ->where('service_id', $request->pixel_service_id)
+            ->where('status', true)
+            ->first();
+
+        if (!$pixelConfig) {
+            return response()->json(['status' => false, 'message' => 'Service introuvable ou inactif'], 404);
+        }
+
+        // Valider le montant selon les limites du pays
+        $iso2          = self::countryCode($pixelConfig->country) ?? '';
+        $limits        = self::AMOUNT_LIMITS[$iso2] ?? ['min' => 200, 'max' => 1_500_000];
+        $amount        = (float) $request->amount;
+        $operationType = $pixelConfig->operation_type; // 'Cash In' ou 'Cash Out'
+
+        if ($amount < $limits['min'] || $amount > $limits['max']) {
+            return response()->json([
+                'status'  => false,
+                'message' => "Montant invalide pour {$pixelConfig->country->name}. Min : {$limits['min']}, Max : {$limits['max']}.",
+            ], 422);
+        }
+
+        // Calcul des frais depuis la config du service
+        $totalFeePct    = (float) $pixelConfig->fixed_fee + (float) $pixelConfig->commission_percent;
+        $totalFeeAdmin    = (float) $pixelConfig->fixed_fee + (float) $pixelConfig->commission_percent;
+        $fees           = round($amount * $totalFeePct / 100, 2);
+        $amountReceived = $amount - $fees;
+        $amountPay = $amount + $fees;
+
+        // Vérifier que le montant reçu après frais est >= au minimum requis
+        if ($operationType === 'Cash In' && $amountReceived < $limits['min']) {
+            $currency    = $limits['currency'] ?? 'XOF';
+            $minRequired = (int) ceil($limits['min'] / (1 - $totalFeePct / 100));
+            return response()->json([
+                'status'  => false,
+                'message' => "Après déduction des frais ({$totalFeePct}%), le destinataire recevrait " . number_format($amountReceived, 0) . " {$currency}, en dessous du minimum autorisé de {$limits['min']} {$currency}. Veuillez saisir au moins {$minRequired} {$currency}.",
+            ], 422);
+        }
+
+        // ── Cash Out (Robus → Mobile money) : vérifier le solde avant tout ──
+        if ($operationType === 'Cash In') {
+            if ((float) $wallet->amount < $amountPay) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Solde insuffisant pour effectuer ce Cash Out.',
+                ], 422);
+            }
+        }
+
+
+        $customData     = $request->custom_data ?? ('ROBUS_' . $wallet->sidUser->id . '_' . now()->timestamp);
+
+        // Enregistrement en base AVANT l'appel API (idempotence)
+        $reload = WalletReload::create([
+            'wallet_id'       => $wallet->id,
+            'provider_id'     => $pixelConfig->provider_id,
+            'reload_cost_id'  => 1,
+            'amount'          => $amount,
+            'fees'            => $fees,
+            'costs_amount'    => $fees,
+            'amount_received' => $amountReceived,
+            'amount_solde'    => $wallet->amount,
+            'balance_before'  => $wallet->amount,
+            'currency'        => $limits['currency'] ?? 'XOF',
+            'status'          => 'PENDING',
+            'payment_method'  => 'pixel_innov_' . strtolower($pixelConfig->provider->name ?? 'unknown'),
+            'metadata'        => json_encode([
+                'user_id'            => $wallet->sidUser->id,
+                'pixel_service_id'   => $pixelConfig->id,
+                'pixel_service_name' => $pixelConfig->name,
+                'service_id'         => $pixelConfig->service_id,
+                'provider'           => $pixelConfig->provider->name ?? null,
+                'country'            => $pixelConfig->country->name ?? null,
+                'country_iso2'       => $iso2,
+                'operation_type'     => $operationType,
+                'destination'        => $request->destination,
+                'custom_data'        => $customData,
+            ]),
+        ]);
+
+        // ── Cash In : débiter le wallet immédiatement avant l'appel Pixel Innov ──
+        if ($operationType === 'Cash In') {
+            DB::beginTransaction();
+            try {
+                $wallet->decrement('amount', $amountPay);
+                DB::commit();
+            } catch (\Throwable $e) {
+                DB::rollBack();
+                $reload->update(['status' => 'ERROR']);
+                Log::error('Pixel Innov — Cash In : erreur débit wallet', ['error' => $e->getMessage()]);
+                return response()->json(['status' => false, 'message' => 'Erreur lors du débit du wallet.'], 500);
+            }
+        }
+
+        // Appel Pixel Innov — clé sélectionnée selon is_xaf du service
+        $pixelService = app(PixelInnovService::class)->setXaf($pixelConfig->is_xaf ?? false);
+
+        $publicBase = rtrim(config('services.pixel_innov.public_url'), '/');
+        $pixelPayload = [
+            'amount'             => (int) $amount,
+            'destination'        => $request->destination,
+            'service_id'         => $pixelConfig->service_id,
+            'ipn_url'            => $publicBase . '/payment_pixelInnov/callback',
+            'custom_data'        => $customData,
+            'redirect_url'       => $publicBase . '/payment_pixelInnov/success',
+            'redirect_error_url' => $publicBase . '/payment_pixelInnov/error',
+        ];
+
+        if ($request->filled('om_otp')) {
+            $pixelPayload['om_otp'] = $request->om_otp;
+        }
+        $pixelPayload = $this->withWaveBusinessNameId($pixelPayload, $pixelConfig);
+
+        $response = $pixelService->initializeTransaction($pixelPayload);
+
+        // Conserver le transaction_id même en cas d'échec (pour réconciliation)
+        $pixelTxId = $response['data']['transaction_id'] ?? null;
+        if ($pixelTxId) {
+            $reload->update(['reference' => $pixelTxId]);
+        }
+
+        $isFailed = ($response['statut_code'] ?? null) !== 200
+            || empty($pixelTxId)
+            || ($response['data']['state'] ?? null) === 'FAILED';
+
+        if ($isFailed) {
+            $reload->update(['status' => 'ERROR']);
+
+            // ── Cash In : rembourser le wallet si Pixel Innov a refusé dès l'init ──
+            if ($operationType === 'Cash In') {
+                $wallet->increment('amount', $amountPay);
+                Log::info('Pixel Innov — Cash In init échouée, wallet remboursé', [
+                    'reload_id'       => $reload->id,
+                    'amount_refunded' => $amountPay,
+                ]);
+            }
+
+            Log::warning('Pixel Innov — init échouée', [
+                'response'       => $response,
+                'reload_id'      => $reload->id,
+                'transaction_id' => $pixelTxId,
+                'state'          => $response['data']['state'] ?? null,
+                'operation_type' => $operationType,
+            ]);
+
+            $pixelMsg     = trim((string) ($response['message'] ?? ''));
+            $dataMsg      = trim((string) ($response['data']['response'] ?? ''));
+            $walletBefore = $response['data']['p_last_wallet_amount'] ?? null;
+            $state        = $response['data']['state'] ?? null;
+
+            if ($pixelMsg !== '') {
+                $reason = $pixelMsg;
+            } elseif ($dataMsg !== '') {
+                $reason = $dataMsg;
+            } elseif ($state === 'FAILED' && $walletBefore === 0) {
+                $reason = 'Solde marchand PixPay insuffisant. Veuillez contacter Robus.';
+            } elseif ($state === 'FAILED') {
+                $reason = 'Transaction rejetée par l\'opérateur mobile.';
+            } else {
+                $reason = 'Échec de l\'initialisation. Veuillez réessayer.';
+            }
+
+            return response()->json(['status' => false, 'message' => $reason], 400);
+        }
+
+        $transactionId = $pixelTxId;
+        // Cherche le lien de paiement dans tous les champs possibles de la réponse
+        $smsLink = $this->extractPixelPaymentLink($response);
+
+        Log::info('Pixel Innov — paiement initié', [
+            'transaction_id' => $transactionId,
+            'provider'       => $pixelConfig->provider->name ?? null,
+            'country'        => $iso2,
+            'user_id'        => $wallet->sidUser->id,
+            'amount'         => $amount,
+            'sms_link'       => $smsLink,
+            'response_data'  => $response['data'] ?? [],
+        ]);
+
+        return response()->json([
+            'status'         => true,
+            'message'        => $this->initMessage($pixelConfig->provider->name ?? '', $smsLink),
+            'transaction_id' => $transactionId,
+            'sms_link'       => $smsLink,
+            'state'          => $response['data']['state'] ?? 'PENDING',
+            'provider'       => $pixelConfig->provider->name ?? null,
+            'country'        => $pixelConfig->country->name ?? null,
+            'amount'         => $amount,
+            'fees'           => $fees,
+            'amount_received' => $amountReceived,
+        ], 200);
+    }
+
     // =========================================================================
     // CALCUL DES FRAIS AVANT INITIALISATION
     // =========================================================================
@@ -778,7 +993,7 @@ class PixelPaymentController extends Controller
         // n'est pas encore chargé à ce stade.
         $pixelService = app(PixelInnovService::class);
         $hashValid = $pixelService->setXaf(false)->verifyIpnHash($transactionId, $hash)
-                  || $pixelService->setXaf(true)->verifyIpnHash($transactionId, $hash);
+            || $pixelService->setXaf(true)->verifyIpnHash($transactionId, $hash);
         if (!$hashValid) {
             Log::warning('Pixel Innov — hash invalide', [
                 'transaction_id' => $transactionId,
@@ -929,57 +1144,6 @@ class PixelPaymentController extends Controller
         ]);
     }
 
-    private function pixelInnovCommissionWallet(): WalletPixel
-    {
-        $walletPixel = WalletPixel::where('wallet_id', 'PIXELINNOV-COM')->lockForUpdate()->first();
-
-        if ($walletPixel) {
-            return $walletPixel;
-        }
-
-        $walletAdmin = WalletAdmin::find(1);
-
-        if (!$walletAdmin) {
-            throw new \Exception('Wallet admin de référence introuvable pour créer le wallet Pixel Innov');
-        }
-
-        return WalletPixel::create([
-            'wallet_id'    => 'PIXELINNOV-COM',
-            'company_id'   => $walletAdmin->company_id,
-            'currencie_id' => $walletAdmin->currencie_id,
-            'country_id'   => $walletAdmin->country_id,
-            'amount'       => 0,
-            'status'       => true,
-            'created_by'   => $walletAdmin->created_by,
-            'sid_user_id'  => $walletAdmin->sid_user_id,
-        ]);
-    }
-
-    private function pixelInnovWalletCommission(): WalletPixelCommission
-    {
-        $walletPixelCommission = WalletPixelCommission::where('wallet_id', 'PIXELINNOV-SOURCE-COM')->lockForUpdate()->first();
-
-        if ($walletPixelCommission) {
-            return $walletPixelCommission;
-        }
-
-        $walletAdmin = WalletAdmin::find(1);
-
-        if (!$walletAdmin) {
-            throw new \Exception('Wallet admin de référence introuvable pour créer le wallet commission Pixel Innov');
-        }
-
-        return WalletPixelCommission::create([
-            'wallet_id'    => 'PIXELINNOV-SOURCE-COM',
-            'company_id'   => $walletAdmin->company_id,
-            'currencie_id' => $walletAdmin->currencie_id,
-            'country_id'   => $walletAdmin->country_id,
-            'amount'       => 0,
-            'status'       => true,
-            'created_by'   => $walletAdmin->created_by,
-            'sid_user_id'  => $walletAdmin->sid_user_id,
-        ]);
-    }
 
     private function handleSuccess(WalletReload $reload, array $ipnData): void
     {
@@ -1023,9 +1187,9 @@ class PixelPaymentController extends Controller
 
         $countryCiv    = Country::find(107);
         $robusCurrency = $wallet->country->currencie->value ?? 1;
-        $walletPixel      = $this->pixelInnovCommissionWallet();
+        $walletPixel      = WalletAdmin::find(1);
         $adminSingle      = SidUser::whereIsAdmin(true)->where('country_id', 107)->first();
-        $walletPixelCommission = $this->pixelInnovWalletCommission();
+        $walletPixelCommission = WalletCommission::find(1);
 
         if ($countryCiv && $countryCiv->currencie->value == $wallet->country->currencie->value) {
             $amountTotalConversion      = $benefice;
@@ -1093,16 +1257,6 @@ class PixelPaymentController extends Controller
             ]);
 
             $walletPixelCommission->decrement('amount', $amountCommissionConversion);
-
-            LedgerEntry::create([
-                'transaction_id' => (string) Str::uuid(),
-                'admin_com_id'   => null,
-                'debit'          => $amountCommissionConversion,
-                'credit'         => 0,
-                'description'    => 'Wallet commission Pixel Innov',
-                'is_uv'          => false,
-                'is_pixel'       => true,
-            ]);
         } else {
             $adminSingle->wallet->increment('amount', $amountCommissionAdminConversion);
         }
@@ -1389,6 +1543,92 @@ class PixelPaymentController extends Controller
         ]);
     }
 
+    public function listMobileTransferServicesWeb(Request $request)
+    {
+        $providerImageUrl = function (?string $image): ?string {
+            if (!$image) {
+                return null;
+            }
+
+            if (str_starts_with($image, 'http://') || str_starts_with($image, 'https://') || str_starts_with($image, '/')) {
+                return $image;
+            }
+
+            return asset_url('dist/providers/' . $image);
+        };
+
+        $services = PixelInnoveService::with(['country', 'provider'])
+            ->where('status', true)
+            ->orderBy('name')
+            ->get();
+
+        $grouped = $services->groupBy(fn($s) => $s->country_id);
+
+        $countries = $grouped->map(function ($items) use ($providerImageUrl) {
+            $first = $items->first();
+            $iso2  = self::countryCode($first->country);
+            $limits = self::AMOUNT_LIMITS[$iso2 ?? ''] ?? ['min' => 200, 'max' => 1_500_000, 'currency' => 'XOF'];
+
+            $formatProvider = function ($s) use ($providerImageUrl) {
+                $providerName = $s->provider->name ?? $s->name;
+
+                return [
+                    'id'                       => $s->id,
+                    'name'                     => $providerName,
+                    'provider'                 => $providerName,
+                    'operator'                 => $providerName,
+                    'service_id'               => $s->service_id,
+                    'sender_service_id'        => $s->service_id,
+                    'recipient_service_id'     => $s->service_id,
+                    'pixel_service_id'         => $s->id,
+                    'pixel_gateway_service_id' => $s->service_id,
+                    'operation_type'           => $s->operation_type,
+                    'pixel_operation_type'     => $s->operation_type,
+                    'country_iso2'             => self::countryCode($s->country),
+                    'country_indicatif'        => optional($s->country)->indecative,
+                    'image'                    => $providerImageUrl($s->provider->image ?? null),
+                    'fixed_fee_pct'            => (float) $s->fixed_fee,
+                    'commission_pct'           => (float) $s->commission_percent,
+                    'total_fee_pct'            => (float) $s->fixed_fee + (float) $s->commission_percent,
+                    'is_xof'                   => (bool) $s->is_xof,
+                    'is_xaf'                   => (bool) $s->is_xaf,
+                    'is_cdf'                   => (bool) $s->is_cdf,
+                    'is_gmd'                   => (bool) $s->is_gmd,
+                ];
+            };
+
+            $cashOutProviders = $items
+                ->where('operation_type', 'Cash Out')
+                ->map($formatProvider)
+                ->values();
+
+            $cashInProviders = $items
+                ->where('operation_type', 'Cash In')
+                ->map($formatProvider)
+                ->values();
+
+            return [
+                'country_id'         => $first->country_id,
+                'country'            => $first->country->name ?? null,
+                'country_iso2'       => $iso2,
+                'country_indicatif'  => optional($first->country)->indecative,
+                'currency'           => $limits['currency'],
+                'amount_min'         => $limits['min'],
+                'amount_max'         => $limits['max'],
+                'providers'          => $cashOutProviders,
+                'cash_out_providers' => $cashOutProviders,
+                'cash_in_providers'  => $cashInProviders,
+                'operators'          => $cashOutProviders,
+                'operateurs'         => $cashOutProviders,
+            ];
+        })->filter(fn($country) => $country['cash_out_providers']->isNotEmpty() || $country['cash_in_providers']->isNotEmpty())->values();
+
+        return response()->json([
+            'status'    => true,
+            'countries' => $countries,
+        ]);
+    }
+
     // =========================================================================
     // TRANSFERT MOBILE ZONE — calcul des frais (deux legs)
     // =========================================================================
@@ -1445,7 +1685,7 @@ class PixelPaymentController extends Controller
             'amount'           => $amount,
             'sender_fee_pct'   => $senderFeePct,
             'sender_fee'       => $senderFee,
-            'recipient_fee_pct'=> $recipientFeePct,
+            'recipient_fee_pct' => $recipientFeePct,
             'recipient_fee'    => $recipientFee,
             'total_fee_pct'    => round($totalFee / $amount * 100, 2),
             'fees'             => $totalFee,
@@ -1455,6 +1695,11 @@ class PixelPaymentController extends Controller
             'sender_provider'    => $senderService->provider->name ?? null,
             'recipient_provider' => $recipientService->provider->name ?? null,
         ]);
+    }
+
+    public function calculateMobileZoneTransferWeb(Request $request)
+    {
+        return $this->calculateMobileZoneTransfer($request);
     }
 
     // =========================================================================
@@ -1571,7 +1816,7 @@ class PixelPaymentController extends Controller
                 'user_id'          => $user->id,
                 'custom_ref'       => $customRef,
                 'sender_service'   => $senderService->name,
-                'recipient_service'=> $recipientService->name,
+                'recipient_service' => $recipientService->name,
             ],
         ]);
 
@@ -1688,7 +1933,7 @@ class PixelPaymentController extends Controller
                 'transaction_id'  => (string) $transfer->id,
                 'cash_out_state'  => $cashOutResponse['data']['state'] ?? 'PENDING',
                 'cash_in_error'   => $cashInErrMsg,
-                'refund_initiated'=> $refundResult['initiated'],
+                'refund_initiated' => $refundResult['initiated'],
                 'refund_error'    => $refundResult['error'] ?? null,
             ], 400);
         }
@@ -1735,6 +1980,263 @@ class PixelPaymentController extends Controller
         ]);
     }
 
+    public function initializeMobileZoneTransferWeb(Request $request)
+    {
+        $request->merge([
+            'sender_phone'    => $request->input('sender_phone', $request->input('my_phone')),
+            'recipient_phone' => $request->input('recipient_phone', $request->input('phone_benef')),
+        ]);
+
+        $validator = Validator::make($request->all(), [
+            'sender_service_id'    => 'required|integer|exists:pixel_innove_services,service_id',
+            'sender_phone'         => 'required|string|min:8|max:20',
+            'recipient_service_id' => 'required|integer|exists:pixel_innove_services,service_id',
+            'recipient_phone'      => 'required|string|min:8|max:20',
+            'amount'               => 'required|numeric|min:1',
+            'name_expeditor'       => 'nullable|string|max:120',
+            'om_otp'               => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Données invalides',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        $senderService = PixelInnoveService::with(['country', 'provider'])
+            ->where('service_id', $request->sender_service_id)
+            ->where('status', true)
+            ->where('operation_type', 'Cash Out')
+            ->first();
+
+        $recipientService = PixelInnoveService::with(['country', 'provider'])
+            ->where('service_id', $request->recipient_service_id)
+            ->where('status', true)
+            ->where('operation_type', 'Cash In')
+            ->first();
+
+        if (!$senderService) {
+            return response()->json(['status' => false, 'message' => 'Service expéditeur introuvable (Cash Out requis)'], 404);
+        }
+        if (!$recipientService) {
+            return response()->json(['status' => false, 'message' => 'Service destinataire introuvable (Cash In requis)'], 404);
+        }
+
+        $senderIso2    = self::countryCode($senderService->country) ?? '';
+        $recipientIso2 = self::countryCode($recipientService->country) ?? '';
+        $senderLimits  = self::AMOUNT_LIMITS[$senderIso2] ?? ['min' => 200, 'max' => 1_500_000, 'currency' => 'XOF'];
+
+        $amount = (float) $request->amount;
+
+        if ($amount < $senderLimits['min'] || $amount > $senderLimits['max']) {
+            return response()->json([
+                'status'  => false,
+                'message' => "Montant invalide pour {$senderService->country->name}. Min : {$senderLimits['min']}, Max : {$senderLimits['max']}.",
+            ], 422);
+        }
+
+        $senderFeePct  = (float) $senderService->fixed_fee + (float) $senderService->commission_percent;
+        $senderFee     = round($amount * $senderFeePct / 100, 2);
+        $amountToSend  = round($amount - $senderFee, 2);
+
+        $recipientFeePct = (float) $recipientService->fixed_fee + (float) $recipientService->commission_percent;
+        $recipientFee    = round($amountToSend * $recipientFeePct / 100, 2);
+        $amountReceived  = round($amountToSend - $recipientFee, 2);
+        $totalFee        = round($senderFee + $recipientFee, 2);
+
+        $recipientLimits = self::AMOUNT_LIMITS[$recipientIso2] ?? ['min' => 200, 'max' => 1_500_000, 'currency' => 'XOF'];
+        if ($amountReceived < $recipientLimits['min']) {
+            $senderCurrency    = $senderLimits['currency'] ?? 'XOF';
+            $recipientCurrency = $recipientLimits['currency'] ?? 'XOF';
+            $factor            = (1 - $senderFeePct / 100) * (1 - $recipientFeePct / 100);
+            $minRequired       = (int) ceil($recipientLimits['min'] / $factor);
+
+            return response()->json([
+                'status'  => false,
+                'message' => "Après déduction des frais, le destinataire recevrait " . number_format($amountReceived, 0) . " {$recipientCurrency}, en dessous du minimum autorisé de {$recipientLimits['min']} {$recipientCurrency}. Veuillez saisir au moins {$minRequired} {$senderCurrency}.",
+            ], 422);
+        }
+
+        $senderCurrencyCode    = $senderLimits['currency'] ?? 'XOF';
+        $recipientCurrencyCode = $recipientLimits['currency'] ?? 'XOF';
+        $customRef             = 'ROBUS_WEB_MZ_' . now()->timestamp . '_' . Str::upper(Str::random(6));
+
+        $transfer = PixelMobileZoneTransfer::create([
+            'sender_pixel_service_id'    => $senderService->id,
+            'sender_phone'               => $request->sender_phone,
+            'sender_country_iso2'        => $senderIso2,
+            'recipient_pixel_service_id' => $recipientService->id,
+            'recipient_phone'            => $request->recipient_phone,
+            'recipient_country_iso2'     => $recipientIso2,
+            'amount'                     => $amount,
+            'sender_fee'                 => $senderFee,
+            'recipient_fee'              => $recipientFee,
+            'total_fee'                  => $totalFee,
+            'amount_to_send'             => $amountToSend,
+            'amount_received'            => $amountReceived,
+            'currency'                   => $senderCurrencyCode,
+            'sender_currency'            => $senderCurrencyCode,
+            'recipient_currency'         => $recipientCurrencyCode,
+            'sender_status'              => 'PENDING',
+            'recipient_status'           => 'PENDING',
+            'status'                     => 'PENDING',
+            'wallet_id'                  => null,
+            'metadata'                   => [
+                'source'            => 'web',
+                'custom_ref'        => $customRef,
+                'name_expeditor'    => $request->name_expeditor,
+                'sender_service'    => $senderService->name,
+                'recipient_service' => $recipientService->name,
+            ],
+        ]);
+
+        $pixelService = app(PixelInnovService::class)->setXaf($senderService->is_xaf ?? false);
+        $publicBase   = rtrim(config('services.pixel_innov.public_url'), '/');
+
+        $cashOutPayload = [
+            'amount'             => (int) $amount,
+            'destination'        => $request->sender_phone,
+            'service_id'         => $senderService->service_id,
+            'ipn_url'            => $publicBase . '/payment_pixelInnov/mobile-transfer/callback',
+            'custom_data'        => $customRef . '_CASHOUT',
+            'redirect_url'       => $publicBase . '/payment_pixelInnov/success',
+            'redirect_error_url' => $publicBase . '/payment_pixelInnov/error',
+        ];
+        if ($request->filled('om_otp')) {
+            $cashOutPayload['om_otp'] = $request->om_otp;
+        }
+        $cashOutPayload = $this->withWaveBusinessNameId($cashOutPayload, $senderService);
+
+        $cashOutResponse = $pixelService->initializeTransaction($cashOutPayload);
+        $cashOutTxId     = $cashOutResponse['data']['transaction_id'] ?? null;
+        $cashOutFailed   = ($cashOutResponse['statut_code'] ?? null) !== 200
+            || empty($cashOutTxId)
+            || ($cashOutResponse['data']['state'] ?? null) === 'FAILED';
+
+        if ($cashOutFailed) {
+            $transfer->update([
+                'sender_status'       => 'FAILED',
+                'status'              => 'FAILED',
+                'raw_response_sender' => $cashOutResponse,
+            ]);
+
+            $reason = trim((string) ($cashOutResponse['message'] ?? ''))
+                ?: trim((string) ($cashOutResponse['data']['response'] ?? ''))
+                ?: 'Échec du débit chez l\'expéditeur. Veuillez réessayer.';
+
+            Log::warning('Mobile Zone Transfer Web — Cash Out échoué', [
+                'transfer_id' => $transfer->id,
+                'response'    => $cashOutResponse,
+            ]);
+
+            return response()->json(['status' => false, 'message' => $reason], 400);
+        }
+
+        $transfer->update([
+            'sender_transaction_id' => $cashOutTxId,
+            'sender_status'         => 'PENDING',
+            'status'                => 'PENDING',
+            'raw_response_sender'   => $cashOutResponse,
+            'pixel_wallet_before'   => $cashOutResponse['data']['p_last_wallet_amount'] ?? null,
+        ]);
+
+        $smsLink = $this->extractPixelPaymentLink($cashOutResponse);
+
+        $pixelService->setXaf($recipientService->is_xaf ?? false);
+        $cashInPayload = [
+            'amount'             => (int) $transfer->amount_received,
+            'destination'        => $request->recipient_phone,
+            'service_id'         => $recipientService->service_id,
+            'ipn_url'            => $publicBase . '/payment_pixelInnov/mobile-transfer/callback',
+            'custom_data'        => $customRef . '_CASHIN',
+            'redirect_url'       => $publicBase . '/payment_pixelInnov/success',
+            'redirect_error_url' => $publicBase . '/payment_pixelInnov/error',
+        ];
+        $cashInPayload = $this->withWaveBusinessNameId($cashInPayload, $recipientService);
+
+        $cashInResponse = $pixelService->initializeTransaction($cashInPayload);
+        $cashInTxId     = $cashInResponse['data']['transaction_id'] ?? null;
+        $cashInState    = $cashInResponse['data']['state'] ?? null;
+        $cashInFailed   = ($cashInResponse['statut_code'] ?? null) !== 200
+            || empty($cashInTxId)
+            || $cashInState === 'FAILED';
+
+        if ($cashInFailed) {
+            $cashInErrMsg = trim((string) ($cashInResponse['message'] ?? ''))
+                ?: trim((string) ($cashInResponse['data']['response'] ?? ''))
+                ?: 'Échec de l\'envoi vers le destinataire';
+
+            $transfer->update([
+                'recipient_status'       => 'FAILED',
+                'status'                 => 'FAILED',
+                'raw_response_recipient' => $cashInResponse,
+            ]);
+
+            Log::error('Mobile Zone Transfer Web — Cash In direct échoué', [
+                'transfer_id'      => $transfer->id,
+                'cash_in_response' => $cashInResponse,
+                'recipient_phone'  => $request->recipient_phone,
+                'amount_sent'      => $transfer->amount_received,
+                'cash_out_tx_id'   => $cashOutTxId,
+            ]);
+
+            $refundResult = $this->refundSender($transfer, $pixelService, $publicBase);
+
+            return response()->json([
+                'status'           => false,
+                'message'          => 'Débit expéditeur initié mais envoi au destinataire échoué : ' . $cashInErrMsg
+                    . ($refundResult['initiated'] ? ' Un remboursement est en cours vers votre numéro.' : ' Contactez le support pour remboursement.'),
+                'transaction_id'   => (string) $transfer->id,
+                'cash_out_state'   => $cashOutResponse['data']['state'] ?? 'PENDING',
+                'cash_in_error'    => $cashInErrMsg,
+                'refund_initiated' => $refundResult['initiated'],
+                'refund_error'     => $refundResult['error'] ?? null,
+            ], 400);
+        }
+
+        $transfer->update([
+            'recipient_transaction_id' => $cashInTxId,
+            'recipient_status'         => 'PENDING',
+            'status'                   => 'PROCESSING',
+            'raw_response_recipient'   => $cashInResponse,
+            'pixel_wallet_after'       => $cashInResponse['data']['p_last_wallet_amount'] ?? null,
+        ]);
+
+        Log::info('Mobile Zone Transfer Web — initié', [
+            'transfer_id'     => $transfer->id,
+            'cash_out_tx_id'  => $cashOutTxId,
+            'cash_in_tx_id'   => $cashInTxId,
+            'sender_phone'    => $request->sender_phone,
+            'recipient_phone' => $request->recipient_phone,
+            'amount'          => $amount,
+        ]);
+
+        return response()->json([
+            'status'          => true,
+            'message'         => $this->initMessage($senderService->provider->name ?? '', $smsLink)
+                . ' Le montant est en cours d\'envoi au destinataire.',
+            'transaction_id'  => (string) $transfer->id,
+            'sms_link'        => $smsLink,
+            'state'           => $cashOutResponse['data']['state'] ?? 'PENDING',
+            'fees'            => $totalFee,
+            'amount_received' => $amountReceived,
+            'sender'          => [
+                'phone'    => $request->sender_phone,
+                'operator' => $senderService->provider->name ?? null,
+                'country'  => $senderService->country->name ?? null,
+            ],
+            'recipient'       => [
+                'phone'      => $request->recipient_phone,
+                'operator'   => $recipientService->provider->name ?? null,
+                'country'    => $recipientService->country->name ?? null,
+                'cash_in_id' => $cashInTxId,
+                'state'      => $cashInState,
+            ],
+        ]);
+    }
+
     // =========================================================================
     // TRANSFERT MOBILE ZONE — IPN callback (Pixel Innov → Robus)
     // =========================================================================
@@ -1755,7 +2257,7 @@ class PixelPaymentController extends Controller
         // Tester les deux clés (XOF et XAF) — le service n'est pas encore connu
         $pixelService = app(PixelInnovService::class);
         $hashValid = $pixelService->setXaf(false)->verifyIpnHash($transactionId, $hash)
-                  || $pixelService->setXaf(true)->verifyIpnHash($transactionId, $hash);
+            || $pixelService->setXaf(true)->verifyIpnHash($transactionId, $hash);
         if (!$hashValid) {
             return response()->json(['status' => 'invalid_hash'], 401);
         }
@@ -1983,8 +2485,8 @@ class PixelPaymentController extends Controller
             return;
         }
 
-        $walletPixel           = $this->pixelInnovCommissionWallet();
-        $walletPixelCommission = $this->pixelInnovWalletCommission();
+        $walletPixel           = WalletAdmin::find(1);
+        $walletPixelCommission = WalletCommission::find(1);;
 
         $transfer->loadMissing(['senderService', 'recipientService', 'wallet.country.currencie']);
 
@@ -2001,8 +2503,8 @@ class PixelPaymentController extends Controller
         $recipientAdminCommission = round((float) $transfer->amount_to_send * (float) $recipientService->commission_percent / 100, 2);
         $recipientBankCommission  = round((float) $transfer->amount_to_send * (float) $recipientService->fixed_fee          / 100, 2);
 
-        $adminCommission = round($senderAdminCommission , 2);
-        $bankCommission  = round($senderBankCommission ,  2);
+        $adminCommission = round($senderAdminCommission, 2);
+        $bankCommission  = round($senderBankCommission,  2);
         $totalCommission = round($adminCommission + $bankCommission, 2);
 
         if ($totalCommission <= 0) {
@@ -2051,7 +2553,8 @@ class PixelPaymentController extends Controller
         }
 
         // Commission sous-distributeur : uniquement si showRemonterPixelButton est actif
-        if ($isUnder
+        if (
+            $isUnder
             && !empty($activeButtons['showRemonterPixelButton'])
             && (float) ($senderService->commission_under_pct ?? 0) > 0
         ) {
@@ -2089,16 +2592,6 @@ class PixelPaymentController extends Controller
 
         // ── Débit wallet commission Pixel Innov ──────────────────────────────
         $walletPixelCommission->decrement('amount', $totalCommissionConversion);
-
-        LedgerEntry::create([
-            'transaction_id' => (string) Str::uuid(),
-            'admin_com_id'   => null,
-            'debit'          => $totalCommissionConversion,
-            'credit'         => 0,
-            'description'    => 'Wallet commission Pixel Innov Transfert Mobile Zone #' . $transfer->id,
-            'is_uv'          => false,
-            'is_pixel'       => true,
-        ]);
 
         // ── Commission sous-distributeur ──────────────────────────────────────
         if ($underCommission > 0 && $walletOwner?->wallet) {
@@ -2279,6 +2772,11 @@ class PixelPaymentController extends Controller
         ]);
     }
 
+    public function checkMobileZoneTransferStatusWeb(Request $request)
+    {
+        return $this->checkMobileZoneTransferStatus($request);
+    }
+
     /**
      * Message de confirmation adapté selon le provider
      * Orange CI → le client valide via un lien SMS (pas d'OTP)
@@ -2416,7 +2914,7 @@ class PixelPaymentController extends Controller
         if ($refundOk) {
             $transfer->update([
                 'status'               => 'REFUNDED',
-                'refund_transaction_id'=> $refundTxId,
+                'refund_transaction_id' => $refundTxId,
                 'refund_status'        => 'PENDING',
                 'refunded_at'          => now(),
                 'pixel_wallet_after'   => $refundResponse['data']['p_last_wallet_amount'] ?? null,

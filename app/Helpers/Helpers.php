@@ -552,30 +552,63 @@ function getReloadMoneysPaiements()
 
 function getMobileTransferServicesGrouped()
 {
+    $providerImageUrl = function (?string $image): ?string {
+        if (!$image) {
+            return null;
+        }
+
+        if (str_starts_with($image, 'http://') || str_starts_with($image, 'https://') || str_starts_with($image, '/')) {
+            return $image;
+        }
+
+        return asset_url('dist/providers/' . $image);
+    };
+
     return \App\Models\PixelInnoveService::with(['country', 'provider'])
         ->where('status', true)
         ->orderBy('name')
         ->get()
         ->groupBy('country_id')
-        ->map(function ($items) {
+        ->map(function ($items) use ($providerImageUrl) {
             $first   = $items->first();
             $country = optional($first->country);
             $iso2    = $country->code ? strtoupper($country->code) : '';
 
+            $formatProvider = function ($s) use ($providerImageUrl) {
+                return [
+                    'id'                   => $s->id,
+                    'provider_id'          => $s->provider_id,
+                    'name'                 => optional($s->provider)->name ?? $s->name,
+                    'image'                => $providerImageUrl(optional($s->provider)->image),
+                    'service_id'           => $s->service_id,
+                    'sender_service_id'    => $s->service_id,
+                    'recipient_service_id' => $s->service_id,
+                    'operation_type'       => $s->operation_type,
+                ];
+            };
+
+            $cashOutProviders = $items
+                ->where('operation_type', 'Cash Out')
+                ->map($formatProvider)
+                ->values();
+
+            $cashInProviders = $items
+                ->where('operation_type', 'Cash In')
+                ->map($formatProvider)
+                ->values();
+
             return [
-                'country_id'   => $first->country_id,
-                'country'      => $country->name,
-                'country_iso2' => $iso2,
-                'providers'    => $items->map(fn($s) => [
-                    'id'             => $s->id,
-                    'provider_id'    => $s->provider_id,
-                    'name'           => optional($s->provider)->name ?? $s->name,
-                    'image'          => optional($s->provider)->image,
-                    'service_id'     => $s->service_id,
-                    'operation_type' => $s->operation_type,
-                ])->values(),
+                'country_id'          => $first->country_id,
+                'country'             => $country->name,
+                'country_iso2'        => $iso2,
+                'country_indicatif'   => $country->indecative ?? '',
+                'providers'           => $cashOutProviders,
+                'cash_out_providers'  => $cashOutProviders,
+                'cash_in_providers'   => $cashInProviders,
             ];
-        })->values();
+        })
+        ->filter(fn($country) => $country['cash_out_providers']->isNotEmpty() || $country['cash_in_providers']->isNotEmpty())
+        ->values();
 }
 
 function sabdyHomeVerify()

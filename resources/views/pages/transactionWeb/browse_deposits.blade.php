@@ -1,474 +1,32 @@
 @extends('layouts.master_web')
 
-@section('title', 'Transfert & Crédit téléphonique')
+@section('title', 'Transfert Mobile Zone')
 
 @push('styles')
-<style>
-    /* ===== THEME DEPOSIT ===== */
-    [data-txn-type="deposit"] {
-        --txn-page-bg:
-            radial-gradient(circle at 10% 15%, rgba(5, 150, 105, .10), transparent 30%),
-            radial-gradient(circle at 88% 5%, rgba(6, 182, 212, .08), transparent 28%),
-            linear-gradient(180deg, #f0fdf9 0%, #ffffff 54%, #f8fafc 100%);
-        --txn-head-gradient: linear-gradient(135deg, #064e3b 0%, #059669 58%, #34d399 100%);
-        --txn-submit-gradient: linear-gradient(135deg, #064e3b 0%, #059669 60%, #10b981 100%);
-        --txn-submit-shadow: rgba(5, 150, 105, .22);
-        --txn-field-bg: #f0fdf9;
-        --txn-field-focus-border: rgba(5, 150, 105, .55);
-        --txn-field-focus-shadow: rgba(5, 150, 105, .12);
-        --txn-section-title-color: #064e3b;
-        --txn-icon-color: #059669;
-        --txn-icon-bg: rgba(5, 150, 105, .10);
-        --txn-amount-note-bg: rgba(6, 182, 212, .10);
-        --txn-amount-note-color: #0e7490;
-    }
-
-    /* ===== SHARED txn-* STYLES ===== */
-    .txn-page {
-        background: var(--txn-page-bg);
-        padding: 64px 0 76px;
-    }
-
-    .txn-shell { align-items: flex-start; }
-
-    .txn-form-panel {
-        background: #ffffff;
-        border: 1px solid rgba(15, 23, 42, .08);
-        border-radius: 24px;
-        box-shadow: 0 24px 70px rgba(15, 23, 42, .10);
-        overflow: hidden;
-    }
-
-    .txn-form-head {
-        display: flex;
-        gap: 18px;
-        align-items: center;
-        justify-content: space-between;
-        background: var(--txn-head-gradient);
-        color: #ffffff;
-        padding: 28px;
-    }
-
-    .txn-form-head h2 {
-        color: #ffffff;
-        font-size: 1.35rem;
-        font-weight: 800;
-        line-height: 1.25;
-        margin: 0;
-    }
-
-    .txn-form-head p {
-        color: rgba(255, 255, 255, .82);
-        margin: 8px 0 0;
-    }
-
-    .txn-head-icon {
-        width: 58px;
-        height: 58px;
-        border-radius: 18px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255, 255, 255, .14);
-        border: 1px solid rgba(255, 255, 255, .20);
-        flex: 0 0 auto;
-    }
-
-    .txn-head-icon i { color: #ffffff; font-size: 1.55rem; }
-
-    .txn-trust-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 18px;
-    }
-
-    .txn-trust-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        min-height: 34px;
-        padding: 8px 12px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, .13);
-        color: rgba(255, 255, 255, .94);
-        font-size: .82rem;
-        font-weight: 700;
-    }
-
-    .txn-form-body { padding: 28px; }
-
-    .txn-section-title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: var(--txn-section-title-color);
-        font-size: .95rem;
-        font-weight: 800;
-        margin-bottom: 16px;
-    }
-
-    .txn-section-title span {
-        width: 32px;
-        height: 32px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 11px;
-        color: var(--txn-icon-color);
-        background: var(--txn-icon-bg);
-    }
-
-    .txn-field {
-        height: 100%;
-        padding: 14px;
-        border: 1px solid rgba(15, 23, 42, .08);
-        border-radius: 18px;
-        background: var(--txn-field-bg);
-    }
-
-    .txn-field label {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #334155;
-        font-size: .84rem;
-        font-weight: 800;
-        margin-bottom: 10px;
-    }
-
-    .txn-field .form-control,
-    .txn-field .form-select {
-        min-height: 48px;
-        border: 1px solid rgba(15, 23, 42, .10) !important;
-        border-radius: 14px !important;
-        background-color: #ffffff;
-        color: #0f172a;
-        font-weight: 700;
-        box-shadow: none;
-    }
-
-    .txn-field .form-control:focus,
-    .txn-field .form-select:focus {
-        border-color: var(--txn-field-focus-border) !important;
-        box-shadow: 0 0 0 .2rem var(--txn-field-focus-shadow);
-    }
-
-    .txn-amount-note {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 12px;
-        padding: 11px 12px;
-        border-radius: 14px;
-        background: var(--txn-amount-note-bg);
-        color: var(--txn-amount-note-color);
-        font-size: .84rem;
-        font-weight: 700;
-    }
-
-    .txn-submit-wrap {
-        display: flex;
-        justify-content: center;
-    }
-
-    .txn-submit-wrap .txn-submit-btn {
-        width: min(100%, 420px);
-    }
-
-    .txn-submit-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        min-height: 58px;
-        height: auto;
-        padding-right: 18px !important;
-        padding-left: 18px !important;
-        border: 0;
-        border-radius: 18px;
-        background: var(--txn-submit-gradient);
-        box-shadow: 0 16px 30px var(--txn-submit-shadow);
-        line-height: 1.25;
-        white-space: normal;
-        overflow-wrap: anywhere;
-        text-align: center;
-    }
-
-    .txn-submit-btn:disabled {
-        background: #a8b3c7;
-        box-shadow: none;
-        cursor: not-allowed;
-    }
-
-    .txn-submit-btn .submit-text { display: inline-flex; }
-    .txn-submit-btn .loading-spinner { flex-wrap: wrap; }
-    .txn-submit-btn i { flex: 0 0 auto; }
-
-    .txn-submit-btn .submit-text,
-    .txn-submit-btn .loading-spinner {
-        align-items: center;
-        justify-content: center;
-        max-width: 100%;
-        min-width: 0;
-        line-height: 1.25;
-    }
-
-    .txn-side-note {
-        margin-top: 16px;
-        padding: 18px;
-        border-radius: 20px;
-        background: #ffffff;
-        border: 1px solid rgba(15, 23, 42, .08);
-        box-shadow: 0 14px 34px rgba(15, 23, 42, .07);
-    }
-
-    .txn-side-note strong {
-        display: block;
-        color: #0f172a;
-        font-size: .95rem;
-        margin-bottom: 6px;
-    }
-
-    .txn-side-note p {
-        color: #64748b;
-        font-size: .88rem;
-        margin: 0;
-    }
-
-    .txn-page .card { border-radius: 22px !important; }
-
-    /* ===== MOBILE ZONE TRANSFER STRIP ===== */
-    .mzt-strip {
-        padding: 22px 28px 0;
-    }
-
-    .mzt-strip-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 14px;
-    }
-
-    .mzt-strip-title {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: .92rem;
-        font-weight: 800;
-        color: #064e3b;
-    }
-
-    .mzt-strip-title i {
-        width: 30px;
-        height: 30px;
-        border-radius: 10px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(5, 150, 105, .10);
-        color: #059669;
-        font-size: .9rem;
-    }
-
-    .mzt-strip-hint {
-        font-size: .78rem;
-        color: #94a3b8;
-        font-weight: 600;
-    }
-
-    .mzt-country {
-        margin-bottom: 8px;
-        border-radius: 14px;
-        border: 1px solid rgba(15, 23, 42, .07);
-        background: #ffffff;
-        box-shadow: 0 2px 8px rgba(15, 23, 42, .04);
-        overflow: hidden;
-        transition: box-shadow .2s ease;
-    }
-
-    .mzt-country:hover {
-        box-shadow: 0 6px 18px rgba(5, 150, 105, .10);
-    }
-
-    .mzt-country-toggle {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 16px;
-        background: none;
-        border: none;
-        cursor: pointer;
-        text-align: left;
-        transition: background .15s ease;
-    }
-
-    .mzt-country-toggle:hover {
-        background: rgba(5, 150, 105, .04);
-    }
-
-    .mzt-country-flag {
-        font-size: 1.5rem;
-        flex: 0 0 auto;
-        line-height: 1;
-    }
-
-    .mzt-country-name {
-        flex: 1;
-        font-size: .94rem;
-        font-weight: 700;
-        color: #0f172a;
-        text-align: left;
-    }
-
-    .mzt-country-count {
-        display: inline-flex;
-        align-items: center;
-        padding: 3px 10px;
-        border-radius: 999px;
-        background: rgba(5, 150, 105, .10);
-        color: #059669;
-        font-size: .74rem;
-        font-weight: 700;
-        white-space: nowrap;
-    }
-
-    .mzt-chevron {
-        font-size: .9rem;
-        color: #059669;
-        transition: transform .25s ease;
-        flex: 0 0 auto;
-    }
-
-    .mzt-chevron.rotated { transform: rotate(180deg); }
-
-    .mzt-operators {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        padding: 12px 16px 14px;
-        background: #f8fafc;
-        border-top: 1px solid rgba(5, 150, 105, .08);
-    }
-
-    .mzt-op-card {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 12px 8px;
-        border-radius: 14px;
-        border: 2px solid rgba(15, 23, 42, .06);
-        background: #ffffff;
-        cursor: pointer;
-        transition: border-color .2s ease, box-shadow .2s ease, transform .15s ease;
-        min-height: 90px;
-    }
-
-    .mzt-op-card:hover {
-        border-color: rgba(5, 150, 105, .30);
-        box-shadow: 0 8px 18px rgba(5, 150, 105, .10);
-        transform: translateY(-1px);
-    }
-
-    .mzt-op-card.selected {
-        border-color: #059669;
-        background: rgba(5, 150, 105, .05);
-        box-shadow: 0 6px 16px rgba(5, 150, 105, .18);
-    }
-
-    .mzt-op-logo {
-        width: 46px;
-        height: 46px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        background: #f1f5f9;
-    }
-
-    .mzt-op-logo img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-    }
-
-    .mzt-op-logo i {
-        font-size: 1.3rem;
-        color: #94a3b8;
-    }
-
-    .mzt-op-name {
-        font-size: .75rem;
-        font-weight: 700;
-        color: #334155;
-        text-align: center;
-        line-height: 1.3;
-    }
-
-    .mzt-op-card.selected .mzt-op-name {
-        color: #059669;
-    }
-
-    .mzt-selected-badge {
-        display: none;
-        align-items: center;
-        gap: 8px;
-        margin: 12px 28px 0;
-        padding: 10px 14px;
-        border-radius: 12px;
-        background: rgba(5, 150, 105, .08);
-        border: 1px solid rgba(5, 150, 105, .18);
-        color: #064e3b;
-        font-size: .82rem;
-        font-weight: 700;
-    }
-
-    .mzt-selected-badge.visible { display: flex; }
-
-    @media (min-width: 576px) {
-        .mzt-operators {
-            grid-template-columns: repeat(4, 1fr);
-        }
-    }
-
-    @media (max-width: 991.98px) {
-        .txn-page { padding: 46px 0 58px; }
-        .txn-form-head { align-items: flex-start; flex-direction: column; }
-    }
-
-    @media (max-width: 575.98px) {
-        .txn-form-head,
-        .txn-form-body { padding: 22px; }
-
-        .mzt-strip { padding: 18px 22px 0; }
-
-        .mzt-selected-badge { margin: 10px 22px 0; }
-
-        .txn-submit-btn {
-            min-height: 54px;
-            padding: 13px 14px !important;
-            border-radius: 15px;
-            font-size: .94rem;
-        }
-
-        .txn-submit-btn .submit-text,
-        .txn-submit-btn .loading-spinner { flex-wrap: wrap; }
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('web/css/mzt-deposits.css') }}">
 @endpush
 
 @section('content')
     @include('components.hero-section', [
         'backgroundImage' => 'https://robus.home.ci/public/dist/images/transaction_acoumpte.jpg',
-        'title' => 'Transfert Mooney',
-        'subtitle' => 'Rechargez en toute sécurité',
-        'badgeText' => 'Transaction 100% sécurisée',
-        'badgeIcon' => 'bi-currency-exchange',
+        'title'           => 'Transfert Mobile Zone',
+        'subtitle'        => 'Sélectionnez vos réseaux et procédez au transfert',
+        'badgeText'       => 'Transaction 100% sécurisée',
+        'badgeIcon'       => 'bi-currency-exchange',
     ])
+
+    @php
+        $mztFlags = [
+            'CI' => '🇨🇮', 'SN' => '🇸🇳', 'ML' => '🇲🇱', 'BF' => '🇧🇫',
+            'BJ' => '🇧🇯', 'TG' => '🇹🇬', 'CM' => '🇨🇲', 'GM' => '🇬🇲',
+            'GN' => '🇬🇳', 'CD' => '🇨🇩', 'MG' => '🇲🇬', 'GA' => '🇬🇦',
+            'CG' => '🇨🇬',
+        ];
+        $mztCountries          = getMobileTransferServicesGrouped();
+        $mztSenderCountries    = $mztCountries->filter(fn($c) => collect($c['cash_out_providers'])->isNotEmpty())->values();
+        $mztRecipientCountries = $mztCountries->filter(fn($c) => collect($c['cash_in_providers'])->isNotEmpty())->values();
+    @endphp
+
 
     <section class="txn-page contact-info-section style_percent" data-txn-type="deposit">
         <div class="container">
@@ -476,22 +34,15 @@
                 <div class="col-lg-8 col-md-11 col-sm-12">
                     <div class="txn-form-panel">
 
-                        {{-- En-tête --}}
+                        {{-- ── En-tête ── --}}
                         <div class="txn-form-head">
-                            <div>
-                                <h2>Formulaire de Transfert</h2>
-                                <p>Renseignez les informations du bénéficiaire, sélectionnez le réseau et le type
-                                    d'opération. Les frais sont calculés automatiquement.</p>
+                            <div class="txn-form-head-content">
+                                <h2>Transfert Mobile Zone</h2>
+                                <p>Choisissez le pays et l'opérateur de chaque côté pour commencer.</p>
                                 <div class="txn-trust-list">
-                                    <span class="txn-trust-chip">
-                                        <i class="bi bi-shield-check"></i> Transaction sécurisée
-                                    </span>
-                                    <span class="txn-trust-chip">
-                                        <i class="bi bi-phone"></i> Mobile Money
-                                    </span>
-                                    <span class="txn-trust-chip">
-                                        <i class="bi bi-receipt"></i> Demande suivie
-                                    </span>
+                                    <span class="txn-trust-chip"><i class="bi bi-shield-check"></i> Sécurisé</span>
+                                    <span class="txn-trust-chip"><i class="bi bi-phone"></i> Mobile Money</span>
+                                    <span class="txn-trust-chip"><i class="bi bi-receipt"></i> Suivi en temps réel</span>
                                 </div>
                             </div>
                             <div class="txn-head-icon">
@@ -499,229 +50,380 @@
                             </div>
                         </div>
 
-                        {{-- Réseaux — Transfert Mobile Zone style --}}
-                        @php
-                            $mztFlags = [
-                                'CI' => '🇨🇮', 'SN' => '🇸🇳', 'ML' => '🇲🇱', 'BF' => '🇧🇫',
-                                'BJ' => '🇧🇯', 'TG' => '🇹🇬', 'CM' => '🇨🇲', 'GM' => '🇬🇲',
-                                'GN' => '🇬🇳', 'CD' => '🇨🇩', 'MG' => '🇲🇬', 'GA' => '🇬🇦',
-                                'CG' => '🇨🇬',
-                            ];
-                            $mztCountries = getMobileTransferServicesGrouped();
-                        @endphp
+                        {{-- ── Barre de progression ── --}}
+                        <div class="mzt-progress">
+                            <div class="mzt-progress-step active" id="mztStep1Indicator">
+                                <div class="mzt-progress-num">1</div>
+                                <div class="mzt-progress-label">Sélection des réseaux</div>
+                            </div>
+                            <div class="mzt-progress-connector" id="mztProgressLine"></div>
+                            <div class="mzt-progress-step" id="mztStep2Indicator">
+                                <div class="mzt-progress-num">2</div>
+                                <div class="mzt-progress-label">Informations & envoi</div>
+                            </div>
+                        </div>
 
-                        <div class="mzt-strip">
-                            <div class="mzt-strip-header">
-                                <div class="mzt-strip-title">
-                                    <i class="bi bi-globe2"></i>
-                                    Réseaux disponibles
+                        {{-- ── ÉTAPE 1 : Sélecteur ── --}}
+                        <div class="mzt-selector" id="mztStep1">
+                            <div class="mzt-selector-header">
+                                <span class="mzt-selector-step-num">1</span>
+                                <div>
+                                    <div class="mzt-selector-title">Sélectionnez les réseaux</div>
+                                    <div class="mzt-selector-sub">Pays puis opérateur — expéditeur à gauche, destinataire à droite</div>
                                 </div>
-                                <span class="mzt-strip-hint">Cliquez pour sélectionner un opérateur</span>
                             </div>
 
-                            @forelse ($mztCountries as $mztCountry)
-                                @php
-                                    $iso2     = $mztCountry['country_iso2'] ?? '';
-                                    $flag     = $mztFlags[$iso2] ?? '🌍';
-                                    $opCount  = count($mztCountry['providers']);
-                                    $countryId = $mztCountry['country_id'];
-                                @endphp
-                                <div class="mzt-country" data-mzt-country-id="{{ $countryId }}">
-                                    <button class="mzt-country-toggle" type="button"
-                                            onclick="mztToggle(this)">
-                                        <span class="mzt-country-flag">{{ $flag }}</span>
-                                        <span class="mzt-country-name">{{ $mztCountry['country'] ?? $iso2 }}</span>
-                                        <span class="mzt-country-count">
-                                            {{ $opCount }} opérateur{{ $opCount > 1 ? 's' : '' }}
-                                        </span>
-                                        <i class="bi bi-chevron-down mzt-chevron"></i>
-                                    </button>
-                                    <div class="mzt-operators d-none">
-                                        @foreach ($mztCountry['providers'] as $mztOp)
-                                            <div class="mzt-op-card"
-                                                 data-provider-id="{{ $mztOp['provider_id'] }}"
-                                                 data-service-id="{{ $mztOp['service_id'] }}"
-                                                 data-op-name="{{ $mztOp['name'] }}"
-                                                 onclick="mztSelectOperator(this)">
-                                                <div class="mzt-op-logo">
-                                                    @if (!empty($mztOp['image']))
-                                                        <img src="{{ $mztOp['image'] }}" alt="{{ $mztOp['name'] }}"
-                                                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-                                                        <i class="bi bi-phone-fill" style="display:none"></i>
-                                                    @else
-                                                        <i class="bi bi-phone-fill"></i>
-                                                    @endif
+                            <div class="row g-3 mb-3">
+
+                                {{-- ── Colonne Expéditeur (Cash Out) ── --}}
+                                <div class="col-md-6">
+                                    <div class="mzt-side mzt-side-sender mb-3" id="mztSideSender">
+                                        <div class="mzt-side-head">
+                                            <div class="mzt-side-icon"><i class="bi bi-box-arrow-up-right"></i></div>
+                                            <div>
+                                                <div class="mzt-side-label">Expéditeur</div>
+                                                <div class="mzt-side-sublabel">Votre opérateur mobile</div>
+                                            </div>
+                                        </div>
+                                        <div class="mzt-side-body">
+
+                                            {{-- Étape A : choix du pays --}}
+                                            <div id="mztSenderCountryStep">
+                                                <div class="mzt-step-hint">Choisissez un pays</div>
+                                                <div class="mzt-country-grid">
+                                                    @forelse ($mztSenderCountries as $country)
+                                                        @php
+                                                            $iso2 = $country['country_iso2'] ?? '';
+                                                            $flag = $mztFlags[$iso2] ?? '🌍';
+                                                            $cnt  = collect($country['cash_out_providers'])->count();
+                                                        @endphp
+                                                        <div class="mzt-ctry-card"
+                                                             data-country-id="{{ $country['country_id'] }}"
+                                                             data-country-name="{{ $country['country'] ?? $iso2 }}"
+                                                             data-country-flag="{{ $flag }}"
+                                                             data-side="sender"
+                                                             onclick="mztPickCountry(this,'sender')">
+                                                            <span class="mzt-ctry-flag">{{ $flag }}</span>
+                                                            <span class="mzt-ctry-name">{{ $country['country'] ?? $iso2 }}</span>
+                                                            <span class="mzt-ctry-badge">{{ $cnt }} op.</span>
+                                                        </div>
+                                                    @empty
+                                                        <div class="mzt-empty" style="grid-column:1/-1">
+                                                            <i class="bi bi-wifi-off"></i>
+                                                            Aucun pays disponible
+                                                        </div>
+                                                    @endforelse
                                                 </div>
-                                                <div class="mzt-op-name">{{ $mztOp['name'] }}</div>
                                             </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @empty
-                                <p class="text-muted small px-2 py-3 mb-0">
-                                    <i class="bi bi-info-circle me-1"></i>
-                                    Aucun réseau disponible pour le moment.
-                                </p>
-                            @endforelse
-                        </div>
 
-                        {{-- Opérateur sélectionné --}}
-                        <div class="mzt-selected-badge" id="mztSelectedBadge">
-                            <i class="bi bi-check-circle-fill text-success"></i>
-                            <span>Opérateur sélectionné : <strong id="mztSelectedName">—</strong></span>
-                        </div>
-
-                        <form method="POST" action="{{ route('web.transactions_deposits_store.stores') }}"
-                            enctype="multipart/form-data">
-                            @csrf
-
-                            <div class="txn-form-body">
-                                <div class="txn-section-title">
-                                    <span><i class="bi bi-person-vcard"></i></span>
-                                    Informations de l'expéditeur & bénéficiaire
-                                </div>
-
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <div class="txn-field">
-                                            <label for="name_expeditor">
-                                                <i class="bi bi-person text-primary"></i>
-                                                Nom et prénom expéditeur <span class="text-danger">*</span>
-                                            </label>
-                                            <input type="text" name="name_expeditor" maxlength="80"
-                                                class="form-control" id="name_expeditor"
-                                                placeholder="Ex: KONAN Franck" required>
-                                            <div class="invalid-feedback">
-                                                Veuillez saisir le nom et prénom de l'expéditeur
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="txn-field">
-                                            <label for="phone_benef">
-                                                <i class="bi bi-phone text-primary"></i>
-                                                N° Téléphone bénéficiaire <span class="text-danger">*</span>
-                                            </label>
-                                            <input type="text" maxlength="10" name="phone_benef"
-                                                class="form-control" id="phone_benef"
-                                                placeholder="Ex: 0909090909" required>
-                                            <div class="invalid-feedback">
-                                                Veuillez saisir le numéro du bénéficiaire
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="txn-field">
-                                            <label for="my_phone">
-                                                <i class="bi bi-telephone text-primary"></i>
-                                                Votre numéro téléphone <span class="text-danger">*</span>
-                                            </label>
-                                            <input type="text" name="my_phone" maxlength="10"
-                                                class="form-control" id="my_phone"
-                                                placeholder="Ex: 0101010101" required>
-                                            <div class="invalid-feedback">
-                                                Veuillez saisir votre numéro de téléphone
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="txn-field">
-                                            <label for="provider">
-                                                <i class="bi bi-wifi text-primary"></i>
-                                                Réseau <span class="text-danger">*</span>
-                                            </label>
-                                            <select required id="provider" name="provider"
-                                                class="form-select @error('provider') is-invalid @enderror">
-                                                <option disabled selected>Sélectionnez le réseau</option>
-                                                @foreach ($providers as $provider)
-                                                    <option value="{{ $provider->id }}">
-                                                        {{ $provider->name ?? null }}
-                                                    </option>
+                                            {{-- Étape B : choix de l'opérateur (masqué jusqu'à sélection du pays) --}}
+                                            <div id="mztSenderProviderStep" class="d-none mzt-provider-step">
+                                                <div class="mzt-back-row">
+                                                    <button type="button" class="mzt-back-btn" onclick="mztBackToCountry('sender')">
+                                                        <i class="bi bi-arrow-left"></i> Changer
+                                                    </button>
+                                                    <div class="mzt-back-row-country">
+                                                        <span class="mzt-back-row-flag" id="mztSenderCountryFlag"></span>
+                                                        <span id="mztSenderCountryLabel"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="mzt-step-hint" style="padding-top:10px">Choisissez l'opérateur</div>
+                                                @foreach ($mztSenderCountries as $country)
+                                                    <div class="mzt-op-group d-none" data-country-id="{{ $country['country_id'] }}">
+                                                        <div class="mzt-operators">
+                                                            @foreach (collect($country['cash_out_providers']) as $op)
+                                                                <div class="mzt-op-card"
+                                                                     data-side="sender"
+                                                                     data-provider-id="{{ $op['provider_id'] }}"
+                                                                     data-service-id="{{ $op['service_id'] }}"
+                                                                     data-op-name="{{ $op['name'] }}"
+                                                                     data-op-image="{{ $op['image'] ?? '' }}"
+                                                                     data-country="{{ $country['country'] ?? '' }}"
+                                                                     data-country-iso2="{{ $country['country_iso2'] ?? '' }}"
+                                                                     data-country-indicatif="{{ $country['country_indicatif'] ?? '' }}"
+                                                                     onclick="mztSelectOp(this,'sender')">
+                                                                    <div class="mzt-op-logo">
+                                                                        @if (!empty($op['image']))
+                                                                            <img src="{{ $op['image'] }}" alt="{{ $op['name'] }}"
+                                                                                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                                                                            <i class="bi bi-phone-fill" style="display:none"></i>
+                                                                        @else
+                                                                            <i class="bi bi-phone-fill"></i>
+                                                                        @endif
+                                                                    </div>
+                                                                    <div class="mzt-op-name">{{ $op['name'] }}</div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
                                                 @endforeach
-                                            </select>
-                                            <div class="invalid-feedback">Veuillez sélectionner un réseau</div>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="txn-section-title mt-4">
-                                    <span><i class="bi bi-cash-coin"></i></span>
-                                    Type d'opération & montant
+                                {{-- ── Colonne Destinataire (Cash In) ── --}}
+                                <div class="col-md-6">
+                                    <div class="mzt-side mzt-side-recipient" id="mztSideRecipient">
+                                        <div class="mzt-side-head">
+                                            <div class="mzt-side-icon"><i class="bi bi-box-arrow-in-down-right"></i></div>
+                                            <div>
+                                                <div class="mzt-side-label">Destinataire</div>
+                                                <div class="mzt-side-sublabel">Réseau du bénéficiaire</div>
+                                            </div>
+                                        </div>
+                                        <div class="mzt-side-body">
+
+                                            {{-- Étape A : choix du pays --}}
+                                            <div id="mztRecipientCountryStep">
+                                                <div class="mzt-step-hint">Choisissez un pays</div>
+                                                <div class="mzt-country-grid">
+                                                    @forelse ($mztRecipientCountries as $country)
+                                                        @php
+                                                            $iso2 = $country['country_iso2'] ?? '';
+                                                            $flag = $mztFlags[$iso2] ?? '🌍';
+                                                            $cnt  = collect($country['cash_in_providers'])->count();
+                                                        @endphp
+                                                        <div class="mzt-ctry-card"
+                                                             data-country-id="{{ $country['country_id'] }}"
+                                                             data-country-name="{{ $country['country'] ?? $iso2 }}"
+                                                             data-country-flag="{{ $flag }}"
+                                                             data-side="recipient"
+                                                             onclick="mztPickCountry(this,'recipient')">
+                                                            <span class="mzt-ctry-flag">{{ $flag }}</span>
+                                                            <span class="mzt-ctry-name">{{ $country['country'] ?? $iso2 }}</span>
+                                                            <span class="mzt-ctry-badge">{{ $cnt }} op.</span>
+                                                        </div>
+                                                    @empty
+                                                        <div class="mzt-empty" style="grid-column:1/-1">
+                                                            <i class="bi bi-wifi-off"></i>
+                                                            Aucun pays disponible
+                                                        </div>
+                                                    @endforelse
+                                                </div>
+                                            </div>
+
+                                            {{-- Étape B : choix de l'opérateur --}}
+                                            <div id="mztRecipientProviderStep" class="d-none mzt-provider-step">
+                                                <div class="mzt-back-row">
+                                                    <button type="button" class="mzt-back-btn" onclick="mztBackToCountry('recipient')">
+                                                        <i class="bi bi-arrow-left"></i> Changer
+                                                    </button>
+                                                    <div class="mzt-back-row-country">
+                                                        <span class="mzt-back-row-flag" id="mztRecipientCountryFlag"></span>
+                                                        <span id="mztRecipientCountryLabel"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="mzt-step-hint" style="padding-top:10px">Choisissez l'opérateur</div>
+                                                @foreach ($mztRecipientCountries as $country)
+                                                    <div class="mzt-op-group d-none" data-country-id="{{ $country['country_id'] }}">
+                                                        <div class="mzt-operators">
+                                                            @foreach (collect($country['cash_in_providers']) as $op)
+                                                                <div class="mzt-op-card"
+                                                                     data-side="recipient"
+                                                                     data-provider-id="{{ $op['provider_id'] }}"
+                                                                     data-service-id="{{ $op['service_id'] }}"
+                                                                     data-op-name="{{ $op['name'] }}"
+                                                                     data-op-image="{{ $op['image'] ?? '' }}"
+                                                                     data-country="{{ $country['country'] ?? '' }}"
+                                                                     data-country-iso2="{{ $country['country_iso2'] ?? '' }}"
+                                                                     data-country-indicatif="{{ $country['country_indicatif'] ?? '' }}"
+                                                                     onclick="mztSelectOp(this,'recipient')">
+                                                                    <div class="mzt-op-logo">
+                                                                        @if (!empty($op['image']))
+                                                                            <img src="{{ $op['image'] }}" alt="{{ $op['name'] }}"
+                                                                                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                                                                            <i class="bi bi-phone-fill" style="display:none"></i>
+                                                                        @else
+                                                                            <i class="bi bi-phone-fill"></i>
+                                                                        @endif
+                                                                    </div>
+                                                                    <div class="mzt-op-name">{{ $op['name'] }}</div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <div class="txn-field">
-                                            <label for="operators">
-                                                <i class="bi bi-gear text-primary"></i>
-                                                Type d'opération <span class="text-danger">*</span>
-                                            </label>
-                                            <select required name="operators" id="operators"
-                                                class="form-select @error('operators') is-invalid @enderror">
-                                                <option disabled selected>Sélectionnez le type d'opération</option>
-                                                <option value="1">Transfert mobile money</option>
-                                                <option value="2">Rechargement téléphonique</option>
-                                            </select>
-                                            <div class="invalid-feedback">
-                                                Veuillez sélectionner le type d'opération
+                            </div>{{-- /row --}}
+
+                            {{-- Route bar --}}
+                            <div class="mzt-route-bar d-none" id="mztRouteBar">
+                                <div class="mzt-route-op">
+                                    <div class="mzt-route-op-avatar" id="mztRouteSenderAvatar">
+                                        <i class="bi bi-phone-fill"></i>
+                                    </div>
+                                    <div class="mzt-route-op-info">
+                                        <div class="mzt-route-op-lbl">Expéditeur</div>
+                                        <div class="mzt-route-op-val" id="mztRouteSenderName">—</div>
+                                    </div>
+                                </div>
+                                <div class="mzt-route-arrow-wrap">
+                                    <div class="mzt-route-arrow"><i class="bi bi-arrow-right"></i></div>
+                                </div>
+                                <div class="mzt-route-op">
+                                    <div class="mzt-route-op-avatar" id="mztRouteRecipientAvatar">
+                                        <i class="bi bi-phone-fill"></i>
+                                    </div>
+                                    <div class="mzt-route-op-info">
+                                        <div class="mzt-route-op-lbl">Destinataire</div>
+                                        <div class="mzt-route-op-val" id="mztRouteRecipientName">—</div>
+                                    </div>
+                                </div>
+                                <button type="button" class="mzt-route-proceed" onclick="mztProceed()">
+                                    <i class="bi bi-check2-circle"></i> Continuer
+                                </button>
+                            </div>
+
+                        </div>{{-- /mztStep1 --}}
+
+                        {{-- ── ÉTAPE 2 : Formulaire ── --}}
+                        <div class="mzt-form-reveal" id="mztFormReveal">
+
+                            <div class="mzt-step-divider">
+                                <div class="mzt-step-divider-line"></div>
+                                <span class="mzt-step-divider-badge">
+                                    <span class="mzt-step-divider-num">2</span>
+                                    Informations du transfert
+                                </span>
+                                <div class="mzt-step-divider-line"></div>
+                            </div>
+
+                            <form id="mztTransferForm" novalidate onsubmit="mztSubmit(event)">
+                                @csrf
+                                <input type="hidden" id="inputSenderServiceId">
+                                <input type="hidden" id="inputRecipientServiceId">
+
+                                <div class="txn-form-body">
+
+                                    {{-- ── Ligne 1 : Expéditeur | Destinataire ── --}}
+                                    <div class="row g-3 mb-3">
+
+                                        {{-- Expéditeur --}}
+                                        <div class="col-12 col-sm-6">
+                                            <div class="mzt-compact-panel">
+                                                <div class="mzt-compact-panel-head sender">
+                                                    <i class="bi bi-box-arrow-up-right"></i> Expéditeur
+                                                </div>
+
+                                                {{-- Opérateur (lecture seule) --}}
+                                                <div class="mzt-info-card" id="mztFormSenderCard" style="padding:10px 12px">
+                                                    <div class="mzt-info-card-avatar" id="mztFormSenderAvatar" style="width:34px;height:34px;border-radius:10px">
+                                                        <i class="bi bi-phone-fill"></i>
+                                                    </div>
+                                                    <div class="mzt-info-card-body">
+                                                        <div class="mzt-info-card-val" id="mztFormSenderOp" style="font-size:.82rem">—</div>
+                                                        <div class="mzt-info-card-country" id="mztFormSenderCountry"></div>
+                                                    </div>
+                                                    <i class="bi bi-lock-fill mzt-info-lock"></i>
+                                                </div>
+
+                                                {{-- Votre numéro --}}
+                                                <div class="mzt-compact-field mt-2" id="mztSenderPhoneField">
+                                                    <i class="bi bi-telephone-fill mzt-cf-icon"></i>
+                                                    <input type="text" name="my_phone" id="my_phone"
+                                                           maxlength="15" placeholder="Votre n°" required
+                                                           oninvalid="mztMarkInvalid('mztSenderPhoneField')"
+                                                           oninput="mztClearInvalid('mztSenderPhoneField')">
+                                                </div>
+                                                <div class="invalid-feedback d-block" id="mztSenderPhoneErr" style="display:none!important;font-size:.75rem;padding:2px 4px"></div>
+                                            </div>
+                                        </div>
+
+                                        {{-- Destinataire --}}
+                                        <div class="col-12 col-sm-6">
+                                            <div class="mzt-compact-panel recip-panel">
+                                                <div class="mzt-compact-panel-head recip">
+                                                    <i class="bi bi-box-arrow-in-down-right"></i> Destinataire
+                                                </div>
+
+                                                {{-- Opérateur (lecture seule) --}}
+                                                <div class="mzt-info-card mzt-info-recip" id="mztFormRecipCard" style="padding:10px 12px">
+                                                    <div class="mzt-info-card-avatar" id="mztFormRecipAvatar" style="width:34px;height:34px;border-radius:10px">
+                                                        <i class="bi bi-phone-fill"></i>
+                                                    </div>
+                                                    <div class="mzt-info-card-body">
+                                                        <div class="mzt-info-card-val" id="mztFormRecipOp" style="font-size:.82rem">—</div>
+                                                        <div class="mzt-info-card-country" id="mztFormRecipCountry"></div>
+                                                    </div>
+                                                    <i class="bi bi-lock-fill mzt-info-lock"></i>
+                                                </div>
+
+                                                {{-- Numéro bénéficiaire --}}
+                                                <div class="mzt-compact-field mt-2" id="mztRecipPhoneField"
+                                                     style="border-color:rgba(5,150,105,.22)">
+                                                    <i class="bi bi-telephone-fill mzt-cf-icon" style="color:var(--mzt-recip-color)"></i>
+                                                    <input type="text" name="phone_benef" id="phone_benef"
+                                                           maxlength="15" placeholder="N° bénéficiaire" required
+                                                           oninvalid="mztMarkInvalid('mztRecipPhoneField')"
+                                                           oninput="mztClearInvalid('mztRecipPhoneField')">
+                                                </div>
+                                                <div class="invalid-feedback d-block" id="mztRecipPhoneErr" style="display:none!important;font-size:.75rem;padding:2px 4px"></div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <div class="txn-field">
-                                            <label for="montant_deposit">
-                                                <i class="bi bi-cash-stack text-primary"></i>
-                                                Montant (FCFA) <span class="text-danger">*</span>
-                                            </label>
-                                            <input type="number" class="form-control" id="montant_deposit"
-                                                name="amount" min="500" max="500000"
-                                                placeholder="Ex: 2400" required>
-                                            <div class="invalid-feedback">
-                                                Le montant doit être entre 500 et 500.000 FCFA
-                                            </div>
-                                            <div class="txn-amount-note">
-                                                <i class="bi bi-info-circle"></i>
-                                                <small id="montantInfoDeposit">Min: 500 FCFA / Max: 500.000 FCFA</small>
-                                            </div>
+                                    {{-- ── Bandeau USSD (pleine largeur, conditionnel) ── --}}
+                                    <div id="mztUssdBannerWrap" style="display:none;margin-bottom:12px"></div>
+
+                                    {{-- ── Code OTP (conditionnel) ── --}}
+                                    <div class="d-none mb-3" id="mztOtpFieldWrap">
+                                        <div class="mzt-compact-field" style="border-color:rgba(249,115,22,.35);background:#fff7ed">
+                                            <i class="bi bi-lock-fill" style="color:#ea580c;flex:0 0 auto"></i>
+                                            <input type="text" name="om_otp" id="om_otp"
+                                                   inputmode="numeric" maxlength="10"
+                                                   placeholder="Code OTP (après composition du USSD)">
                                         </div>
                                     </div>
 
-                                    <div class="col-12">
-                                        @include('layouts.shared_web.frais_transfert', [
-                                            'total_percent' => $total_percent ?? 0,
-                                        ])
-                                        @include('layouts.shared_web.frais_credit', [
-                                            'total_percent_phone' => $total_percent_phone ?? 0,
-                                        ])
+                                    {{-- ── Montant ── --}}
+                                    <div class="mzt-amount-field mb-3">
+                                        <div class="mzt-af-icon"><i class="bi bi-cash-stack"></i></div>
+                                        <input type="number" id="mztAmount" min="1"
+                                               placeholder="Montant à envoyer (FCFA)" required
+                                               oninput="mztOnAmountChange(this.value)">
+                                        <span class="mzt-af-badge">FCFA</span>
                                     </div>
 
-                                    <div class="col-12 txn-submit-wrap">
-                                        <button type="submit"
-                                            class="btn btn-primary btn-lg py-3 fw-bold txn-submit-btn"
-                                            id="submitButtonDeposit" disabled>
-                                            <span class="submit-text">
-                                                <i class="bi bi-send me-2"></i>
-                                                Procéder à la demande
-                                            </span>
-                                            <span class="loading-spinner" style="display: none;">
-                                                <i class="bi bi-arrow-repeat me-2"></i>
-                                                Traitement en cours...
-                                            </span>
+                                    {{-- Frais dynamiques --}}
+                                    <div id="mztFeesWrap" style="display:none;margin-bottom:14px">
+                                        <div id="mztFeesPreview"></div>
+                                    </div>
+
+                                    {{-- Bouton envoyer --}}
+                                    <button type="button"
+                                        class="btn btn-primary fw-bold txn-submit-btn"
+                                        id="mztSubmitBtn" onclick="mztSubmit()">
+                                        <span class="submit-text">
+                                            <i class="bi bi-send-fill me-2"></i>Envoyer maintenant
+                                        </span>
+                                        <span class="loading-spinner d-none">
+                                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                            Traitement en cours...
+                                        </span>
+                                    </button>
+
+                                    {{-- Lien Modifier --}}
+                                    <div class="text-center mt-2">
+                                        <button type="button" class="btn btn-link btn-sm text-muted p-0" onclick="mztBack()">
+                                            <i class="bi bi-pencil me-1"></i>Modifier les réseaux
                                         </button>
                                     </div>
                                 </div>
-                            </div>
-                        </form>
-                    </div>
+                            </form>
+                        </div>{{-- /mztFormReveal --}}
+
+                    </div>{{-- /txn-form-panel --}}
 
                     <div class="txn-side-note">
                         <strong>Avant d'envoyer votre demande</strong>
-                        <p>Vérifiez le numéro du bénéficiaire, le réseau sélectionné et le type d'opération. Une
-                            erreur peut retarder le traitement.</p>
+                        <p>Vérifiez le numéro du bénéficiaire, le réseau et le type d'opération. Une erreur peut retarder le traitement.</p>
                     </div>
                 </div>
 
@@ -729,69 +431,57 @@
             </div>
         </div>
     </section>
+
+    {{-- ── Modal Confirmation ── --}}
+    <div class="modal fade" id="mztConfirmModal" tabindex="-1" aria-labelledby="mztConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius:20px;overflow:hidden;border:0">
+                <div class="modal-header" style="background:var(--txn-head-gradient);border:0;padding:20px 24px">
+                    <h5 class="modal-title text-white fw-bold" id="mztConfirmModalLabel">
+                        <i class="bi bi-arrow-left-right me-2"></i>Confirmer le transfert
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4" id="mztConfirmBody"></div>
+                <div class="modal-footer border-0 px-4 pb-4 pt-0 gap-2">
+                    <button type="button" class="btn btn-outline-secondary rounded-3 fw-bold" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i> Annuler
+                    </button>
+                    <button type="button" class="btn btn-primary fw-bold rounded-3 px-4" id="mztConfirmBtn" onclick="mztDoInitialize()">
+                        <i class="bi bi-check2-circle me-1"></i> Confirmer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ── Modal Résultat ── --}}
+    <div class="modal fade" id="mztResultModal" tabindex="-1" aria-labelledby="mztResultModalLabel" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius:20px;overflow:hidden;border:0">
+                <div class="modal-header border-0 px-4 pt-4 pb-0">
+                    <h5 class="modal-title fw-bold" id="mztResultModalLabel"></h5>
+                </div>
+                <div class="modal-body px-4 py-3" id="mztResultBody"></div>
+                <div class="modal-footer border-0 px-4 pb-4 pt-0">
+                    <button type="button" class="btn btn-primary fw-bold rounded-3 w-100"
+                            data-bs-dismiss="modal" onclick="mztAfterResult()">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
 <script>
-    // ── Opérateur toggle de type d'opération ──────────────────────────────────
-    const selectElement  = document.querySelector('select[name="operators"]');
-    const elementToToggle  = document.querySelector('.active_phone');
-    const elementToToggle1 = document.querySelector('.active_phone1');
-    const elementToToggle2 = document.querySelector('.active_transfert');
-    const elementToToggle3 = document.querySelector('.active_transfert2');
-
-    selectElement.addEventListener('change', function () {
-        const selectedValue = selectElement.value;
-        if (selectedValue === '1') {
-            elementToToggle2.classList.remove('d-none');
-            elementToToggle3.classList.remove('d-none');
-            elementToToggle.classList.add('d-none');
-            elementToToggle1.classList.add('d-none');
-        } else if (selectedValue === '2') {
-            elementToToggle.classList.remove('d-none');
-            elementToToggle1.classList.remove('d-none');
-            elementToToggle2.classList.add('d-none');
-            elementToToggle3.classList.add('d-none');
-        } else {
-            elementToToggle.classList.add('d-none');
-            elementToToggle1.classList.add('d-none');
-            elementToToggle2.classList.add('d-none');
-            elementToToggle3.classList.add('d-none');
-        }
-    });
-
-    // ── Mobile Zone Transfer — accordion et sélection opérateur ──────────────
-    function mztToggle(btn) {
-        const section   = btn.closest('.mzt-country');
-        const operators = section.querySelector('.mzt-operators');
-        const chevron   = btn.querySelector('.mzt-chevron');
-        operators.classList.toggle('d-none');
-        chevron.classList.toggle('rotated');
-    }
-
-    function mztSelectOperator(card) {
-        document.querySelectorAll('.mzt-op-card').forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-
-        const providerId = card.dataset.providerId;
-        const opName     = card.dataset.opName;
-
-        // Mise à jour du select réseau si la valeur correspond
-        const providerSelect = document.getElementById('provider');
-        if (providerSelect && providerId) {
-            const match = Array.from(providerSelect.options).find(o => o.value == providerId);
-            if (match) {
-                providerSelect.value = providerId;
-            }
-        }
-
-        // Badge opérateur sélectionné
-        const badge     = document.getElementById('mztSelectedBadge');
-        const nameLbl   = document.getElementById('mztSelectedName');
-        if (badge && nameLbl) {
-            nameLbl.textContent = opName || '—';
-            badge.classList.add('visible');
-        }
-    }
+window._MZT = {
+    calcUrl:   "{{ route('web.pixelInnov.mobile-transfer.calculate') }}",
+    initUrl:   "{{ route('web.pixelInnov.mobile-transfer.initialize') }}",
+    statusUrl: "{{ route('web.pixelInnov.mobile-transfer.status') }}",
+    csrf: document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+};
 </script>
+<script src="{{ asset('web/js/mzt-deposits.js') }}"></script>
 @endpush

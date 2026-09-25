@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CommissionController;
 use App\Http\Controllers\CountrieController;
+use App\Http\Controllers\PixelPaymentController;
 use App\Http\Controllers\TransactionWebController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,4 +32,15 @@ Route::group(['prefix' => 'robus'], function () {
     Route::get('search-percent/{country_id}',  [TransactionWebController::class, 'searchProviderPercent']);
     Route::get('search-indice/{country_id}',  [TransactionWebController::class, 'searchCountrieName']);
 
+    // Pixel Innov - Transfert mobile web public
+    Route::prefix('pixelInnov/mobile-transfer')->name('web.pixelInnov.mobile-transfer.')->group(function () {
+        Route::get('services', [PixelPaymentController::class, 'listMobileTransferServicesWeb'])->name('services');
+        Route::post('calculate', [PixelPaymentController::class, 'calculateMobileZoneTransferWeb'])->name('calculate');
+        Route::post('initialize', [PixelPaymentController::class, 'initializeMobileZoneTransferWeb'])->name('initialize');
+        Route::post('/reloadinitialize', [PixelPaymentController::class, 'initializeWebPayment'])
+            ->name('pixelInnov.reload.initialize');
+        Route::post('/reloadcalculate', [PixelPaymentController::class, 'calculateAmount'])
+            ->name('pixelInnov.reload.calculate');
+        Route::post('status', [PixelPaymentController::class, 'checkMobileZoneTransferStatusWeb'])->name('status');
+    });
 });

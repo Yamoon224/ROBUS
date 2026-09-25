@@ -309,7 +309,7 @@ class ProvidersService
                   ->orWhere('pixel_innove_services.is_gmd', true);
             })
             ->where('pixel_innove_services.status', true)
-            ->where('providers.status', true)
+            // ->where('providers.status', true)
             ->select(
                 'providers.*',
                 'pixel_innove_services.id as pixel_service_id',

@@ -624,14 +624,14 @@
                                 @endif
 
                             </div>
-  
+
                             @if ($type === 'reload')
-                               <div class="txn-section-title mt-4">
+                            <div class="txn-section-title mt-4">
                                 <span><i class="bi bi-cash-coin"></i></span>
                                 Montant et frais
-                            </div> 
+                            </div>
                             @endif
-                            
+
 
                             <div class="row g-3">
                                 {{-- Sélection de carte (reload uniquement) --}}
@@ -718,3 +718,5 @@
         </div>
     </div>
 </section>
+
+@endif
