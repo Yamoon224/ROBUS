@@ -3,7 +3,7 @@
 @section('title', 'Transfert Mobile Zone')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('web/css/mzt-deposits.css') }}">
+<link rel="stylesheet" href="{{ asset('public/web/css/mzt-deposits.css') }}">
 @endpush
 
 @section('content')

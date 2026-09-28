@@ -200,7 +200,7 @@
             <div class="qr-call-to-action">Scannez &amp; donnez votre avis !</div>
             <div class="qr-subtitle">Votre opinion nous aide à améliorer la qualité de service</div>
             <div class="stars">★ ★ ★ ★ ★</div>
-            <img src="{{ asset($wallet->qr_comment) }}" alt="QR Code Avis" class="qr-image">
+            <img src="{{ asset('public/'. $wallet->qr_comment) }}" alt="QR Code Avis" class="qr-image">
             <div class="qr-url">{{ url('/avis/' . $wallet->wallet_id) }}</div>
         </div>
 

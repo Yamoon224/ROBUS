@@ -25,7 +25,7 @@
             {{-- QR déjà généré --}}
             <div class="flex flex-col items-center">
                 <div style="border:3px solid #e0e7ff;border-radius:14px;padding:14px;background:#fafbff;margin-bottom:20px;display:inline-block;">
-                    <img src="{{ asset($qrPath) }}?v={{ time() }}"
+                    <img src="{{ asset('public/'. $qrPath) }}?v={{ time() }}"
                          alt="QR Code {{ env('WEBSITE_URL') }}"
                          style="width:220px;height:220px;object-fit:contain;display:block;">
                 </div>

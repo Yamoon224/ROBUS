@@ -101,11 +101,7 @@ class PixelMobileZoneHisto extends Component
             ->when($walletUser->is_under_distributer || $walletUser->is_api, function ($query) use ($walletUser) {
                 return $query->where('wallets.sid_user_id', $walletUser->id);
             })
-            ->when($walletUser->is_distributer, function ($query) use ($walletUser) {
-                return $query->whereHas('wallet.sidUser', function ($userQuery) use ($walletUser) {
-                    $userQuery->where('distributer_id', $walletUser->id);
-                });
-            })
+           
             ->when($walletUser->is_com_zone, function ($query) use ($walletUser) {
                 return $query->whereIn('wallets.sid_user_id', function ($subQuery) use ($walletUser) {
                     $subQuery->select('id')

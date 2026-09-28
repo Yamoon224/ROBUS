@@ -95,8 +95,8 @@
                 </div>
             </div>
         </div>
-        <div class="intro-y col-span-12  lg:overflow-visible">
-            <table class="table table-bordered table-hover -mt-2 -intro-x ">
+        <div class="intro-y col-span-12 overflow-x-auto">
+            <table class="table table-bordered table-hover -mt-2 -intro-x w-full">
                 <thead class="table-dark">
                     <tr>
                         <th class="whitespace-nowrap">Nom & prenom</th>
@@ -120,18 +120,18 @@
                                     </span>
 
                                 </td>
-                                <td>
+                                <td class="max-w-xs">
                                     <div class="text-lg text-gray-800 font-semibold">
                                         <span
-                                            class="alert alert-secondary inline-flex items-center justify-center px-4 py-2 text-indigo-500 bg-indigo-600 rounded">
+                                            class="alert alert-secondary inline-flex items-center justify-center px-4 py-2 text-indigo-500 bg-indigo-600 rounded break-all">
                                             {{ $item->email ?? 'N/A' }}
                                         </span>
                                     </div>
 
                                 </td>
 
-                                <td>
-                                    <h3 class="mb-3">
+                                <td class="max-w-xs">
+                                    <h3 class="mb-3 break-words">
                                         Localisation : {{ $item->country->name ?? null }} -
                                         {{ $item->city->name ?? null }} - {{ $item->zone ?? null }}
                                     </h3>

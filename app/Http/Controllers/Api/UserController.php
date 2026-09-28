@@ -351,6 +351,7 @@ class UserController extends Controller
             'Push' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletPush::class),
             'Djamo' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletDjamo::class),
             'BankSend' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletBankSend::class),
+            'Envoi Mobile Zone' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(PixelMobileZoneTransfer::class),
             // 'Commission remonté' => RemonteSingleCollection::collection($this->transactionAccount->getUserRemonte(WithMerchant::class, robus()->id)),
         ];
 
@@ -516,6 +517,7 @@ class UserController extends Controller
             $walletTresort = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class);
             $walletDjamo = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletDjamo::class);
             $walletBankSend = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletBankSend::class);
+            $walletMobileZone = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(PixelMobileZoneTransfer::class);
 
             if ($gain_amount <= 0) {
                 return response()->json([
@@ -566,6 +568,9 @@ class UserController extends Controller
             } else if ($commissions == "Commission sur Xbet" &&  $walletXbet != 0) {
 
                 $gain_amount =  $walletXbet;
+            } else if ($commissions == "Commission Envoi Mobile Zone" &&  $walletMobileZone != 0) {
+
+                $gain_amount =  $walletMobileZone;
             } else {
                 return response()->json([
                     'success' => false,
@@ -609,6 +614,8 @@ class UserController extends Controller
                     $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletBankSend::class);
                 } else if ($commissions == "Commission sur Xbet") {
                     $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletXbet::class);
+                } else if ($commissions == "Commission Envoi Mobile Zone") {
+                    $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(PixelMobileZoneTransfer::class);
                 } else {
 
                     return response()->json([

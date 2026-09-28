@@ -61,11 +61,11 @@
                                             </div>
 
                                         </td>
-                                        <td>
-                                            <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                                        <td class="max-w-xs">
+                                            <div class="text-slate-500 text-xs mt-0.5">
                                                 {{ $item->phone }}
                                             </div>
-                                            <div class="text-slate-500 text-xs whitespace-nowrap mt-3">
+                                            <div class="text-slate-500 text-xs break-all mt-3">
                                                 {{ $item->email }}
                                             </div>
                                         </td>

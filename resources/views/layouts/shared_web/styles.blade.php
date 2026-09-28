@@ -8,7 +8,7 @@
 
 
 <link rel="stylesheet" href="{{ asset_url('web/css/owl.carousel.min.css') }}" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<link rel="stylesheet" href="{{ asset_url('web/css/bootstrap-icons/bootstrap-icons.css') }}">
 <!-- Bootstrap CSS -->
 <link rel="stylesheet" href="{{ asset_url('web/css/bootstrap.min.css') }}">
 

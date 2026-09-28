@@ -1,1 +1,2 @@
-Débit expéditeur initié mais envoi au destinataire échoué : The receiver phonenumber must be a number. (and 1 more error) Un remboursement est en cours vers votre numéro.
+Cannot declare class App\Http\Livewire\TransferVisitorsOrigin, because the name is already in use
+

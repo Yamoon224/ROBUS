@@ -3,7 +3,7 @@
 @section('title', 'Achat UV — ROBUS')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('web/css/achat-uv.css') }}">
+<link rel="stylesheet" href="{{ asset('public/web/css/achat-uv.css') }}">
 @endpush
 
 @section('content')

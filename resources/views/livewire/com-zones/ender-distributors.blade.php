@@ -32,8 +32,8 @@
             </div>
         </div>
     </div>
-    <div class="intro-y col-span-12 overflow-auto lg:overflow-visible mt-5">
-        <table class="table table-bordered table-hover -mt-2 -intro-x ">
+    <div class="intro-y col-span-12 overflow-x-auto mt-5">
+        <table class="table table-bordered table-hover -mt-2 -intro-x w-full">
             <thead class="table-dark">
                 <tr>
                     <th class="whitespace-nowrap">Date de création</th>
@@ -75,10 +75,10 @@
 
 
                         </td>
-                        <td>
-                            <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">{{ $item->phone }}
+                        <td class="max-w-xs">
+                            <div class="text-slate-500 text-xs mt-0.5">{{ $item->phone }}
                             </div>
-                            <div class="text-slate-500 text-xs whitespace-nowrap mt-3">{{ $item->email }}
+                            <div class="text-slate-500 text-xs break-all mt-3">{{ $item->email }}
                             </div>
                         </td>
                         <td>

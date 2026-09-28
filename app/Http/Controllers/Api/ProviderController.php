@@ -111,6 +111,13 @@ class ProviderController extends Controller
 
                 (robus()->is_custumers) ? $dashboard_data['Achat UV'] = ProviderSingleCollection::collection($walletTransactionReload) : [];
 
+                $zoneProviders = ProvidersService::getPixelInnovZoneProviders($countrieId);
+                $canShowPixelInnov = !(robus()->is_under_distributer || robus()->is_api);
+
+                if ($canShowPixelInnov && $zoneProviders->isNotEmpty()) {
+                    $dashboard_data['Transfert mobile Zone'] = ProviderSingleCollection::collection($zoneProviders);
+                }
+
                 return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
             }
 
@@ -246,6 +253,7 @@ class ProviderController extends Controller
                         Cache::put($providerCacheKey, $providers, 1800);
                     }
                 }
+                
                 $zoneProviders = ProvidersService::getPixelInnovZoneProviders($countrieId);
                 $canShowPixelInnov = !(robus()->is_under_distributer || robus()->is_api)
                     || !empty($activeButtons['showPixelButton']);

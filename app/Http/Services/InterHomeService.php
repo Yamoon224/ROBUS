@@ -1,4 +1,4 @@
-ead<?php
+<?php
 
 namespace App\Http\Services;
 

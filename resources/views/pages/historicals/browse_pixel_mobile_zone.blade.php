@@ -4,6 +4,6 @@
 
 @section('content')
     <div>
-        <livewire:historical.pixel-mobile-zone-histo>
+        <livewire:Historical.pixel-mobile-zone-histo>
     </div>
 @endsection

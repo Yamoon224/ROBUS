@@ -502,11 +502,6 @@ class Historique extends Component
             ->when(sabdy()->is_under_distributer || sabdy()->is_api, function ($query) {
                 return $query->where('wallets.sid_user_id', sabdy()->id);
             })
-            ->when(sabdy()->is_distributer, function ($query) {
-                return $query->whereHas('wallet.sidUser', function ($userQuery) {
-                    $userQuery->where('distributer_id', sabdy()->id);
-                });
-            })
             ->when(sabdy()->is_com_zone, fn ($query) => $this->scopeComZoneLinkedUsers($query));
     }
 
