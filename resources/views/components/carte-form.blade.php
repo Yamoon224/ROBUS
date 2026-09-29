@@ -718,5 +718,3 @@
         </div>
     </div>
 </section>
-
-@endif

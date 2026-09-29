@@ -483,5 +483,5 @@ window._MZT = {
     csrf: document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
 };
 </script>
-<script src="{{ asset('web/js/mzt-deposits.js') }}"></script>
+<script src="{{ asset('public/web/js/mzt-deposits.js') }}"></script>
 @endpush

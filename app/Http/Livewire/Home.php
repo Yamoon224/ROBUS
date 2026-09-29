@@ -20,6 +20,7 @@ use App\Models\Wallets\WalletTresortMoney;
 use App\Models\Wallets\WalletVersement;
 use App\Models\Wallets\WalletAdmin;
 use App\Models\Wallets\WalletCommission;
+use App\Models\PixelMobileZoneTransfer;
 use Illuminate\Support\Facades\Cache;
 
 class Home extends Component
@@ -97,6 +98,24 @@ class Home extends Component
             $push_pendding = $homeService->getTransactionCount(WalletPush::class, 'PENDING', 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by', 'wallet_pushes.status');
             $push_success  = $homeService->getTransactionCount(WalletPush::class, 'SUCCESS', 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by', 'wallet_pushes.status');
 
+            $pixelMobileZoneQuery = $this->pixelMobileZoneBaseQuery();
+            $pixel_mobile_zone_success = (clone $pixelMobileZoneQuery)
+                ->whereBetween('pixel_mobile_zone_transfers.created_at', [now()->startOfDay(), now()->endOfDay()])
+                ->where('pixel_mobile_zone_transfers.status', 'SUCCESS')
+                ->count();
+            $pixel_mobile_zone_pendding = (clone $pixelMobileZoneQuery)
+                ->whereBetween('pixel_mobile_zone_transfers.created_at', [now()->startOfDay(), now()->endOfDay()])
+                ->whereIn('pixel_mobile_zone_transfers.status', ['PENDING', 'PROCESSING'])
+                ->count();
+            $pixel_mobile_zone_error = (clone $pixelMobileZoneQuery)
+                ->whereBetween('pixel_mobile_zone_transfers.created_at', [now()->startOfDay(), now()->endOfDay()])
+                ->whereIn('pixel_mobile_zone_transfers.status', ['FAILED', 'ERROR'])
+                ->count();
+            $pixel_mobile_zone_refund = (clone $pixelMobileZoneQuery)
+                ->whereBetween('pixel_mobile_zone_transfers.created_at', [now()->startOfDay(), now()->endOfDay()])
+                ->where('pixel_mobile_zone_transfers.status', 'REFUNDED')
+                ->count();
+
             // Volumes financiers (Aujourd'hui)
             $payement_amount           = $homeService->getTodayTransactionAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount');
             $payement_amount_cie       = $homeService->getTodayTransactionProvidersAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount', '8');
@@ -125,6 +144,10 @@ class Home extends Component
             $push_amount         = $homeService->getTodayTransactionAmountTotal(WalletPush::class, 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by',  'wallet_pushes.status',  'wallet_pushes.amount');
             $tresortMoney_amount = $homeService->getTodayTransactionAmountTotal(WalletTresortMoney::class, 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by',  'wallet_tresort_money.status',  'wallet_tresort_money.amount');
             $versment_amount     = $homeService->getTodayTransactionAmountTotal(WalletVersement::class, 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by',  'wallet_versements.status',  'wallet_versements.amount');
+            $pixel_mobile_zone_amount = (clone $pixelMobileZoneQuery)
+                ->whereBetween('pixel_mobile_zone_transfers.created_at', [now()->startOfDay(), now()->endOfDay()])
+                ->where('pixel_mobile_zone_transfers.status', 'SUCCESS')
+                ->sum('pixel_mobile_zone_transfers.amount');
 
             // Volumes financiers (Mois)
             $payment_amount_month     = $homeService->getDaysTransaction(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount');
@@ -153,6 +176,9 @@ class Home extends Component
             $djamo_amount_days        = $homeService->getTransactionAllCount(WalletDjamo::class, 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by');
             $versment_amount_days     = $homeService->getTransactionAllCount(WalletVersement::class, 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by');
             $tresortMoney_amount_days = $homeService->getTransactionAllCount(WalletTresortMoney::class, 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by');
+            $pixel_mobile_zone_amount_days = (clone $pixelMobileZoneQuery)
+                ->whereBetween('pixel_mobile_zone_transfers.created_at', [now()->startOfDay(), now()->endOfDay()])
+                ->count();
 
             // Métriques Utilisateurs (Utilisation directe du Service)
             $custumers         = $homeService->getUserTypeTotal('is_custumers', true);
@@ -193,6 +219,11 @@ class Home extends Component
                 'push_success'          => $push_success,
                 'push_pendding'         => $push_pendding,
 
+                'pixel_mobile_zone_error'    => $pixel_mobile_zone_error,
+                'pixel_mobile_zone_success'  => $pixel_mobile_zone_success,
+                'pixel_mobile_zone_pendding' => $pixel_mobile_zone_pendding,
+                'pixel_mobile_zone_refund'   => $pixel_mobile_zone_refund,
+
                 'error_xbet'            => $xbet_error,
                 'success_xbet'          => $xbet_success,
                 'pendding_xbet'         => $xbet_padding,
@@ -221,6 +252,7 @@ class Home extends Component
                 'amount_push_days'         => $push_amount,
                 'amount_tresortMoney_days' => $tresortMoney_amount,
                 'amount_versment_days'     => $versment_amount,
+                'amount_pixel_mobile_zone_days' => $pixel_mobile_zone_amount,
 
                 'amount_payment_days'           => $payement_amount,
                 'amount_payment_cie_days'       => $payement_amount_cie,
@@ -257,6 +289,7 @@ class Home extends Component
                 'sum_djamo'        => $djamo_amount,
                 'sum_versment'     => $versment_amount,
                 'sum_tresortMoney' => $tresortMoney_amount,
+                'sum_pixelMobileZone' => $pixel_mobile_zone_amount,
                 'sum_phoneCredit'  => $phonecredit_amount,
                 'sum_xbet'         => $xbet_amount,
                 
@@ -285,6 +318,7 @@ class Home extends Component
                 'account_djamo_days'       => $djamo_amount_days,
                 'account_versment_days'    => $versment_amount_days,
                 'account_tresort_days'     => $tresortMoney_amount_days,
+                'account_pixel_mobile_zone_days' => $pixel_mobile_zone_amount_days,
 
                 'walletCommissions' => WalletCommission::where('status', 1)->sum('amount'),
                 'walletAdmin'       => WalletAdmin::where('status', 1)->sum('amount'),
@@ -299,7 +333,7 @@ class Home extends Component
      */
     private function dashboardCacheKey($walletUser): string
     {
-        return 'home-dashboard:' . $walletUser->id . ':' . md5($this->startDate . $this->endDate);
+        return 'home-dashboard:v2:' . $walletUser->id . ':' . md5($this->startDate . $this->endDate);
     }
 
     /**
@@ -308,5 +342,13 @@ class Home extends Component
     public function getUserTypeTotal($user, $status)
     {
         return SidUser::where($user, $status)->count();
+    }
+
+    private function pixelMobileZoneBaseQuery()
+    {
+        return PixelMobileZoneTransfer::join('wallets', 'pixel_mobile_zone_transfers.wallet_id', '=', 'wallets.id')
+            ->when(sabdy()->is_under_distributer || sabdy()->is_api, function ($query) {
+                return $query->where('wallets.sid_user_id', sabdy()->id);
+            });
     }
 }

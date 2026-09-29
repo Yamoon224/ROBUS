@@ -223,6 +223,23 @@
                                 Echec Versements {{ $versment_error }}
                             </div>
                         </div>
+                        <div class="flex flex-wrap gap-2 mb-transactions">
+                            <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                Succès Mobile Zone {{ $pixel_mobile_zone_success ?? 0 }}
+                            </div>
+
+                            <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                Attente Mobile Zone {{ $pixel_mobile_zone_pendding ?? 0 }}
+                            </div>
+
+                            <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                Echec Mobile Zone {{ $pixel_mobile_zone_error ?? 0 }}
+                            </div>
+
+                            <div class="report-box__indicator bg-warning tooltip cursor-pointer">
+                                Remboursement Mobile Zone {{ $pixel_mobile_zone_refund ?? 0 }}
+                            </div>
+                        </div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"
                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
@@ -590,6 +607,16 @@
                             </div>
 
                         </div>
+                        <div class="flex flex-wrap items-center gap-4 mt-3">
+                            <div class="flex flex-col items-start">
+                                <div class="text-3xl font-medium leading-8">
+                                    {{ $amount_pixel_mobile_zone_days ?? 0 }}
+                                </div>
+                                <div class="text-base text-slate-500">Mobile Zone {{ $user_currencie }}
+                                </div>
+                            </div>
+
+                        </div>
 
                     </div>
                 </div>
@@ -726,7 +753,7 @@
                 </div>
             </div>
 
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_facture_home2">
+            <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_facture_home2">
                 <div>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -762,7 +789,7 @@
                 </div>
             </div>
 
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table2">
+            <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_table2">
                 <div>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -779,63 +806,28 @@
                         Transaction Tresort Money</a>
                 </div>
             </div>
+
+            <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_facture_home2">
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
+                        class="lucide lucide-credit-card report-box__icon text-secondary">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
+                        </rect>
+                        <line x1="1" y1="10" x2="23" y2="10"></line>
+                    </svg>
+                </div>
+                <div class="text-3xl font-medium leading-8 mt-6">{{ $account_pixel_mobile_zone_days ?? 0 }}</div>
+                <div class="font-medium text-historique mt-6">
+                    <a href="{{ route('pixel-mobile-zone.historical') }}">
+                        Transfert Mobile Zone</a>
+                </div>
+            </div>
         </div>
-
-        {{-- <div class="grid grid-cols-12 gap-6 mt-6">
-
-            <!-- BEGIN: Sales Report -->
-            <div class="col-span-12 sm:col-span-8 lg:col-span-4 mt-8">
-                <div class="intro-y block sm:flex items-center h-10">
-                    <h2 class="text-lg font-medium truncate mr-5">
-                        Activités d'aujourd'hui en {{ $usersCountry }}
-                    </h2>
-                </div>
-
-                <div class="intro-y box p-5 mt-12 sm:mt-5">
-                    <canvas id="sum" virement="{{ json_encode($sum_bank) }}"
-                        deposit="{{ json_encode($sum_deposit) }}" payment="{{ json_encode($sum_payment) }}"
-                        reload="{{ json_encode($sum_reload) }}" transaction="{{ json_encode($sum_transaction) }}"
-                        inter="{{ json_encode($sum_inter) }}" phone="{{ json_encode($sum_phoneCredit) }}"
-                        xbet="{{ json_encode($sum_phoneCredit) }}" push="{{ json_encode($sum_push) }}"
-                        djamo="{{ json_encode($sum_djamo) }}" versment="{{ json_encode($sum_versment) }}"
-                        tresort="{{ json_encode($sum_tresortMoney) }}">
-                    </canvas>
-
-                </div>
-            </div>
-            <!-- END: Sales Report -->
-            <!-- BEGIN: Sales Report -->
-
-            <!-- BEGIN: Sales Report -->
-            <div class="col-span-12 sm:col-span-8 lg:col-span-8 mt-8">
-                <div class="intro-y flex items-center h-10">
-                    <h2 class="text-lg font-medium truncate mr-5">
-                        Les activités des 30 derniers jours en {{ $usersCountry }}
-                    </h2>
-                </div>
-                <div class="intro-y box p-5 mt-12 sm:mt-5">
-                    <canvas id="sum_month" virement_month="{{ json_encode($sum_bank_month) }}"
-                        deposit_month="{{ json_encode($sum_deposit_month) }}"
-                        payment_month="{{ json_encode($sum_payment_month) }}"
-                        reload_month="{{ json_encode($sum_reload_month) }}"
-                        transaction_month="{{ json_encode($sum_transaction_month) }}"
-                        inter_month="{{ json_encode($sum_inter_month) }}"
-                        phone_month="{{ json_encode($sum_phoneCredit_month) }}"
-                        xbet_month="{{ json_encode($sum_xbet_month) }}"
-                        push_month="{{ json_encode($sum_push_month) }}"
-                        djamo_month="{{ json_encode($sum_djamo_month) }}"
-                        versment_month="{{ json_encode($sum_versment_month) }}"
-                        tresort_month="{{ json_encode($sum_tresort_month) }}"></canvas>
-                </div>
-            </div>
-            <!-- END: Sales Report -->
-            <!-- END: Sales Report -->
-        </div> --}}
 
     </div>
     @stack('scripts')
-    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> --}}
     <script>
         setInterval(function() {
             const boxes = document.querySelectorAll('.style_app');
@@ -849,187 +841,5 @@
             });
         }, 1000);
     </script>
-    {{-- <script>
-        var sumVirement = JSON.parse($('#sum').attr('virement'));
-        var sumDeposit = JSON.parse($('#sum').attr('deposit'));
-        var sumPayment = JSON.parse($('#sum').attr('payment'));
-        var sumReload = JSON.parse($('#sum').attr('reload'));
-        var sumTransaction = JSON.parse($('#sum').attr('transaction'));
-        var sumInter = JSON.parse($('#sum').attr('inter'));
-        var sumPhone = JSON.parse($('#sum').attr('phone'));
-        var sumXbet = JSON.parse($('#sum').attr('xbet'));
-        var sumPush = JSON.parse($('#sum').attr('push'));
-        var sumDjamo = JSON.parse($('#sum').attr('djamo'));
-        var sumVersment = JSON.parse($('#sum').attr('versment'));
-        var sumTresort = JSON.parse($('#sum').attr('tresort'));
-
-        var sum_v_month = JSON.parse($('#sum_month').attr('virement_month'));
-        var sum_d_month = JSON.parse($('#sum_month').attr('deposit_month'));
-        var sum_p_month = JSON.parse($('#sum_month').attr('payment_month'));
-        var sum_r_month = JSON.parse($('#sum_month').attr('reload_month'));
-        var sum_t_month = JSON.parse($('#sum_month').attr('transaction_month'));
-        var sum_i_month = JSON.parse($('#sum_month').attr('inter_month'));
-        var sum_phone_month = JSON.parse($('#sum_month').attr('phone_month'));
-        var sum_1xbetw_month = JSON.parse($('#sum_month').attr('xbet_month'));
-        var sum_push_month = JSON.parse($('#sum_month').attr('push_month'));
-        var sum_djamo_month = JSON.parse($('#sum_month').attr('djamo_month'));
-        var sum_versment_month = JSON.parse($('#sum_month').attr('versment_month'));
-        var sum_tresortMoney_month = JSON.parse($('#sum_month').attr('tresort_month'));
-
-        var _ctx = $('#sum');
-        var _ctx2 = $('#sum_month');
-
-        new Chart(_ctx, {
-            type: 'pie',
-            data: {
-                labels: [
-                    'Virements',
-                    'Cartes',
-                    'Paiements',
-                    'Rechargement',
-                    'Transactions',
-                    'Inters',
-                    'Credits',
-                    '1Xbet',
-                    'Push',
-                    'Djamo',
-                    'Versement',
-                    'Tresort',
-                ],
-                datasets: [{
-
-                    label: 'Activites du jours',
-                    data: [sumVirement, sumDeposit, sumPayment, sumReload,
-                        sumTransaction, sumInter, sumPhone, sumXbet, sumPush, sumDjamo, sumVersment,
-                        sumTresort
-                    ],
-                    backgroundColor: [
-                        '#84cc17', // ✅ sumVirement → vert clair
-                        '#f97417', // ✅ sumDeposit → orange vif
-                        '#ff0101', // ✅ sumPayment → rouge
-                        '#e11d48', // ✅ sumReload → rouge rosé
-                        '#ff6384', // ✅ sumTransaction → rose clair
-                        '#b5048f', // ✅ sumInter → violet
-                        '#facc15', // ✅ sumPhone → jaune
-                        '#3b82f6', // ✅ sumXbet → bleu moyen
-                        '#14b8a6', // ✅ sumPush → turquoise
-                        '#9333ea', // ✅ sumDjamo → violet profond
-                        '#a855f7', // ✅ sumVersment → mauve clair
-                        '#0ea5e9' // ✅ sumTresort → bleu ciel
-                    ],
-
-                    borderColor: [
-                        '#84cc17', // ✅ sumVirement → vert clair
-                        '#f97417', // ✅ sumDeposit → orange vif
-                        '#ff0101', // ✅ sumPayment → rouge
-                        '#e11d48', // ✅ sumReload → rouge rosé
-                        '#ff6384', // ✅ sumTransaction → rose clair
-                        '#b5048f', // ✅ sumInter → violet
-                        '#facc15', // ✅ sumPhone → jaune
-                        '#3b82f6', // ✅ sumXbet → bleu moyen
-                        '#14b8a6', // ✅ sumPush → turquoise
-                        '#9333ea', // ✅ sumDjamo → violet profond
-                        '#a855f7', // ✅ sumVersment → mauve clair
-                        '#0ea5e9' // ✅ sumTresort → bleu ciel
-
-                    ],
-                    borderWidth: 2,
-                }]
-            },
-            options: {
-                animations: {
-                    tension: {
-                        duration: 1000,
-                        easing: 'linear',
-                        from: 1,
-                        to: 0,
-                        loop: true
-                    }
-                },
-
-            }
-
-        });
-
-        new Chart(_ctx2, {
-            type: 'bar',
-            data: {
-                labels: [
-                    'Virements',
-                    'Cartes',
-                    'Paiements',
-                    'Rechargement',
-                    'Transactions',
-                    'Inters',
-                    'Credits',
-                    '1Xbet',
-                    'Push',
-                    'Djamo',
-                    'Versement',
-                    'Tresort',
-                ],
-                datasets: [{
-
-                    label: 'Activites du mois',
-                    data: [sum_v_month, sum_d_month,
-                        sum_p_month, sum_r_month, sum_t_month, sum_i_month, sum_phone_month,
-                        sum_1xbetw_month, sum_push_month, sum_djamo_month, sum_versment_month,
-                        sum_tresortMoney_month
-                    ],
-                    backgroundColor: [
-                        '#84cc17', // ✅ sumVirement → vert clair
-                        '#f97417', // ✅ sumDeposit → orange vif
-                        '#ff0101', // ✅ sumPayment → rouge
-                        '#e11d48', // ✅ sumReload → rouge rosé
-                        '#ff6384', // ✅ sumTransaction → rose clair
-                        '#b5048f', // ✅ sumInter → violet
-                        '#facc15', // ✅ sumPhone → jaune
-                        '#3b82f6', // ✅ sumXbet → bleu moyen
-                        '#14b8a6', // ✅ sumPush → turquoise
-                        '#9333ea', // ✅ sumDjamo → violet profond
-                        '#a855f7', // ✅ sumVersment → mauve clair
-                        '#0ea5e9' // ✅ sumTresort → bleu ciel
-
-                    ],
-                    borderColor: [
-                        '#84cc17', // ✅ sumVirement → vert clair
-                        '#f97417', // ✅ sumDeposit → orange vif
-                        '#ff0101', // ✅ sumPayment → rouge
-                        '#e11d48', // ✅ sumReload → rouge rosé
-                        '#ff6384', // ✅ sumTransaction → rose clair
-                        '#b5048f', // ✅ sumInter → violet
-                        '#facc15', // ✅ sumPhone → jaune
-                        '#3b82f6', // ✅ sumXbet → bleu moyen
-                        '#14b8a6', // ✅ sumPush → turquoise
-                        '#9333ea', // ✅ sumDjamo → violet profond
-                        '#a855f7', // ✅ sumVersment → mauve clair
-                        '#0ea5e9' // ✅ sumTresort → bleu ciel
-
-                    ],
-                    borderWidth: 1,
-                }]
-            },
-            options: {
-                animations: {
-                    tension: {
-                        duration: 1000,
-                        easing: 'linear',
-                        from: 1,
-                        to: 0,
-                        loop: true
-                    }
-                },
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    labels: {
-                        render: 'percentage',
-                        fontColor: ['white', 'white'],
-                    }
-                },
-            }
-
-
-        });
-    </script> --}}
+  
 </div>
