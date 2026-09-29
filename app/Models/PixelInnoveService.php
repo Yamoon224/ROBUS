@@ -23,6 +23,8 @@ class PixelInnoveService extends Model
         'service_id' => 'integer',
         'fixed_fee' => 'decimal:2',
         'commission_percent' => 'decimal:2',
+        'commission_under_pct' => 'decimal:2',
+        'commission_companie_pct' => 'decimal:2',
         'status' => 'boolean',
         'is_xof' => 'boolean',
         'is_xaf' => 'boolean',
@@ -48,5 +50,50 @@ class PixelInnoveService extends Model
     public function getFixedFeeAttribute($value)
     {
         return $value !== null ? (float) $value : null;
+    }
+
+    public function getCommissionPercentAttribute($value)
+    {
+        return $value !== null ? (float) $value : null;
+    }
+
+    public function getCommissionUnderPctAttribute($value)
+    {
+        return $value !== null ? (float) $value : null;
+    }
+
+    public function getCommissionCompaniePctAttribute($value)
+    {
+        return $value !== null ? (float) $value : null;
+    }
+
+    public function getFixedFeeRateAttribute()
+    {
+        return $this->formatPercentage($this->fixed_fee);
+    }
+
+    public function getCommissionRateAttribute()
+    {
+        return $this->formatPercentage($this->commission_percent);
+    }
+
+    public function getCommissionUnderRateAttribute()
+    {
+        return $this->formatPercentage($this->commission_under_pct);
+    }
+
+    public function getCommissionCompanieRateAttribute()
+    {
+        return $this->formatPercentage($this->commission_companie_pct);
+    }
+
+    public function getTotalFeeRateAttribute()
+    {
+        return (float) $this->fixed_fee + (float) $this->commission_percent;
+    }
+
+    private function formatPercentage($value)
+    {
+        return is_numeric($value) ? (float) $value / 100 : null;
     }
 }

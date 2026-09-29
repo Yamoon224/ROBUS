@@ -11,6 +11,7 @@ use App\Models\Custumers\Country;
 use App\Models\Providers\Provider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Artisan;
 
 class ServiceController extends Controller
 {
@@ -302,6 +303,7 @@ class ServiceController extends Controller
 
                 $root_countrie->save();
 
+                Artisan::call('cache:clear');
                 return redirect(route('services.browse'))->with('status', 'Service modifier avec succès');
             }
         } catch (\Throwable $th) {

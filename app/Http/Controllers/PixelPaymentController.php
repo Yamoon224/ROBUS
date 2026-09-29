@@ -948,8 +948,22 @@ class PixelPaymentController extends Controller
                     ]);
                 }
             } elseif (in_array($remoteState, ['FAILED', 'FAIL', 'ERROR', 'CANCELLED']) && $reload->status !== 'ERROR') {
-                $reload->update(['status' => 'ERROR']);
-                $synced = true;
+                DB::beginTransaction();
+                try {
+                    $this->handleFailure($reload, $remote['data'] ?? []);
+                    DB::commit();
+                    $synced = true;
+                    Log::info('Pixel Innov — FAILED synchronisé manuellement (IPN manqué), wallet remboursé si Cash In', [
+                        'transaction_id' => $request->transaction_id,
+                        'remote_state'   => $remoteState,
+                    ]);
+                } catch (\Throwable $e) {
+                    DB::rollBack();
+                    Log::error('Pixel Innov — erreur sync manuelle FAILED', [
+                        'transaction_id' => $request->transaction_id,
+                        'error'          => $e->getMessage(),
+                    ]);
+                }
             }
             $reload->refresh();
         }

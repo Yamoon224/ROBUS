@@ -112,9 +112,8 @@ class ProviderController extends Controller
                 (robus()->is_custumers) ? $dashboard_data['Achat UV'] = ProviderSingleCollection::collection($walletTransactionReload) : [];
 
                 $zoneProviders = ProvidersService::getPixelInnovZoneProviders($countrieId);
-                $canShowPixelInnov = !(robus()->is_under_distributer || robus()->is_api);
 
-                if ($canShowPixelInnov && $zoneProviders->isNotEmpty()) {
+                if ($zoneProviders->isNotEmpty()) {
                     $dashboard_data['Transfert mobile Zone'] = ProviderSingleCollection::collection($zoneProviders);
                 }
 
@@ -368,7 +367,7 @@ class ProviderController extends Controller
                     }
                 }
 
-                if ($canShowPixelInnov && $zoneProviders->isNotEmpty()) {
+                if ($zoneProviders->isNotEmpty()) {
                     $dashboard_data['Transfert mobile Zone'] = ProviderSingleCollection::collection($zoneProviders);
                 }
 

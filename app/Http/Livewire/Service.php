@@ -9,6 +9,7 @@ use Livewire\WithFileUploads;
 use App\Models\CountryService;
 use App\Models\Custumers\Country;
 use App\Models\Providers\Provider;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 class Service extends Component
@@ -114,6 +115,9 @@ class Service extends Component
         if (!empty($check)) {
             if ($check->status == 0) $check->update(['status' => 1]);
             else $check->update(['status' => 0]);
+
+            Artisan::call('cache:clear');
+
             $this->emit('modal-hide', 'hide');
             $this->emit('success', $check->status == 1 ? 'Operateur activée !' : 'Operateur désactivée !');
         }
@@ -125,6 +129,8 @@ class Service extends Component
         if (!empty($check)) {
             if ($check->is_order == 0) $check->update(['is_order' => 1]);
             else $check->update(['is_order' => 0]);
+            Artisan::call('cache:clear');
+
             $this->emit('modal-hide', 'hide');
             $this->emit('success', $check->status == 1 ? 'Commande de carte activée !' : 'Commande de carte désactivée !');
         }
@@ -143,10 +149,10 @@ class Service extends Component
     public function render()
     {
         $provider = Provider::query();
-       
+
 
         if ($this->search != "") {
-            
+
             $this->resetPage();
             $provider->orwhereHas(
                 'providerType',
@@ -155,7 +161,6 @@ class Service extends Component
                 }
             )
                 ->orWhere("name", "like",  "%" . $this->search . "%");
-
         }
 
         return view('livewire.service', [

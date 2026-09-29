@@ -6,6 +6,7 @@ use App\Models\Custumers\Country;
 use App\Models\PixelInnoveService;
 use App\Models\ProviderType;
 use App\Models\Providers\Provider;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -207,6 +208,7 @@ class PixelInnoveServices extends Component
             'status'                  => true,
         ]);
 
+        Artisan::call('cache:clear');
         $this->resetField();
         $this->emit('modal-hide', 'hide');
         $this->emit('success', 'Service Pixel Innove ajoute !');
@@ -271,6 +273,7 @@ class PixelInnoveServices extends Component
             'updated_by'              => Auth::guard('web')->id(),
         ]);
 
+        Artisan::call('cache:clear');
         $this->resetField();
         $this->emit('modal-hide', 'hide');
         $this->emit('success', 'Service Pixel Innove modifie !');
@@ -280,6 +283,10 @@ class PixelInnoveServices extends Component
     {
         $service = PixelInnoveService::findOrFail($this->pixelServiceId);
         $service->update(['status' => !$service->status]);
+
+        if (!$service->status) {
+            Artisan::call('cache:clear');
+        }
 
         $this->emit('modal-hide', 'hide');
         $this->emit('success', $service->status ? 'Service Pixel Innove active !' : 'Service Pixel Innove desactive !');
@@ -318,29 +325,43 @@ class PixelInnoveServices extends Component
     public function render()
     {
         $services = PixelInnoveService::with(['country', 'providerType', 'provider'])
-            ->when($this->filterCountryId !== '', fn($q) =>
+            ->when(
+                $this->filterCountryId !== '',
+                fn($q) =>
                 $q->where('country_id', $this->filterCountryId)
             )
-            ->when($this->filterIsXof !== '', fn($q) =>
+            ->when(
+                $this->filterIsXof !== '',
+                fn($q) =>
                 $q->where('is_xof', true)
             )
-            ->when($this->filterIsXaf !== '', fn($q) =>
+            ->when(
+                $this->filterIsXaf !== '',
+                fn($q) =>
                 $q->where('is_xaf', true)
             )
-            ->when($this->filterIsCdf !== '', fn($q) =>
+            ->when(
+                $this->filterIsCdf !== '',
+                fn($q) =>
                 $q->where('is_cdf', true)
             )
-            ->when($this->filterIsGmd !== '', fn($q) =>
+            ->when(
+                $this->filterIsGmd !== '',
+                fn($q) =>
                 $q->where('is_gmd', true)
             )
             ->when($this->search !== '', function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
                         ->orWhere('service_id', 'like', '%' . $this->search . '%')
-                        ->orWhereHas('country', fn($c) =>
+                        ->orWhereHas(
+                            'country',
+                            fn($c) =>
                             $c->where('name', 'like', '%' . $this->search . '%')
                         )
-                        ->orWhereHas('provider', fn($p) =>
+                        ->orWhereHas(
+                            'provider',
+                            fn($p) =>
                             $p->where('name', 'like', '%' . $this->search . '%')
                         );
                 });
@@ -353,7 +374,7 @@ class PixelInnoveServices extends Component
             'countries' => Country::where('robus', true)->orderBy('name', 'asc')->get(),
             'providerTypes' => ProviderType::where('status', true)->orderBy('name', 'asc')->get(),
             'providers' => Provider::where('status', true)
-                 ->where('is_pixel', true)
+                ->where('is_pixel', true)
                 ->orderBy('name', 'asc')
                 ->get(),
         ]);
