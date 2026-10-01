@@ -55,12 +55,8 @@ class GainDistributer extends Component
 
     public function getGainAdminsProperty()
     {
-        $data = [];
-        foreach (AdminsCom::where('description_distributer' ,'Validation distributeur')->get() as $bank) {
-            $data[] = $bank->amount_distributer;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return AdminsCom::where('description_distributer' ,'Validation distributeur')->sum('amount_distributer');
     }
 
     public function getGainAdminTodaysProperty()
@@ -69,14 +65,8 @@ class GainDistributer extends Component
         $todays = Carbon::now();
         $convertions = $todays->toDateString();
 
-        $data = [];
-
-        foreach (AdminsCom::where('description_distributer' ,'Validation distributeur')->whereDate('created_at', $convertions)->get() as $bank) {
-           
-            $data[] = $bank->amount_distributer;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return AdminsCom::where('description_distributer' ,'Validation distributeur')->whereDate('created_at', $convertions)->sum('amount_distributer');
     }
 
     public function getGainAdminDrawalTodaysProperty()
@@ -85,14 +75,8 @@ class GainDistributer extends Component
         $todays = Carbon::now();
         $convertions = $todays->toDateString();
 
-        $data = [];
-
-        foreach (AdminsCom::where('description_distributer','Validation distributeur')->whereDate('created_at', $convertions)->get() as $bank) {
-           
-            $data[] = $bank->amount_distributer;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return AdminsCom::where('description_distributer','Validation distributeur')->whereDate('created_at', $convertions)->sum('amount_distributer');
     }
 
 }

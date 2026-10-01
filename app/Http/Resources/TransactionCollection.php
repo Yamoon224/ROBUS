@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class TransactionCollection extends JsonResource
 {
+    use \App\Http\Resources\Concerns\BatchesLazyLoads;
     /**
      * Transform the resource into an array.
      *

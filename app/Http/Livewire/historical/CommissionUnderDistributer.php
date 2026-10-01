@@ -77,7 +77,7 @@ class CommissionUnderDistributer extends Component
                 ->where(
                     'sid_users.country_id',
                     107
-                )->whereDate('date_removed', Carbon::now()))->get() as $item
+                )->whereBetween('date_removed', [Carbon::today(), Carbon::today()->endOfDay()]))->get() as $item
         ) {
             $data[] = $item->amount_with_draw;
         }

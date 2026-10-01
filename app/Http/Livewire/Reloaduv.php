@@ -112,7 +112,7 @@ class Reloaduv extends Component
 
 
         $query = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-            ->whereDate('wallet_reloads.created_at', Carbon::today());
+            ->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()]);
 
         $stats = [
             'today' => [
@@ -131,7 +131,7 @@ class Reloaduv extends Component
         for ($i = 1; $i <= 7; $i++) {
             $date = Carbon::today()->subDays($i);
             $dailyQuery = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                ->whereDate('wallet_reloads.created_at', $date);
+                ->whereBetween('wallet_reloads.created_at', [$date, $date->copy()->endOfDay()]);
 
             $stats['week'][$date->format('Y-m-d')] = [
                 'date' => $date->format('d/m'),
@@ -159,7 +159,7 @@ class Reloaduv extends Component
         // Heure de pointe
         $stats['peak_hour'] = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
             ->where('wallet_reloads.status', 'SUCCESS')
-            ->whereDate('wallet_reloads.created_at', Carbon::today())
+            ->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->select(DB::raw('HOUR(wallet_reloads.created_at) as hour'), DB::raw('count(*) as count'))
             ->groupBy('hour')
             ->orderBy('count', 'desc')
@@ -176,7 +176,7 @@ class Reloaduv extends Component
             ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
             ->where('sid_users.is_supervisor', true)
             ->whereColumn('wallet_reloads.account_wallet', 'sid_users.wallet_id') // CORRECTION: whereColumn au lieu de andWhere
-            ->whereDate('wallet_reloads.created_at', Carbon::today());
+            ->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()]);
 
         $stats = [
             'today' => [
@@ -198,7 +198,7 @@ class Reloaduv extends Component
                 ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
                 ->where('sid_users.is_supervisor', true)
                 ->whereColumn('wallet_reloads.account_wallet', 'sid_users.wallet_id') // CORRECTION: whereColumn
-                ->whereDate('wallet_reloads.created_at', $date);
+                ->whereBetween('wallet_reloads.created_at', [$date, $date->copy()->endOfDay()]);
 
             $stats['week'][$date->format('Y-m-d')] = [
                 'date' => $date->format('d/m'),
@@ -238,7 +238,7 @@ class Reloaduv extends Component
             ->where('sid_users.is_supervisor', true)
             ->whereColumn('wallet_reloads.account_wallet', 'sid_users.wallet_id') // CORRECTION: whereColumn
             ->where('wallet_reloads.status', 'SUCCESS')
-            ->whereDate('wallet_reloads.created_at', Carbon::today())
+            ->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->select(DB::raw('HOUR(wallet_reloads.created_at) as hour'), DB::raw('count(*) as count'))
             ->groupBy('hour')
             ->orderBy('count', 'desc')
@@ -264,7 +264,7 @@ class Reloaduv extends Component
         $query = WalletReload::join('wallets', 'wallet_reloads.wallet_id', '=', 'wallets.id')
             ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
             ->where('sid_users.is_supervisor', true)
-            ->whereDate('wallet_reloads.created_at', Carbon::today());
+            ->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()]);
 
         $stats = [
             'today' => [
@@ -285,7 +285,7 @@ class Reloaduv extends Component
             $dailyQuery = WalletReload::join('wallets', 'wallet_reloads.wallet_id', '=', 'wallets.id')
                 ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
                 ->where('sid_users.is_supervisor', true)
-                ->whereDate('wallet_reloads.created_at', $date);
+                ->whereBetween('wallet_reloads.created_at', [$date, $date->copy()->endOfDay()]);
 
             $stats['week'][$date->format('Y-m-d')] = [
                 'date' => $date->format('d/m'),
@@ -321,7 +321,7 @@ class Reloaduv extends Component
             ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
             ->where('sid_users.is_supervisor', true)
             ->where('wallet_reloads.status', 'SUCCESS')
-            ->whereDate('wallet_reloads.created_at', Carbon::today())
+            ->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->select(DB::raw('HOUR(wallet_reloads.created_at) as hour'), DB::raw('count(*) as count'))
             ->groupBy('hour')
             ->orderBy('count', 'desc')
@@ -349,7 +349,7 @@ class Reloaduv extends Component
             $labels[] = $date->format('d/m');
 
             $count = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                ->whereDate('wallet_reloads.created_at', $date)
+                ->whereBetween('wallet_reloads.created_at', [$date, $date->copy()->endOfDay()])
                 ->where('wallet_reloads.status', 'SUCCESS')
                 ->count();
 
@@ -1244,11 +1244,14 @@ class Reloaduv extends Component
 
         $wallet = Wallet::query();
 
+        // Une seule ligne suffit : la boucle plus bas relance la même recherche pour chaque wallet,
+        // charger tous les wallets du pays multipliait les requêtes identiques.
         $wallets = Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
             ->where('sid_users.is_distributer', true)
             ->orWhere('sid_users.is_under_distributer', true)
             ->where('wallets.status', true)
             ->Where('wallets.country_id', $walletUser->country->id)
+            ->limit(1)
             ->get();
 
         $sid_search = SidUser::query();
@@ -1326,11 +1329,11 @@ class Reloaduv extends Component
                     'WalletReloads' => $this->WalletReloads,
                     'WalletTransactionCommissions' => $this->WalletReloads,
                     'reload_error' => WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'ERROR')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->count(),
+                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'ERROR')->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_reloads.*')->count(),
                     'reload_success' =>   WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'SUCCESS')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->count(),
+                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'SUCCESS')->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_reloads.*')->count(),
                     'reload_pendding' =>   WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'PENDING')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->count(),
+                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'PENDING')->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_reloads.*')->count(),
                     'reload_historicals' => $realod_search->join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)
                         ->where('wallet_reloads.created_by', sabdy()->id)
@@ -1427,11 +1430,11 @@ class Reloaduv extends Component
                     'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
                     'WalletReloads' => $this->WalletReloads,
                     'reload_error' => WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'ERROR')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->count(),
+                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'ERROR')->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_reloads.*')->count(),
                     'reload_success' =>   WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'SUCCESS')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->count(),
+                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'SUCCESS')->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_reloads.*')->count(),
                     'reload_pendding' =>   WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'PENDING')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->count(),
+                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'PENDING')->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_reloads.*')->count(),
                     'reload_historicals' => $realod_search->join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->select('wallet_reloads.*')->orderBy('wallet_reloads.created_at', 'desc')->paginate(20),
                     'countrie_number_local' => sabdy()->country->indecative,
@@ -1478,30 +1481,18 @@ class Reloaduv extends Component
     public function getWalletReloadsProperty()
     {
 
-        $data = [];
-
-        foreach (
-            WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', sabdy()->country->id)->where('wallet_reloads.status', 'SUCCESS')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->get() as $reload
-        ) {
-            $data[] = $reload->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', sabdy()->country->id)->where('wallet_reloads.status', 'SUCCESS')->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_reloads.*')
+            ->sum('wallet_reloads.amount');
     }
 
     public function getWalletReloadsUserProperty()
     {
 
-        $data = [];
-
-        foreach (
-            WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', sabdy()->country->id)->where('wallet_reloads.created_by', sabdy()->id)->where('wallet_reloads.status', 'SUCCESS')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->get() as $reload
-        ) {
-            $data[] = $reload->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', sabdy()->country->id)->where('wallet_reloads.created_by', sabdy()->id)->where('wallet_reloads.status', 'SUCCESS')->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_reloads.*')
+            ->sum('wallet_reloads.amount');
     }
 }

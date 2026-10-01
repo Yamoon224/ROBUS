@@ -144,13 +144,8 @@ class TransactionsAccountService
     public function getTransactionOperatorsAmount($wallets, $id)
     {
 
-        $data = [];
-
-        foreach ($wallets::where('updated_by', $id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return $wallets::where('updated_by', $id)->where('status', 'SUCCESS')->sum('amount');
     }
 
 
@@ -162,17 +157,9 @@ class TransactionsAccountService
         $sidUsers = SidUser::where('master_id',  robus()->id)->get();
         $totalcount = 0;
 
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $count = $walletModel::where('wallet_id', $sidUserId)
-                ->where('status', $status)->count();
-
-            if ($count !== null) {
-                $totalcount += $count;
-            }
-        }
+        // Une seule requête pour tous les membres au lieu d'une par membre
+        $totalcount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
+            ->where('status', $status)->count();
 
         return $totalcount;
     }
@@ -186,17 +173,9 @@ class TransactionsAccountService
         $sidUsers = SidUser::where('master_id',  robus()->id)->get();
         $totalcount = 0;
 
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $count = $walletModel::where('wallet_id', $sidUserId)
-                ->whereMonth('created_at', now()->month)->count();
-
-            if ($count !== null) {
-                $totalcount += $count;
-            }
-        }
+        // Une seule requête pour tous les membres au lieu d'une par membre
+        $totalcount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
+            ->whereMonth('created_at', now()->month)->count();
 
         return $totalcount;
     }
@@ -208,17 +187,9 @@ class TransactionsAccountService
         $sidUsers = SidUser::where('master_id',  robus()->id)->get();
         $totalcount = 0;
 
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $count = $walletModel::where('wallet_id', $sidUserId)
-                ->whereMonth('created_at', now()->month)->count();
-
-            if ($count !== null) {
-                $totalcount += $count;
-            }
-        }
+        // Une seule requête pour tous les membres au lieu d'une par membre
+        $totalcount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
+            ->whereMonth('created_at', now()->month)->count();
 
         return $totalcount;
     }
@@ -230,19 +201,11 @@ class TransactionsAccountService
 
         $totalAmount = 0;
 
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->whereStatus('SUCCESS')
-                ->whereDate('created_at', Carbon::today())
-                ->sum('commission_masters');
-
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
-        }
+        // Une seule requête pour tous les membres au lieu d'une par membre
+        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
+            ->whereStatus('SUCCESS')
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->sum('commission_masters');
 
 
         return $totalAmount;
@@ -255,19 +218,11 @@ class TransactionsAccountService
 
         $totalAmount = 0;
 
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->whereStatus('SUCCESS')
-                ->whereMonth('created_at', now()->month)
-                ->sum('commission_masters');
-
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
-        }
+        // Une seule requête pour tous les membres au lieu d'une par membre
+        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
+            ->whereStatus('SUCCESS')
+            ->whereMonth('created_at', now()->month)
+            ->sum('commission_masters');
 
 
         return $totalAmount;
@@ -316,40 +271,23 @@ class TransactionsAccountService
     {
 
 
-        $data = [];
-
-
-        foreach ($wallets::where('wallet_id', $wallet_solde->id)->orWhere($number_compte,  $wallet_solde->wallet_id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return $wallets::where('wallet_id', $wallet_solde->id)->orWhere($number_compte,  $wallet_solde->wallet_id)->where('status', 'SUCCESS')->sum('amount');
     }
 
     public function getTransactionsRecevedAllAmount($wallets, $number_compte, $wallet_solde)
     {
 
 
-        $data = [];
-
-
-        foreach ($wallets::where($number_compte,  $wallet_solde->wallet_id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return $wallets::where($number_compte,  $wallet_solde->wallet_id)->where('status', 'SUCCESS')->sum('amount');
     }
 
     public function getTransactionAmount($wallets, $id)
     {
 
-        $data = [];
-
-        foreach ($wallets::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return $wallets::where('wallet_id', $id)->where('status', 'SUCCESS')->sum('amount');
     }
 
 
@@ -358,52 +296,32 @@ class TransactionsAccountService
     public function getTransactionXbetAmount($wallets, $id, $choose)
     {
 
-        $data = [];
-
-        foreach ($wallets::where('wallet_id', $id)->where('choose_type_transaction', $choose)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return $wallets::where('wallet_id', $id)->where('choose_type_transaction', $choose)->where('status', 'SUCCESS')->sum('amount');
     }
 
 
     public function getTransactionCommissionAmount($wallets, $id)
     {
 
-        $data = [];
-
-        foreach ($wallets::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->commissions;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return $wallets::where('wallet_id', $id)->where('status', 'SUCCESS')->sum('commissions');
     }
 
 
     public function walletSumCommission($wallets, $id)
     {
 
-        $data = [];
-
-        foreach ($wallets::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->commission_masters;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return $wallets::where('wallet_id', $id)->where('status', 'SUCCESS')->sum('commission_masters');
     }
 
 
     public function walletSumCommissionCompany($wallets, $id)
     {
 
-        $data = [];
-
-        foreach ($wallets::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->commission_companie;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return $wallets::where('wallet_id', $id)->where('status', 'SUCCESS')->sum('commission_companie');
     }
 
 
@@ -545,19 +463,11 @@ class TransactionsAccountService
 
         $totalAmount = 0;
 
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->whereStatus('SUCCESS')
-                // ->whereDate('created_at', Carbon::today())
-                ->sum('commission_masters');
-
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
-        }
+        // Une seule requête pour tous les membres au lieu d'une par membre
+        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
+            ->whereStatus('SUCCESS')
+            // ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->sum('commission_masters');
 
 
         return $totalAmount;
@@ -567,7 +477,7 @@ class TransactionsAccountService
     public function getWalletTransactionDaysAccountGainUser($wallet)
     {
 
-        $account_valeur = $wallet::whereDate('created_at', Carbon::now())
+        $account_valeur = $wallet::whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->where('created_by', robus()->id)
             ->whereStatus('SUCCESS')
             ->count();
@@ -578,7 +488,7 @@ class TransactionsAccountService
     public function getWalletTransactionDaysAccountGainIntegrate($wallet)
     {
 
-        $account_valeur = $wallet::whereDate('created_at', Carbon::now())
+        $account_valeur = $wallet::whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->where('created_by', integrate()->id)
             ->whereStatus('SUCCESS')
             ->count();
@@ -589,7 +499,7 @@ class TransactionsAccountService
     public function getWalletTransactionDaysAccountStatusUser($wallet, $status)
     {
 
-        $account_valeur = $wallet::whereDate('created_at', Carbon::now())
+        $account_valeur = $wallet::whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->where('created_by', robus()->id)
             ->whereStatus($status)
             ->count();
@@ -600,7 +510,7 @@ class TransactionsAccountService
     public function getWalletTransactionDaysAccountStatusIntegrate($wallet, $status)
     {
 
-        $account_valeur = $wallet::whereDate('created_at', Carbon::now())
+        $account_valeur = $wallet::whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->where('created_by', integrate()->id)
             ->whereStatus($status)
             ->count();

@@ -120,50 +120,23 @@ class TransferHistoVis extends Component
     {
 
 
-        $data = [];
-
-        $wallets = WalletTransaction::whereIsWeb(true)->where("wallet_transactions.status", $this->statusTransferFilter)->get();
-
-        foreach ($wallets as $bank) {
-            // Accédez à la propriété amount sur chaque objet
-            $data[] = $bank->amount;
-        }
-
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletTransaction::whereIsWeb(true)->where("wallet_transactions.status", $this->statusTransferFilter)->sum('amount');
     }
     public function getTransactionsAllDaysProperty()
     {
 
 
-        $data = [];
-
-        $wallets = WalletTransaction::whereIsWeb(true)->get();
-
-        foreach ($wallets as $bank) {
-            // Accédez à la propriété amount sur chaque objet
-            $data[] = $bank->amount;
-        }
-
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletTransaction::whereIsWeb(true)->sum('amount');
     }
 
     public function getTransactionsDaysProperty()
     {
 
 
-        $data = [];
-
-        $wallets = WalletTransaction::whereIsWeb(true)->whereBetween('created_at', [$this->beginDate, $this->endDateT])->get();
-
-        foreach ($wallets as $bank) {
-            // Accédez à la propriété amount sur chaque objet
-            $data[] = $bank->amount;
-        }
-
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletTransaction::whereIsWeb(true)->whereBetween('created_at', [$this->beginDate, $this->endDateT])->sum('amount');
     }
 
     public function getTransactionsAllsProperty()

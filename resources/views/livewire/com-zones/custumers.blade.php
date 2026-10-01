@@ -47,9 +47,7 @@
                 <tbody>
                     @php
 
-                        $old_operators = \App\Models\OperatorService::where('sid_user_id', $item->id)
-                            ->pluck('operator_id')
-                            ->toArray();
+                        $old_operators = $item->operator_services->pluck('operator_id')->toArray();
 
                     @endphp
                     <tr class="intro-x">

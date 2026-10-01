@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class CountryService extends Model
 
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
 
     protected $table = 'country_services';
 

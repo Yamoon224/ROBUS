@@ -3154,20 +3154,10 @@ class AdminController extends Controller
         $totalAmount = 0;
 
 
-        foreach ($sidUsers as $sidUser) {
-            // Vérifie que le wallet existe avant d’y accéder
-            if (!$sidUser->wallet) {
-                continue; // passe à l'utilisateur suivant
-            }
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->where('status', 'SUCCESS')
-                ->sum('commission_companie');
-
-            $totalAmount += $amount ?? 0;
-        }
+        // Une seule requête pour tous les membres au lieu d'une par membre
+        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
+            ->where('status', 'SUCCESS')
+            ->sum('commission_companie');
 
         return $totalAmount;
     }
@@ -3180,7 +3170,7 @@ class AdminController extends Controller
             ->whereStatus('SUCCESS');
 
         if ($period === 'daily') {
-            $query->whereDate('created_at', Carbon::today());
+            $query->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()]);
         } elseif ($period === 'monthly') {
             $query->whereMonth('created_at', Carbon::now()->month)
                 ->whereYear('created_at', Carbon::now()->year);
@@ -3203,7 +3193,7 @@ class AdminController extends Controller
             ->whereStatus('SUCCESS');
 
         if ($period === 'daily') {
-            $query->whereDate('created_at', Carbon::today());
+            $query->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()]);
         } elseif ($period === 'monthly') {
             $query->whereMonth('created_at', Carbon::now()->month)
                 ->whereYear('created_at', Carbon::now()->year);
@@ -3260,22 +3250,12 @@ class AdminController extends Controller
 
         $totalAmount = 0;
 
-        foreach ($sidUsers as $sidUser) {
-            // Vérifie que le wallet existe avant d’y accéder
-            if (!$sidUser->wallet) {
-                continue; // passe à l'utilisateur suivant
-            }
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->where('status', 'SUCCESS')
-                ->where('provider_id', 9)
-                ->where('type_transaction', 'Retrait')
-                ->sum('commission_companie');
-
-            $totalAmount += $amount ?? 0;
-        }
+        // Une seule requête pour tous les membres au lieu d'une par membre
+        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
+            ->where('status', 'SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Retrait')
+            ->sum('commission_companie');
 
 
         return $totalAmount;
@@ -3312,22 +3292,12 @@ class AdminController extends Controller
         $totalAmount = 0;
 
 
-        foreach ($sidUsers as $sidUser) {
-            // Vérifie que le wallet existe avant d’y accéder
-            if (!$sidUser->wallet) {
-                continue; // passe à l'utilisateur suivant
-            }
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->whereStatus('SUCCESS')
-                ->where('provider_id', 9)
-                ->where('type_transaction', 'Depot')
-                ->sum('commission_companie');
-
-            $totalAmount += $amount ?? 0;
-        }
+        // Une seule requête pour tous les membres au lieu d'une par membre
+        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Depot')
+            ->sum('commission_companie');
 
         return $totalAmount;
     }
@@ -3361,21 +3331,11 @@ class AdminController extends Controller
         $totalAmount = 0;
 
 
-        foreach ($sidUsers as $sidUser) {
-            // Vérifie que le wallet existe avant d’y accéder
-            if (!$sidUser->wallet) {
-                continue; // passe à l'utilisateur suivant
-            }
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->where('status', 'SUCCESS')
-                ->where('provider_id', '!=', 9)
-                ->sum('commission_companie');
-
-            $totalAmount += $amount ?? 0;
-        }
+        // Une seule requête pour tous les membres au lieu d'une par membre
+        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
+            ->where('status', 'SUCCESS')
+            ->where('provider_id', '!=', 9)
+            ->sum('commission_companie');
 
 
 
@@ -3449,7 +3409,7 @@ class AdminController extends Controller
         $query = $walletModel::where('updated_by', $userID);
 
         if ($period === 'daily') {
-            $query->whereDate('created_at', Carbon::today());
+            $query->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()]);
         } elseif ($period === 'monthly') {
             $query->whereMonth('created_at', Carbon::now()->month)
                 ->whereYear('created_at', Carbon::now()->year);
@@ -3466,7 +3426,7 @@ class AdminController extends Controller
         $query = $walletModel::where('updated_by', $userID);
 
         if ($period === 'daily') {
-            $query->whereDate('created_at', Carbon::today());
+            $query->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()]);
         } elseif ($period === 'monthly') {
             $query->whereMonth('created_at', Carbon::now()->month)
                 ->whereYear('created_at', Carbon::now()->year);
@@ -3603,25 +3563,15 @@ class AdminController extends Controller
 
     public function getWalletReloadSumAdminProperty($id)
     {
-        $data = [];
-
-        foreach (WalletReload::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletReload::where('wallet_id', $id)->where('status', 'SUCCESS')->sum('amount');
     }
     public function getWalletWithMerchantSumUserProperty($id)
     {
 
 
-        $data = [];
-
-        foreach (WithMerchant::where('sid_user_id', $id)->get() as $bank) {
-            $data[] = $bank->amount_with_draw;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WithMerchant::where('sid_user_id', $id)->sum('amount_with_draw');
     }
 
     public function getCountWalletTransaction($wallet_id, $status)
@@ -3671,13 +3621,8 @@ class AdminController extends Controller
     {
 
 
-        $data = [];
-
-        foreach (WalletTransaction::where('wallet_id', $id)->where('type_transaction', 'Retrait')->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletTransaction::where('wallet_id', $id)->where('type_transaction', 'Retrait')->where('status', 'SUCCESS')->sum('amount');
     }
 
 

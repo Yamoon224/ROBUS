@@ -276,7 +276,7 @@ class HomeCompany extends Component
     {
 
         $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where($wallet_status, $status);
 
         if (sabdy()->is_company) {

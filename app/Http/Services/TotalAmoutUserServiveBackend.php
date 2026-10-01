@@ -61,7 +61,7 @@ class TotalAmoutUserServiveBackend
                     $walletCreatedBy,
                     sabdy()->id
                 )
-                ->whereDate($walletCreatedAt, Carbon::today())
+                ->whereBetween($walletCreatedAt, [Carbon::today(), Carbon::today()->endOfDay()])
                 ->select($allWallet)
                 ->where($walletStatus, 'SUCCESS')
                 ->get()
@@ -209,41 +209,29 @@ class TotalAmoutUserServiveBackend
 
     public function getWalletBanksCeilingProperty()
     {
-        $data = [];
-        foreach (
-            WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                ->where(
-                    'wallets.country_id',
-                    sabdy()->country->id
-                )
-                ->where(
-                    'wallet_banks.created_by',
-                    sabdy()->id
-                )
-                ->whereDate('wallet_banks.created_at', Carbon::today())
-                ->select('wallet_banks.*')
-                ->where('wallet_banks.status', 'SUCCESS')
-                ->get()
-            as $bank
-        ) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
+            ->where(
+            'wallets.country_id',
+            sabdy()->country->id
+            )
+            ->where(
+            'wallet_banks.created_by',
+            sabdy()->id
+            )
+            ->whereBetween('wallet_banks.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->select('wallet_banks.*')
+            ->where('wallet_banks.status', 'SUCCESS')
+            ->sum('wallet_banks.amount');
     }
 
 
     public function getWalletBankCardCeilingProperty()
     {
-        $data = [];
-        foreach (
-            BankCard::where('created_by', sabdy()->id)
-                ->whereDate('created_at', Carbon::today())->whereStatus(1)->get() as $bank
-        ) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return BankCard::where('created_by', sabdy()->id)
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->whereStatus(1)
+            ->sum('amount');
     }
 
 

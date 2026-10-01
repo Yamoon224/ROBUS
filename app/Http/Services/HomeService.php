@@ -9,6 +9,8 @@ use App\Models\Sid\SidUser;
 
 class HomeService
 {
+    private ?array $firmMemberWalletIds = null;
+
     private function todayRange(): array
     {
         return [Carbon::today()->startOfDay(), Carbon::today()->endOfDay()];
@@ -40,7 +42,7 @@ class HomeService
 
         $totalAmount = $walletModel::where('wallet_id',  propect()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereDate('created_at', Carbon::today())
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->sum('amount');
 
         return $totalAmount;
@@ -73,7 +75,7 @@ class HomeService
             $wallet_transactions,
             'wallets.id'
         )
-            ->whereDate($transaction_days, Carbon::today());
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()]);
 
         $query->where(function ($query) use ($wallet_transactions) {
             $query->where($wallet_transactions, propect()->wallet->id);
@@ -87,7 +89,7 @@ class HomeService
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where('provider_id', $providers)
             ->where($transaction_status, 'SUCCESS');
 
@@ -105,7 +107,7 @@ class HomeService
 
         $totalCount = $walletModel::where('wallet_id', propect()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereDate('created_at', Carbon::today())
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->count();
 
         return $totalCount;
@@ -115,7 +117,7 @@ class HomeService
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where($transaction_status, 'SUCCESS');
 
 
@@ -131,7 +133,7 @@ class HomeService
     {
 
         $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where($wallet_status, $status);
 
         $query->where(function ($query) use ($wallet_transactions) {
@@ -147,7 +149,7 @@ class HomeService
     {
 
         $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where($wallet_status, $status);
 
         if (sabdy()->is_company) {
@@ -165,7 +167,7 @@ class HomeService
 
         $totalCount = $walletModel::where('wallet_id', firm()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereDate('created_at', Carbon::today())
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->count();
 
         return $totalCount;
@@ -174,81 +176,28 @@ class HomeService
     public function getDaysTransactionCompanieGain($walletModel)
     {
 
-        $sidUsers = SidUser::where('company_id', firm()->company->id)
-            ->where('id', '!=', firm()->id)
-            ->get();
-
-        $totalAmount = 0;
-
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->whereStatus('SUCCESS')
-                ->whereMonth('created_at', now()->month)
-                ->sum('commission_companie');
-
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
-        }
-
-
-        return $totalAmount;
+        return $walletModel::whereIn('wallet_id', $this->firmMemberWalletIds())
+            ->whereStatus('SUCCESS')
+            ->whereMonth('created_at', now()->month)
+            ->sum('commission_companie');
     }
 
     public function getTodayTransactionCommissionCompanieAmountTotal($walletModel)
     {
 
-        $sidUsers = SidUser::where('company_id',  firm()->company->id)
-            ->where('id', '!=', firm()->id)
-            ->get();
-
-        $totalAmount = 0;
-
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->whereStatus('SUCCESS')
-                ->whereDate('created_at', Carbon::today())
-                ->sum('commission_companie');
-
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
-        }
-
-
-        return $totalAmount;
+        return $walletModel::whereIn('wallet_id', $this->firmMemberWalletIds())
+            ->whereStatus('SUCCESS')
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->sum('commission_companie');
     }
 
     public function getTodayTransactionUndersAmountTotal($walletModel)
     {
 
-        $sidUsers = SidUser::where('company_id',  firm()->company->id)
-            ->where('id', '!=', firm()->id)->get();
-
-        $totalAmount = 0;
-
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->whereStatus('SUCCESS')
-                ->whereDate('created_at', Carbon::today())
-                ->sum('amount');
-
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
-        }
-
-
-        return $totalAmount;
+        return $walletModel::whereIn('wallet_id', $this->firmMemberWalletIds())
+            ->whereStatus('SUCCESS')
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->sum('amount');
     }
 
     public function getTodayReloadAmountCompagnieTotal($walletModel)
@@ -257,7 +206,7 @@ class HomeService
 
         $totalAmount = $walletModel::where('wallet_id',  firm()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereDate('created_at', Carbon::today())
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->sum('amount');
 
         return $totalAmount;
@@ -279,7 +228,7 @@ class HomeService
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where($transaction_status, 'SUCCESS');
 
         if (sabdy()->is_under_distributer) {
@@ -296,7 +245,7 @@ class HomeService
     {
 
         $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where($wallet_status, $status);
 
         if (sabdy()->is_company) {
@@ -312,23 +261,22 @@ class HomeService
     {
 
 
-        $sidUsers = SidUser::where('company_id',  firm()->company->id)
-            ->where('id', '!=', firm()->id)->get();
-        $totalcount = 0;
+        return $walletModel::whereIn('wallet_id', $this->firmMemberWalletIds())
+            ->where('status', $status)->count();
+    }
 
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $count = $walletModel::where('wallet_id', $sidUserId)
-                ->where('status', $status)->count();
-
-            if ($count !== null) {
-                $totalcount += $count;
-            }
-        }
-
-        return $totalcount;
+    /**
+     * Wallets des membres de la compagnie (hors compte compagnie), chargés une seule fois.
+     */
+    private function firmMemberWalletIds(): array
+    {
+        return $this->firmMemberWalletIds ??= SidUser::where('company_id', firm()->company->id)
+            ->where('id', '!=', firm()->id)
+            ->with('wallet')
+            ->get()
+            ->pluck('wallet.id')
+            ->filter()
+            ->all();
     }
 
     public function getDaysCompagnieTransaction($walletModel)
@@ -354,49 +302,26 @@ class HomeService
     public function getDaysTransactionUnderMonth($walletModel)
     {
 
-        $sidUsers = SidUser::where('company_id', firm()->company->id)
-            ->where('id', '!=', firm()->id)
-            ->get();
-
-        $totalAmount = 0;
-
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->whereStatus('SUCCESS')
-                ->whereMonth('created_at', now()->month)
-                ->sum('amount');
-
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
-        }
-
-
-        return $totalAmount;
+        return $walletModel::whereIn('wallet_id', $this->firmMemberWalletIds())
+            ->whereStatus('SUCCESS')
+            ->whereMonth('created_at', now()->month)
+            ->sum('amount');
     }
 
     public function getMastersGainProperty($walletModel)
     {
         $reloads = [];
 
-        $currentYear = Carbon::now()->year;
+        // Une seule requête groupée par mois au lieu de 12
+        $sums = $walletModel::where('wallet_id', firm()->wallet->id)
+            ->where('status', 'SUCCESS')
+            ->whereBetween('created_at', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])
+            ->selectRaw('MONTH(created_at) as month, SUM(amount) as total')
+            ->groupBy('month')
+            ->pluck('total', 'month');
 
         for ($month = 1; $month <= 12; $month++) {
-            $formattedMonth = str_pad($month, 2, '0', STR_PAD_LEFT);
-
-            $reloadSum = 0;
-
-            $reloadSum += $walletModel::where('wallet_id', firm()->wallet->id)
-                ->where('status', 'SUCCESS')
-                ->whereYear('created_at', $currentYear)
-                ->where('created_at', 'like', "%-$formattedMonth-%")
-                ->sum('amount');
-
-
-            $reloads[] = $reloadSum;
+            $reloads[] = 0 + ($sums[$month] ?? 0);
         }
 
         return $reloads;
@@ -441,7 +366,7 @@ class HomeService
         if (!empty($filters['periode'])) {
             switch ($filters['periode']) {
                 case 'today':
-                    $query->whereDate("{$walletTransactionTable}.created_at", now());
+                    $query->whereBetween("{$walletTransactionTable}.created_at", [today(), today()->endOfDay()]);
                     break;
                 case 'week':
                     $query->whereBetween("{$walletTransactionTable}.created_at", [now()->startOfWeek(), now()->endOfWeek()]);
@@ -708,8 +633,11 @@ class HomeService
             });
         } else {
 
-            $query->where('wallets.country_id', '!=', $countryId)
-                ->orWhere('wallets.country_id', '=', $countryId);
+            // Regroupé : sans parenthèses, le orWhere annulait le filtre sur la date du jour
+            $query->where(function ($query) use ($countryId) {
+                $query->where('wallets.country_id', '!=', $countryId)
+                    ->orWhere('wallets.country_id', '=', $countryId);
+            });
         }
 
 
@@ -869,6 +797,45 @@ class HomeService
 
 
         return $query->sum($wallet_amount);
+    }
+
+    // Nombre de transactions du jour (SUCCESS) pour un provider
+    public function getTodayTransactionProviderCount($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $providerId)
+    {
+
+        $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
+            ->whereBetween($transaction_days, $this->todayRange())
+            ->where('provider_id', $providerId)
+            ->where($transaction_status, 'SUCCESS');
+
+
+        if (sabdy()->is_distributer) {
+            $query->where($walletMy, sabdy()->id);
+        } elseif (sabdy()->is_under_distributer) {
+            $query->where(function ($query) use ($wallet_transaction) {
+                $query->where($wallet_transaction, sabdy()->wallet->id);
+            });
+        } elseif (sabdy()->is_com_zone) {
+            $query->whereIn('wallets.sid_user_id', function ($sub) {
+                $sub->select('id')
+                    ->from('sid_users')
+                    ->where('com_zone_id', sabdy()->id);
+            });
+        } else {
+
+            // Mêmes filtres que getTodayTransactionProviderAmountTotal pour que nombre et montant concordent
+            $query->where(function ($query) use ($walletMy) {
+                $query->where($walletMy, sabdy()->id)
+                    ->orWhere($walletMy, '!=', sabdy()->id);
+            })
+                ->where(function ($query) {
+                    $countryId = sabdy()->country->id;
+                    $query->where('wallets.country_id', '!=', $countryId)
+                        ->orWhere('wallets.country_id', '=', $countryId);
+                });
+        }
+
+        return $query->count();
     }
 
     public function getTodayTransactionProviderTypeOneAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount)

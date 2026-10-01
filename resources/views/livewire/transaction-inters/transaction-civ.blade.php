@@ -65,7 +65,7 @@
         @if (!is_null($country_inter_out_civ))
             <div class="modal-body mt-1">
                 @php
-                    $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
+                    $countrie_indicative = countryById($country_inter_out_civ);
                     $region = match ($countrie_indicative->name_groupe) {
                         'AFL' => '🌍 Afrique de L\'Ouest',
                         'AFC' => '🌍 Afrique Centrale',
@@ -256,7 +256,7 @@
                     ];
 
                     $provider = $providerData[$provider_inter_out_civ] ?? null;
-                    $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
+                    $countrie_indicative = countryById($country_inter_out_civ);
                     $wallet_name = $wallet_name ?? '';
 
                 @endphp
@@ -392,10 +392,7 @@
 
                     <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
                         @php
-                            $countrie_indicative = App\Models\Custumers\Country::where(
-                                'id',
-                                $country_inter_out_civ,
-                            )->first();
+                            $countrie_indicative = countryById($country_inter_out_civ);
                             $amount_to_pay = $this->commission_transaction_val_inter_pay;
                             $amount_to_receive = $this->commission_transaction_val_inter_convertion_send;
                             $commission = $this->commission_transaction_val_inter_pay;
@@ -520,7 +517,7 @@
 
             @php
 
-                $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
+                $countrie_indicative = countryById($country_inter_out_civ);
 
             @endphp
 

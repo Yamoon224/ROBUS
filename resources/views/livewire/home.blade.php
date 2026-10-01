@@ -262,6 +262,7 @@
                                 </div>
                                 <div class="text-base text-slate-500">Moov
                                     {{ $user_currencie }}</div>
+                                <div class="text-xs text-slate-500">{{ $count_transaction_moov_days ?? 0 }} transaction(s)</div>
                             </div>
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
@@ -269,6 +270,7 @@
                                 </div>
                                 <div class="text-base text-slate-500">Wave {{ $user_currencie }}
                                 </div>
+                                <div class="text-xs text-slate-500">{{ $count_transaction_wave_days ?? 0 }} transaction(s)</div>
                             </div>
                         </div>
                         <div class="flex flex-wrap items-center gap-4 mt-3">
@@ -278,6 +280,7 @@
                                 </div>
                                 <div class="text-base text-slate-500">Orange {{ $user_currencie }}
                                 </div>
+                                <div class="text-xs text-slate-500">{{ $count_transaction_orange_days ?? 0 }} transaction(s)</div>
                             </div>
 
                             <div class="flex flex-col items-start">
@@ -286,6 +289,7 @@
                                 </div>
                                 <div class="text-base text-slate-500">Mtn {{ $user_currencie }}
                                 </div>
+                                <div class="text-xs text-slate-500">{{ $count_transaction_mtn_days ?? 0 }} transaction(s)</div>
                             </div>
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
@@ -304,6 +308,23 @@
                                 </div>
                                 <div class="text-base text-slate-500">Montant Total {{ $user_currencie }}
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-4 mt-3">
+                            <div class="flex flex-col items-start">
+                                <div class="text-3xl font-medium leading-8">
+                                    {{ $count_transaction_direct_days ?? 0 }}
+                                </div>
+                                <div class="text-base text-slate-500">Nombre de transactions directes du jour
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-start">
+                                <div class="text-3xl font-medium leading-8">
+                                    {{ $amount_transaction_direct_days ?? 0 }}
+                                </div>
+                                <div class="text-base text-slate-500">Montant total direct (Orange, Mtn, Moov, Wave)
+                                    {{ $user_currencie }}</div>
                             </div>
                         </div>
 

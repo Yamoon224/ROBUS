@@ -72,7 +72,7 @@
             ];
 
             $provider = $providerData[$provider_transaction] ?? null;
-            $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
+            $countrie_indicative = countryById($country_inter_out_civ);
         @endphp
         @if ($provider)
             <div class="modal-body grid grid-cols-12 gap-4 gap-y-3 style_image_providers">

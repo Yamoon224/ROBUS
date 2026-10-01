@@ -18,6 +18,7 @@ use App\Models\Sid\SidUser;
 
 class WalletPhoneCredit extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
     use LogsActivity;

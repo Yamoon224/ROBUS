@@ -98,7 +98,7 @@ class HistoriqueVisitorss extends Component
     public function getTodayTransactionAmountTotal($walletModel , $transaction_days, $walletMy, $transaction_status, $wallet_amount , $IswebStatus , $isWeb)
     {
 
-        return $walletModel::whereDate($transaction_days, Carbon::today())
+        return $walletModel::whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where(function ($query) use ($walletMy) {
                 if (sabdy()->is_distributer) {
                     $query->where($walletMy, '=', sabdy()->id);
@@ -116,7 +116,7 @@ class HistoriqueVisitorss extends Component
     public function getTransactionCount($walletModel, $status, $transaction_days, $walletMy, $wallet_status , $IswebStatus , $isWeb)
     {
 
-        return $walletModel::whereDate($transaction_days, Carbon::today())
+        return $walletModel::whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where(function ($query) use ($walletMy) {
                 if (sabdy()->is_distributer) {
                     $query->where($walletMy, '=', sabdy()->id);

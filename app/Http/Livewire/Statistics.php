@@ -230,7 +230,7 @@ class Statistics extends Component
     {
         // Commencer par construire la requête de base
         $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where($wallet_status, $status)
             ->where($IswebStatus, $isWeb);
 

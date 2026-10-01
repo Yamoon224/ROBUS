@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AppSetting extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory , SoftDeletes;
 
     protected $table = 'app_settings';

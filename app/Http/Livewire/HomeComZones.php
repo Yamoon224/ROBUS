@@ -217,7 +217,7 @@ class HomeComZones extends Component
 
         $totalCount = $walletModel::where('wallet_id', comzone()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereDate('created_at', Carbon::today())
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->count();
 
         return $totalCount;
@@ -230,7 +230,7 @@ class HomeComZones extends Component
 
         return $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
             ->where('wallets.country_id', comzone()->country->id)
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where($transaction_status, 'SUCCESS')
             ->sum($wallet_amount);
     }
@@ -244,7 +244,7 @@ class HomeComZones extends Component
 
         $totalAmount = $walletModel::where('wallet_id',  comzone()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereDate('created_at', Carbon::today())
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->sum('amount');
 
         return $totalAmount;

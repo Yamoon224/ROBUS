@@ -127,6 +127,15 @@ class Home extends Component
             $transaction_amount_wave   = $homeService->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount', '6');
             $transaction_amount_orange = $homeService->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount', '4');
             $transaction_amount_mtn    = $homeService->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount', '1');
+
+            // Transactions directes (ORANGE, MTN, MOOV, WAVE) : nombre et montant total du jour
+            $transaction_count_moov   = $homeService->getTodayTransactionProviderCount(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status', '3');
+            $transaction_count_wave   = $homeService->getTodayTransactionProviderCount(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status', '6');
+            $transaction_count_orange = $homeService->getTodayTransactionProviderCount(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status', '4');
+            $transaction_count_mtn    = $homeService->getTodayTransactionProviderCount(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status', '1');
+            $transaction_count_direct  = $transaction_count_moov + $transaction_count_wave + $transaction_count_orange + $transaction_count_mtn;
+            $transaction_amount_direct = $transaction_amount_moov + $transaction_amount_wave + $transaction_amount_orange + $transaction_amount_mtn;
+
             $reload_amount             = $homeService->getTodayReloadAmountTotal(WalletReload::class);
             $phonecredit_amount        = $homeService->getTodayTransactionAmountTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by',  'wallet_phone_credits.status',  'wallet_phone_credits.amount');
             $inter_amount              = $homeService->getTodayTransactionProviderTypeOneAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount_received');
@@ -264,6 +273,12 @@ class Home extends Component
                 'amount_transaction_wave_days'  => $transaction_amount_wave,
                 'amount_transaction_orange_days'=> $transaction_amount_orange,
                 'amount_transaction_mtn_days'   => $transaction_amount_mtn,
+                'count_transaction_moov_days'   => $transaction_count_moov,
+                'count_transaction_wave_days'   => $transaction_count_wave,
+                'count_transaction_orange_days' => $transaction_count_orange,
+                'count_transaction_mtn_days'    => $transaction_count_mtn,
+                'count_transaction_direct_days' => $transaction_count_direct,
+                'amount_transaction_direct_days'=> $transaction_amount_direct,
                 'amount_reload_days'            => $reload_amount,
                 'amount_phone_credit_days'      => $phonecredit_amount,
                 'amount_inter_days'             => $inter_amount,
@@ -333,7 +348,7 @@ class Home extends Component
      */
     private function dashboardCacheKey($walletUser): string
     {
-        return 'home-dashboard:v2:' . $walletUser->id . ':' . md5($this->startDate . $this->endDate);
+        return 'home-dashboard:v3:' . $walletUser->id . ':' . md5($this->startDate . $this->endDate);
     }
 
     /**

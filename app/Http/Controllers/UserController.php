@@ -522,13 +522,8 @@ class UserController extends Controller
     {
 
 
-        $data = [];
-
-        foreach (WithMerchant::where('sid_user_id', $id)->get() as $bank) {
-            $data[] = $bank->amount_with_draw;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WithMerchant::where('sid_user_id', $id)->sum('amount_with_draw');
     }
 
     public function getTodayTransactionCompagnieCommissionAmountTotal($walletModel, $idCompagnie, $id)
@@ -539,20 +534,10 @@ class UserController extends Controller
 
         $totalAmount = 0;
 
-        foreach ($sidUsers as $sidUser) {
-            // Vérifie que le wallet existe avant d’y accéder
-            if (!$sidUser->wallet) {
-                continue; // passe à l'utilisateur suivant
-            }
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->where('status', 'SUCCESS')
-                ->sum('commission_companie');
-
-            $totalAmount += $amount ?? 0;
-        }
+        // Une seule requête pour tous les membres au lieu d'une par membre
+        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
+            ->where('status', 'SUCCESS')
+            ->sum('commission_companie');
 
         return $totalAmount;
     }
@@ -567,22 +552,11 @@ class UserController extends Controller
 
         $totalAmount = 0;
 
-        foreach ($sidUsers as $sidUser) {
-
-            if (!$sidUser->wallet) {
-                continue; // passe à l'utilisateur suivant
-            }
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->where('status', 'SUCCESS')
-                ->where('provider_id', '!=', 9)
-                ->sum('commission_companie');
-
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
-        }
+        // Une seule requête pour tous les membres au lieu d'une par membre
+        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
+            ->where('status', 'SUCCESS')
+            ->where('provider_id', '!=', 9)
+            ->sum('commission_companie');
 
 
         return $totalAmount;
@@ -596,24 +570,12 @@ class UserController extends Controller
 
         $totalAmount = 0;
 
-        foreach ($sidUsers as $sidUser) {
-
-            if (!$sidUser->wallet) {
-                continue; // passe à l'utilisateur suivant
-            }
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->where('status', 'SUCCESS')
-                ->where('provider_id', 9)
-                ->where('type_transaction', 'Depot')
-                ->sum('commission_companie');
-
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
-        }
+        // Une seule requête pour tous les membres au lieu d'une par membre
+        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
+            ->where('status', 'SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Depot')
+            ->sum('commission_companie');
 
 
         return $totalAmount;
@@ -628,24 +590,12 @@ class UserController extends Controller
 
         $totalAmount = 0;
 
-        foreach ($sidUsers as $sidUser) {
-
-            if (!$sidUser->wallet) {
-                continue; // passe à l'utilisateur suivant
-            }
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->where('status', 'SUCCESS')
-                ->where('provider_id', 9)
-                ->where('type_transaction', 'Retrait')
-                ->sum('commission_companie');
-
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
-        }
+        // Une seule requête pour tous les membres au lieu d'une par membre
+        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
+            ->where('status', 'SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Retrait')
+            ->sum('commission_companie');
 
 
         return $totalAmount;

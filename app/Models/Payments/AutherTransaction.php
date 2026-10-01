@@ -13,6 +13,7 @@ use App\Models\Sid\SidUser;
 
 class AutherTransaction extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
 

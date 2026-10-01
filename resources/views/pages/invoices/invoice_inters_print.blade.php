@@ -168,10 +168,7 @@
                 @if ($walletInters->provider->name == 'ROBUS')
                     <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid #ecf0f1;">
                         @php
-                            $wallet_info = \App\Models\Wallets\Wallet::where(
-                                'wallet_id',
-                                $walletInters->number_compte,
-                            )->first();
+                            $wallet_info = walletByNumber($walletInters->number_compte);
 
                         @endphp
                         <div class="info-label" style="margin-bottom: 4px;">DETAILS DESTINATAIRE</div>

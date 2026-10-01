@@ -13,6 +13,7 @@ use App\Models\Wallets\WalletVersement;
 
 class AutherTransactionInvoice extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
 

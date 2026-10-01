@@ -21,7 +21,7 @@
     @if (!is_null($country_inter_out_civ))
         <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
             @php
-                $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
+                $countrie_indicative = countryById($country_inter_out_civ);
             @endphp
             <div class="col-span-12 text-center">
                 <span
@@ -93,7 +93,7 @@
                 ];
 
                 $provider = $providerData[$provider_inter_out_civ] ?? null;
-                $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
+                $countrie_indicative = countryById($country_inter_out_civ);
             @endphp
 
             @if ($provider)
@@ -179,7 +179,7 @@
         @if (!is_null($amount_inter_out_civ))
             <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
                 @php
-                    $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
+                    $countrie_indicative = countryById($country_inter_out_civ);
                 @endphp
 
                 @if (sabdy()->is_under_distributer == 1)

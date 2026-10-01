@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DepositCost extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     
     use SoftDeletes;

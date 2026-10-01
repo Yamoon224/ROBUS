@@ -314,13 +314,8 @@ class GainUnders extends Component
     public function getWalletRemontsProperty()
     {
 
-        $data = [];
-
-        foreach (WithMerchant::where('sid_user_id', sabdy()->id)->whereStatus('SUCCESS')->get() as $reload) {
-            $data[] = $reload->amount_with_draw;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WithMerchant::where('sid_user_id', sabdy()->id)->whereStatus('SUCCESS')->sum('amount_with_draw');
     }
 
     public function getTransactionCountReload($walletModel)

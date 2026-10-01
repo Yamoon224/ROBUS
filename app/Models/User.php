@@ -16,6 +16,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use Notifiable, HasApiTokens, SoftDeletes, HasFactory;
 
     /**

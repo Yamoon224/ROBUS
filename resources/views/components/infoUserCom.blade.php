@@ -1,6 +1,6 @@
 @php
     use App\Models\Wallets\Wallet;
-   $wallet_info = Wallet::where('id', $visite->wallet_visit)->first();
+   $wallet_info = walletById($visite->wallet_visit);
     $user = $wallet_info?->sidUser;
 @endphp
 
