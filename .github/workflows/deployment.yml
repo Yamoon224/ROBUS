@@ -126,8 +126,11 @@ jobs:
             artisan migrate --force
           fi
 
-          artisan config:cache
-          artisan route:cache
+          # Pas de config:cache : le code lit env() directement (APP_URL, APP_NAME...),
+          # ce qui renvoie null une fois la configuration mise en cache.
+          # Pas de route:cache : la sérialisation des routes épuise la mémoire (1 Go).
+          artisan config:clear
+          artisan route:clear
           artisan view:cache
 
           # Les liens symboliques sont parfois interdits en mutualisé : non bloquant.
