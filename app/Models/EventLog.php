@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class EventLog extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     protected $table = 'event_logs';
     protected $fillable = ['event_name', 'event_data', 'event_user' , 'type_user_event' , 'user_countrie'

@@ -50,16 +50,24 @@ class TransactionState extends Component
     public function getWalletReloadSumGainProperty()
     {
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->sum('commission_companie');
+        $data = [];
+        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $bank) {
+            $data[] = $bank->commission_companie;
+        }
+
+        return array_sum($data);
     }
 
 
     public function getWalletReloadSumGainUserProperty()
     {
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->sum('commission_companie');
+        $data = [];
+        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $bank) {
+            $data[] = $bank->commission_companie;
+        }
+
+        return array_sum($data);
     }
 
 

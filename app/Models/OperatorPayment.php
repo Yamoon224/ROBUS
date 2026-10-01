@@ -10,7 +10,6 @@ use App\Models\PaymentService;
 
 class OperatorPayment extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
     protected $table = 'operator_payments';

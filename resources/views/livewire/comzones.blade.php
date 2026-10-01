@@ -52,7 +52,7 @@
                 @foreach ($users as $item)
                 @php
 
-                $old_operators = $item->operator_services->pluck('operator_id')->toArray();
+                $old_operators = getOperators($item->id);
 
                 @endphp
                 <tbody>

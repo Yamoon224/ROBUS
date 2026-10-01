@@ -202,7 +202,10 @@
                                     {{ 'Destinataire' }}</td>
                                 <td class="bold" style="border-bottom:1px dotted #B8B8B8">
                                     @php
-                                        $wallet_info = walletByNumber($walletTransfers->num_wallet);
+                                        $wallet_info = \App\Models\Wallets\Wallet::where(
+                                            'wallet_id',
+                                            $walletTransfers->num_wallet,
+                                        )->first();
 
                                     @endphp
                                     <p class="font-medium whitespace-nowrap">

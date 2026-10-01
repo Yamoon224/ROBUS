@@ -6128,7 +6128,7 @@ class Transfers extends Component
 
         $walletDepositQuery = $model::join('wallets', "{$table}.wallet_id", '=', 'wallets.id')
             ->where('wallets.country_id', $userCountryId)
-            ->whereBetween("{$table}.created_at", [Carbon::today(), Carbon::today()->endOfDay()])
+            ->whereDate("{$table}.created_at", Carbon::today())
             ->where("{$table}.status", 'SUCCESS');
 
         if (sabdy()->is_under_distributer) {

@@ -10,7 +10,6 @@ use App\Models\Sid\SidUser;
 
 class Master extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     protected $table = 'masters';
 

@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class LevelBankIvoire extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
 

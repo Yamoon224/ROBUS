@@ -10,7 +10,6 @@ use App\Models\Sid\SidUser;
 
 class OneBetTransaction extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
 

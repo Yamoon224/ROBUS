@@ -7,7 +7,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class InterTransactionSingleCollection extends JsonResource
 {
-    use \App\Http\Resources\Concerns\BatchesLazyLoads;
     /**
      * Transform the resource collection into an array.
      *

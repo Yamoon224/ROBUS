@@ -181,12 +181,9 @@ class Masters extends Component
         $wallet_info_lastname = null;
         $wallet_info_image = null;
 
-        // Une seule ligne suffit : la boucle plus bas relance la même recherche pour chaque wallet,
-        // charger tous les wallets du pays multipliait les requêtes identiques.
         $wallets = Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
             ->where('wallets.status', true)
             ->Where('wallets.country_id', comzone()->country->id)
-            ->limit(1)
             ->get();
 
 

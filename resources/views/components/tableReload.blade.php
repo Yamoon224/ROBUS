@@ -33,7 +33,6 @@
       </thead>
       <tbody>
           @if ($reload_historicals->count() > 0)
-              @php primeWallets($reload_historicals, 'account_wallet'); @endphp
               @foreach ($reload_historicals as $item)
                   @php
                       $pixelMeta = is_array($item->metadata ?? null)

@@ -86,17 +86,25 @@ class TransactionHisto extends Component
     // Admin 
     public function getWalletRelaodProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', firm()->country->id)->where('wallet_transactions.status', 'SUCCESS')->select('wallet_transactions.*')->sum('wallet_transactions.commission_companie');
+        $data = [];
+        foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', firm()->country->id)->where('wallet_transactions.status', 'SUCCESS')->select('wallet_transactions.*')->get() as $bank) {
+            $data[] = $bank->commission_companie;
+        }
+
+        return array_sum($data);
     }
 
     // User 
     public function getWalletRelaodUserProperty()
     {
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', firm()->country->id)->where('wallet_transactions.created_by', firm()->id)->where('wallet_transactions.status', 'SUCCESS')->select('wallet_transactions.*')->sum('wallet_transactions.commission_companie');
+        $data = [];
+        foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', firm()->country->id)->where('wallet_transactions.created_by', firm()->id)->where('wallet_transactions.status', 'SUCCESS')->select('wallet_transactions.*')->get() as $bank) {
+            $data[] = $bank->commission_companie;
+        }
+
+        return array_sum($data);
     }
 }

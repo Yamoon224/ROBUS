@@ -179,7 +179,6 @@
                                     </thead>
                                     <tbody>
                                         @if ($transfer_historicals->count() > 0)
-                                            @php primeWallets($transfer_historicals, 'num_wallet'); @endphp
                                             @foreach ($transfer_historicals as $key => $item)
                                                 <tr class="intro-x">
                                                     <td>
@@ -244,7 +243,7 @@
                                                     <td class="w-40">
 
                                                         @php
-                                                            $wallet_info = walletByNumber($item->num_wallet);
+                                                            $wallet_info = \App\Models\Wallets\Wallet::where('wallet_id', $item->num_wallet)->first();
                                                             
                                                         @endphp
                                                         <p class="font-medium whitespace-nowrap">

@@ -24,7 +24,6 @@ use App\Models\Costs\BankCommission;
 
 class WalletInter extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
     use LogsActivity;

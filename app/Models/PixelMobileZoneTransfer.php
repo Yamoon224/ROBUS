@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PixelMobileZoneTransfer extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
 
     protected $table = 'pixel_mobile_zone_transfers';

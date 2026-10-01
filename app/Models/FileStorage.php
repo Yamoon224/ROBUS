@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class FileStorage extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
 
     use HasFactory, IconTrait, HasWallet;
 

@@ -21,7 +21,7 @@
     @if (!is_null($country_inter_out_civ))
         <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
             @php
-                $countrie_indicative = countryById($country_inter_out_civ);
+                $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
             @endphp
             <div class="col-span-12 text-center">
                 <span
@@ -408,7 +408,7 @@
                 @if (!is_null($country_inter_out_civ))
                     <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 ">
                         @php
-                            $countrie_indicative = countryById($country_inter_out_civ);
+                            $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                         @endphp
                         <div class="col-span-12 mt-space">
                             <label for="phone_inter_out_civ" class="form-label">Numero de
@@ -440,7 +440,7 @@
                 @if (!is_null($country_inter_out_civ))
                     <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 ">
                         @php
-                            $countrie_indicative = countryById($country_inter_out_civ);
+                            $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                         @endphp
                         <div class="col-span-12 mt-space">
                             <label for="phone_inter_out_civ" class="form-label">Numero de
@@ -470,7 +470,7 @@
                 @if (!is_null($country_inter_out_civ))
                     <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 ">
                         @php
-                            $countrie_indicative = countryById($country_inter_out_civ);
+                            $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                         @endphp
                         <div class="col-span-12 mt-space">
                             <label for="phone_inter_out_civ" class="form-label">Numero de
@@ -500,7 +500,7 @@
                 @if (!is_null($country_inter_out_civ))
                     <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 ">
                         @php
-                            $countrie_indicative = countryById($country_inter_out_civ);
+                            $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                         @endphp
                         <div class="col-span-12 mt-space">
                             <label for="phone_inter_out_civ" class="form-label">Numero de
@@ -530,7 +530,7 @@
                 @if (!is_null($country_inter_out_civ))
                     <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 ">
                         @php
-                            $countrie_indicative = countryById($country_inter_out_civ);
+                            $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                         @endphp
                         <div class="col-span-12 mt-space">
                             <label for="phone_inter_out_civ" class="form-label">Numero de
@@ -560,7 +560,7 @@
                 @if (!is_null($country_inter_out_civ))
                     <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 ">
                         @php
-                            $countrie_indicative = countryById($country_inter_out_civ);
+                            $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                         @endphp
                         <div class="col-span-12 mt-space">
                             <label for="phone_inter_out_civ" class="form-label">Numero de
@@ -590,7 +590,7 @@
                 @if (!is_null($country_inter_out_civ))
                     <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 ">
                         @php
-                            $countrie_indicative = countryById($country_inter_out_civ);
+                            $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                         @endphp
                         <div class="col-span-12 mt-space">
                             <label for="phone_inter_out_civ" class="form-label">Numero de
@@ -620,7 +620,7 @@
                 @if (!is_null($country_inter_out_civ))
                     <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 ">
                         @php
-                            $countrie_indicative = countryById($country_inter_out_civ);
+                            $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                         @endphp
                         <div class="col-span-12 mt-space">
                             <label for="phone_inter_out_civ" class="form-label">Numero de
@@ -650,7 +650,7 @@
                 @if (!is_null($country_inter_out_civ))
                     <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 ">
                         @php
-                            $countrie_indicative = countryById($country_inter_out_civ);
+                            $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                         @endphp
                         <div class="col-span-12 mt-space">
                             <label for="phone_inter_out_civ" class="form-label">Numero de
@@ -680,7 +680,7 @@
                 @if (!is_null($country_inter_out_civ))
                     <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 ">
                         @php
-                            $countrie_indicative = countryById($country_inter_out_civ);
+                            $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                         @endphp
                         <div class="col-span-12 mt-space">
                             <label for="phone_inter_out_civ" class="form-label">Numero de
@@ -710,7 +710,7 @@
                 @if (!is_null($country_inter_out_civ))
                     <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 ">
                         @php
-                            $countrie_indicative = countryById($country_inter_out_civ);
+                            $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                         @endphp
                         <div class="col-span-12 mt-space">
                             <label for="phone_inter_out_civ" class="form-label">Numero de
@@ -740,7 +740,7 @@
                 @if (!is_null($country_inter_out_civ))
                     <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 ">
                         @php
-                            $countrie_indicative = countryById($country_inter_out_civ);
+                            $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                         @endphp
                         <div class="col-span-12">
                             <label for="phone_inter_out_civ" class="form-label">Numero wallet<span
@@ -798,7 +798,7 @@
         @if (!is_null($amount_inter_out_civ))
             <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
                 @php
-                    $countrie_indicative = countryById($country_inter_out_civ);
+                    $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                 @endphp
 
                 @if (sabdy()->is_under_distributer == 1)

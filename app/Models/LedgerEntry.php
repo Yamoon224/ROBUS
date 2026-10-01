@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 
 class LedgerEntry extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
 
     public const CATEGORY_ADMIN = 'admin';

@@ -81,8 +81,17 @@ class XbetHisto extends Component
     {
 
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletXbet::where("wallet_xbets.status", $this->statusFilter)->sum('amount');
+        $data = [];
+
+        $wallets = WalletXbet::where("wallet_xbets.status", $this->statusFilter)->get();
+
+        foreach ($wallets as $bank) {
+            // Accédez à la propriété amount sur chaque objet
+            $data[] = $bank->amount;
+        }
+
+
+        return array_sum($data);
     }
     public function getVirementsAllDaysProperty()
     {
@@ -105,8 +114,17 @@ class XbetHisto extends Component
     {
 
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletXbet::whereBetween('created_at', [$this->startDate, $this->endDate])->sum('amount');
+        $data = [];
+
+        $wallets = WalletXbet::whereBetween('created_at', [$this->startDate, $this->endDate])->get();
+
+        foreach ($wallets as $bank) {
+            // Accédez à la propriété amount sur chaque objet
+            $data[] = $bank->amount;
+        }
+
+
+        return array_sum($data);
     }
 
     public function getVirementTransactionProperty()

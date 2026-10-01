@@ -18,7 +18,6 @@ use App\Models\Sid\SidUser;
 
 class WalletTresortMoney extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
 

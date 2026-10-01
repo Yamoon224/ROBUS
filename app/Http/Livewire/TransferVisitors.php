@@ -1887,7 +1887,7 @@ class transferVisitors extends Component
                     ->orWhere($walletMy, '=', sabdy()->id);
             }
         })
-            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
+            ->whereDate($transaction_days, Carbon::today())
             ->where($wallet_status, $status)
             ->where($IswebStatus, $isWeb)
             ->count();
@@ -1905,7 +1905,7 @@ class transferVisitors extends Component
                     ->orWhere($walletMy, '=', sabdy()->id);
             }
         })
-            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
+            ->whereDate($transaction_days, Carbon::today())
             ->where($transaction_status, $status)
             ->where($IswebStatus, $isWeb)
             ->sum($wallet_amount);

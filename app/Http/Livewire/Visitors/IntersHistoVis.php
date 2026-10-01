@@ -128,8 +128,17 @@ class IntersHistoVis extends Component
     {
 
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletInter::whereIsWeb(true)->whereBetween('created_at', [$this->startDate, $this->endDate])->sum('amount');
+        $data = [];
+
+        $wallets = WalletInter::whereIsWeb(true)->whereBetween('created_at', [$this->startDate, $this->endDate])->get();
+
+        foreach ($wallets as $bank) {
+            // Accédez à la propriété amount sur chaque objet
+            $data[] = $bank->amount;
+        }
+
+
+        return array_sum($data);
     }
 
 
@@ -137,8 +146,17 @@ class IntersHistoVis extends Component
     {
 
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletInter::whereIsWeb(true)->where("status", $this->statusInterFilter)->sum('amount');
+        $data = [];
+
+        $wallets = WalletInter::whereIsWeb(true)->where("status", $this->statusInterFilter)->get();
+
+        foreach ($wallets as $bank) {
+            // Accédez à la propriété amount sur chaque objet
+            $data[] = $bank->amount;
+        }
+
+
+        return array_sum($data);
     }
 
 
@@ -147,8 +165,17 @@ class IntersHistoVis extends Component
     {
 
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletInter::whereIsWeb(true)->whereBetween('created_at', [$this->startDate, $this->endDate])->sum('amount');
+        $data = [];
+
+        $wallets = WalletInter::whereIsWeb(true)->whereBetween('created_at', [$this->startDate, $this->endDate])->get();
+
+        foreach ($wallets as $bank) {
+            // Accédez à la propriété amount sur chaque objet
+            $data[] = $bank->amount;
+        }
+
+
+        return array_sum($data);
     }
 
 
@@ -157,8 +184,12 @@ class IntersHistoVis extends Component
     public function getWalletInterStatusComProperty()
     {
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletInter::whereIsWeb(true)->where("status", $this->statusPhoneFilter)->where('status', 'SUCCESS')->select('wallet_inters.*')->sum('commissions');
+        $data = [];
+        foreach (WalletInter::whereIsWeb(true)->where("status", $this->statusPhoneFilter)->where('status', 'SUCCESS')->select('wallet_inters.*')->get() as $bank) {
+            $data[] = $bank->commissions;
+        }
+
+        return array_sum($data);
     }
 
  

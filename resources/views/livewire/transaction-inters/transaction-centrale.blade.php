@@ -39,7 +39,7 @@
         @if (!is_null($country_inter_out_civ))
             <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
                 @php
-                    $countrie_indicative = countryById($country_inter_out_civ);
+                    $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                 @endphp
                 <div class="col-span-12 text-center">
                     <span
@@ -116,7 +116,7 @@
                     ];
 
                     $provider = $providerData[$provider_inter_out_civ] ?? null;
-                    $countrie_indicative = countryById($country_inter_out_civ);
+                    $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
                     $wallet_name = $wallet_name ?? '';
 
                 @endphp
@@ -265,7 +265,10 @@
                         <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
                             {{-- Commission --}}
                             @php
-                                $countrie_indicative = countryById($country_inter_out_civ);
+                                $countrie_indicative = App\Models\Custumers\Country::where(
+                                    'id',
+                                    $country_inter_out_civ,
+                                )->first();
                                 $amount_to_pay = $this->commission_transaction_val_inter_pay;
                                 $amount_to_receive = $this->commission_transaction_val_inter_convertion_send;
                                 $commission = $this->commission_transaction_val_inter_pay;
@@ -321,7 +324,7 @@
             {{-- Other Providers Inputs --}}
             @php
 
-                $countrie_indicative = countryById($country_inter_out_civ);
+                $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
 
             @endphp
 

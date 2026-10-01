@@ -18,7 +18,6 @@ use App\Models\Custumers\Country;
 
 class WalletBankSend extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
     use LogsActivity;

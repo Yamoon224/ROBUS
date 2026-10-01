@@ -119,33 +119,49 @@ class ValidateDailyLimitService
     }
     public function getWalletBankCardCeilingProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return BankCard::where('created_by', robus()->id)
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->whereStatus(1)->sum('amount');
+        $data = [];
+        foreach (BankCard::where('created_by', robus()->id)
+            ->whereDate('created_at', Carbon::today())->whereStatus(1)->get() as $bank) {
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
     }
 
 
     public function getWalletBanksCeilingProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletBank::where('created_by', robus()->id)
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('status', 'SUCCESS')->sum('amount');
+        $data = [];
+        foreach (WalletBank::where('created_by', robus()->id)
+            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $bank) {
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
     }
 
 
     public function getWalletWavesCeilingProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletWave::where('created_by', robus()->id)
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('status', 'SUCCESS')->sum('amount');
+        $data = [];
+        foreach (WalletWave::where('created_by', robus()->id)
+            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $bank) {
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
     }
 
 
     public function getWalletXbetsCeilingProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletXbet::where('created_by', robus()->id)
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('status', 'SUCCESS')->sum('amount');
+        $data = [];
+        foreach (WalletXbet::where('created_by', robus()->id)
+            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $bank) {
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
     }
 
 
@@ -165,16 +181,26 @@ class ValidateDailyLimitService
     public function getWalletDepositsCeilingProperty()
     {
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletDeposit::where('created_by',  robus()->id)
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('status', 'SUCCESS')->sum('amount');
+        $data = [];
+
+        foreach (WalletDeposit::where('created_by',  robus()->id)
+            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $deposit) {
+            $data[] = $deposit->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletIntersCeilingProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletInter::where('created_by',  robus()->id)
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('status', 'SUCCESS')->sum('amount');
+        $data = [];
+
+        foreach (WalletInter::where('created_by',  robus()->id)
+            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $inter) {
+            $data[] = $inter->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function validatedTransaction($code_validated)
@@ -190,31 +216,52 @@ class ValidateDailyLimitService
 
     public function getWalletPaymentsCeilingProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletPayment::where('created_by',  robus()->id)
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('status', 'SUCCESS')->sum('amount');
+        $data = [];
+
+        foreach (WalletPayment::where('created_by',  robus()->id)
+            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $payment) {
+            $data[] = $payment->amount;
+        }
+
+        return array_sum($data);
     }
 
 
     public function getWalletTransactionsCeilingProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletTransaction::where('created_by',  robus()->id)
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('status', 'SUCCESS')->sum('amount');
+        $data = [];
+
+        foreach (WalletTransaction::where('created_by',  robus()->id)
+            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $transaction) {
+            $data[] = $transaction->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletPhoneCreditsCeilingProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletPhoneCredit::where('created_by', robus()->id)
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('status', 'SUCCESS')->sum('amount');
+        $data = [];
+
+
+        foreach (WalletPhoneCredit::where('created_by', robus()->id)
+            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $phone) {
+            $data[] = $phone->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletReloadsCeilingProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletReload::where('created_by',  robus()->id)
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('status', 'SUCCESS')->sum('amount');
+        $data = [];
+
+        foreach (WalletReload::where('created_by',  robus()->id)
+            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $reload) {
+            $data[] = $reload->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function search_amount($amount_received)

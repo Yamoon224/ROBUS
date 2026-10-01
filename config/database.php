@@ -113,19 +113,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Regroupement des relations chargées à la demande
-    |--------------------------------------------------------------------------
-    |
-    | Pendant le rendu d'une vue, une relation lue sur une ligne d'une liste
-    | est chargée en une seule requête pour toutes les lignes (anti N+1).
-    | Mettre BATCH_LAZY_LOADS=false pour revenir au comportement d'Eloquent.
-    |
-    */
-
-    'batch_lazy_loads' => env('BATCH_LAZY_LOADS', true),
-
-    /*
-    |--------------------------------------------------------------------------
     | Redis Databases
     |--------------------------------------------------------------------------
     |

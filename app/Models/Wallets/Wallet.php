@@ -23,7 +23,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Wallet extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
     use LogsActivity;

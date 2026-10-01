@@ -362,7 +362,6 @@
                                     </thead>
                                     <tbody>
                                         @if ($transactions->count() > 0)
-                                            @php primeWallets($transactions, 'num_wallet'); @endphp
                                             @foreach ($transactions as $key => $item)
                                                 <tr class="intro-x">
                                                     <td>
@@ -468,7 +467,10 @@
                                                     </td>
                                                     <td class="w-40">
                                                         @php
-                                                            $wallet_info = walletByNumber($item->num_wallet);
+                                                            $wallet_info = \App\Models\Wallets\Wallet::where(
+                                                                'wallet_id',
+                                                                $item->num_wallet,
+                                                            )->first();
 
                                                         @endphp
                                                         <p class="font-medium whitespace-nowrap">
@@ -644,7 +646,6 @@
                                     </thead>
                                     <tbody>
                                         @if ($walletreloads->count() > 0)
-                                            @php primeWallets($walletreloads, 'account_wallet'); @endphp
                                             @foreach ($walletreloads as $key => $item)
                                                 <tr class="intro-x">
                                                     <td>
@@ -711,7 +712,10 @@
                                                     </td>
                                                     <td class="w-40">
                                                         @php
-                                                            $wallet_info = walletByNumber($item->account_wallet);
+                                                            $wallet_info = \App\Models\Wallets\Wallet::where(
+                                                                'wallet_id',
+                                                                $item->account_wallet,
+                                                            )->first();
 
                                                         @endphp
                                                         <p class="font-medium whitespace-nowrap">

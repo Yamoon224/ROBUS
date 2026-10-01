@@ -11,7 +11,6 @@ use Spatie\Activitylog\LogOptions;
 
 class OneBetInvoice extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
     use LogsActivity;

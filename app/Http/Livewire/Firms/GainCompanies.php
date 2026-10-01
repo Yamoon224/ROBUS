@@ -338,8 +338,13 @@ class GainCompanies extends Component
     public function getWalletRemontsProperty()
     {
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WithMerchant::where('sid_user_id', firm()->id)->whereStatus('SUCCESS')->sum('amount_with_draw');
+        $data = [];
+
+        foreach (WithMerchant::where('sid_user_id', firm()->id)->whereStatus('SUCCESS')->get() as $reload) {
+            $data[] = $reload->amount_with_draw;
+        }
+
+        return array_sum($data);
     }
 
     public function getTransactionCountReload($walletModel)
@@ -348,7 +353,7 @@ class GainCompanies extends Component
 
         $totalCount = $walletModel::where('wallet_id', firm()->wallet->id)
             ->whereStatus('SUCCESS')
-            // ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            // ->whereDate('created_at', Carbon::today())
             ->count();
 
         return $totalCount;
@@ -362,9 +367,17 @@ class GainCompanies extends Component
             ->where('id', '!=', firm()->id)->get();
         $totalcount = 0;
 
-        // Une seule requête pour tous les membres au lieu d'une par membre
-        $totalcount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
-            ->where('status', $status)->count();
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $count = $walletModel::where('wallet_id', $sidUserId)
+                ->where('status', $status)->count();
+
+            if ($count !== null) {
+                $totalcount += $count;
+            }
+        }
 
         return $totalcount;
     }
@@ -379,11 +392,19 @@ class GainCompanies extends Component
 
         $totalAmount = 0;
 
-        // Une seule requête pour tous les membres au lieu d'une par membre
-        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
-            ->whereStatus('SUCCESS')
-            ->where('commission_companie', '!=', 0)
-            ->sum('amount');
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->where('commission_companie', '!=', 0)
+                ->sum('amount');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
 
 
         return $totalAmount;
@@ -400,10 +421,18 @@ class GainCompanies extends Component
 
         $totalAmount = 0;
 
-        // Une seule requête pour tous les membres au lieu d'une par membre
-        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
-            ->whereStatus('SUCCESS')
-            ->sum('commission_companie');
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
 
 
         return $totalAmount;
@@ -418,12 +447,20 @@ class GainCompanies extends Component
 
         $totalAmount = 0;
 
-        // Une seule requête pour tous les membres au lieu d'une par membre
-        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
-            ->whereStatus('SUCCESS')
-            ->where('provider_id', 9)
-            ->where('type_transaction', 'Retrait')
-            ->sum('commission_companie');
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->where('provider_id', 9)
+                ->where('type_transaction', 'Retrait')
+                ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
 
 
         return $totalAmount;
@@ -438,12 +475,20 @@ class GainCompanies extends Component
 
         $totalAmount = 0;
 
-        // Une seule requête pour tous les membres au lieu d'une par membre
-        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
-            ->whereStatus('SUCCESS')
-            ->where('provider_id', 9)
-            ->where('type_transaction', 'Depot')
-            ->sum('commission_companie');
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->where('provider_id', 9)
+                ->where('type_transaction', 'Depot')
+                ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
 
 
         return $totalAmount;
@@ -458,11 +503,19 @@ class GainCompanies extends Component
 
         $totalAmount = 0;
 
-        // Une seule requête pour tous les membres au lieu d'une par membre
-        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
-            ->whereStatus('SUCCESS')
-            ->where('provider_id', '!=', 9)
-            ->sum('commission_companie');
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->where('provider_id', '!=', 9)
+                ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
 
 
         return $totalAmount;

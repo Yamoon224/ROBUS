@@ -1,5 +1,5 @@
   @php
-      $wallet_info = walletByNumber($item->account_wallet);
+      $wallet_info = \App\Models\Wallets\Wallet::where('wallet_id', $item->account_wallet)->first();
   @endphp
   <div class="amount-section">
       <div class="amount-label">Montant envoyé</div>

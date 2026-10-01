@@ -506,7 +506,6 @@
                                         </thead>
                                         <tbody>
                                             @if ($reaload_acomptes->count() > 0)
-                                                @php primeWallets($reaload_acomptes, 'account_wallet'); @endphp
                                                 @foreach ($reaload_acomptes as $item)
                                                     <tr class="intro-x">
                                                         <td class="text-center w-40">

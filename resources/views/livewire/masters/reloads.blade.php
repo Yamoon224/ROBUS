@@ -179,7 +179,6 @@
                                         </thead>
                                         <tbody>
                                             @if ($reaload_uv->count() > 0)
-                                                @php primeWallets($reaload_uv, 'account_wallet'); @endphp
                                                 @foreach ($reaload_uv as $item)
                                                     <tr class="intro-x">
                                                         <td>
@@ -234,7 +233,7 @@
                                                         <td class="w-40">
 
                                                             @php
-                                                                $wallet_info = walletByNumber($item->account_wallet);
+                                                                $wallet_info = \App\Models\Wallets\Wallet::where('wallet_id' , $item->account_wallet)->first();
                                                             @endphp
                                                            
                                                             <p class="font-medium whitespace-nowrap">

@@ -41,14 +41,6 @@
         </div>
     </div>
     <div class="grid grid-cols-12 gap-6 mt-5">
-        @php
-            // Soldes de tous les utilisateurs de la liste en une seule requête
-            $soldes = \App\Models\Wallets\Wallet::withTrashed()
-                ->whereIn('sid_user_id', collect($users instanceof \Illuminate\Contracts\Pagination\Paginator ? $users->items() : $users)->pluck('id'))
-                ->groupBy('sid_user_id')
-                ->selectRaw('sid_user_id, SUM(amount) as total')
-                ->pluck('total', 'sid_user_id');
-        @endphp
         @foreach ($users as $item)
             <div class="intro-y col-span-12 md:col-span-6 lg:col-span-4">
                 <div class="box">
@@ -100,7 +92,7 @@
                         </div>
 
                         @php
-                            $solde = $soldes[$item->id] ?? 0;
+                            $solde = $item->wallet()->sum('amount');
                         @endphp
 
                         @if ($solde >= 100000)

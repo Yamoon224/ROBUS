@@ -511,9 +511,9 @@ class Reloads extends Component
             [
                 'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
                 'WalletReloads' => $this->WalletReloads,
-                'reload_error' => WalletReload::where('wallet_id', $walletUser->wallet->id)->where('status', 'ERROR')->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->count(),
-                'reload_success' =>   WalletReload::where('wallet_id', $walletUser->wallet->id)->where('status', 'SUCCESS')->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->count(),
-                'reload_pendding' =>   WalletReload::where('wallet_id', $walletUser->wallet->id)->where('status', 'PENDING')->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->count(),
+                'reload_error' => WalletReload::where('wallet_id', $walletUser->wallet->id)->where('status', 'ERROR')->whereDate('created_at', Carbon::today())->count(),
+                'reload_success' =>   WalletReload::where('wallet_id', $walletUser->wallet->id)->where('status', 'SUCCESS')->whereDate('created_at', Carbon::today())->count(),
+                'reload_pendding' =>   WalletReload::where('wallet_id', $walletUser->wallet->id)->where('status', 'PENDING')->whereDate('created_at', Carbon::today())->count(),
                 'reaload_uv' => $realod_search->where('wallet_id', $walletUser->wallet->id)->orWhere('account_wallet', $walletUser->wallet->wallet_id)->orderBy('created_at', 'desc')->paginate(25),
                 'wallet_search' => $wallet->where("wallet_id", "like",  "%" . $this->account_reload_uv . "%")
                     ->where('country_id',  $walletUser->country->id)->where('status', true)->get(),
@@ -537,67 +537,106 @@ class Reloads extends Component
 
     public function getWalletBankCardCeilingProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return BankCard::where('created_by', master()->id)
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->whereStatus(1)->sum('amount');
+        $data = [];
+        foreach (BankCard::where('created_by', master()->id)
+            ->whereDate('created_at', Carbon::today())->whereStatus(1)->get() as $bank) {
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
     }
     public function getWalletBanksCeilingProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
+        $data = [];
+        foreach (WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
             ->where('wallets.country_id', master()->country->id)
             ->where('wallet_banks.created_by', master()->id)
-            ->whereBetween('wallet_banks.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_banks.*')->where('wallet_banks.status', 'SUCCESS')->sum('wallet_banks.amount');
+            ->whereDate('wallet_banks.created_at', Carbon::today())->select('wallet_banks.*')->where('wallet_banks.status', 'SUCCESS')->get() as $bank) {
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletDepositsCeilingProperty()
     {
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
             ->where('wallets.country_id',  master()->country->id)->where('wallet_deposits.created_by',  master()->id)
-            ->whereBetween('wallet_deposits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_deposits.*')->where('wallet_deposits.status', 'SUCCESS')->sum('wallet_deposits.amount');
+            ->whereDate('wallet_deposits.created_at', Carbon::today())->select('wallet_deposits.*')->where('wallet_deposits.status', 'SUCCESS')->get() as $deposit) {
+            $data[] = $deposit->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletIntersCeilingProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
             ->where('wallets.country_id',  master()->country->id)->where('wallet_inters.created_by',  master()->id)
-            ->whereBetween('wallet_inters.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_inters.*')->where('wallet_inters.status', 'SUCCESS')->sum('wallet_inters.amount');
+            ->whereDate('wallet_inters.created_at', Carbon::today())->select('wallet_inters.*')->where('wallet_inters.status', 'SUCCESS')->get() as $inter) {
+            $data[] = $inter->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletPaymentsCeilingProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
             ->where('wallets.country_id',  master()->country->id)->where('wallet_payments.created_by',  master()->id)
-            ->whereBetween('wallet_payments.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_payments.*')->where('wallet_payments.status', 'SUCCESS')->sum('wallet_payments.amount');
+            ->whereDate('wallet_payments.created_at', Carbon::today())->select('wallet_payments.*')->where('wallet_payments.status', 'SUCCESS')->get() as $payment) {
+            $data[] = $payment->amount;
+        }
+
+        return array_sum($data);
     }
 
 
     public function getWalletTransactionsCeilingProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
             ->where('wallets.country_id',  master()->country->id)->where('wallet_transactions.created_by',  master()->id)
-            ->whereBetween('wallet_transactions.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_transactions.*')->where('wallet_transactions.status', 'SUCCESS')->sum('wallet_transactions.amount');
+            ->whereDate('wallet_transactions.created_at', Carbon::today())->select('wallet_transactions.*')->where('wallet_transactions.status', 'SUCCESS')->get() as $transaction) {
+            $data[] = $transaction->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletPhoneCreditsCeilingProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
+        $data = [];
+
+
+        foreach (WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', master()->country->id)->where('wallet_phone_credits.created_by', master()->id)
-            ->whereBetween('wallet_phone_credits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_phone_credits.*')->where('wallet_phone_credits.status', 'SUCCESS')->sum('wallet_phone_credits.amount');
+            ->whereDate('wallet_phone_credits.created_at', Carbon::today())->select('wallet_phone_credits.*')->where('wallet_phone_credits.status', 'SUCCESS')->get() as $phone) {
+            $data[] = $phone->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletReloadsCeilingProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
             ->where('wallets.country_id',  master()->country->id)->where('wallet_reloads.created_by',  master()->id)
-            ->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_reloads.*')->where('wallet_reloads.status', 'SUCCESS')->sum('wallet_reloads.amount');
+            ->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->where('wallet_reloads.status', 'SUCCESS')->get() as $reload) {
+            $data[] = $reload->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getReloadUvTransactionProperty()
@@ -618,16 +657,26 @@ class Reloads extends Component
     public function getWalletReloadsProperty()
     {
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', master()->country->id)->where('wallet_reloads.status', 'SUCCESS')->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_reloads.*')->sum('wallet_reloads.amount');
+        $data = [];
+
+        foreach (WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', master()->country->id)->where('wallet_reloads.status', 'SUCCESS')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->get() as $reload) {
+            $data[] = $reload->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletReloadsUserProperty()
     {
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', master()->country->id)->where('wallet_reloads.created_by', master()->id)->where('wallet_reloads.status', 'SUCCESS')->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_reloads.*')->sum('wallet_reloads.amount');
+        $data = [];
+
+        foreach (WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', master()->country->id)->where('wallet_reloads.created_by', master()->id)->where('wallet_reloads.status', 'SUCCESS')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->get() as $reload) {
+            $data[] = $reload->amount;
+        }
+
+        return array_sum($data);
     }
 }

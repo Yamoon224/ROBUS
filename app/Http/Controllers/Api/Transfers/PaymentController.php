@@ -540,7 +540,7 @@ class PaymentController extends Controller
 
                     $commission_invoice = PaymentCost::whereId(1)->first();
 
-                    foreach ($offers->take(1) as $offer) {
+                    foreach ($offers  as $offer) {
 
                         $offer_amount = $offer->whereId($amount_offer)->first();
 
@@ -584,7 +584,7 @@ class PaymentController extends Controller
 
                     $commission_reload_inter_val_inter_percent_pay = 0;
 
-                    foreach ($offers->take(1) as $offer) {
+                    foreach ($offers  as $offer) {
 
                         $offer_amount = $offer->whereId($amount_offer)->first();
 

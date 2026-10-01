@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PaymentReload extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
       use SoftDeletes;
 

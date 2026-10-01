@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ProviderService extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
       use SoftDeletes;
 

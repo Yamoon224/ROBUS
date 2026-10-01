@@ -193,7 +193,7 @@ class Historique extends Component
         $djamo_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletDjamo::class, 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by',  'wallet_djamos.status',  'wallet_djamos.amount',  'wallet_djamos.is_web', false);
         $bankSend_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletBankSend::class, 'wallet_bank_sends.wallet_id', 'wallet_bank_sends.created_at', 'wallet_bank_sends.updated_by',  'wallet_bank_sends.status',  'wallet_bank_sends.amount',  'wallet_bank_sends.is_web', false);
         $pixel_mobile_zone_amount = (clone $pixelMobileZoneQuery)
-            ->whereBetween('pixel_mobile_zone_transfers.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->whereDate('pixel_mobile_zone_transfers.created_at', Carbon::today())
             ->where('pixel_mobile_zone_transfers.status', 'SUCCESS')
             ->sum('pixel_mobile_zone_transfers.amount');
 

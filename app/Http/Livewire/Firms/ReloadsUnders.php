@@ -70,9 +70,9 @@ class ReloadsUnders extends Component
             [
                 'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
                 'WalletReloads' => $this->WalletReloads,
-                'reload_error' => WalletReload::where('wallet_id', $walletUser->wallet->id)->where('status', 'ERROR')->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->count(),
-                'reload_success' =>   WalletReload::where('wallet_id', $walletUser->wallet->id)->where('status', 'SUCCESS')->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->count(),
-                'reload_pendding' =>   WalletReload::where('wallet_id', $walletUser->wallet->id)->where('status', 'PENDING')->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->count(),
+                'reload_error' => WalletReload::where('wallet_id', $walletUser->wallet->id)->where('status', 'ERROR')->whereDate('created_at', Carbon::today())->count(),
+                'reload_success' =>   WalletReload::where('wallet_id', $walletUser->wallet->id)->where('status', 'SUCCESS')->whereDate('created_at', Carbon::today())->count(),
+                'reload_pendding' =>   WalletReload::where('wallet_id', $walletUser->wallet->id)->where('status', 'PENDING')->whereDate('created_at', Carbon::today())->count(),
                 'reaload_uv' => $transferHistoricals,
                 'usersCountry' => $walletUser->country->currencie->name,
                 'realods' => $this->RealodsAdmin,
@@ -192,9 +192,14 @@ class ReloadsUnders extends Component
     public function getWalletReloadsProperty()
     {
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', firm()->country->id)->where('wallet_reloads.status', 'SUCCESS')->select('wallet_reloads.*')->sum('wallet_reloads.amount');
+        $data = [];
+
+        foreach (WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', firm()->country->id)->where('wallet_reloads.status', 'SUCCESS')->select('wallet_reloads.*')->get() as $reload) {
+            $data[] = $reload->amount;
+        }
+
+        return array_sum($data);
     }
 
  

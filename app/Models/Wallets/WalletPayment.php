@@ -18,7 +18,6 @@ use App\Models\Sid\SidUser;
 
 class WalletPayment extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
     use LogsActivity;

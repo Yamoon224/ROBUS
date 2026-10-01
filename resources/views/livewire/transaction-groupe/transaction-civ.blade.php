@@ -92,7 +92,7 @@
                 ];
 
                 $provider = $providerData[$provider_transaction] ?? null;
-                $countrie_indicative = countryById(sabdy()->country->id);
+                $countrie_indicative = App\Models\Custumers\Country::where('id', sabdy()->country->id)->first();
                 $wallet_name = $wallet_name ?? '';
 
             @endphp

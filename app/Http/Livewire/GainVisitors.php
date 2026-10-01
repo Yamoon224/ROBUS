@@ -229,8 +229,12 @@ class GainVisitors extends Component
 
     public function getGainAdminsProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return AdminsCom::whereIsWeb(true)->sum('amount');
+        $data = [];
+        foreach (AdminsCom::whereIsWeb(true)->get() as $bank) {
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getGainAdminsDaysProperty()
@@ -254,23 +258,47 @@ class GainVisitors extends Component
         $todays = Carbon::now();
         $convertions = $todays->toDateString();
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return AdminsCom::whereIsWeb(true)->where('description', 'Commission administrateur')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)->sum('amount');
+        $data = [];
+
+        foreach (AdminsCom::whereIsWeb(true)->where('description', 'Commission administrateur')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)->get() as $bank) {
+
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getGainAdminDateProperty()
     {
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return AdminsCom::whereIsWeb(true)->whereBetween('created_at', [$this->startDate, $this->endDate])->where('description', 'Commission administrateur')->whereStatus('SUCCESS')->sum('amount');
+        $data = [];
+
+
+        $admins = AdminsCom::whereIsWeb(true)->whereBetween('created_at', [$this->startDate, $this->endDate])->where('description', 'Commission administrateur')->whereStatus('SUCCESS')->get();
+
+        foreach ($admins as $bank) {
+            // Accédez à la propriété amount sur chaque objet
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
     }
 
 
     public function getGainAdminStatutProperty()
     {
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return AdminsCom::whereIsWeb(true)->where("status", $this->statusTransferFilter)->where('description', 'Commission administrateur')->sum('amount');
+        $data = [];
+
+
+        $admins = AdminsCom::whereIsWeb(true)->where("status", $this->statusTransferFilter)->where('description', 'Commission administrateur')->get();
+
+        foreach ($admins as $bank) {
+            // Accédez à la propriété amount sur chaque objet
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getGainAdminDrawalTodaysProperty()
@@ -279,8 +307,14 @@ class GainVisitors extends Component
         $todays = Carbon::now();
         $convertions = $todays->toDateString();
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return AdminsCom::whereIsWeb(true)->where('description', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)->sum('amount');
+        $data = [];
+
+        foreach (AdminsCom::whereIsWeb(true)->where('description', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)->get() as $bank) {
+
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getGainAdminTransactionsTodaysProperty()
@@ -289,16 +323,31 @@ class GainVisitors extends Component
         $todays = Carbon::now();
         $convertions = $todays->toDateString();
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return AdminsCom::whereIsWeb(true)->where('description_underdistributer', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)->sum('amount_under');
+        $data = [];
+
+        foreach (AdminsCom::whereIsWeb(true)->where('description_underdistributer', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)->get() as $bank) {
+
+            $data[] = $bank->amount_under;
+        }
+
+        return array_sum($data);
     }
 
     public function getGainAdminTransactionsDaysProperty()
     {
 
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return AdminsCom::whereIsWeb(true)->whereBetween('created_at', [$this->startDate, $this->endDate])->where('description_underdistributer', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->sum('amount_under');
+        $data = [];
+
+        $admins = AdminsCom::whereIsWeb(true)->whereBetween('created_at', [$this->startDate, $this->endDate])->where('description_underdistributer', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->get();
+
+        foreach ($admins as $bank) {
+            // Accédez à la propriété amount sur chaque objet
+            $data[] = $bank->amount_under;
+        }
+
+
+        return array_sum($data);
     }
 
 }

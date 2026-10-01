@@ -111,21 +111,31 @@ class Historicals extends Component
     {
 
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
-            ->whereBetween('wallet_banks.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->select('wallet_banks.*')->where('wallet_banks.status', 'SUCCESS')->sum('wallet_banks.amount');
+            ->whereDate('wallet_banks.created_at', Carbon::today())->select('wallet_banks.*')->where('wallet_banks.status', 'SUCCESS')->get() as $bank) {
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletDepositSumAdminProperty()
     {
 
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_deposits.*')
-            ->whereBetween('wallet_deposits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('wallet_deposits.status', 'SUCCESS')->sum('wallet_deposits.amount');
+            ->whereDate('wallet_deposits.created_at', Carbon::today())->where('wallet_deposits.status', 'SUCCESS')->get() as $deposit) {
+            $data[] = $deposit->amount;
+        }
+
+        return array_sum($data);
     }
 
 
@@ -133,43 +143,63 @@ class Historicals extends Component
     {
 
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_payments.*')
-            ->whereBetween('wallet_payments.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('wallet_payments.status', 'SUCCESS')->sum('wallet_payments.amount');
+            ->whereDate('wallet_payments.created_at', Carbon::today())->where('wallet_payments.status', 'SUCCESS')->get() as $payment) {
+            $data[] = $payment->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletTransactionSumAdminProperty()
     {
 
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_transactions.*')
-            ->whereBetween('wallet_transactions.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('wallet_transactions.status', 'SUCCESS')->sum('wallet_transactions.amount');
+            ->whereDate('wallet_transactions.created_at', Carbon::today())->where('wallet_transactions.status', 'SUCCESS')->get() as $transaction) {
+            $data[] = $transaction->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletInterSumAdminProperty()
     {
 
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_inters.*')
-            ->whereBetween('wallet_inters.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('wallet_inters.status', 'SUCCESS')->sum('wallet_inters.amount');
+            ->whereDate('wallet_inters.created_at', Carbon::today())->where('wallet_inters.status', 'SUCCESS')->get() as $inter) {
+            $data[] = $inter->amount;
+        }
+
+        return array_sum($data);
     }
     public function getWalletPhoneCreditSumAdminProperty()
     {
 
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_phone_credits.*')
-            ->whereBetween('wallet_phone_credits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('wallet_phone_credits.status', 'SUCCESS')->sum('wallet_phone_credits.amount');
+            ->whereDate('wallet_phone_credits.created_at', Carbon::today())->where('wallet_phone_credits.status', 'SUCCESS')->get() as $phone) {
+            $data[] = $phone->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletReloadSumAdminProperty()
@@ -177,84 +207,124 @@ class Historicals extends Component
 
 
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_reloads.*')
-            ->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('wallet_reloads.status', 'SUCCESS')->sum('wallet_reloads.amount');
+            ->whereDate('wallet_reloads.created_at', Carbon::today())->where('wallet_reloads.status', 'SUCCESS')->get() as $reload) {
+            $data[] = $reload->amount;
+        }
+
+        return array_sum($data);
     }
 
     // User
     public function getWalletBanksUserProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
+        $data = [];
+        foreach (WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->where('wallet_banks.created_by', Auth::guard('web')->user()->id)
             ->select('wallet_banks.*')
-            ->whereBetween('wallet_banks.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('wallet_banks.status', 'SUCCESS')->sum('wallet_banks.amount');
+            ->whereDate('wallet_banks.created_at', Carbon::today())->where('wallet_banks.status', 'SUCCESS')->get() as $bank) {
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletDepositsUserProperty()
     {
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
             ->where('wallets.country_id',  Auth::guard('web')->user()->country->id)
             ->select('wallet_deposits.*')
             ->where('wallet_deposits.created_by',  Auth::guard('web')->user()->id)
-            ->whereBetween('wallet_deposits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('wallet_deposits.status', 'SUCCESS')->sum('wallet_deposits.amount');
+            ->whereDate('wallet_deposits.created_at', Carbon::today())->where('wallet_deposits.status', 'SUCCESS')->get() as $deposit) {
+            $data[] = $deposit->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletIntersUserProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
             ->where('wallets.country_id',  Auth::guard('web')->user()->country->id)
             ->select('wallet_inters.*')
             ->where('wallet_inters.created_by',  Auth::guard('web')->user()->id)
-            ->whereBetween('wallet_inters.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('wallet_inters.status', 'SUCCESS')->sum('wallet_inters.amount');
+            ->whereDate('wallet_inters.created_at', Carbon::today())->where('wallet_inters.status', 'SUCCESS')->get() as $inter) {
+            $data[] = $inter->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletPaymentsUserProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
             ->where('wallets.country_id',  Auth::guard('web')->user()->country->id)
             ->select('wallet_payments.*')
             ->where('wallet_payments.created_by',  Auth::guard('web')->user()->id)
-            ->whereBetween('wallet_payments.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('wallet_payments.status', 'SUCCESS')->sum('wallet_payments.amount');
+            ->whereDate('wallet_payments.created_at', Carbon::today())->where('wallet_payments.status', 'SUCCESS')->get() as $payment) {
+            $data[] = $payment->amount;
+        }
+
+        return array_sum($data);
     }
 
 
     public function getWalletTransactionsUserProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
             ->where('wallets.country_id',  Auth::guard('web')->user()->country->id)
             ->select('wallet_transactions.*')
             ->where('wallet_transactions.created_by',  Auth::guard('web')->user()->id)
-            ->whereBetween('wallet_transactions.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('wallet_transactions.status', 'SUCCESS')->sum('wallet_transactions.amount');
+            ->whereDate('wallet_transactions.created_at', Carbon::today())->where('wallet_transactions.status', 'SUCCESS')->get() as $transaction) {
+            $data[] = $transaction->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletPhoneCreditsUserProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
+        $data = [];
+
+
+        foreach (WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_phone_credits.*')
             ->where('wallet_phone_credits.created_by', Auth::guard('web')->user()->id)
-            ->whereBetween('wallet_phone_credits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('wallet_phone_credits.status', 'SUCCESS')->sum('wallet_phone_credits.amount');
+            ->whereDate('wallet_phone_credits.created_at', Carbon::today())->where('wallet_phone_credits.status', 'SUCCESS')->get() as $phone) {
+            $data[] = $phone->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getWalletReloadsUserProperty()
     {
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+        $data = [];
+
+        foreach (WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
             ->where('wallets.country_id',  Auth::guard('web')->user()->country->id)
             ->select('wallet_reloads.*')
             ->where('wallet_reloads.created_by',  Auth::guard('web')->user()->id)
-            ->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('wallet_reloads.status', 'SUCCESS')->sum('wallet_reloads.amount');
+            ->whereDate('wallet_reloads.created_at', Carbon::today())->where('wallet_reloads.status', 'SUCCESS')->get() as $reload) {
+            $data[] = $reload->amount;
+        }
+
+        return array_sum($data);
     }
 
     // Details Transaction User
@@ -263,7 +333,7 @@ class Historicals extends Component
         $transactionError = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_transactions.*')
-            ->where('wallet_transactions.created_by', Auth::guard('web')->user()->id)->where('wallet_transactions.status', 'ERROR')->whereBetween('wallet_transactions.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_transactions.created_by', Auth::guard('web')->user()->id)->where('wallet_transactions.status', 'ERROR')->whereDate('wallet_transactions.created_at', Carbon::today())
             ->count();
         return $transactionError;
     }
@@ -274,7 +344,7 @@ class Historicals extends Component
         $transactionSuccess = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_transactions.*')
-            ->where('wallet_transactions.created_by', Auth::guard('web')->user()->id)->where('wallet_transactions.status', 'SUCCESS')->whereBetween('wallet_transactions.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_transactions.created_by', Auth::guard('web')->user()->id)->where('wallet_transactions.status', 'SUCCESS')->whereDate('wallet_transactions.created_at', Carbon::today())
             ->count();
         return $transactionSuccess;
     }
@@ -285,7 +355,7 @@ class Historicals extends Component
         $transactionPendding = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_transactions.*')
-            ->where('wallet_transactions.created_by', Auth::guard('web')->user()->id)->where('wallet_transactions.status', 'PENDING')->whereBetween('wallet_transactions.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_transactions.created_by', Auth::guard('web')->user()->id)->where('wallet_transactions.status', 'PENDING')->whereDate('wallet_transactions.created_at', Carbon::today())
             ->count();
         return $transactionPendding;
     }
@@ -296,7 +366,7 @@ class Historicals extends Component
         $paimentError = WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_payments.*')
-            ->where('wallet_payments.status', 'ERROR')->where('wallet_payments.created_by', Auth::guard('web')->user()->id)->whereBetween('wallet_payments.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_payments.status', 'ERROR')->where('wallet_payments.created_by', Auth::guard('web')->user()->id)->whereDate('wallet_payments.created_at', Carbon::today())
             ->count();
         return $paimentError;
     }
@@ -307,7 +377,7 @@ class Historicals extends Component
         $paimentSuccess = WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_payments.*')
-            ->where('wallet_payments.status', 'SUCCESS')->where('wallet_payments.created_by', Auth::guard('web')->user()->id)->whereBetween('wallet_payments.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_payments.status', 'SUCCESS')->where('wallet_payments.created_by', Auth::guard('web')->user()->id)->whereDate('wallet_payments.created_at', Carbon::today())
             ->count();
         return $paimentSuccess;
     }
@@ -318,7 +388,7 @@ class Historicals extends Component
         $paimentPendding = WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_payments.*')
-            ->where('wallet_payments.status', 'PENDING')->where('wallet_payments.created_by', Auth::guard('web')->user()->id)->whereBetween('wallet_payments.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_payments.status', 'PENDING')->where('wallet_payments.created_by', Auth::guard('web')->user()->id)->whereDate('wallet_payments.created_at', Carbon::today())
             ->count();
         return $paimentPendding;
     }
@@ -330,7 +400,7 @@ class Historicals extends Component
         $reloadError = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_reloads.*')
-            ->where('wallet_reloads.status', 'ERROR')->where('wallet_reloads.created_by', Auth::guard('web')->user()->id)->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_reloads.status', 'ERROR')->where('wallet_reloads.created_by', Auth::guard('web')->user()->id)->whereDate('wallet_reloads.created_at', Carbon::today())
             ->count();
         return $reloadError;
     }
@@ -342,7 +412,7 @@ class Historicals extends Component
         $reloadSuccess = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_reloads.*')
-            ->where('wallet_reloads.status', 'SUCCESS')->where('wallet_reloads.created_by', Auth::guard('web')->user()->id)->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_reloads.status', 'SUCCESS')->where('wallet_reloads.created_by', Auth::guard('web')->user()->id)->whereDate('wallet_reloads.created_at', Carbon::today())
             ->count();
         return $reloadSuccess;
     }
@@ -353,7 +423,7 @@ class Historicals extends Component
         $reloadPendding = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_reloads.*')
-            ->where('wallet_reloads.status', 'PENDING')->where('wallet_reloads.created_by', Auth::guard('web')->user()->id)->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_reloads.status', 'PENDING')->where('wallet_reloads.created_by', Auth::guard('web')->user()->id)->whereDate('wallet_reloads.created_at', Carbon::today())
             ->count();
         return $reloadPendding;
     }
@@ -365,7 +435,7 @@ class Historicals extends Component
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_banks.*')
             ->where('wallet_banks.created_by', Auth::guard('web')->user()->id)
-            ->where('wallet_banks.status', 'SUCCESS')->whereBetween('wallet_banks.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_banks.status', 'SUCCESS')->whereDate('wallet_banks.created_at', Carbon::today())
             ->count();
         return $virementSuccess;
     }
@@ -377,7 +447,7 @@ class Historicals extends Component
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_banks.*')
             ->where('wallet_banks.created_by', Auth::guard('web')->user()->id)
-            ->where('wallet_banks.status', 'PENDING')->whereBetween('wallet_banks.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_banks.status', 'PENDING')->whereDate('wallet_banks.created_at', Carbon::today())
             ->count();
         return $virementPendding;
     }
@@ -388,7 +458,7 @@ class Historicals extends Component
         $virementError = WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_banks.*')
-            ->where('wallet_banks.created_by', Auth::guard('web')->user()->id)->where('wallet_banks.status', 'ERROR')->whereBetween('wallet_banks.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_banks.created_by', Auth::guard('web')->user()->id)->where('wallet_banks.status', 'ERROR')->whereDate('wallet_banks.created_at', Carbon::today())
             ->count();
         return $virementError;
     }
@@ -399,7 +469,7 @@ class Historicals extends Component
         $interError = WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_inters.*')
-            ->where('wallet_inters.created_by', Auth::guard('web')->user()->id)->where('wallet_inters.status', 'ERROR')->whereBetween('wallet_inters.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_inters.created_by', Auth::guard('web')->user()->id)->where('wallet_inters.status', 'ERROR')->whereDate('wallet_inters.created_at', Carbon::today())
             ->count();
         return $interError;
     }
@@ -410,7 +480,7 @@ class Historicals extends Component
         $interSuccess = WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_inters.*')
-            ->where('wallet_inters.created_by', Auth::guard('web')->user()->id)->where('wallet_inters.status', 'SUCCESS')->whereBetween('wallet_inters.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_inters.created_by', Auth::guard('web')->user()->id)->where('wallet_inters.status', 'SUCCESS')->whereDate('wallet_inters.created_at', Carbon::today())
             ->count();
         return $interSuccess;
     }
@@ -421,7 +491,7 @@ class Historicals extends Component
         $interPendding = WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_inters.*')
-            ->where('wallet_inters.created_by', Auth::guard('web')->user()->id)->where('wallet_inters.status', 'PENDING')->whereBetween('wallet_inters.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_inters.created_by', Auth::guard('web')->user()->id)->where('wallet_inters.status', 'PENDING')->whereDate('wallet_inters.created_at', Carbon::today())
             ->count();
         return $interPendding;
     }
@@ -432,7 +502,7 @@ class Historicals extends Component
         $phoneCreditError = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_phone_credits.*')
-            ->where('wallet_phone_credits.created_by', Auth::guard('web')->user()->id)->where('wallet_phone_credits.status', 'ERROR')->whereBetween('wallet_phone_credits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_phone_credits.created_by', Auth::guard('web')->user()->id)->where('wallet_phone_credits.status', 'ERROR')->whereDate('wallet_phone_credits.created_at', Carbon::today())
             ->count();
         return $phoneCreditError;
     }
@@ -443,7 +513,7 @@ class Historicals extends Component
         $phoneCreditSuccess = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_phone_credits.*')
-            ->where('wallet_phone_credits.created_by', Auth::guard('web')->user()->id)->where('wallet_phone_credits.status', 'SUCCESS')->whereBetween('wallet_phone_credits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_phone_credits.created_by', Auth::guard('web')->user()->id)->where('wallet_phone_credits.status', 'SUCCESS')->whereDate('wallet_phone_credits.created_at', Carbon::today())
             ->count();
         return $phoneCreditSuccess;
     }
@@ -454,7 +524,7 @@ class Historicals extends Component
         $phoneCreditPendding = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_phone_credits.*')
-            ->where('wallet_phone_credits.created_by', Auth::guard('web')->user()->id)->where('wallet_phone_credits.status', 'PENDING')->whereBetween('wallet_phone_credits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_phone_credits.created_by', Auth::guard('web')->user()->id)->where('wallet_phone_credits.status', 'PENDING')->whereDate('wallet_phone_credits.created_at', Carbon::today())
             ->count();
         return $phoneCreditPendding;
     }
@@ -465,7 +535,7 @@ class Historicals extends Component
         $depositError = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_deposits.*')
-            ->where('wallet_deposits.created_by', Auth::guard('web')->user()->id)->where('wallet_deposits.status', 'ERROR')->whereBetween('wallet_deposits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_deposits.created_by', Auth::guard('web')->user()->id)->where('wallet_deposits.status', 'ERROR')->whereDate('wallet_deposits.created_at', Carbon::today())
             ->count();
         return $depositError;
     }
@@ -476,7 +546,7 @@ class Historicals extends Component
         $depositSuccess = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_deposits.*')
-            ->where('wallet_deposits.created_by', Auth::guard('web')->user()->id)->where('wallet_deposits.status', 'SUCCESS')->whereBetween('wallet_deposits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_deposits.created_by', Auth::guard('web')->user()->id)->where('wallet_deposits.status', 'SUCCESS')->whereDate('wallet_deposits.created_at', Carbon::today())
             ->count();
         return $depositSuccess;
     }
@@ -487,7 +557,7 @@ class Historicals extends Component
         $depositPendding = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_deposits.*')
-            ->where('wallet_deposits.created_by', Auth::guard('web')->user()->id)->where('wallet_deposits.status', 'PENDING')->whereBetween('wallet_deposits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_deposits.created_by', Auth::guard('web')->user()->id)->where('wallet_deposits.status', 'PENDING')->whereDate('wallet_deposits.created_at', Carbon::today())
             ->count();
         return $depositPendding;
     }
@@ -498,7 +568,7 @@ class Historicals extends Component
         $transactionError = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_transactions.*')
-            ->where('wallet_transactions.status', 'ERROR')->whereBetween('wallet_transactions.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_transactions.status', 'ERROR')->whereDate('wallet_transactions.created_at', Carbon::today())
             ->count();
         return $transactionError;
     }
@@ -509,7 +579,7 @@ class Historicals extends Component
         $transactionSuccess = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_transactions.*')
-            ->where('wallet_transactions.status', 'SUCCESS')->whereBetween('wallet_transactions.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_transactions.status', 'SUCCESS')->whereDate('wallet_transactions.created_at', Carbon::today())
             ->count();
         return $transactionSuccess;
     }
@@ -520,7 +590,7 @@ class Historicals extends Component
         $transactionPendding = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_transactions.*')
-            ->where('wallet_transactions.status', 'PENDING')->whereBetween('wallet_transactions.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_transactions.status', 'PENDING')->whereDate('wallet_transactions.created_at', Carbon::today())
             ->count();
         return $transactionPendding;
     }
@@ -531,7 +601,7 @@ class Historicals extends Component
         $paimentError = WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_payments.*')
-            ->where('wallet_payments.status', 'ERROR')->whereBetween('wallet_payments.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_payments.status', 'ERROR')->whereDate('wallet_payments.created_at', Carbon::today())
             ->count();
         return $paimentError;
     }
@@ -542,7 +612,7 @@ class Historicals extends Component
         $paimentSuccess = WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_payments.*')
-            ->where('wallet_payments.status', 'SUCCESS')->whereBetween('wallet_payments.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_payments.status', 'SUCCESS')->whereDate('wallet_payments.created_at', Carbon::today())
             ->count();
         return $paimentSuccess;
     }
@@ -553,7 +623,7 @@ class Historicals extends Component
         $paimentPendding = WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_payments.*')
-            ->where('wallet_payments.status', 'PENDING')->whereBetween('wallet_payments.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_payments.status', 'PENDING')->whereDate('wallet_payments.created_at', Carbon::today())
             ->count();
         return $paimentPendding;
     }
@@ -565,7 +635,7 @@ class Historicals extends Component
         $reloadError = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_reloads.*')
-            ->where('wallet_reloads.status', 'ERROR')->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_reloads.status', 'ERROR')->whereDate('wallet_reloads.created_at', Carbon::today())
             ->count();
         return $reloadError;
     }
@@ -577,7 +647,7 @@ class Historicals extends Component
         $reloadSuccess = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_reloads.*')
-            ->where('wallet_reloads.status', 'SUCCESS')->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_reloads.status', 'SUCCESS')->whereDate('wallet_reloads.created_at', Carbon::today())
             ->count();
         return $reloadSuccess;
     }
@@ -588,7 +658,7 @@ class Historicals extends Component
         $reloadPendding = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_reloads.*')
-            ->where('wallet_reloads.status', 'PENDING')->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_reloads.status', 'PENDING')->whereDate('wallet_reloads.created_at', Carbon::today())
             ->count();
         return $reloadPendding;
     }
@@ -599,7 +669,7 @@ class Historicals extends Component
         $virementSuccess = WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_banks.*')
-            ->where('wallet_banks.status', 'SUCCESS')->whereBetween('wallet_banks.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_banks.status', 'SUCCESS')->whereDate('wallet_banks.created_at', Carbon::today())
             ->count();
         return $virementSuccess;
     }
@@ -610,7 +680,7 @@ class Historicals extends Component
         $virementPendding = WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_banks.*')
-            ->where('wallet_banks.status', 'PENDING')->whereBetween('wallet_banks.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_banks.status', 'PENDING')->whereDate('wallet_banks.created_at', Carbon::today())
             ->count();
         return $virementPendding;
     }
@@ -621,7 +691,7 @@ class Historicals extends Component
         $interError = WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_inters.*')
-            ->where('wallet_inters.status', 'ERROR')->whereBetween('wallet_inters.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_inters.status', 'ERROR')->whereDate('wallet_inters.created_at', Carbon::today())
             ->count();
         return $interError;
     }
@@ -632,7 +702,7 @@ class Historicals extends Component
         $interError = WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_inters.*')
-            ->where('wallet_inters.status', 'ERROR')->whereBetween('wallet_inters.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_inters.status', 'ERROR')->whereDate('wallet_inters.created_at', Carbon::today())
             ->count();
         return $interError;
     }
@@ -643,7 +713,7 @@ class Historicals extends Component
         $interSuccess = WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_inters.*')
-            ->where('wallet_inters.status', 'SUCCESS')->whereBetween('wallet_inters.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_inters.status', 'SUCCESS')->whereDate('wallet_inters.created_at', Carbon::today())
             ->count();
         return $interSuccess;
     }
@@ -653,7 +723,7 @@ class Historicals extends Component
         $interPendding = WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_inters.*')
-            ->where('wallet_inters.status', 'PENDING')->whereBetween('wallet_inters.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_inters.status', 'PENDING')->whereDate('wallet_inters.created_at', Carbon::today())
             ->count();
         return $interPendding;
     }
@@ -663,7 +733,7 @@ class Historicals extends Component
         $phoneCreditError = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_phone_credits.*')
-            ->where('wallet_phone_credits.status', 'ERROR')->whereBetween('wallet_phone_credits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_phone_credits.status', 'ERROR')->whereDate('wallet_phone_credits.created_at', Carbon::today())
             ->count();
         return $phoneCreditError;
     }
@@ -673,7 +743,7 @@ class Historicals extends Component
         $phoneCreditSuccess = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_phone_credits.*')
-            ->where('wallet_phone_credits.status', 'SUCCESS')->whereBetween('wallet_phone_credits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_phone_credits.status', 'SUCCESS')->whereDate('wallet_phone_credits.created_at', Carbon::today())
             ->count();
         return $phoneCreditSuccess;
     }
@@ -684,7 +754,7 @@ class Historicals extends Component
         $phoneCreditPendding = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_phone_credits.*')
-            ->where('wallet_phone_credits.status', 'PENDING')->whereBetween('wallet_phone_credits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_phone_credits.status', 'PENDING')->whereDate('wallet_phone_credits.created_at', Carbon::today())
             ->count();
         return $phoneCreditPendding;
     }
@@ -696,7 +766,7 @@ class Historicals extends Component
         $depositError = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_deposits.*')
-            ->where('wallet_deposits.status', 'ERROR')->whereBetween('wallet_deposits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_deposits.status', 'ERROR')->whereDate('wallet_deposits.created_at', Carbon::today())
             ->count();
         return $depositError;
     }
@@ -707,7 +777,7 @@ class Historicals extends Component
         $depositSuccess = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_deposits.*')
-            ->where('wallet_deposits.status', 'SUCCESS')->whereBetween('wallet_deposits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_deposits.status', 'SUCCESS')->whereDate('wallet_deposits.created_at', Carbon::today())
             ->count();
         return $depositSuccess;
     }
@@ -718,7 +788,7 @@ class Historicals extends Component
         $depositPendding = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
             ->select('wallet_deposits.*')
-            ->where('wallet_deposits.status', 'PENDING')->whereBetween('wallet_deposits.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->where('wallet_deposits.status', 'PENDING')->whereDate('wallet_deposits.created_at', Carbon::today())
             ->count();
         return $depositPendding;
     }

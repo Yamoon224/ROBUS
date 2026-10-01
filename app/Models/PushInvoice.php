@@ -7,6 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class PushInvoice extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
 }

@@ -11,7 +11,6 @@ use App\Models\Wallets\WalletBankSend;
 
 class InvoiceBankSend extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
     use LogsActivity;

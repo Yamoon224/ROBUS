@@ -281,8 +281,13 @@ class FirmController extends Controller
     {
         $todays = Carbon::now();
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return WalletTransaction::where('wallet_id', $id)->where('num_wallet',   $user_wallet)->where('status', 'SUCCESS')->sum('amount');
+        $data = [];
+
+        foreach (WalletTransaction::where('wallet_id', $id)->where('num_wallet',   $user_wallet)->where('status', 'SUCCESS')->get() as $transaction) {
+            $data[] = $transaction->amount;
+        }
+
+        return array_sum($data);
     }
     public function show_company(Request $request, int $id)
     {

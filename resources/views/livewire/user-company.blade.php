@@ -86,7 +86,7 @@
                     <tbody>
 
                         @php
-                            $old_operators = $item->operator_services->pluck('operator_id')->toArray();
+                            $old_operators = getOperators($item->id);
                         @endphp
 
                         <tr class="intro-x">

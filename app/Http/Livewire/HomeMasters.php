@@ -220,11 +220,19 @@ class HomeMasters extends Component
 
         $totalAmount = 0;
 
-        // Une seule requête pour tous les membres au lieu d'une par membre
-        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
-            ->whereStatus('SUCCESS')
-            ->whereMonth('created_at', now()->month)
-            ->sum('amount');
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->whereMonth('created_at', now()->month)
+                ->sum('amount');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
 
 
         return $totalAmount;
@@ -237,11 +245,19 @@ class HomeMasters extends Component
 
         $totalAmount = 0;
 
-        // Une seule requête pour tous les membres au lieu d'une par membre
-        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
-            ->whereStatus('SUCCESS')
-            ->whereMonth('created_at', now()->month)
-            ->sum('commission_masters');
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->whereMonth('created_at', now()->month)
+                ->sum('commission_masters');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
 
 
         return $totalAmount;
@@ -254,9 +270,17 @@ class HomeMasters extends Component
         $sidUsers = SidUser::where('master_id',  master()->id)->get();
         $totalcount = 0;
 
-        // Une seule requête pour tous les membres au lieu d'une par membre
-        $totalcount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
-            ->where('status', $status)->count();
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $count = $walletModel::where('wallet_id', $sidUserId)
+                ->where('status', $status)->count();
+
+            if ($count !== null) {
+                $totalcount += $count;
+            }
+        }
 
         return $totalcount;
     }
@@ -268,7 +292,7 @@ class HomeMasters extends Component
 
         $totalCount = $walletModel::where('wallet_id', master()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->whereDate('created_at', Carbon::today())
             ->count();
 
         return $totalCount;
@@ -282,11 +306,19 @@ class HomeMasters extends Component
 
         $totalAmount = 0;
 
-        // Une seule requête pour tous les membres au lieu d'une par membre
-        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
-            ->whereStatus('SUCCESS')
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
-            ->sum('commission_masters');
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->whereDate('created_at', Carbon::today())
+                ->sum('commission_masters');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
 
 
         return $totalAmount;
@@ -301,11 +333,19 @@ class HomeMasters extends Component
 
         $totalAmount = 0;
 
-        // Une seule requête pour tous les membres au lieu d'une par membre
-        $totalAmount += $walletModel::whereIn('wallet_id', $sidUsers->loadMissing('wallet')->pluck('wallet.id')->filter()->all())
-            ->whereStatus('SUCCESS')
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
-            ->sum('amount');
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->whereDate('created_at', Carbon::today())
+                ->sum('amount');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
 
 
         return $totalAmount;
@@ -317,7 +357,7 @@ class HomeMasters extends Component
 
         $totalAmount = $walletModel::where('wallet_id',  master()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->whereDate('created_at', Carbon::today())
             ->sum('amount');
 
         return $totalAmount;

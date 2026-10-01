@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class CountryWeb extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
 
     use HasFactory;
 

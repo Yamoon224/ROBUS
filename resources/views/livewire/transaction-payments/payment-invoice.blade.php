@@ -79,7 +79,7 @@
                         @endif
                         <div class="col-span-6">
                             @php
-                                $countrie_indicative = countryById(107);
+                                $countrie_indicative = App\Models\Custumers\Country::whereId(107)->first();
                             @endphp
                             <label for="paiement_phone_canal_inter" class="form-label">Numero du
                                 telephone(10

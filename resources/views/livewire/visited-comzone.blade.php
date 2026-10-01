@@ -366,7 +366,6 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
-                    @php primeWallets($visites, 'wallet_visit', 'id'); @endphp
                     @forelse($visites as $visite)
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-900 transition-all duration-200 group">
                         {{-- ID --}}

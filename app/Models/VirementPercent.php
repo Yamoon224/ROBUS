@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class VirementPercent extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
 
     use SoftDeletes;

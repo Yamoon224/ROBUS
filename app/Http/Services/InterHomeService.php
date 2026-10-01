@@ -98,7 +98,7 @@ class InterHomeService
 
         $walletDepositQuery = $model::join('wallets', "{$table}.wallet_id", '=', 'wallets.id')
             ->where('wallets.country_id', $userCountryId)
-            ->whereBetween("{$table}.created_at", [Carbon::today(), Carbon::today()->endOfDay()])
+            ->whereDate("{$table}.created_at", Carbon::today())
             ->where("{$table}.status", 'SUCCESS');
 
         if (sabdy()->is_under_distributer) {
@@ -115,7 +115,7 @@ class InterHomeService
         $query = $model::join('wallets', "$table.wallet_id", '=', 'wallets.id')
             // ->where('wallets.country_id', $userCountryId)
             ->where("$table.status", $status)
-            ->whereBetween("$table.created_at", [Carbon::today(), Carbon::today()->endOfDay()]);
+            ->whereDate("$table.created_at", Carbon::today());
 
         if (sabdy()->is_under_distributer) {
             $query->where("$table.wallet_id", sabdy()->wallet->id);
@@ -140,7 +140,7 @@ class InterHomeService
                     Auth::guard('web')->user()->country->id
                 )
                 ->select('wallet_reloads.*')
-                ->whereBetween('wallet_reloads.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+                ->whereDate('wallet_reloads.created_at', Carbon::today())
                 ->select('wallet_reloads.*')
                 ->where('wallet_reloads.status', 'SUCCESS')
                 ->get()

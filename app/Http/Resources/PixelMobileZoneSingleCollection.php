@@ -6,7 +6,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PixelMobileZoneSingleCollection extends JsonResource
 {
-    use \App\Http\Resources\Concerns\BatchesLazyLoads;
     public function toArray($request): array
     {
         $senderService   = optional($this->senderService);

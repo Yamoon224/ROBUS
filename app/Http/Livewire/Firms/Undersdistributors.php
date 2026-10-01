@@ -489,7 +489,7 @@ class Undersdistributors extends Component
     {
 
         $query = $walletModel::join('wallets', $wallet_reloads, 'wallets.id')
-            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
+            ->whereDate($transaction_days, Carbon::today())
             ->where($wallet_status, $status);
 
         if (sabdy()->is_company) {
@@ -505,7 +505,7 @@ class Undersdistributors extends Component
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
+            ->whereDate($transaction_days, Carbon::today())
             ->where($transaction_status, 'SUCCESS');
 
         if (sabdy()->is_under_distributer) {

@@ -122,7 +122,7 @@
         <div class="section">
             <div class="section-title">Destinataire</div>
             @php
-                $wallet_info = walletByNumber($walletReload->account_wallet);
+                $wallet_info = \App\Models\Wallets\Wallet::where('wallet_id', $walletReload->account_wallet)->first();
             @endphp
             <div class="info-grid">
                 <div class="info-item">

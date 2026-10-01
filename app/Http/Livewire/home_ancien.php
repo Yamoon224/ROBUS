@@ -178,7 +178,7 @@ class HomeRobusAncien extends Component
     {
 
 
-        return $walletModel::whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
+        return $walletModel::whereDate($transaction_days, Carbon::today())
             ->count();
     }
 
@@ -189,7 +189,7 @@ class HomeRobusAncien extends Component
 
         $totalCount = $walletModel::where('wallet_id', sabdy()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->whereDate('created_at', Carbon::today())
             ->count();
 
         return $totalCount;
@@ -202,7 +202,7 @@ class HomeRobusAncien extends Component
 
         $totalAmount = $walletModel::where('wallet_id',  sabdy()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->whereDate('created_at', Carbon::today())
             ->sum('amount');
 
         return $totalAmount;
@@ -225,7 +225,7 @@ class HomeRobusAncien extends Component
     public function getTransactionCount($walletModel,  $transaction_days, $wallet_status, $status)
     {
 
-        return $walletModel::whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
+        return $walletModel::whereDate($transaction_days, Carbon::today())
             ->where($wallet_status, $status)
             ->count();
     }
@@ -234,7 +234,7 @@ class HomeRobusAncien extends Component
     public function getTodayTransactionAmountTotal($walletModel, $transaction_days, $wallet_amount)
     {
 
-        return $walletModel::whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
+        return $walletModel::whereDate($transaction_days, Carbon::today())
             ->where(function ($query) {
                 $id_user = sabdy()->id;
                 if (sabdy()->is_distributer) {

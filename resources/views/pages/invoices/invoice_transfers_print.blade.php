@@ -141,7 +141,7 @@
             </div>
 
             @php
-                $wallet_info = walletByNumber($walletTransfers->num_wallet);
+                $wallet_info = \App\Models\Wallets\Wallet::where('wallet_id', $walletTransfers->num_wallet)->first();
             @endphp
             <!-- Tableau des montants -->
             <table class="amount-table">

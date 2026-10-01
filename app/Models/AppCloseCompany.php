@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class AppCloseCompany extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
    
     use HasFactory;
     protected $table = 'app_close_companies';

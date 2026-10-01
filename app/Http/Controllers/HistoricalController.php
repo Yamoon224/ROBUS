@@ -439,8 +439,14 @@ class HistoricalController extends Controller
     public function walletTransactionsDays($wallets, $searchDateBegin, $searchDateEnd)
     {
 
-        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
-        return $wallets::whereBetween('created_at', [$searchDateBegin, $searchDateEnd])->where('wallet_id', firm()->wallet->wallet_id)->where('status', 'SUCCESS')->sum('amount');
+        $data = [];
+
+        foreach ($wallets::whereBetween('created_at', [$searchDateBegin, $searchDateEnd])->where('wallet_id', firm()->wallet->wallet_id)->where('status', 'SUCCESS')->get() as $bank) {
+
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function reporting_drawer_historical()

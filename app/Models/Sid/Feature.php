@@ -9,7 +9,6 @@ use Spatie\Activitylog\LogOptions;
 
 class Feature extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use LogsActivity;
 

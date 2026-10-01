@@ -17,7 +17,6 @@ use App\Models\Sid\SidUser;
 
 class WalletWave extends Model
 {
-    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
 

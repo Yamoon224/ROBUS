@@ -245,7 +245,6 @@ Template Name: Rubick - HTML Admin Dashboard Template
                                             </thead>
                                             <tbody>
                                                 {{-- @if ($bank_historicals->count() > 0) --}}
-                                                @php primeWallets($bank_transfer_sends, 'num_wallet'); @endphp
                                                 @foreach ($bank_transfer_sends as $key => $item)
                                                     <tr>
                                                         <td>
@@ -316,7 +315,7 @@ Template Name: Rubick - HTML Admin Dashboard Template
                                                         </td>
                                                         <td>
                                                             @php
-                                                                $wallet_info = walletByNumber($item->num_wallet);
+                                                                $wallet_info = \App\Models\Wallets\Wallet::where('wallet_id', $item->num_wallet)->first();
                                                             @endphp
                                                             <p href="" class="font-medium whitespace-nowrap">
                                                                 {{ $item->phone ?? null }}
@@ -504,7 +503,6 @@ Template Name: Rubick - HTML Admin Dashboard Template
                                             </thead>
                                             <tbody>
                                                 {{-- @if ($bank_historicals->count() > 0) --}}
-                                                @php primeWallets($bank_transfer_recieveds, 'num_wallet'); @endphp
                                                 @foreach ($bank_transfer_recieveds as $key => $item)
                                                     <tr>
                                                         <td>
@@ -575,7 +573,7 @@ Template Name: Rubick - HTML Admin Dashboard Template
                                                         </td>
                                                         <td>
                                                             @php
-                                                                $wallet_info = walletByNumber($item->num_wallet);
+                                                                $wallet_info = \App\Models\Wallets\Wallet::where('wallet_id', $item->num_wallet)->first();
                                                             @endphp
                                                             <p href="" class="font-medium whitespace-nowrap">
                                                                 {{ $item->phone ?? null }}
@@ -764,7 +762,6 @@ Template Name: Rubick - HTML Admin Dashboard Template
                                             </thead>
                                             <tbody>
                                                 {{-- @if ($bank_historicals->count() > 0) --}}
-                                                @php primeWallets($bank_reloads_send_recieveds, 'account_wallet'); @endphp
                                                 @foreach ($bank_reloads_send_recieveds as $key => $item)
                                                     <tr>
                                                         <td>
@@ -817,7 +814,7 @@ Template Name: Rubick - HTML Admin Dashboard Template
                                                         </td>
                                                         <td>
                                                             @php
-                                                                $wallet_info = walletByNumber($item->account_wallet);
+                                                                $wallet_info = \App\Models\Wallets\Wallet::where('wallet_id', $item->account_wallet)->first();
                                                             @endphp
                                                             <p href="" class="font-medium whitespace-nowrap">
                                                                 {{ $item->account_wallet ?? null }}</p>
@@ -1006,7 +1003,6 @@ Template Name: Rubick - HTML Admin Dashboard Template
                                             </thead>
                                             <tbody>
                                                 {{-- @if ($bank_historicals->count() > 0) --}}
-                                                @php primeWallets($bank_reloads_recieveds, 'account_wallet'); @endphp
                                                 @foreach ($bank_reloads_recieveds as $key => $item)
                                                     <tr>
                                                         <td>
@@ -1059,7 +1055,7 @@ Template Name: Rubick - HTML Admin Dashboard Template
                                                         </td>
                                                         <td>
                                                             @php
-                                                                $wallet_info = walletByNumber($item->account_wallet);
+                                                                $wallet_info = \App\Models\Wallets\Wallet::where('wallet_id', $item->account_wallet)->first();
                                                             @endphp
                                                             <p href="" class="font-medium whitespace-nowrap">
                                                                 {{ $item->account_wallet ?? null }}</p>
