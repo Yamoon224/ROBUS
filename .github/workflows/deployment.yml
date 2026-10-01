@@ -94,6 +94,10 @@ jobs:
           set -euo pipefail
           cd "$DEPLOY_PATH"
 
+          # L'ancien manifeste peut référencer des paquets de dev absents du nouveau
+          # vendor (--no-dev) et empêcher Laravel de démarrer : il est régénéré.
+          rm -f bootstrap/cache/packages.php bootstrap/cache/services.php
+
           $PHP_BIN artisan package:discover --ansi
           $PHP_BIN artisan migrate --force
           $PHP_BIN artisan config:cache
