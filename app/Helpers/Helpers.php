@@ -666,8 +666,7 @@ function sabdyIntegrationVerify()
 if (!function_exists('asset_url')) {
     function asset_url($path)
     {
-        // index.php est à la racine du projet : les fichiers statiques sont sous public/
-        return asset('public/' . ltrim($path, '/'));
+        return asset('/' . $path);
     }
 }
 
