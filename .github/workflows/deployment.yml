@@ -17,7 +17,7 @@ env:
 
 jobs:
   deploy:
-    name: Build et déploiement (hébergement mutualisé)
+    name: Build et déploiement (ROBUS)
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
