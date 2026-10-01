@@ -94,11 +94,13 @@ jobs:
         env:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
+          # Le .htaccess racine du dépôt est celui du dossier parent sur le serveur :
+          # envoyé dans le dossier du site, il crée une boucle de redirection (erreur 500).
           # Rien n'est supprimé ici : .env, storage/ et les fichiers déposés par les
           # utilisateurs dans public/ (KYC, profils, QR codes...) restent en place.
           rsync -az \
             --exclude='.git/' --exclude='.github/' --exclude='node_modules/' \
-            --exclude='.env' --exclude='.env.*' \
+            --exclude='.env' --exclude='.env.*' --exclude='/.htaccess' \
             --exclude='storage/' --exclude='bootstrap/cache/' --exclude='tests/' \
             --exclude='/docs/' --exclude='/*.md' --exclude='/laravel.log' \
             ./ "deploy:$DEPLOY_PATH/"
@@ -117,7 +119,12 @@ jobs:
           rm -f bootstrap/cache/packages.php bootstrap/cache/services.php
 
           artisan package:discover
-          artisan migrate --force
+
+          # Variable RUN_MIGRATIONS=false pour déployer sans lancer les migrations.
+          if [ "${{ vars.RUN_MIGRATIONS || 'true' }}" = "true" ]; then
+            artisan migrate --force
+          fi
+
           artisan config:cache
           artisan route:cache
           artisan view:cache
