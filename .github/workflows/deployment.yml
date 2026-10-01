@@ -131,7 +131,11 @@ jobs:
           # Pas de route:cache : la sérialisation des routes épuise la mémoire (1 Go).
           artisan config:clear
           artisan route:clear
-          artisan view:cache
+          artisan view:clear
+
+          # Précompilation facultative : une vue inutilisée (book-a-table) référence un
+          # composant absent et fait échouer view:cache ; les vues se compilent sinon à la demande.
+          artisan view:cache || echo "view:cache ignoré"
 
           # Les liens symboliques sont parfois interdits en mutualisé : non bloquant.
           artisan storage:link || true
