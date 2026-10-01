@@ -1,0 +1,119 @@
+name: Deployment
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Un seul déploiement à la fois ; un push pendant un déploiement attend la fin du précédent.
+concurrency:
+  group: deployment-production
+  cancel-in-progress: false
+
+env:
+  # À aligner sur le serveur (Settings → Secrets and variables → Actions → Variables).
+  PHP_VERSION: ${{ vars.PHP_VERSION || '8.1' }}
+  PHP_BIN: ${{ vars.PHP_BIN || 'php' }}
+
+jobs:
+  deploy:
+    name: Build et déploiement (hébergement mutualisé)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Le mutualisé n'a ni composer ni npm : tout est construit ici puis envoyé.
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          tools: composer:v2
+          coverage: none
+
+      - name: Dépendances PHP
+        run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress --no-scripts
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Build des assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Préparer la connexion SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "${SSH_PORT:-22}" -H "$SSH_HOST" >> ~/.ssh/known_hosts
+          cat >> ~/.ssh/config <<EOF
+          Host deploy
+            HostName $SSH_HOST
+            User $SSH_USER
+            Port ${SSH_PORT:-22}
+            IdentityFile ~/.ssh/deploy_key
+          EOF
+
+      - name: Mode maintenance
+        env:
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: ssh deploy "cd '$DEPLOY_PATH' && $PHP_BIN artisan down --retry=30"
+
+      - name: Envoi des fichiers
+        env:
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          # Rien n'est supprimé ici : .env, storage/ et les fichiers déposés par les
+          # utilisateurs dans public/ (KYC, profils, QR codes...) restent en place.
+          rsync -az \
+            --exclude='.git/' --exclude='.github/' --exclude='node_modules/' \
+            --exclude='.env' --exclude='.env.*' \
+            --exclude='storage/' --exclude='bootstrap/cache/' --exclude='tests/' \
+            --exclude='/docs/' --exclude='/*.md' --exclude='/laravel.log' \
+            ./ "deploy:$DEPLOY_PATH/"
+
+          # Dossiers de code uniquement : on retire les fichiers supprimés du dépôt.
+          for dir in app config database/migrations resources routes vendor public/build; do
+            rsync -az --delete "./$dir/" "deploy:$DEPLOY_PATH/$dir/"
+          done
+
+      - name: Migrations et caches
+        env:
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          ssh deploy "DEPLOY_PATH='$DEPLOY_PATH' PHP_BIN='$PHP_BIN' bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd "$DEPLOY_PATH"
+
+          $PHP_BIN artisan package:discover --ansi
+          $PHP_BIN artisan migrate --force
+          $PHP_BIN artisan config:cache
+          $PHP_BIN artisan route:cache
+          $PHP_BIN artisan view:cache
+
+          # Les liens symboliques sont parfois interdits en mutualisé : non bloquant.
+          $PHP_BIN artisan storage:link || true
+
+          # Sans effet si aucun worker ne tourne (QUEUE_CONNECTION=sync).
+          $PHP_BIN artisan queue:restart
+          REMOTE
+
+      # Le site repasse en ligne quoi qu'il arrive, même si une étape a échoué.
+      - name: Fin du mode maintenance
+        if: always()
+        env:
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          if [ -f ~/.ssh/deploy_key ]; then
+            ssh deploy "cd '$DEPLOY_PATH' && $PHP_BIN artisan up"
+            rm -f ~/.ssh/deploy_key
+          fi
