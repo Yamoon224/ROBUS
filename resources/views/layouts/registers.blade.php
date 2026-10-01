@@ -16,10 +16,10 @@
     {{-- <script type="module"  src="{{ asset('build/assets/app.13c293c6.js') }}"></script>
     <script type="module" crossorigin src="/boostrap/assets/app2.mjs"></script> --}}
     {{-- <script src="https://js.pusher.com/4.1/pusher.min.js"></script> --}}
-    <script type="module"  src="{{ asset('build/assets/app.c57777cd.js') }}"></script>
+    <script type="module"  src="{{ vite_asset('resources/js/app.js') }}"></script>
     {{-- <script type="module" crossorigin src="{{ asset('boostrap/ssr/app2.mjs') }}"></script> --}}
     {{-- <link rel="stylesheet" href="/build/assets/app2.mjs">
-    <link href="{{ asset('public/build/assets/app.b4f7846d.css') }}" rel="stylesheet">
+    <link href="{{ vite_asset('resources/css/app.css') }}" rel="stylesheet">
     {{-- <style>
         [x-cloak] {
             display: none !important;

@@ -12,7 +12,7 @@
 
     @include('layouts.shared.styles')
 
-    <script type="module" src="{{ asset('public/build/assets/app.fe6fedf5.js') }}"></script>
+    <script type="module" src="{{ vite_asset('resources/js/app.js') }}"></script>
     {{-- <script type="module"  src="{{ asset('public/build/assets/app.0a422702.js') }}"></script>
     {{-- <script type="module" crossorigin src="/boostrap/assets/app.0a422702.js"></script> --}}
     {{-- <link rel="stylesheet" href="/build/assets/app2.mjs">

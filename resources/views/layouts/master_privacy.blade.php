@@ -12,7 +12,7 @@
 
     @include('layouts.shared.styles')
     <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
-    <script type="module"  src="{{ asset('build/assets/app.c57777cd.js') }}"></script>
+    <script type="module"  src="{{ vite_asset('resources/js/app.js') }}"></script>
 
 
     @stack('styles')

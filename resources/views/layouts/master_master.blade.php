@@ -14,7 +14,7 @@
     {{-- <script type="module"  src="{{ asset('build/assets/app.13c293c6.js') }}"></script>
     <script type="module" crossorigin src="/boostrap/assets/app2.mjs"></script> --}}
     <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
-    <script type="module" src="{{ asset('build/assets/app.c57777cd.js') }}"></script>
+    <script type="module" src="{{ vite_asset('resources/js/app.js') }}"></script>
     {{-- @vite('ressource/js/app.js') --}}
 
 

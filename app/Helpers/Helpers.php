@@ -671,6 +671,21 @@ if (!function_exists('asset_url')) {
     }
 }
 
+if (!function_exists('vite_asset')) {
+    function vite_asset($entry)
+    {
+        // Le nom des fichiers compilés change à chaque build : on le lit dans le manifeste
+        static $manifest = null;
+
+        if ($manifest === null) {
+            $path = public_path('build/manifest.json');
+            $manifest = is_file($path) ? (json_decode(file_get_contents($path), true) ?: []) : [];
+        }
+
+        return isset($manifest[$entry]['file']) ? asset_url('build/' . $manifest[$entry]['file']) : '';
+    }
+}
+
 
 function sabdyCompanyVerify()
 {
