@@ -120,8 +120,9 @@ jobs:
 
           artisan package:discover
 
-          # Variable RUN_MIGRATIONS=false pour déployer sans lancer les migrations.
-          if [ "${{ vars.RUN_MIGRATIONS || 'true' }}" = "true" ]; then
+          # Migrations désactivées par défaut : la table `migrations` de production ne
+          # reflète pas le schéma réel. Variable RUN_MIGRATIONS=true pour les réactiver.
+          if [ "${{ vars.RUN_MIGRATIONS || 'false' }}" = "true" ]; then
             artisan migrate --force
           fi
 
