@@ -286,7 +286,7 @@
                                                                   </a>
                                                               @endif
                                                           @elseif ($item->status == 'SUCCESS' && $item->updated_by == Auth::guard('web')->user()->id)
-                                                              @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                              @if (Route::has('bankSends.invoice.print') && Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                   <a target="_bank"
                                                                       href="{{ route('bankSends.invoice.print', $item->id) }}"
                                                                       class="btn btn-primary mr-1 mb-2 btn-sm"
