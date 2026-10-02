@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      migration:
+        description: 'Migration à exécuter seule (nom du fichier sans .php), vide pour aucune'
+        required: false
+        default: ''
 
 # Un seul déploiement à la fois ; un push pendant un déploiement attend la fin du précédent.
 concurrency:
@@ -113,7 +118,13 @@ jobs:
       - name: Migrations et caches
         env:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          MIGRATION: ${{ inputs.migration }}
         run: |
+          if [[ -n "$MIGRATION" && ! "$MIGRATION" =~ ^[A-Za-z0-9_]+$ ]]; then
+            echo "Nom de migration invalide : $MIGRATION" >&2
+            exit 1
+          fi
+
           ~/remote <<'REMOTE'
           # Le nouveau vendor (--no-dev) n'a plus les paquets de dev : manifeste régénéré.
           rm -f bootstrap/cache/packages.php bootstrap/cache/services.php
@@ -124,6 +135,12 @@ jobs:
           # reflète pas le schéma réel. Variable RUN_MIGRATIONS=true pour les réactiver.
           if [ "${{ vars.RUN_MIGRATIONS || 'false' }}" = "true" ]; then
             artisan migrate --force
+          fi
+
+          # Lancement manuel avec une migration nommée : elle seule est exécutée,
+          # les autres migrations en attente ne sont pas touchées.
+          if [ -n "${{ inputs.migration }}" ]; then
+            artisan migrate --force --path="database/migrations/${{ inputs.migration }}.php"
           fi
 
           # Pas de config:cache : le code lit env() directement (APP_URL, APP_NAME...),
