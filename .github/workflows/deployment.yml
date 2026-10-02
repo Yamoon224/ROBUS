@@ -21,10 +21,11 @@ env:
   PHP_BIN: ${{ vars.PHP_BIN || 'php' }}
 
 jobs:
-  deploy:
-    name: Build et déploiement (ROBUS)
+  # Tout est construit et vérifié ici : si ce job échoue, le serveur n'est pas touché.
+  build:
+    name: Build
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
@@ -35,6 +36,15 @@ jobs:
           php-version: ${{ env.PHP_VERSION }}
           tools: composer:v2
           coverage: none
+
+      - name: Vérification de la syntaxe PHP
+        run: |
+          errors=$(find app bootstrap config database routes -name '*.php' -not -path 'bootstrap/cache/*' -print0 \
+            | xargs -0 -n1 -P4 php -l 2>&1 | grep -E 'Parse error|Fatal error|Errors parsing' || true)
+          if [ -n "$errors" ]; then
+            echo "$errors"
+            exit 1
+          fi
 
       - name: Dépendances PHP
         run: composer install --no-dev --optimize-autoloader --no-interaction --no-progress --no-scripts
@@ -48,6 +58,46 @@ jobs:
         run: |
           npm ci
           npm run build
+
+      - name: Préparer la release
+        run: |
+          # Le .htaccess racine du dépôt est celui du dossier parent sur le serveur :
+          # envoyé dans le dossier du site, il crée une boucle de redirection (erreur 500).
+          mkdir -p "$RUNNER_TEMP/release"
+          rsync -a \
+            --exclude='.git/' --exclude='.github/' --exclude='node_modules/' \
+            --exclude='.env' --exclude='.env.*' --exclude='/.htaccess' \
+            --exclude='storage/' --exclude='bootstrap/cache/' --exclude='tests/' \
+            --exclude='/docs/' --exclude='/*.md' --exclude='/laravel.log' \
+            ./ "$RUNNER_TEMP/release/"
+          test -f "$RUNNER_TEMP/release/vendor/autoload.php"
+          test -f "$RUNNER_TEMP/release/public/build/manifest.json"
+          tar -czf "$RUNNER_TEMP/release.tar.gz" -C "$RUNNER_TEMP/release" .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release
+          path: ${{ runner.temp }}/release.tar.gz
+          retention-days: 3
+          compression-level: 0
+
+  # Sans mode maintenance : la release est d'abord envoyée dans un dossier d'attente hors
+  # du site, puis copiée d'un coup sur place. Le site répond pendant tout le déploiement.
+  deploy:
+    name: Deployment
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release
+
+      - name: Extraire la release
+        run: |
+          mkdir release
+          tar -xzf release.tar.gz -C release
 
       - name: Préparer la connexion SSH
         env:
@@ -77,6 +127,7 @@ jobs:
             cat <<'PRELUDE'
           set -euo pipefail
           cd "$DEPLOY_PATH"
+          STAGING="$HOME/.robus_deploy/release"
           artisan() { $PHP_BIN artisan "$@" 2>&1 | sed '/Deprecated: /d'; }
           PRELUDE
             cat
@@ -84,38 +135,13 @@ jobs:
           EOF
           chmod +x ~/remote
 
-      - name: Mode maintenance
-        env:
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+      # Étape lente (réseau) : elle n'écrit que dans le dossier d'attente, le site n'est pas touché.
+      - name: Envoi vers le dossier d'attente
         run: |
-          ~/remote <<'REMOTE'
-          # Un manifeste périmé peut référencer des paquets absents de vendor et
-          # empêcher Laravel de démarrer : supprimé, il est reconstruit tout seul.
-          rm -f bootstrap/cache/packages.php bootstrap/cache/services.php
-          artisan down --retry=30
-          REMOTE
+          ssh deploy 'mkdir -p .robus_deploy/release'
+          rsync -az --delete ./release/ deploy:.robus_deploy/release/
 
-      - name: Envoi des fichiers
-        env:
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
-        run: |
-          # Le .htaccess racine du dépôt est celui du dossier parent sur le serveur :
-          # envoyé dans le dossier du site, il crée une boucle de redirection (erreur 500).
-          # Rien n'est supprimé ici : .env, storage/ et les fichiers déposés par les
-          # utilisateurs dans public/ (KYC, profils, QR codes...) restent en place.
-          rsync -az \
-            --exclude='.git/' --exclude='.github/' --exclude='node_modules/' \
-            --exclude='.env' --exclude='.env.*' --exclude='/.htaccess' \
-            --exclude='storage/' --exclude='bootstrap/cache/' --exclude='tests/' \
-            --exclude='/docs/' --exclude='/*.md' --exclude='/laravel.log' \
-            ./ "deploy:$DEPLOY_PATH/"
-
-          # Dossiers de code uniquement : on retire les fichiers supprimés du dépôt.
-          for dir in app config database/migrations resources routes vendor public/build; do
-            rsync -az --delete "./$dir/" "deploy:$DEPLOY_PATH/$dir/"
-          done
-
-      - name: Migrations et caches
+      - name: Mise en ligne
         env:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           MIGRATION: ${{ inputs.migration }}
@@ -126,6 +152,22 @@ jobs:
           fi
 
           ~/remote <<'REMOTE'
+          test -f "$STAGING/artisan"
+          test -f "$STAGING/vendor/autoload.php"
+
+          # Copie locale, donc rapide : chaque fichier est remplacé d'un coup par rsync.
+          # Rien n'est supprimé ici : .env, storage/ et les fichiers déposés par les
+          # utilisateurs dans public/ (KYC, profils, QR codes...) restent en place.
+          rsync -a "$STAGING/" ./
+
+          # Dossiers de code uniquement : on retire les fichiers supprimés du dépôt.
+          for dir in app config database/migrations resources routes vendor; do
+            rsync -a --delete "$STAGING/$dir/" "./$dir/"
+          done
+
+          # Les anciens fichiers compilés restent une semaine pour les pages déjà ouvertes.
+          find public/build/assets -type f -mtime +7 -delete 2>/dev/null || true
+
           # Le nouveau vendor (--no-dev) n'a plus les paquets de dev : manifeste régénéré.
           rm -f bootstrap/cache/packages.php bootstrap/cache/services.php
 
@@ -161,13 +203,6 @@ jobs:
           artisan queue:restart
           REMOTE
 
-      # Le site repasse en ligne quoi qu'il arrive, même si une étape a échoué.
-      - name: Fin du mode maintenance
+      - name: Nettoyage
         if: always()
-        env:
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
-        run: |
-          if [ -x ~/remote ]; then
-            echo 'artisan up' | ~/remote
-            rm -f ~/.ssh/deploy_key
-          fi
+        run: rm -f ~/.ssh/deploy_key
