@@ -2970,7 +2970,7 @@ class TransactionCiv extends Component
 
                 $commission_invoice = PaymentCost::whereId(2)->first();
 
-                foreach ($offers  as $offer) {
+                foreach ($offers->take(1) as $offer) {
 
                     $offer_amount = $offer->whereId($this->offer_paiement)->first();
 
@@ -3030,7 +3030,7 @@ class TransactionCiv extends Component
 
                 $commission_invoice = PaymentCost::whereId(2)->first();
 
-                foreach ($offers  as $offer) {
+                foreach ($offers->take(1) as $offer) {
 
                     $offer_amount = $offer->whereId($this->offer_paiement)->first();
 

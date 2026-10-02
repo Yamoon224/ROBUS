@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Company extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
 
     protected $table = 'companies';

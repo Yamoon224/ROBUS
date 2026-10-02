@@ -80,50 +80,23 @@ class XbetHistoVis extends Component
     {
 
 
-        $data = [];
-
-        $wallets = WalletXbet::whereIsWeb(true)->where("status", $this->statusFilter)->get();
-
-        foreach ($wallets as $bank) {
-            // Accédez à la propriété amount sur chaque objet
-            $data[] = $bank->amount;
-        }
-
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletXbet::whereIsWeb(true)->where("status", $this->statusFilter)->sum('amount');
     }
     public function getVirementsAllDaysProperty()
     {
 
 
-        $data = [];
-
-        $wallets = WalletXbet::whereIsWeb(true)->get();
-
-        foreach ($wallets as $bank) {
-            // Accédez à la propriété amount sur chaque objet
-            $data[] = $bank->amount;
-        }
-
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletXbet::whereIsWeb(true)->sum('amount');
     }
 
     public function getVirementsDaysProperty()
     {
 
 
-        $data = [];
-
-        $wallets = WalletXbet::whereIsWeb(true)->whereBetween('created_at', [$this->startDate, $this->endDate])->get();
-
-        foreach ($wallets as $bank) {
-            // Accédez à la propriété amount sur chaque objet
-            $data[] = $bank->amount;
-        }
-
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletXbet::whereIsWeb(true)->whereBetween('created_at', [$this->startDate, $this->endDate])->sum('amount');
     }
 
 

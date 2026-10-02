@@ -81,17 +81,8 @@ class WaveHisto extends Component
     {
 
 
-        $data = [];
-
-        $wallets = WalletWave::where("wallet_waves.status", $this->statusFilter)->get();
-
-        foreach ($wallets as $bank) {
-            // Accédez à la propriété amount sur chaque objet
-            $data[] = $bank->amount;
-        }
-
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletWave::where("wallet_waves.status", $this->statusFilter)->sum('amount');
     }
     public function getVirementsAllDaysProperty()
     {
@@ -114,17 +105,8 @@ class WaveHisto extends Component
     {
 
 
-        $data = [];
-
-        $wallets = WalletWave::whereBetween('created_at', [$this->startDate, $this->endDate])->get();
-
-        foreach ($wallets as $bank) {
-            // Accédez à la propriété amount sur chaque objet
-            $data[] = $bank->amount;
-        }
-
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletWave::whereBetween('created_at', [$this->startDate, $this->endDate])->sum('amount');
     }
 
 

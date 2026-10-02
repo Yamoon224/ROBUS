@@ -34,6 +34,45 @@ if (!function_exists('getAppStatus')) {
     }
 }
 
+if (!function_exists('walletByNumber')) {
+    // Wallet par numéro de compte, mémorisé pendant la requête (évite les N+1 dans les tableaux)
+    function walletByNumber($number)
+    {
+        return app(\App\Support\WalletLookup::class)->find('wallet_id', $number);
+    }
+}
+
+if (!function_exists('walletById')) {
+    function walletById($id)
+    {
+        return app(\App\Support\WalletLookup::class)->find('id', $id);
+    }
+}
+
+if (!function_exists('primeWallets')) {
+    // Charge en une requête les wallets de toutes les lignes d'une liste avant la boucle d'affichage
+    function primeWallets($items, string $attribute, string $column = 'wallet_id'): void
+    {
+        if (is_iterable($items)) {
+            app(\App\Support\WalletLookup::class)->prime($items, $attribute, $column);
+        }
+    }
+}
+
+if (!function_exists('countryById')) {
+    // Pays par id, mémorisé pendant la requête : les formulaires le relisent plusieurs fois par rendu
+    function countryById($id)
+    {
+        if ($id === null || $id === '') {
+            return null;
+        }
+
+        return app(\App\Support\RequestMemo::class)->remember('country:' . $id, function () use ($id) {
+            return Country::where('id', $id)->first();
+        });
+    }
+}
+
 if (!function_exists('safeNotifyMany')) {
     function safeNotifyMany($users, Notification $notification): void
     {
@@ -173,11 +212,14 @@ if (!function_exists('getCloseMasterRobusData')) {
 if (!function_exists('sidUserInfo')) {
     function sidUserInfo($id)
     {
-        $user = SidUser::find($id);
-        if ($user) {
-            return $user->firstname . ' ' . $user->lastname;
-        }
-        return null;
+        // Le même opérateur revient sur de nombreuses lignes : une seule lecture par requête
+        return app(\App\Support\RequestMemo::class)->remember('sidUserInfo:' . $id, function () use ($id) {
+            $user = SidUser::find($id);
+            if ($user) {
+                return $user->firstname . ' ' . $user->lastname;
+            }
+            return null;
+        });
     }
 }
 
@@ -242,6 +284,14 @@ function cumulOrderCard()
 
 function cumulTransaction()
 {
+    // Le menu et le menu mobile appellent ce cumul sur chaque page : calculé une seule fois par requête
+    return app(\App\Support\RequestMemo::class)->remember('cumulTransaction:' . optional(sabdy())->id, function () {
+        return cumulTransactionCount();
+    });
+}
+
+function cumulTransactionCount()
+{
     $interHomeService = app(InterHomeService::class);
 
     // Récupérer tous les counts
@@ -287,7 +337,7 @@ function getTransactionCount($walletModel, $status, $wallet_transactions, $trans
 {
 
     $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
-        ->whereDate($transaction_days, Carbon::today())
+        ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
         ->where($wallet_status, $status);
 
     if (sabdy()->is_distributer) {
@@ -397,16 +447,19 @@ function sabdyVerify()
 
 function getCountriesForUser($user)
 {
-    $isDistributor = $user->wallet->sidUser->is_distributor;
+    // Appelé par le menu et le menu mobile de chaque page : une seule lecture par requête
+    return app(\App\Support\RequestMemo::class)->remember('countriesForUser:' . $user->id, function () use ($user) {
+        $isDistributor = $user->wallet->sidUser->is_distributor;
 
-    $countries = Country::whereRobus(true)
-        ->orderBy('name', 'asc');
+        $countries = Country::whereRobus(true)
+            ->orderBy('name', 'asc');
 
-    if ($isDistributor) {
-        $countries->where('id', $user->wallet->country->id);
-    }
+        if ($isDistributor) {
+            $countries->where('id', $user->wallet->country->id);
+        }
 
-    return $countries->get();
+        return $countries->get();
+    });
 }
 
 function getCountriesForVisitorsUser($user)

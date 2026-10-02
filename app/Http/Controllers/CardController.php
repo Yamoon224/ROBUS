@@ -540,115 +540,68 @@ class CardController extends Controller
 
     public function getWalletBankCardCeilingProperty()
     {
-        $data = [];
-        foreach (
-            BankCard::where('created_by', Auth::guard('web')->user()->id)
-                ->whereDate('created_at', Carbon::today())->whereStatus(1)->get() as $bank
-        ) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return BankCard::where('created_by', Auth::guard('web')->user()->id)
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->whereStatus(1)
+            ->sum('amount');
     }
 
 
     public function getWalletBanksCeilingProperty()
     {
-        $data = [];
-        foreach (
-            WalletBank::where('created_by', Auth::guard('web')->user()->id)
-                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $bank
-        ) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletBank::where('created_by', Auth::guard('web')->user()->id)
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('status', 'SUCCESS')
+            ->sum('amount');
     }
 
     public function getWalletDepositsCeilingProperty()
     {
 
-        $data = [];
-
-        foreach (
-            WalletDeposit::where('created_by',  Auth::guard('web')->user()->id)
-                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $deposit
-        ) {
-            $data[] = $deposit->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletDeposit::where('created_by',  Auth::guard('web')->user()->id)
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('status', 'SUCCESS')
+            ->sum('amount');
     }
 
     public function getWalletIntersCeilingProperty()
     {
-        $data = [];
-
-        foreach (
-            WalletInter::where('created_by',  Auth::guard('web')->user()->id)
-                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $inter
-        ) {
-            $data[] = $inter->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletInter::where('created_by',  Auth::guard('web')->user()->id)
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('status', 'SUCCESS')
+            ->sum('amount');
     }
 
     public function getWalletPaymentsCeilingProperty()
     {
-        $data = [];
-
-        foreach (
-            WalletPayment::where('created_by',  Auth::guard('web')->user()->id)
-                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $payment
-        ) {
-            $data[] = $payment->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletPayment::where('created_by',  Auth::guard('web')->user()->id)
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('status', 'SUCCESS')
+            ->sum('amount');
     }
 
 
     public function getWalletTransactionsCeilingProperty()
     {
-        $data = [];
-
-        foreach (
-            WalletTransaction::where('created_by',  Auth::guard('web')->user()->id)
-                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $transaction
-        ) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletTransaction::where('created_by',  Auth::guard('web')->user()->id)
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('status', 'SUCCESS')
+            ->sum('amount');
     }
 
     public function getWalletPhoneCreditsCeilingProperty()
     {
-        $data = [];
-
-
-        foreach (
-            WalletPhoneCredit::where('created_by', Auth::guard('web')->user()->id)
-                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $phone
-        ) {
-            $data[] = $phone->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletPhoneCredit::where('created_by', Auth::guard('web')->user()->id)
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('status', 'SUCCESS')
+            ->sum('amount');
     }
 
     public function getWalletReloadsCeilingProperty()
     {
-        $data = [];
-
-        foreach (
-            WalletReload::where('wallet_reloads.created_by',  Auth::guard('web')->user()->id)
-                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $reload
-        ) {
-            $data[] = $reload->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletReload::where('wallet_reloads.created_by',  Auth::guard('web')->user()->id)
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])->where('status', 'SUCCESS')
+            ->sum('amount');
     }
 }

@@ -15,6 +15,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class WalletPixel extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
     use LogsActivity;

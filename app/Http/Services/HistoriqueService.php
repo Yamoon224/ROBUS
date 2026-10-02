@@ -28,7 +28,7 @@ class HistoriqueService
 
         $totalCount = $walletModel::where('wallet_id', sabdy()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereDate('created_at', Carbon::today())
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->count();
 
         return $totalCount;
@@ -40,7 +40,7 @@ class HistoriqueService
 
         $totalCount = $walletModel::where('wallet_id', propect()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereDate('created_at', Carbon::today())
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->count();
 
         return $totalCount;
@@ -50,7 +50,7 @@ class HistoriqueService
     {
         // Construction de la requête de base
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where($transaction_status, 'SUCCESS')
             ->where($IswebStatus, $isWeb);
 
@@ -66,7 +66,7 @@ class HistoriqueService
     {
         // Construction de la requête de base
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where($transaction_status, 'SUCCESS')
             ->where($IswebStatus, $isWeb);
 
@@ -98,7 +98,7 @@ class HistoriqueService
     {
         // Commencer par construire la requête de base
         $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where($wallet_status, $status)
             ->where($IswebStatus, $isWeb);
 
@@ -137,7 +137,7 @@ class HistoriqueService
     {
         // Commencer par construire la requête de base
         $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where($wallet_status, $status)
             ->where($IswebStatus, $isWeb);
 
@@ -510,13 +510,8 @@ class HistoriqueService
             $wallets->where($walletCreated, '!=', $walletUser->id);
         }
 
-        $wallets = $wallets->get();
-
-        foreach ($wallets as $bank) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return $wallets->sum('amount');
     }
 
     public function getTransactionsAllDaysProperty($walletTransaction, $walletTransactionIsWeb, string $walletCreated, string  $walletUpdated)
@@ -543,13 +538,8 @@ class HistoriqueService
                 ->orWhere($walletCreated, $walletUser->id);
         }
 
-        $wallets = $wallets->get();
-
-        foreach ($wallets as $bank) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return $wallets->sum('amount');
     }
 
     public function getTransactionsDaysProperty($walletTransaction, $beginDate, $endDate, string $walletCreated, string  $walletUpdated)
@@ -574,13 +564,8 @@ class HistoriqueService
             $wallets->where($walletCreated, '!=', $walletUser->id);
         }
 
-        $wallets = $wallets->get();
-
-        foreach ($wallets as $bank) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return $wallets->sum('amount');
     }
 
     public function getTransactionAllCount($walletModel, $wallet_transactions, $transaction_days)
@@ -592,7 +577,7 @@ class HistoriqueService
             $wallet_transactions,
             'wallets.id'
         )
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where(function ($query) {
                 $countryId = sabdy()->country->id;
                 if (sabdy()->is_distributer) {
@@ -735,7 +720,7 @@ class HistoriqueService
             $wallet_transactions,
             'wallets.id'
         )
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where(function ($query) use ($walletMy) {
                 if (sabdy()->is_distributer) {
                     $query->where($walletMy, '=', sabdy()->id);
@@ -762,7 +747,7 @@ class HistoriqueService
     {
 
         return $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where(function ($query) use ($walletMy) {
                 if (sabdy()->is_distributer) {
                     $query->where($walletMy, '=', sabdy()->id);
@@ -852,7 +837,7 @@ class HistoriqueService
 
         return $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
             ->where('wallets.country_id', $countrie)
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where(function ($query) use ($walletMy) {
                 if (sabdy()->is_distributer) {
                     $query->where($walletMy, '=', sabdy()->id);
@@ -893,7 +878,7 @@ class HistoriqueService
 
         $totalAmount = $walletModel::where('wallet_id',  propect()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereDate('created_at', Carbon::today())
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->sum('amount');
 
         return $totalAmount;
@@ -905,7 +890,7 @@ class HistoriqueService
 
         $totalAmount = $walletModel::where('wallet_id',  sabdy()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereDate('created_at', Carbon::today())
+            ->whereBetween('created_at', [Carbon::today(), Carbon::today()->endOfDay()])
             ->sum('amount');
 
         return $totalAmount;
@@ -915,19 +900,12 @@ class HistoriqueService
     {
 
 
-        $data = [];
-
-        foreach (
-            Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-                ->where('sid_users.is_under_distributer', true)
-                ->where('wallets.country_id', 107)
-                ->select('wallets.*')
-                ->get() as $wallet
-        ) {
-            $data[] = $wallet->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
+            ->where('sid_users.is_under_distributer', true)
+            ->where('wallets.country_id', 107)
+            ->select('wallets.*')
+            ->sum('wallets.amount');
     }
 
 
@@ -943,38 +921,24 @@ class HistoriqueService
     {
 
 
-        $data = [];
-
-        foreach (
-            Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-                ->where('sid_users.is_under_distributer', true)
-                ->where('wallets.country_id', $countrie)
-                ->select('wallets.*')
-                ->get() as $wallet
-        ) {
-            $data[] = $wallet->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
+            ->where('sid_users.is_under_distributer', true)
+            ->where('wallets.country_id', $countrie)
+            ->select('wallets.*')
+            ->sum('wallets.amount');
     }
 
     public function getCustumersSumCountrieAdmin($countrie)
     {
 
 
-        $data = [];
-
-        foreach (
-            Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-                ->where('sid_users.is_custumers', true)
-                ->where('wallets.country_id', $countrie)
-                ->select('wallets.*')
-                ->get() as $wallet
-        ) {
-            $data[] = $wallet->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
+            ->where('sid_users.is_custumers', true)
+            ->where('wallets.country_id', $countrie)
+            ->select('wallets.*')
+            ->sum('wallets.amount');
     }
 
 
@@ -982,18 +946,11 @@ class HistoriqueService
     {
 
 
-        $data = [];
-
-        foreach (
-            Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-                ->where('sid_users.is_custumers', true)
-                ->where('wallets.country_id', 107)
-                ->select('wallets.*')
-                ->get() as $wallet
-        ) {
-            $data[] = $wallet->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
+            ->where('sid_users.is_custumers', true)
+            ->where('wallets.country_id', 107)
+            ->select('wallets.*')
+            ->sum('wallets.amount');
     }
 }

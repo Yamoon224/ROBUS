@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Comment extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
 
     protected $table = 'comments';

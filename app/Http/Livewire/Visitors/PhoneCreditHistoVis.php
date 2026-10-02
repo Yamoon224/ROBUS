@@ -100,17 +100,8 @@ class PhoneCreditHistoVis extends Component
     {
 
 
-        $data = [];
-
-        $wallets = WalletPhoneCredit::whereIsWeb(false)->whereBetween('created_at', [$this->startDate, $this->endDate])->get();
-
-        foreach ($wallets as $bank) {
-            // Accédez à la propriété amount sur chaque objet
-            $data[] = $bank->amount;
-        }
-
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletPhoneCredit::whereIsWeb(false)->whereBetween('created_at', [$this->startDate, $this->endDate])->sum('amount');
     }
 
 
@@ -118,51 +109,24 @@ class PhoneCreditHistoVis extends Component
     {
 
 
-        $data = [];
-
-        $wallets = WalletPhoneCredit::whereIsWeb(false)->where("status", $this->statusPhoneFilter)->get();
-
-        foreach ($wallets as $bank) {
-            // Accédez à la propriété amount sur chaque objet
-            $data[] = $bank->amount;
-        }
-
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletPhoneCredit::whereIsWeb(false)->where("status", $this->statusPhoneFilter)->sum('amount');
     }
 
     public function getPhoneCreditsAllDaysProperty()
     {
 
 
-        $data = [];
-
-        $wallets = WalletPhoneCredit::whereIsWeb(true)->get();
-
-        foreach ($wallets as $bank) {
-            // Accédez à la propriété amount sur chaque objet
-            $data[] = $bank->amount;
-        }
-
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletPhoneCredit::whereIsWeb(true)->sum('amount');
     }
 
     public function getPhoneCreditsDaysProperty()
     {
 
 
-        $data = [];
-
-        $wallets = WalletPhoneCredit::whereIsWeb(true)->whereBetween('created_at', [$this->startDate, $this->endDate])->get();
-
-        foreach ($wallets as $bank) {
-            // Accédez à la propriété amount sur chaque objet
-            $data[] = $bank->amount;
-        }
-
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletPhoneCredit::whereIsWeb(true)->whereBetween('created_at', [$this->startDate, $this->endDate])->sum('amount');
     }
 
 

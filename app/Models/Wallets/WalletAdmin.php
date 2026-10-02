@@ -15,6 +15,7 @@ use App\Models\Payments\TransactionCommission;
 
 class WalletAdmin extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
     use LogsActivity;

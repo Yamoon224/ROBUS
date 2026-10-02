@@ -145,32 +145,24 @@ class Employers extends Component
 
     public function getWalletTransactionsCeilingProperty()
     {
-        $data = [];
-
-        foreach (
-            WalletTransaction::join(
-                'wallets',
-                'wallet_transactions.wallet_id',
-                'wallets.id'
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletTransaction::join(
+            'wallets',
+            'wallet_transactions.wallet_id',
+            'wallets.id'
             )
-                ->where(
-                    'wallets.country_id',
-                    firm()->country->id
-                )
-                ->where(
-                    'wallet_transactions.created_by',
-                    firm()->id
-                )
-                ->whereDate('wallet_transactions.created_at', Carbon::today())
-                ->select('wallet_transactions.*')
-                ->where('wallet_transactions.status', 'SUCCESS')
-                ->get()
-            as $transaction
-        ) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
+            ->where(
+            'wallets.country_id',
+            firm()->country->id
+            )
+            ->where(
+            'wallet_transactions.created_by',
+            firm()->id
+            )
+            ->whereBetween('wallet_transactions.created_at', [Carbon::today(), Carbon::today()->endOfDay()])
+            ->select('wallet_transactions.*')
+            ->where('wallet_transactions.status', 'SUCCESS')
+            ->sum('wallet_transactions.amount');
     }
 
 
@@ -716,7 +708,7 @@ class Employers extends Component
     {
 
         $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where($wallet_status, $status);
 
         if (sabdy()->is_company) {
@@ -732,7 +724,7 @@ class Employers extends Component
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
+            ->whereBetween($transaction_days, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where($transaction_status, 'SUCCESS');
 
         if (sabdy()->is_under_distributer) {

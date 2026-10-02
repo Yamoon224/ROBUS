@@ -7,5 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Push extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
 }

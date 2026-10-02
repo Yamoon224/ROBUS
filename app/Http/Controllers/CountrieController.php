@@ -1070,7 +1070,7 @@ class CountrieController extends Controller
             ->where('sid_users.country_id', $countrie)
             ->where('sid_users.is_under_distributer', true)
             ->where('with_merchants.date_removed', '!=', null)
-            ->whereDate('with_merchants.date_removed', Carbon::now())
+            ->whereBetween('with_merchants.date_removed', [Carbon::today(), Carbon::today()->endOfDay()])
             ->sum('with_merchants.amount_with_draw');
     }
 
@@ -1080,7 +1080,7 @@ class CountrieController extends Controller
             ->where('sid_users.country_id', $countrie)
             ->where('sid_users.is_company', true)
             ->where('with_merchants.date_removed', '!=', null)
-            ->whereDate('with_merchants.date_removed', Carbon::now())
+            ->whereBetween('with_merchants.date_removed', [Carbon::today(), Carbon::today()->endOfDay()])
             ->sum('with_merchants.amount_with_draw');
     }
 
@@ -1093,7 +1093,7 @@ class CountrieController extends Controller
         $withMerchant = WithMerchant::join('sid_users', 'sid_users.id', 'with_merchants.sid_user_id')
             ->where('sid_users.country_id', $countrie)
             ->where('with_merchants.date_removed', '!=', null)
-            ->whereDate('with_merchants.date_removed', Carbon::now())
+            ->whereBetween('with_merchants.date_removed', [Carbon::today(), Carbon::today()->endOfDay()])
             ->orderBy('with_merchants.date_removed', 'desc')
             ->select('with_merchants.*')
             ->limit(5)

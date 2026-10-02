@@ -39,6 +39,14 @@
                         </thead>
                         <tbody>
                             @if ($users->count() > 0)
+                                @php
+                                    // Soldes de tous les utilisateurs de la liste en une seule requête
+                                    $soldes = \App\Models\Wallets\Wallet::withTrashed()
+                                        ->whereIn('sid_user_id', collect($users instanceof \Illuminate\Contracts\Pagination\Paginator ? $users->items() : $users)->pluck('id'))
+                                        ->groupBy('sid_user_id')
+                                        ->selectRaw('sid_user_id, SUM(amount) as total')
+                                        ->pluck('total', 'sid_user_id');
+                                @endphp
                                 @foreach ($users as $key => $item)
                                     <tr class="intro-x">
                                         <td>
@@ -101,7 +109,7 @@
                                         </td>
                                         <td>
                                             @php
-                                                $solde = $item->wallet()->sum('amount');
+                                                $solde = $soldes[$item->id] ?? 0;
                                             @endphp
 
                                             @if ($solde >= 100000)

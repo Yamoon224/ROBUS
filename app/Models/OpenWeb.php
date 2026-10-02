@@ -7,5 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class OpenWeb extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
 }

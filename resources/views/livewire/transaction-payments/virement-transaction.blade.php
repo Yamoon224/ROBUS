@@ -97,7 +97,7 @@
                 <div class="modal-body grid grid-cols-12 gap-4 gap-y-3 mt-space-padding">
 
                     @php
-                        $countrie_indicative = App\Models\Custumers\Country::whereId($country_inter_robus)->first();
+                        $countrie_indicative = countryById($country_inter_robus);
                     @endphp
                     <div class="col-span-6">
                         <label for="phone_user_inter" class="form-label">Numero<span class="text-danger">
@@ -270,7 +270,7 @@
             @if (!is_null($country_inter_robus))
                 <div class="modal-body grid grid-cols-12 gap-4 gap-y-3 mt-space-padding">
                     @php
-                        $countrie_indicative = App\Models\Custumers\Country::whereId($country_inter_robus)->first();
+                        $countrie_indicative = countryById($country_inter_robus);
                     @endphp
                     <div class="col-span-6">
                         <label for="phone_user_inter" class="form-label">Numero<span class="text-danger">

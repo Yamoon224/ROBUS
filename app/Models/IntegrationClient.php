@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 
 class IntegrationClient extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
 

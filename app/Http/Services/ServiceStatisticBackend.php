@@ -21,7 +21,7 @@ class ServiceStatisticBackend
             ->when(sabdy()->is_com_zone, function ($query) {
                 return $this->scopeComZoneLinkedUsers($query);
             })
-            ->whereDate($walletCreateAt, Carbon::today())
+            ->whereBetween($walletCreateAt, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where($walletStatus, 'SUCCESS')
             ->sum($walletCommission);
 
@@ -38,7 +38,7 @@ class ServiceStatisticBackend
             ->when(sabdy()->is_com_zone, function ($query) {
                 return $this->scopeComZoneLinkedUsers($query);
             })
-            ->whereDate($walletCreateAt, Carbon::today())
+            ->whereBetween($walletCreateAt, [Carbon::today(), Carbon::today()->endOfDay()])
             ->where($walletStatus, 'SUCCESS')
             ->sum($walletCommission);
 
@@ -57,18 +57,23 @@ class ServiceStatisticBackend
         $userCountryId = Auth::guard('web')->user()->country->id;
         $tableName = (new $walletClass)->getTable();
 
+        // Une seule requête groupée par mois au lieu de 12 parcours de table
+        $sums = $walletClass::join('wallets', $walletTransaction, '=', 'wallets.id')
+            ->where('wallets.country_id', $userCountryId)
+            ->when(sabdy()->is_under_distributer, function ($query) use ($walletCreatedBy) {
+                return $query->where($walletCreatedBy, sabdy()->id);
+            })
+            ->when(sabdy()->is_com_zone, function ($query) {
+                return $this->scopeComZoneLinkedUsers($query);
+            })
+            ->where($walletStatus, 'SUCCESS')
+            ->whereNotNull($walletCreated)
+            ->selectRaw("MONTH($walletCreated) as stat_month, SUM($tableName.$field) as total")
+            ->groupBy('stat_month')
+            ->pluck('total', 'stat_month');
+
         for ($month = 1; $month <= 12; $month++) {
-            $reloads[$month] = $walletClass::join('wallets', $walletTransaction, '=', 'wallets.id')
-                ->where('wallets.country_id', $userCountryId)
-                ->when(sabdy()->is_under_distributer, function ($query) use ($walletCreatedBy) {
-                    return $query->where($walletCreatedBy, sabdy()->id);
-                })
-                ->when(sabdy()->is_com_zone, function ($query) {
-                    return $this->scopeComZoneLinkedUsers($query);
-                })
-                ->where($walletStatus, 'SUCCESS')
-                ->where($walletCreated, 'like', '%-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-%')
-                ->sum("$tableName.$field");
+            $reloads[$month] = 0 + ($sums[$month] ?? 0);
         }
 
         return array_values($reloads);

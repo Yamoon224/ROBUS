@@ -30,6 +30,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class SidUser extends Authenticatable
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use Notifiable, SoftDeletes, HasFactory, HasApiTokens;
     // use Impersonate
     use LogsActivity;
@@ -156,13 +157,16 @@ class SidUser extends Authenticatable
      */
     public function get_role()
     {
-        return DB::table('sid_model_has_roles')
+        // Mémorisé sur l'instance : les listes l'appellent deux fois par ligne
+        return $this->roleRows ??= DB::table('sid_model_has_roles')
             ->join('sid_users', 'sid_users.id', '=', 'sid_model_has_roles.model_id')
             ->join('sid_roles', 'sid_model_has_roles.role_id', '=', 'sid_roles.id')
             ->where('sid_users.id', $this->id)
             ->select('sid_roles.name', 'sid_roles.id')
             ->get();
     }
+
+    protected $roleRows = null;
 
     protected $hidden = [
         'password',

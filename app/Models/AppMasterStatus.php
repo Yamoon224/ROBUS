@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AppMasterStatus extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
 
     protected $table = 'app_master_statuses';

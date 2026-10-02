@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Balance extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     protected $table = 'balances';
 

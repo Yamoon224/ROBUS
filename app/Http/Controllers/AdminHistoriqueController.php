@@ -914,13 +914,8 @@ class AdminHistoriqueController extends Controller
     public function getWalletBankSumCommissionsProperty($id)
     {
 
-        $data = [];
-
-        foreach (WalletBank::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletBank::where('wallet_id', $id)->where('status', 'SUCCESS')->sum('commissions');
     }
 
     public function getWalletBankSumProperty($id, $startDate = null, $endDate = null)
@@ -964,51 +959,31 @@ class AdminHistoriqueController extends Controller
         $todays = Carbon::now();
         $formattedDate = today();
 
-        $data = [];
-
-        foreach ($wallet::where('updated_by', $id)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return $wallet::where('updated_by', $id)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->sum('amount');
     }
 
     public function getWalletDepositSumCommissionsProperty($id)
     {
 
-        $data = [];
-
-        foreach (WalletDeposit::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $deposit) {
-            $data[] = $deposit->commissions;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletDeposit::where('wallet_id', $id)->where('status', 'SUCCESS')->sum('commissions');
     }
 
 
     public function getWalletPaymentSumCommissionsProperty($id)
     {
 
-        $data = [];
-
-        foreach (WalletPayment::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $payment) {
-            $data[] = $payment->commissions;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletPayment::where('wallet_id', $id)->where('status', 'SUCCESS')->sum('commissions');
     }
 
     public function getWalletTransactionSumCommissionsProperty($id)
     {
 
 
-        $data = [];
-
-        foreach (WalletTransaction::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->commissions;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletTransaction::where('wallet_id', $id)->where('status', 'SUCCESS')->sum('commissions');
     }
 
 
@@ -1016,37 +991,22 @@ class AdminHistoriqueController extends Controller
     {
 
 
-        $data = [];
-
-        foreach (WalletInter::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $inter) {
-            $data[] = $inter->commissions;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletInter::where('wallet_id', $id)->where('status', 'SUCCESS')->sum('commissions');
     }
 
     public function getWalletPhoneCreditSumCommissionsProperty($id)
     {
 
-        $data = [];
-
-        foreach (WalletPhoneCredit::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $phone) {
-            $data[] = $phone->commissions;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletPhoneCredit::where('wallet_id', $id)->where('status', 'SUCCESS')->sum('commissions');
     }
 
     public function getWalletReloadSumCommissionsProperty($id)
     {
 
-        $data = [];
-
-        foreach (WalletReload::where('account_wallet', $id)->where('status', 'SUCCESS')->get() as $reload) {
-            $data[] = $reload->commissions;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletReload::where('account_wallet', $id)->where('status', 'SUCCESS')->sum('commissions');
     }
 
     // User 
@@ -1073,12 +1033,8 @@ class AdminHistoriqueController extends Controller
         $todays = Carbon::now();
         $convertions = $todays->toDateString();
 
-        $data = [];
-        foreach (WalletReload::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletReload::where('wallet_id', $id)->where('status', 'SUCCESS')->sum('amount');
     }
 
     public function walletRelaodSumReceivedUserProperty($id, $startDate = null, $endDate = null)
@@ -2387,13 +2343,8 @@ class AdminHistoriqueController extends Controller
     public function walletTransactionSumDays($searchDateBegin, $searchDateEnd)
     {
 
-        $data = [];
-
-        foreach (WalletInter::whereBetween('created_at', [$searchDateBegin, $searchDateEnd])->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletInter::whereBetween('created_at', [$searchDateBegin, $searchDateEnd])->where('status', 'SUCCESS')->sum('amount');
     }
 
 
@@ -2420,14 +2371,8 @@ class AdminHistoriqueController extends Controller
     public function walletTransactionsDays($wallets, $searchDateBegin, $searchDateEnd)
     {
 
-        $data = [];
-
-        foreach ($wallets::whereBetween('created_at', [$searchDateBegin, $searchDateEnd])->where('status', 'SUCCESS')->get() as $bank) {
-
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return $wallets::whereBetween('created_at', [$searchDateBegin, $searchDateEnd])->where('status', 'SUCCESS')->sum('amount');
     }
 
 
@@ -2451,12 +2396,8 @@ class AdminHistoriqueController extends Controller
     public function walletCardDepositSumUserDaysProperty($id)
     {
 
-        $data = [];
-        foreach (WalletDeposit::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletDeposit::where('wallet_id', $id)->where('status', 'SUCCESS')->sum('amount');
     }
 
 

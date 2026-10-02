@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AppComZoneStatus extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
 
     protected $table = 'app_com_zone_statuses';

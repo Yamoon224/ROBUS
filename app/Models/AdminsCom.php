@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AdminsCom extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
 

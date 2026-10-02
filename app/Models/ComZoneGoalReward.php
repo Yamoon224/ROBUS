@@ -9,6 +9,7 @@ use App\Models\Sid\SidUser;
 
 class ComZoneGoalReward extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
 
     use HasFactory;
 

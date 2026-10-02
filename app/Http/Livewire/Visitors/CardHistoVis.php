@@ -103,33 +103,15 @@ class CardHistoVis extends Component
     {
 
 
-        $data = [];
-
-        $wallets = WalletDeposit::whereIsWeb(true)->where("status", $this->statusFilter)->get();
-
-        foreach ($wallets as $bank) {
-            // Accédez à la propriété amount sur chaque objet
-            $data[] = $bank->amount;
-        }
-
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletDeposit::whereIsWeb(true)->where("status", $this->statusFilter)->sum('amount');
     }
     public function getDepositAllDaysProperty()
     {
 
 
-        $data = [];
-
-        $wallets = WalletDeposit::whereIsWeb(true)->get();
-
-        foreach ($wallets as $bank) {
-            // Accédez à la propriété amount sur chaque objet
-            $data[] = $bank->amount;
-        }
-
-
-        return array_sum($data);
+        // Somme calculée par la base au lieu de charger toutes les lignes en mémoire
+        return WalletDeposit::whereIsWeb(true)->sum('amount');
     }
 
     public function getWalletDepositsDaysProperty()

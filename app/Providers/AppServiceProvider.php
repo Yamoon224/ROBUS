@@ -20,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(CeldingValeurService::class, function () {
             return new CeldingValeurService();
         });
+
+        $this->app->scoped(\App\Support\WalletLookup::class);
+        $this->app->scoped(\App\Support\RequestMemo::class);
     }
 
     /**

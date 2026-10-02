@@ -127,6 +127,7 @@
                                         </thead>
                                         <tbody>
                                             @if ($unlocks->count() > 0)
+                                                @php primeWallets($unlocks, 'num_wallet'); @endphp
                                                 @foreach ($unlocks as $item)
                                                     <tr class="intro-x">
                                                         <td>
@@ -181,7 +182,7 @@
                                                         <td class="w-40">
 
                                                             @php
-                                                                $wallet_info = \App\Models\Wallets\Wallet::where('wallet_id' , $item->num_wallet)->first();
+                                                                $wallet_info = walletByNumber($item->num_wallet);
                                                             @endphp
                                                            
                                                             <p class="font-medium whitespace-nowrap">

@@ -9,6 +9,7 @@ use App\Models\Sid\SidUser;
 
 class MessageTransaction extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
     protected $table = 'message_transactions';

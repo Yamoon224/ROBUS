@@ -10,6 +10,7 @@ use Spatie\Activitylog\LogOptions;
 
 class Permissions extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use LogsActivity;
 
     protected $table = 'sid_permissions';

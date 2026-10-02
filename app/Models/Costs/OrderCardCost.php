@@ -15,6 +15,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class OrderCardCost extends Model
 {
+    use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
     use LogsActivity;
