@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>FACTURE - {{ $walletReload->paymentReload->transaction_id ?? 'N/A' }}</title>
 
-    <link rel="stylesheet" href="{{ asset_url('css/invoice.css') }}?v={{ filemtime(public_path('css/invoice.css')) }}" />
+    <link rel="stylesheet" href="{{ asset_url('css/invoice.css') }}" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="UTF-8">
 

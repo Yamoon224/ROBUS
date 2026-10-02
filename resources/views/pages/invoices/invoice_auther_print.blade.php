@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <title>FACTURE - {{ $walletTransaction->transaction->transaction_id ?? 'N/A' }}</title>
 
-    <link rel="stylesheet" href="{{ asset_url('css/invoice.css') }}?v={{ filemtime(public_path('css/invoice.css')) }}" />
+    <link rel="stylesheet" href="{{ asset_url('css/invoice.css') }}" />
 
 </head>
 

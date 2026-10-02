@@ -6,10 +6,6 @@
 @endphp
 
 <div>
-    <!-- inject:js -->
-    <script src="{{ asset_url('/dist/js/app.js') }}"></script>
-    <script src="{{ asset_url('/css/app.css') }}"></script>
-    {{-- <script src="{{ asset_url('/css/appModal.css') }}"></script> --}}
 
 
     <h2 class="text-lg font-medium truncate mr-6 mt-6">
@@ -1353,8 +1349,8 @@
         });
     });
 
-    // Au chargement, détecter l'onglet actif
-    $(document).ready(function() {
+    // Au chargement, détecter l'onglet actif (jQuery est chargé en fin de page par le layout)
+    document.addEventListener('DOMContentLoaded', function() {
         // Sauvegarder l'onglet actif initial
         const $activeNav = $('.nav-link.active').first();
         if ($activeNav.length) {

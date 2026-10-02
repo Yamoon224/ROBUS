@@ -5,7 +5,7 @@
        <title>FACTURE - {{ $order->transaction->transaction_id ?? 'N/A' }}</title>
     
     <link rel="stylesheet" 
-      href="{{ asset_url('css/invoice.css') }}?v={{ filemtime(public_path('css/invoice.css')) }}" />
+      href="{{ asset_url('css/invoice.css') }}" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="UTF-8">
  

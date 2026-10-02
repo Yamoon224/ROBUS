@@ -1,9 +1,5 @@
 <div>
 
-    <!-- inject:js -->
-    <script src="{{ asset_url('/js/app.js') }}"></script>
-    <script src="{{ asset_url('/css/app.css') }}"></script>
-    <script src="{{ asset_url('/css/appModal.css') }}"></script>
 
     <div class="intro-y col-span-12 lg:col-span-12">
 

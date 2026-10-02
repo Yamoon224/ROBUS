@@ -464,15 +464,10 @@ function getCountriesForUser($user)
 
 function getCountriesForVisitorsUser($user)
 {
-    $isDistributor = $user->wallet->sidUser->is_distributor;
-
-    $countries = Country::whereRobus(true)->whereId(107)->first();
-
-    if ($isDistributor) {
-        $countries->where('id', $user->wallet->country->id);
-    }
-
-    return $countries;
+    // Appelé par le menu et le menu mobile de chaque page : une seule lecture par requête
+    return app(\App\Support\RequestMemo::class)->remember('countriesForVisitorsUser', function () {
+        return Country::whereRobus(true)->whereId(107)->first();
+    });
 }
 
 if (!function_exists('appDispoRobus')) {
@@ -720,7 +715,16 @@ if (!function_exists('asset_url')) {
     function asset_url($path)
     {
         // index.php est à la racine du projet : les fichiers statiques sont sous public/
-        return asset('public/' . ltrim($path, '/'));
+        $path = ltrim((string) $path, '/');
+        $url = asset('public/' . $path);
+
+        // ?v=<date de modification> : le navigateur garde le fichier en cache (voir
+        // public/.htaccess) et le recharge dès qu'il change.
+        if ($path !== '' && ! str_contains($path, '?') && is_file($file = public_path($path))) {
+            $url .= '?v=' . filemtime($file);
+        }
+
+        return $url;
     }
 }
 
