@@ -3,17 +3,19 @@
     rel="stylesheet">
 
 <!-- Plugin css for this page -->
-<link href="{{ asset_url('dist/plugins/toastr/css/toastr.min.css') }}?v={{ filemtime(public_path('dist/plugins/toastr/css/toastr.min.css')) }}" 
+<link href="{{ asset_url('dist/plugins/toastr/css/toastr.min.css') }}" 
       rel="stylesheet">
 
 <!-- Layout styles -->
 {{-- <link rel="stylesheet" 
-      href="{{ asset_url('css/style.css') }}?v={{ filemtime(public_path('css/style.css')) }}"> --}}
+      href="{{ asset_url('css/style.css') }}"> --}}
 
 <!-- App styles -->
 <link rel="stylesheet" 
-      href="{{ asset_url('dist/css/app.css') }}?v={{ filemtime(public_path('dist/css/app.css')) }}" />
+      href="{{ asset_url('dist/css/app.css') }}" />
 
 <!-- Animation styles -->
 <link rel="stylesheet" 
-      href="{{ asset_url('web/css/animation.css') }}?v={{ filemtime(public_path('web/css/animation.css')) }}">
+      href="{{ asset_url('web/css/animation.css') }}">
+
+@include('layouts.partials.page_frame')

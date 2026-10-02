@@ -33,3 +33,4 @@
       }
     }
   </style>
+@include('layouts.partials.page_frame')

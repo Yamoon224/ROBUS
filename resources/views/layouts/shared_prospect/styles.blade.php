@@ -21,3 +21,5 @@
 {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
 
 <!-- BEGIN: Custom CSS-->
+
+@include('layouts.partials.page_frame')

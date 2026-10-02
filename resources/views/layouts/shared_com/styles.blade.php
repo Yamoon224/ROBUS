@@ -15,3 +15,5 @@
 <!-- End layout styles -->
 <link rel="stylesheet" href="{{ asset_url('css/comzones/app.css') }}" />
 <!-- END: Page CSS-->
+
+@include('layouts.partials.page_frame')
