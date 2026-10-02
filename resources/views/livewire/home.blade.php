@@ -184,24 +184,81 @@
             display: grid;
             gap: 1.5rem;
             grid-template-columns: minmax(0, 1fr);
-            align-items: start;
         }
 
+        /* Panneaux de même hauteur sur une rangée : aucun vide entre les blocs */
         .rb-amounts {
             display: grid;
             gap: 1.5rem;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .rb-amounts .rb-panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rb-amounts .rb-rows {
+            flex: 1;
+        }
+
+        .rb-status-cols {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+            gap: 0.5rem 3rem;
             align-items: start;
+        }
+
+        @media (min-width: 1024px) {
+            .rb-amounts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+
+        /* Transferts par opérateur : une cellule par opérateur */
+        .rb-ops {
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+            gap: 1rem 1.5rem;
+        }
+
+        .rb-ops div {
+            border-left: 2px solid var(--rb-line);
+            padding-left: 0.75rem;
+            min-width: 0;
+        }
+
+        .rb-ops dt {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8125rem;
+            color: var(--rb-muted);
+        }
+
+        .rb-ops dd {
+            margin: 0.25rem 0 0;
+            font-size: 1.0625rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .rb-ops dd small {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: var(--rb-muted);
+        }
+
+        .rb-ops .rb-total {
+            border-left-color: var(--rb-brand);
+        }
+
+        .rb-ops .rb-total dt {
+            color: var(--rb-ink);
         }
 
         @media (max-width: 999px) {
             .rb-balance--main { grid-column: 1 / -1; }
-        }
-
-        @media (min-width: 1100px) {
-            .rb-grid {
-                grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-            }
         }
 
         /* Statuts du jour */
@@ -271,7 +328,8 @@
         /* Montants */
         .rb-rows {
             margin: 0;
-            display: grid;
+            display: flex;
+            flex-direction: column;
         }
 
         .rb-rows div {
@@ -307,6 +365,7 @@
         }
 
         .rb-rows .rb-total {
+            margin-top: auto;
             border-bottom: 0;
             padding-bottom: 0;
         }
@@ -438,57 +497,62 @@
     <div class="rb-grid">
         <section class="rb-panel">
             <h3>Opérations par statut</h3>
-            <table class="rb-status">
-                <thead>
-                    <tr>
-                        <th scope="col">Service</th>
-                        <th scope="col"><span class="rb-ok">Succès</span></th>
-                        <th scope="col"><span class="rb-wait">Attente</span></th>
-                        <th scope="col"><span class="rb-fail">Échec</span></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($statuses as [$label, $ok, $wait, $fail])
-                        <tr>
-                            <th scope="row">{{ $label }}</th>
-                            <td class="{{ empty($ok) ? 'rb-zero' : 'rb-ok' }}">{{ $ok ?? 0 }}</td>
-                            <td class="{{ empty($wait) ? 'rb-zero' : 'rb-wait' }}">{{ $wait ?? 0 }}</td>
-                            <td class="{{ empty($fail) ? 'rb-zero' : 'rb-fail' }}">{{ $fail ?? 0 }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+            <div class="rb-status-cols">
+                @foreach (array_chunk($statuses, 6) as $chunk)
+                    <table class="rb-status">
+                        <thead>
+                            <tr>
+                                <th scope="col">Service</th>
+                                <th scope="col"><span class="rb-ok">Succès</span></th>
+                                <th scope="col"><span class="rb-wait">Attente</span></th>
+                                <th scope="col"><span class="rb-fail">Échec</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($chunk as [$label, $ok, $wait, $fail])
+                                <tr>
+                                    <th scope="row">{{ $label }}</th>
+                                    <td class="{{ empty($ok) ? 'rb-zero' : 'rb-ok' }}">{{ $ok ?? 0 }}</td>
+                                    <td class="{{ empty($wait) ? 'rb-zero' : 'rb-wait' }}">{{ $wait ?? 0 }}</td>
+                                    <td class="{{ empty($fail) ? 'rb-zero' : 'rb-fail' }}">{{ $fail ?? 0 }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endforeach
+            </div>
             <p class="rb-note">Remboursements Mobile Zone : {{ $pixel_mobile_zone_refund ?? 0 }}</p>
         </section>
 
-        <div class="rb-amounts">
-            <section class="rb-panel">
-                <h3>Transferts par opérateur <span class="rb-unit">({{ $currency }})</span></h3>
-                <dl class="rb-rows">
-                    @foreach ($operators as [$name, $color, $amount, $count])
-                        <div>
-                            <dt><span class="rb-swatch" style="background: {{ $color }}"></span>{{ $name }}</dt>
-                            <dd>
-                                {{ $amount }}
-                                @if ($count !== null)
-                                    <small>{{ $count }} transaction(s)</small>
-                                @endif
-                            </dd>
-                        </div>
-                    @endforeach
+        <section class="rb-panel">
+            <h3>Transferts par opérateur <span class="rb-unit">({{ $currency }})</span></h3>
+            <dl class="rb-ops">
+                @foreach ($operators as [$name, $color, $amount, $count])
                     <div>
-                        <dt>Directs (Orange, MTN, Moov, Wave)</dt>
+                        <dt><span class="rb-swatch" style="background: {{ $color }}"></span>{{ $name }}</dt>
                         <dd>
-                            {{ $amount_transaction_direct_days ?? 0 }}
-                            <small>{{ $count_transaction_direct_days ?? 0 }} transaction(s)</small>
+                            {{ $amount }}
+                            @if ($count !== null)
+                                <small>{{ $count }} transaction(s)</small>
+                            @endif
                         </dd>
                     </div>
-                    <div class="rb-total">
-                        <dt>Total des transferts</dt>
-                        <dd>{{ $amount_transaction_days ?? 0 }}</dd>
-                    </div>
-                </dl>
-            </section>
+                @endforeach
+                <div>
+                    <dt>Directs (Orange, MTN, Moov, Wave)</dt>
+                    <dd>
+                        {{ $amount_transaction_direct_days ?? 0 }}
+                        <small>{{ $count_transaction_direct_days ?? 0 }} transaction(s)</small>
+                    </dd>
+                </div>
+                <div class="rb-total">
+                    <dt>Total des transferts</dt>
+                    <dd>{{ $amount_transaction_days ?? 0 }}</dd>
+                </div>
+            </dl>
+        </section>
+
+        <div class="rb-amounts">
 
             @foreach ($amountGroups as [$title, $rows, $total])
                 <section class="rb-panel">
