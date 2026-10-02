@@ -6,6 +6,27 @@
     $cumulPendding = cumulTransaction();
 
 @endphp
+<style>
+    /* Menu mobile compact : sans séparateur entre chaque lien */
+    .mobile-menu > ul {
+        padding-top: 0.5rem;
+        padding-bottom: 0.75rem;
+    }
+
+    .mobile-menu .menu__devider {
+        display: none;
+    }
+
+    .mobile-menu .menu {
+        height: 44px;
+        font-size: 0.9375rem;
+    }
+
+    .mobile-menu ul li ul .menu {
+        height: 40px;
+        font-size: 0.875rem;
+    }
+</style>
 
 @if (sabdyVerify())
 

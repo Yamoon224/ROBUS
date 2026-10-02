@@ -207,7 +207,7 @@
                     <a href="{{ route('cards.browse') }}"
                         class="side-menu {{ $route == 'cards.browse' || $route == 'cards.show' || $route == 'cards.add' || $route == 'cards.edit' ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon"> <i data-feather="clipboard" class="block mx-auto"></i></div>
-                        <div class="side-menu__title">Commades Cartes </div>
+                        <div class="side-menu__title">Commandes Cartes </div>
                     </a>
                 </li>
             @endif

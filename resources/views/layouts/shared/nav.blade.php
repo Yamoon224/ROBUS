@@ -13,6 +13,66 @@ $user = Auth::guard('web')->user();
 $isAdminOrSupervisor = $user && ($user->is_admin || $user->is_supervisor);
 @endphp
 <!-- BEGIN: Side Menu -->
+<style>
+    /* Menu latéral compact : plus de séparateur entre chaque lien, et le menu reste
+       visible quand la page défile. */
+    .side-nav {
+        position: sticky;
+        top: 0;
+        align-self: flex-start;
+        height: 100vh;
+        overflow-y: auto;
+        padding-bottom: 1.5rem;
+        scrollbar-width: thin;
+        scrollbar-color: rgb(255 255 255 / 0.25) transparent;
+    }
+
+    .side-nav > .side-nav__devider {
+        margin: 0.75rem 0;
+    }
+
+    .side-nav > ul > li.side-nav__devider {
+        display: none;
+    }
+
+    .side-nav .side-menu {
+        height: 42px;
+        margin-bottom: 2px;
+        font-size: 0.875rem;
+        line-height: 1.2;
+    }
+
+    /* La courbe sous le lien actif suit la nouvelle hauteur */
+    .side-nav > ul > li > .side-menu.side-menu--active:after {
+        margin-top: 42px;
+    }
+
+    .side-nav .side-menu__icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .side-nav > ul ul {
+        margin: 2px 0 6px;
+        padding: 4px 0;
+    }
+
+    .side-nav > ul ul .side-menu {
+        height: 36px;
+        margin-bottom: 0;
+        font-size: 0.8125rem;
+    }
+
+    .side-nav > ul ul .side-menu__icon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .side-nav .side-menu:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: -2px;
+    }
+</style>
 
 @if (sabdyVerify())
 
@@ -321,7 +381,7 @@ $isAdminOrSupervisor = $user && ($user->is_admin || $user->is_supervisor);
             <a href="{{ route('cards.browse') }}"
                 class="side-menu {{ $route == 'cards.browse' || $route == 'cards.show' || $route == 'cards.add' || $route == 'cards.edit' ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <i data-feather="clipboard" class="block mx-auto"></i></div>
-                <div class="side-menu__title">Commades Cartes </div>
+                <div class="side-menu__title">Commandes Cartes </div>
             </a>
         </li>
         @endif
