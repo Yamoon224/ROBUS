@@ -57,11 +57,34 @@ return new class extends Migration
                     continue;
                 }
 
+                $columns = $this->prefixLongColumns($table, $columns);
+
                 Schema::table($table, function (Blueprint $blueprint) use ($columns, $name) {
                     $blueprint->index($columns, $name);
                 });
             }
         }
+    }
+
+    /**
+     * Une colonne texte longue dépasse la taille maximale d'une clé (1000 octets
+     * en MyISAM) : elle est indexée sur ses 191 premiers caractères.
+     */
+    private function prefixLongColumns(string $table, array $columns): array
+    {
+        if (DB::getDriverName() !== 'mysql') {
+            return $columns;
+        }
+
+        foreach ($columns as $i => $column) {
+            $type = DB::select("SHOW COLUMNS FROM `{$table}` WHERE Field = ?", [$column])[0]->Type ?? '';
+
+            if (str_contains($type, 'text') || (preg_match('/^(var)?char\((\d+)\)/i', $type, $m) && (int) $m[2] > 191)) {
+                $columns[$i] = DB::raw("`{$column}`(191)");
+            }
+        }
+
+        return $columns;
     }
 
     public function down(): void
