@@ -24,3 +24,7 @@ COPY --chown=www-data:www-data . .
 COPY --chown=www-data:www-data --from=vendor /app/vendor ./vendor
 COPY --chown=www-data:www-data --from=assets /app/public/build ./public/build
 RUN composer dump-autoload --optimize --no-dev --classmap-authoritative
+
+# L'application génère des URLs /public/... (index.php à la racine en hébergement mutualisé) ;
+# ici la racine web est déjà public/, ce lien permet à /public/dist/... de se résoudre.
+RUN ln -s . public/public
