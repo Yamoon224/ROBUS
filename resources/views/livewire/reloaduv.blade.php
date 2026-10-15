@@ -462,7 +462,7 @@
                                 class="form-control  w-56 box pr-10" style="height: 3rem; background-color: #eff3f7;"
                                 placeholder="Rechercher">
                             {{-- <i class="w-4 h-4 absolute my-auto inset-y-0 mr-6 " style="margin-left: 12rem;"
-                                data-feather="searchTransaction"></i> --}}
+                                data-feather="search"></i> --}}
                         </div>
                     </div>
                 </div>
