@@ -603,11 +603,16 @@ class TransferVisitorsOrigin extends Component
                                                                         }
                                                                 }
 
-                                                                $message = $this->sendSms();
+                                                                $message = \App\Support\SmsMessage::transaction($check, (string) $check->status);
 
                                                                 $encode = substr($check->phone_benef, -10);
 
-                                                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                                                http::get("https://app.smspro.africa/api/http/sms/send", [
+                                                                    'recipient' => "225$encode",
+                                                                    'sender_id' => "ROBUS",
+                                                                    'message' => \App\Support\SmsMessage::normalize($message),
+                                                                    'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                                                                ]);
 
 
                                                                 Notification::send(
@@ -858,11 +863,16 @@ class TransferVisitorsOrigin extends Component
                                                                 }
                                                         }
 
-                                                        $message = $this->sendSms();
+                                                        $message = \App\Support\SmsMessage::transaction($check, (string) $check->status);
 
                                                         $encode = substr($check->phone, -10);
 
-                                                        http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                                        http::get("https://app.smspro.africa/api/http/sms/send", [
+                                                            'recipient' => "225$encode",
+                                                            'sender_id' => "ROBUS",
+                                                            'message' => \App\Support\SmsMessage::normalize($message),
+                                                            'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                                                        ]);
 
 
                                                         Notification::send(
@@ -933,7 +943,7 @@ class TransferVisitorsOrigin extends Component
                                                                 'status' => $check->status,
                                                         ]);
 
-                                                        // $message = $this->sendSms();
+                                                        // $message = \App\Support\SmsMessage::transaction($check, (string) $check->status);
 
                                                         // $encode = substr($check->phone, -10);
 
@@ -1077,11 +1087,16 @@ class TransferVisitorsOrigin extends Component
 
                                                         $valeur_amount_com = $check->adminCom->amount;
 
-                                                        $message = $this->sendSms();
+                                                        $message = \App\Support\SmsMessage::transaction($check, (string) $check->status);
 
                                                         $encode = substr($check->phone_benef, -10);
 
-                                                        http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                                        http::get("https://app.smspro.africa/api/http/sms/send", [
+                                                            'recipient' => "225$encode",
+                                                            'sender_id' => "ROBUS",
+                                                            'message' => \App\Support\SmsMessage::normalize($message),
+                                                            'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                                                        ]);
 
                                                         //  Send valeur in Admin
                                                         if ($admin_civ->count() > 0) {
@@ -1143,7 +1158,7 @@ class TransferVisitorsOrigin extends Component
                                                                 }
                                                         }
 
-                                                        // $message = $this->sendSms();
+                                                        // $message = \App\Support\SmsMessage::transaction($check, (string) $check->status);
 
                                                         // $encode = substr($check->phone, -10);
 
@@ -1303,11 +1318,16 @@ class TransferVisitorsOrigin extends Component
 
                                                         $date = $check->updated_at;
 
-                                                        $message = $this->sendSms();
+                                                        $message = \App\Support\SmsMessage::transaction($check, (string) $check->status);
 
                                                         $encode = substr($check->phone, -10);
 
-                                                        http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                                        http::get("https://app.smspro.africa/api/http/sms/send", [
+                                                            'recipient' => "225$encode",
+                                                            'sender_id' => "ROBUS",
+                                                            'message' => \App\Support\SmsMessage::normalize($message),
+                                                            'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                                                        ]);
 
                                                         Notification::send(
                                                                 $admins,
@@ -1352,7 +1372,7 @@ class TransferVisitorsOrigin extends Component
                                                         }
 
 
-                                                        // $message = $this->sendSms();
+                                                        // $message = \App\Support\SmsMessage::transaction($check, (string) $check->status);
 
                                                         // $encode = substr($check->phone, -10);
 
@@ -1523,11 +1543,16 @@ class TransferVisitorsOrigin extends Component
                                                                 ]);
                                                         }
 
-                                                        $message = $this->sendSms();
+                                                        $message = \App\Support\SmsMessage::transaction($check, (string) $check->status);
 
                                                         $encode = substr($check->phone_benef, -10);
 
-                                                        http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                                        http::get("https://app.smspro.africa/api/http/sms/send", [
+                                                            'recipient' => "225$encode",
+                                                            'sender_id' => "ROBUS",
+                                                            'message' => \App\Support\SmsMessage::normalize($message),
+                                                            'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                                                        ]);
 
                                                         $valeur_amount_com = $check->adminCom->amount;
 
@@ -1605,7 +1630,7 @@ class TransferVisitorsOrigin extends Component
                                                         ]);
 
 
-                                                        // $message = $this->sendSms();
+                                                        // $message = \App\Support\SmsMessage::transaction($check, (string) $check->status);
 
                                                         // $encode = substr(
                                                         //     $check->phone_benef,

@@ -26,6 +26,19 @@ use Illuminate\Support\Facades\Notification as NotificationFacade;
 use App\Http\Services\AuthenticationService;
 use App\Models\AppStatus;
 
+if (!function_exists('formatDisplayAmount')) {
+    /** Format a monetary value for display without changing its stored precision. */
+    function formatDisplayAmount($amount): string
+    {
+        if ($amount === null || $amount === '') {
+            return '0,00';
+        }
+
+        // Keep explicit placeholders used by transaction summaries.
+        return is_numeric($amount) ? number_format((float) $amount, 2, ',', ' ') : (string) $amount;
+    }
+}
+
 
 if (!function_exists('getAppStatus')) {
     function getAppStatus()
@@ -128,7 +141,12 @@ if (! function_exists('sendTryCashMessage')) {
 
         try {
 
-            Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+            Http::get("https://app.smspro.africa/api/http/sms/send", [
+                'recipient' => "225$encode",
+                'sender_id' => "ROBUS",
+                'message' => \App\Support\SmsMessage::normalize($message),
+                'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+            ]);
 
         } catch (\Exception $e) {
             // Ici tu peux logger l'erreur pour analyse
@@ -714,9 +732,11 @@ function sabdyIntegrationVerify()
 if (!function_exists('asset_url')) {
     function asset_url($path)
     {
-        // index.php est à la racine du projet : les fichiers statiques sont sous public/
+        // Le préfixe public/ est nécessaire uniquement avec le point d'entrée à la racine.
         $path = ltrim((string) $path, '/');
-        $url = asset('public/' . $path);
+        $script = request()->server('SCRIPT_FILENAME');
+        $usesRootEntry = $script && realpath($script) === realpath(base_path('index.php'));
+        $url = asset(($usesRootEntry ? 'public/' : '') . $path);
 
         // ?v=<date de modification> : le navigateur garde le fichier en cache (voir
         // public/.htaccess) et le recharge dès qu'il change.
@@ -765,7 +785,12 @@ if (!function_exists('sendOtpSms')) {
     function sendOtpSms($phone_user, $otpSend)
     {
 
-        $response = Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$phone_user&sender_id=Bonjour%20doc&message=$otpSend&api_token=21|cDXu8PK2lD3MaANrDc8qzeyMoG9ZohPVmSwphAQwe7e6eaac");
+        $response = Http::get("https://app.smspro.africa/api/http/sms/send", [
+            'recipient' => "225$phone_user",
+            'sender_id' => "Bonjour doc",
+            'message' => \App\Support\SmsMessage::normalize($otpSend),
+            'api_token' => "21|cDXu8PK2lD3MaANrDc8qzeyMoG9ZohPVmSwphAQwe7e6eaac",
+        ]);
 
         return $response;
     }

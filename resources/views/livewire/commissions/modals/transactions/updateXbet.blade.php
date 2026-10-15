@@ -62,7 +62,7 @@
                                 <label class="form-label required">Montant</label>
                                 <div class="field-value">
                                     <i class="fas fa-money-bill-wave"></i>
-                                    <span id="amount_xbet_edit">{{ $amount_xbet ?? null }}
+                                    <span id="amount_xbet_edit">{{ formatDisplayAmount($amount_xbet ?? null) }}
                                         {{ $devise_user ?? null }}</span>
                                 </div>
                             </div>
@@ -122,7 +122,7 @@
                                 <label class="form-label required">Montant</label>
                                 <div class="field-value">
                                     <i class="fas fa-money-bill-wave"></i>
-                                    <span id="amount_xbet"> {{ $amount_xbet ?? null }}
+                                    <span id="amount_xbet"> {{ formatDisplayAmount($amount_xbet ?? null) }}
                                         {{ $currency_custumers ?? null }}</span>
                                 </div>
                             </div>

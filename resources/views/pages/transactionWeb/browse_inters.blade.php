@@ -530,7 +530,7 @@
                 const montantSaisi = parseFloat(amountInput.value);
                 if (!isNaN(montantSaisi)) {
                     const montantCalcule = montantSaisi * (totalPercent / 100);
-                    $('#total-percent-cumuls').text(montantCalcule.toFixed(2) + " FCFA");
+                    $('#total-percent-cumuls').text(montantCalcule.toFixed(2).replace(".", ",") + " FCFA");
                 } else {
                     $('#total-percent-cumuls').text('Aucune information disponible');
                 }

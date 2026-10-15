@@ -474,7 +474,7 @@ class TransactionCiv extends Component
 
                                                 if ($this->updateAmountRobusReceived($this->compte_number_robus, $walletTransaction, $valeur_received)) {
 
-                                                    $message = 'Vous venez de recevoir un montant de ' . $reel_amount . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                                    $message = 'Vous venez de recevoir un montant de ' . $reel_amount . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . '. Votre nouveau solde est de ' . formatDisplayAmount($amount_solde_drawal) . ' ' . $wallet_search->currencie->name . "\nROBUS vous remercie pour votre fidélité.";
 
                                                     if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
                                                         sendTryCashMessage($wallet_search->sidUser->phone, $message);
@@ -546,7 +546,7 @@ class TransactionCiv extends Component
 
                                         if ($walletTransaction != null) {
 
-                                            $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                            $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . '. Votre nouveau solde est de ' . formatDisplayAmount($amount_solde_drawal) . ' ' . $wallet_search->currencie->name . "\nROBUS vous remercie pour votre fidélité.";
 
                                             if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
                                                 sendTryCashMessage($wallet_search->sidUser->phone, $message);
@@ -617,7 +617,7 @@ class TransactionCiv extends Component
 
                                         if ($walletTransaction != null) {
 
-                                            $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                            $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . '. Votre nouveau solde est de ' . formatDisplayAmount($amount_solde_drawal) . ' ' . $wallet_search->currencie->name . "\nROBUS vous remercie pour votre fidélité.";
 
                                             if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
                                                 sendTryCashMessage($wallet_search->sidUser->phone, $message);
@@ -939,6 +939,7 @@ class TransactionCiv extends Component
         $providers = $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', sabdy()->country->id)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             // ->where('providers.id' , 9)
             ->where('providers.provider_type_id', $providerType)
@@ -956,6 +957,7 @@ class TransactionCiv extends Component
         $providers = $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', sabdy()->country->id)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.id', 9)
             ->where('providers.provider_type_id', $providerType)
@@ -974,6 +976,7 @@ class TransactionCiv extends Component
         $providers = $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', sabdy()->country->id)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.id', '!=', 9)
             ->where('providers.provider_type_id', $providerType)

@@ -43,7 +43,9 @@ class PhoneProviderController extends Controller
 {
     public function index()
     {
-        return new ProviderCollection(Provider::whereStatus(true)->where('provider_type_id',  6)
+        return new ProviderCollection(Provider::query()
+            ->availableInCountry((int) Auth::user()->country_id)
+            ->where('provider_type_id', 6)
             ->orderBy('name', 'asc')
             ->get());
     }

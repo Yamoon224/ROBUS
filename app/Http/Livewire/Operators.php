@@ -25,8 +25,7 @@ class Operators extends Component
     public $providerType;
     public $countrys = [];
     public $image;
-
-
+    public $currentLogo;
 
     public function edit($id, $state)
     {
@@ -35,31 +34,39 @@ class Operators extends Component
         $this->providerId = $id;
         $this->providerName = $check->name;
         $this->providerDescription = $check->description;
-        // $this->image = $check->image;
+        $this->currentLogo = $check->logo;
         $this->providerStatus = $check->status;
         $this->emit($state);
     }
 
     public function update()
     {
-        $this->validate();
-        $check = Operator::whereId($this->providerId)->first();
+        $this->validate([
+            'providerName'        => 'required|string|max:255',
+            'providerDescription' => 'nullable|string',
+            'image'               => 'nullable|image|max:2048',
+        ]);
+
+        $check = Provider::whereId($this->providerId)->first();
 
         if ($check) {
-            $check->update([
-                'name' => $this->providerName,
+            $data = [
+                'name'        => $this->providerName,
                 'description' => $this->providerDescription,
-                'status' => 1,
-            ]);
+                'status'      => 1,
+            ];
+
+            if ($this->image) {
+                $filename = 'dist/providers/' . $this->image->getClientOriginalName();
+                $this->image->move(public_path('dist/providers'), $this->image->getClientOriginalName());
+                $data['logo'] = $filename;
+            }
+
+            $check->update($data);
 
             $this->resetField();
             $this->emit('modal-hide', 'hide');
-            $this->emit('success', 'Operateur  modifié !');
-        } else {
-
-            $this->resetField();
-            $this->emit('modal-hide', 'hide');
-            $this->emit('success', 'Operateur  modifié !');
+            $this->emit('success', 'Opérateur modifié !');
         }
     }
 

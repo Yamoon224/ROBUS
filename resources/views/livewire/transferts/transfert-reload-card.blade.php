@@ -101,13 +101,13 @@
                                 </label>
                                 <div
                                     class="px-5 py-3 alert {{ $user_auth->is_under_distributer && $showRemonterRechargementButton ? 'alert-primary' : 'alert-primary' }} font-medium text-white text-xl">
-                                    {{ $amount_deposit_nation_pay ?? '-' }} {{ $usersCountry }}
+                                    {{ formatDisplayAmount($amount_deposit_nation_pay ?? '-') }} {{ $usersCountry }}
                                 </div>
                             </div>
                             <div class="col-span-6 mt-3">
                                 <label class="form-label">Montant à recevoir </label>
                                 <div class="px-5 py-3 alert alert-success font-medium text-white text-xl">
-                                    {{ $amount_deposit_nation_receive ?? '-' }} {{ $usersCountry }}
+                                    {{ formatDisplayAmount($amount_deposit_nation_receive ?? '-') }} {{ $usersCountry }}
                                 </div>
                             </div>
                         @endif
@@ -173,7 +173,7 @@
 
                             <div
                                 class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                {{ $amount_reloadcard ?? null }} {{ $usersCountry }}
+                                {{ formatDisplayAmount($amount_reloadcard ?? null) }} {{ $usersCountry }}
                             </div>
                         </div>
 

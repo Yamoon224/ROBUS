@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use App\Models\CloseApp;
+use App\Support\AccountValidation;
 
 
 class AuthenticationService
@@ -196,6 +197,15 @@ class AuthenticationService
                                 }
 
                                 if ($user->is_custumers && Hash::check($password, $user->password)) {
+                                        if (!$user->is_active) {
+                                                Auth::logout();
+
+                                                return array_merge(
+                                                        ['success' => false, 'http_status' => 403],
+                                                        AccountValidation::payload()
+                                                );
+                                        }
+
                                         Auth::user()->update([
                                                 'last_login' => Carbon::now()->toDateTimeString(),
                                                 'last_logout' => null,

@@ -755,13 +755,18 @@ class UserController extends Controller
 
             if ($user->country->code == "CI") {
 
-                $message = 'Votre compte a été desactivez avec success';
+                $message = 'Votre compte a été désactivé avec succès.';
 
                 $encode = substr($user->phone,  -10);
 
                 //                 http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
 
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                Http::get("https://app.smspro.africa/api/http/sms/send", [
+                    'recipient' => "225$encode",
+                    'sender_id' => "ROBUS",
+                    'message' => \App\Support\SmsMessage::normalize($message),
+                    'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                ]);
             }
             $notify = new MailController;
             $notify->activeAccount($user);
@@ -857,11 +862,16 @@ class UserController extends Controller
 
                 if ($user->country->code == "CI") {
 
-                    $message = 'Votre compte a été desactivé pour une raison';
+                    $message = 'Votre compte a été désactivé. Contactez le support ROBUS pour plus d’informations.';
 
                     $encode = substr($user->phone,  -10);
 
-                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    http::get("https://app.smspro.africa/api/http/sms/send", [
+                        'recipient' => "225$encode",
+                        'sender_id' => "ROBUS",
+                        'message' => \App\Support\SmsMessage::normalize($message),
+                        'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                    ]);
                 } else {
 
                     $notify = new MailController;
@@ -875,15 +885,20 @@ class UserController extends Controller
                 ]);
                 $msg = 'Activation effectuée avec succès';
 
-                $message = 'Votre compte a été activé avec succès';
+                $message = 'Votre compte a été activé avec succès.';
 
                 if ($user->country->code == "CI") {
 
-                    $message = 'Votre compte a été activé avec succès';
+                    $message = 'Votre compte a été activé avec succès.';
 
                     $encode = substr($user->phone,  -10);
 
-                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    http::get("https://app.smspro.africa/api/http/sms/send", [
+                        'recipient' => "225$encode",
+                        'sender_id' => "ROBUS",
+                        'message' => \App\Support\SmsMessage::normalize($message),
+                        'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                    ]);
                 } else {
 
                     $notify = new MailController;
@@ -926,11 +941,16 @@ class UserController extends Controller
 
                 if ($user->country->code == "CI") {
 
-                    $message = 'Votre compte a été desactivé pour une raison';
+                    $message = 'Votre compte a été désactivé. Contactez le support ROBUS pour plus d’informations.';
 
                     $encode = substr($user->phone,  -10);
 
-                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    http::get("https://app.smspro.africa/api/http/sms/send", [
+                        'recipient' => "225$encode",
+                        'sender_id' => "ROBUS",
+                        'message' => \App\Support\SmsMessage::normalize($message),
+                        'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                    ]);
                 } else {
 
                     $notify = new MailController;
@@ -944,15 +964,20 @@ class UserController extends Controller
                 ]);
                 $msg = 'Activation effectuée avec succès';
 
-                $message = 'Votre compte a été activé avec succès';
+                $message = 'Votre compte a été activé avec succès.';
 
                 if ($user->country->code == "CI") {
 
-                    $message = 'Votre compte a été activé avec succès';
+                    $message = 'Votre compte a été activé avec succès.';
 
                     $encode = substr($user->phone,  -10);
 
-                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    http::get("https://app.smspro.africa/api/http/sms/send", [
+                        'recipient' => "225$encode",
+                        'sender_id' => "ROBUS",
+                        'message' => \App\Support\SmsMessage::normalize($message),
+                        'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                    ]);
                 } else {
 
                     $notify = new MailController;
@@ -1108,11 +1133,16 @@ class UserController extends Controller
 
                     if ($user->country->code == "CI") {
 
-                        $message = 'Votre compte a été activé avec succès';
+                        $message = 'Votre compte a été activé avec succès.';
 
                         $encode = substr($user->phone,  -10);
 
-                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                        http::get("https://app.smspro.africa/api/http/sms/send", [
+                            'recipient' => "225$encode",
+                            'sender_id' => "ROBUS",
+                            'message' => \App\Support\SmsMessage::normalize($message),
+                            'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                        ]);
                     } else {
 
                         $notify = new MailController;
@@ -1141,11 +1171,16 @@ class UserController extends Controller
 
                     if ($user->country->code == "CI") {
 
-                        $message = 'Votre compte a été activé avec succès';
+                        $message = 'Votre compte a été activé avec succès.';
 
                         $encode = substr($user->phone,  -10);
 
-                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                        http::get("https://app.smspro.africa/api/http/sms/send", [
+                            'recipient' => "225$encode",
+                            'sender_id' => "ROBUS",
+                            'message' => \App\Support\SmsMessage::normalize($message),
+                            'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                        ]);
                     } else {
 
                         $notify = new MailController;
@@ -1174,11 +1209,16 @@ class UserController extends Controller
 
                     if ($user->country->code == "CI") {
 
-                        $message = 'Votre compte a été activé avec succès';
+                        $message = 'Votre compte a été activé avec succès.';
 
                         $encode = substr($user->phone,  -10);
 
-                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                        http::get("https://app.smspro.africa/api/http/sms/send", [
+                            'recipient' => "225$encode",
+                            'sender_id' => "ROBUS",
+                            'message' => \App\Support\SmsMessage::normalize($message),
+                            'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                        ]);
                     } else {
 
                         $notify = new MailController;
@@ -1246,11 +1286,16 @@ class UserController extends Controller
 
                 if ($user->country->code == "CI") {
 
-                    $message = 'Votre dossier a été activé avec succès';
+                    $message = 'Votre dossier a été validé avec succès.';
 
                     $encode = substr($user->phone,  -10);
 
-                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    http::get("https://app.smspro.africa/api/http/sms/send", [
+                        'recipient' => "225$encode",
+                        'sender_id' => "ROBUS",
+                        'message' => \App\Support\SmsMessage::normalize($message),
+                        'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                    ]);
                 } else {
 
                     $notify = new MailController;
@@ -1306,11 +1351,16 @@ class UserController extends Controller
 
                 if ($user->country->code == "CI") {
 
-                    $message = 'Votre dossier a été rejeté avec succès veuillez le modifier et le renvoyer';
+                    $message = 'Votre dossier a été refusé. Veuillez le corriger et le soumettre à nouveau.';
 
                     $encode = substr($user->phone,  -10);
 
-                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    http::get("https://app.smspro.africa/api/http/sms/send", [
+                        'recipient' => "225$encode",
+                        'sender_id' => "ROBUS",
+                        'message' => \App\Support\SmsMessage::normalize($message),
+                        'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                    ]);
                 } else {
 
                     $notify = new MailController;

@@ -10,6 +10,14 @@ use App\Models\Sid\SidUser;
 class HomeService
 {
     private ?array $firmMemberWalletIds = null;
+    private string $dashboardPeriod = 'day';
+
+    public function forCurrentMonth(): self
+    {
+        $this->dashboardPeriod = 'month';
+
+        return $this;
+    }
 
     private function todayRange(): array
     {
@@ -19,6 +27,13 @@ class HomeService
     private function currentMonthRange(): array
     {
         return [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()];
+    }
+
+    private function dashboardRange(string $period): array
+    {
+        return $period === 'month' || $this->dashboardPeriod === 'month'
+            ? $this->currentMonthRange()
+            : $this->todayRange();
     }
 
     // HOME Prospects valeurs
@@ -574,7 +589,7 @@ class HomeService
 
         $totalAmount = $walletModel::where('wallet_id',  sabdy()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereBetween('created_at', $this->todayRange())
+            ->whereBetween('created_at', $this->dashboardRange('day'))
             ->sum('amount');
 
         return $totalAmount;
@@ -599,14 +614,14 @@ class HomeService
 
         $totalCount = $walletModel::where('wallet_id', sabdy()->wallet->id)
             ->whereStatus('SUCCESS')
-            ->whereBetween('created_at', $this->todayRange())
+            ->whereBetween('created_at', $this->dashboardRange('day'))
             ->count();
 
         return $totalCount;
     }
 
 
-    public function getTransactionAllCount($walletModel, $wallet_transactions, $transaction_days, $walletMy)
+    public function getTransactionAllCount($walletModel, $wallet_transactions, $transaction_days, $walletMy, string $period = 'day')
     {
 
         $countryId = sabdy()->country->id;
@@ -616,7 +631,7 @@ class HomeService
             $wallet_transactions,
             'wallets.id'
         )
-            ->whereBetween($transaction_days, $this->todayRange());
+            ->whereBetween($transaction_days, $this->dashboardRange($period));
 
         if (sabdy()->is_distributer) {
             $query->where($walletMy, sabdy()->id);
@@ -645,11 +660,11 @@ class HomeService
     }
 
 
-    public function getTransactionCount($walletModel, $status, $wallet_transactions, $transaction_days, $walletMy, $wallet_status)
+    public function getTransactionCount($walletModel, $status, $wallet_transactions, $transaction_days, $walletMy, $wallet_status, string $period = 'day')
     {
 
         $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
-            ->whereBetween($transaction_days, $this->todayRange())
+            ->whereBetween($transaction_days, $this->dashboardRange($period))
             ->where($wallet_status, $status);
 
         if (sabdy()->is_distributer) {
@@ -683,11 +698,11 @@ class HomeService
     }
 
     // Sum amount days valeurs
-    public function getTodayTransactionAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount)
+    public function getTodayTransactionAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount, string $period = 'day')
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereBetween($transaction_days, $this->todayRange())
+            ->whereBetween($transaction_days, $this->dashboardRange($period))
             ->where($transaction_status, 'SUCCESS');
 
 
@@ -721,11 +736,11 @@ class HomeService
         return $query->sum($wallet_amount);
     }
 
-    public function getTodayTransactionProvidersAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount, $providers)
+    public function getTodayTransactionProvidersAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount, $providers, string $period = 'day')
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereBetween($transaction_days, $this->todayRange())
+            ->whereBetween($transaction_days, $this->dashboardRange($period))
             ->where('provider_id', $providers)
             ->where($transaction_status, 'SUCCESS');
 
@@ -760,11 +775,11 @@ class HomeService
         return $query->sum($wallet_amount);
     }
 
-    public function getTodayTransactionProviderAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount, $providerId)
+    public function getTodayTransactionProviderAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount, $providerId, string $period = 'day')
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereBetween($transaction_days, $this->todayRange())
+            ->whereBetween($transaction_days, $this->dashboardRange($period))
             ->where('provider_id', $providerId)
             ->where($transaction_status, 'SUCCESS');
 
@@ -800,11 +815,11 @@ class HomeService
     }
 
     // Nombre de transactions du jour (SUCCESS) pour un provider
-    public function getTodayTransactionProviderCount($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $providerId)
+    public function getTodayTransactionProviderCount($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $providerId, string $period = 'day')
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereBetween($transaction_days, $this->todayRange())
+            ->whereBetween($transaction_days, $this->dashboardRange($period))
             ->where('provider_id', $providerId)
             ->where($transaction_status, 'SUCCESS');
 
@@ -838,20 +853,20 @@ class HomeService
         return $query->count();
     }
 
-    public function getTodayTransactionProviderTypeOneAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount)
+    public function getTodayTransactionProviderTypeOneAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount, string $period = 'day')
     {
 
 
         if (sabdy()->is_distributer) {
 
-            $query = $walletModel::whereBetween($transaction_days, $this->todayRange())
+            $query = $walletModel::whereBetween($transaction_days, $this->dashboardRange($period))
                 ->where($transaction_status, 'SUCCESS');
 
             $query->where($walletMy, sabdy()->id);
         } elseif (sabdy()->is_under_distributer) {
 
             $query = $walletModel::join('wallets', 'wallets.id', $wallet_transaction)
-                ->whereBetween($transaction_days, $this->todayRange())
+                ->whereBetween($transaction_days, $this->dashboardRange($period))
                 ->where($transaction_status, 'SUCCESS');
 
             $query->where(function ($query) use ($wallet_transaction) {
@@ -859,7 +874,7 @@ class HomeService
             });
         } elseif (sabdy()->is_com_zone) {
             $query = $walletModel::join('wallets', 'wallets.id', $wallet_transaction)
-                ->whereBetween($transaction_days, $this->todayRange())
+                ->whereBetween($transaction_days, $this->dashboardRange($period))
                 ->where($transaction_status, 'SUCCESS');
 
             $query->whereIn('wallets.sid_user_id', function($sub) {
@@ -869,7 +884,7 @@ class HomeService
         });
         } else {
 
-            $query = $walletModel::whereBetween($transaction_days, $this->todayRange())
+            $query = $walletModel::whereBetween($transaction_days, $this->dashboardRange($period))
                 ->where($transaction_status, 'SUCCESS');
 
             $query->where(function ($query) use ($walletMy) {
@@ -904,11 +919,11 @@ class HomeService
         return $totalAmountConv;
     }
 
-    public function getTodayTransactionProviderOneAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount, $providerId)
+    public function getTodayTransactionProviderOneAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount, $providerId, string $period = 'day')
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction,  'wallets.id')
-            ->whereBetween($transaction_days, $this->todayRange())
+            ->whereBetween($transaction_days, $this->dashboardRange($period))
             ->whereProviderType($providerId)
             ->where($transaction_status, 'SUCCESS');
 

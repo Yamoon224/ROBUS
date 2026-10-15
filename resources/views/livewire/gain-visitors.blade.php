@@ -50,7 +50,7 @@
             </div>
             <div class="font-medium text-historique mt-6">Montant Banque journalier</div>
             <div class="text-slate-500 mt-3">
-                {{ $sum_gain_banques ?? null }} FCFA
+                {{ formatDisplayAmount($sum_gain_banques ?? null) }} FCFA
             </div>
         </div>
     </div>
@@ -116,7 +116,7 @@
                                 </td>
                                 <td class="w-56">
                                     <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                        <div class="text-slate-300 text-xs  mt-0.5"> {{ $item->amount ?? null }} Frcfa
+                                        <div class="text-slate-300 text-xs  mt-0.5"> {{ formatDisplayAmount($item->amount ?? null) }} Frcfa
                                         </div>
                                     </div>
                                     <div class="text-slate-500  mt-0.5">
@@ -139,7 +139,7 @@
                                             <span
                                                 class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                                                 {{ $item->walletBank->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->walletBank->costs_amount ?? null }}FCFA
+                                                montant : {{ formatDisplayAmount($item->walletBank->costs_amount ?? null) }}FCFA
                                             </span>
                                         </div>
                                     @elseif($item->wallet_transaction_id != null)
@@ -154,7 +154,7 @@
                                             <span
                                                 class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                                                 {{ $item->walletTransaction->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->walletTransaction->costs_amount ?? 'Retrait' }}FCFA
+                                                montant : {{ formatDisplayAmount($item->walletTransaction->costs_amount ?? 'Retrait') }}FCFA
                                             </span>
                                         </div>
                                     @elseif($item->wallet_deposit_id != null)
@@ -169,7 +169,7 @@
                                             <span
                                                 class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                                                 {{ $item->walletDeposit->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->walletDeposit->costs_amount ?? null }} FCFA
+                                                montant : {{ formatDisplayAmount($item->walletDeposit->costs_amount ?? null) }} FCFA
                                             </span>
                                         </div>
                                     @elseif($item->wallet_inter_id != null)
@@ -184,7 +184,7 @@
                                             <span
                                                 class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                                                 {{ $item->walletInter->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->walletInter->costs_amount ?? null }}
+                                                montant : {{ formatDisplayAmount($item->walletInter->costs_amount ?? null) }}
                                             </span>
                                         </div>
                                     @elseif($item->wallet_payment_id != null)
@@ -199,7 +199,7 @@
                                             <span
                                                 class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                                                 {{ $item->walletPayment->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->walletPayment->costs_amount ?? null }}
+                                                montant : {{ formatDisplayAmount($item->walletPayment->costs_amount ?? null) }}
                                             </span>
                                         </div>
                                     @elseif($item->wallet_phone_credit_id != null)
@@ -214,7 +214,7 @@
                                             <span
                                                 class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                                                 {{ $item->walletPhoneCredit->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->walletPhoneCredit->costs_amount ?? null }}
+                                                montant : {{ formatDisplayAmount($item->walletPhoneCredit->costs_amount ?? null) }}
                                             </span>
                                         </div>
                                     @elseif($item->wallet_xbet_id != null)
@@ -229,7 +229,7 @@
                                             <span
                                                 class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                                                 {{ $item->walletXbet->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->walletXbet->costs_amount ?? null }}
+                                                montant : {{ formatDisplayAmount($item->walletXbet->costs_amount ?? null) }}
                                             </span>
                                         </div>
                                     @elseif($item->wallet_reload_id != null)
@@ -244,7 +244,7 @@
                                             <span
                                                 class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                                                 {{ $item->walletReload->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->walletReload->costs_amount ?? null }} FCFA
+                                                montant : {{ formatDisplayAmount($item->walletReload->costs_amount ?? null) }} FCFA
                                             </span>
                                         </div>
                                     @elseif($item->bank_card_id != null)
@@ -259,7 +259,7 @@
                                             <span
                                                 class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                                                 {{ $item->orderCard->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->orderCard->costs_amount ?? null }} FCFA
+                                                montant : {{ formatDisplayAmount($item->orderCard->costs_amount ?? null) }} FCFA
                                             </span>
                                         </div>
                                     @endif

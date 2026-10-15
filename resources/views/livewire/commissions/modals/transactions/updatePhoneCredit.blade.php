@@ -37,7 +37,7 @@
                             <label class="form-label required">Montant</label>
                             <div class="field-value">
                                 <i class="fas fa-money-bill-wave"></i>
-                                <span id="amount_phone_credit_edit">{{ $amount_phone_credit_edit ?? null }}
+                                <span id="amount_phone_credit_edit">{{ formatDisplayAmount($amount_phone_credit_edit ?? null) }}
                                     {{ $currency_custumers ?? null }}</span>
                             </div>
                         </div>

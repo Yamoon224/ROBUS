@@ -480,14 +480,14 @@
                                                             </td>
                                                             <td class="w-50">
                                                                 <p class="font-medium whitespace-nowrap">
-                                                                    {{ $item->amount_with_draw ?? null }}
+                                                                    {{ formatDisplayAmount($item->amount_with_draw ?? null) }}
                                                                     {{ $user_currencie }}
                                                                 </p>
 
                                                             </td>
                                                             <td class="w-40">
                                                                 <p class="font-medium whitespace-nowrap">
-                                                                    {{ $item->amount_solde ?? null }}
+                                                                    {{ formatDisplayAmount($item->amount_solde ?? null) }}
                                                                     {{ $user_currencie }}
 
                                                                 </p>

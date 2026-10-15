@@ -92,7 +92,7 @@
                                         <div class="amount-balance">
                                             <div class="flex items-baseline justify-between">
                                                 <span class="amount-balance-value">
-                                                    {{ number_format($item['total_amount'], 0, ',', ' ') }}
+                                                    {{ number_format($item['total_amount'], 2, ',', ' ') }}
                                                 </span>
                                                 <span class="amount-balance-currency">
                                                     {{ $item['currency'] }}

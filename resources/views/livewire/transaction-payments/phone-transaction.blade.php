@@ -103,7 +103,7 @@
         
                                 <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
                                     style="font-size: 25px; color:white;">
-                                    {{ $amount_received_credit ?? null }}
+                                    {{ formatDisplayAmount($amount_received_credit ?? null) }}
                                     {{ $usersCountry }}
                                 </div>
                             </div>
@@ -114,7 +114,7 @@
         
                                 <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
                                     style="font-size: 25px; color:white;">
-                                    {{ $amount_phone_credit_val_pay ?? null }}
+                                    {{ formatDisplayAmount($amount_phone_credit_val_pay ?? null) }}
                                     {{ $usersCountry }}
                                 </div>
                             </div>
@@ -124,7 +124,7 @@
                                         *</span></label>
                                 <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
                                     style="font-size: 25px; color:white;">
-                                    {{ $amount_phone_credit_val_receive ?? null }}
+                                    {{ formatDisplayAmount($amount_phone_credit_val_receive ?? null) }}
                                     {{ $usersCountry }}
                                 </div>
                             </div>
@@ -136,7 +136,7 @@
         
                                 <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
                                     style="font-size: 25px; color:white;">
-                                    {{ $amount_phone_credit_val_pay ?? null }}
+                                    {{ formatDisplayAmount($amount_phone_credit_val_pay ?? null) }}
                                     {{ $usersCountry }}
                                 </div>
         
@@ -147,7 +147,7 @@
                                         *</span></label>
                                 <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
                                     style="font-size: 25px; color:white;">
-                                    {{ $amount_phone_credit_val_receive ?? null }}
+                                    {{ formatDisplayAmount($amount_phone_credit_val_receive ?? null) }}
                                     {{ $usersCountry }}
                                 </div>
                             </div>
@@ -246,7 +246,7 @@
         
                                 <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
                                     style="font-size: 25px; color:white;">
-                                    {{ $amount_received_credit ?? null }}
+                                    {{ formatDisplayAmount($amount_received_credit ?? null) }}
                                     {{ $usersCountry }}
                                 </div>
                             </div>
@@ -257,7 +257,7 @@
         
                                 <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
                                     style="font-size: 25px; color:white;">
-                                    {{ $amount_phone_credit_val_pay ?? null }}
+                                    {{ formatDisplayAmount($amount_phone_credit_val_pay ?? null) }}
                                     {{ $usersCountry }}
                                 </div>
                             </div>
@@ -267,7 +267,7 @@
                                         *</span></label>
                                 <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
                                     style="font-size: 25px; color:white;">
-                                    {{ $amount_phone_credit_val_receive ?? null }}
+                                    {{ formatDisplayAmount($amount_phone_credit_val_receive ?? null) }}
                                     {{ $usersCountry }}
                                 </div>
                             </div>
@@ -279,7 +279,7 @@
         
                                 <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
                                     style="font-size: 25px; color:white;">
-                                    {{ $amount_phone_credit_val_pay ?? null }}
+                                    {{ formatDisplayAmount($amount_phone_credit_val_pay ?? null) }}
                                     {{ $usersCountry }}
                                 </div>
         
@@ -290,7 +290,7 @@
                                         *</span></label>
                                 <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
                                     style="font-size: 25px; color:white;">
-                                    {{ $amount_phone_credit_val_receive ?? null }}
+                                    {{ formatDisplayAmount($amount_phone_credit_val_receive ?? null) }}
                                     {{ $usersCountry }}
                                 </div>
                             </div>
@@ -391,7 +391,7 @@
         
                                 <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
                                     style="font-size: 25px; color:white;">
-                                    {{ $amount_received_credit ?? null }}
+                                    {{ formatDisplayAmount($amount_received_credit ?? null) }}
                                     {{ $usersCountry }}
                                 </div>
                             </div>
@@ -402,7 +402,7 @@
         
                                 <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
                                     style="font-size: 25px; color:white;">
-                                    {{ $amount_phone_credit_val_pay ?? null }}
+                                    {{ formatDisplayAmount($amount_phone_credit_val_pay ?? null) }}
                                     {{ $usersCountry }}
                                 </div>
                             </div>
@@ -412,7 +412,7 @@
                                         *</span></label>
                                 <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
                                     style="font-size: 25px; color:white;">
-                                    {{ $amount_phone_credit_val_receive ?? null }}
+                                    {{ formatDisplayAmount($amount_phone_credit_val_receive ?? null) }}
                                     {{ $usersCountry }}
                                 </div>
                             </div>
@@ -424,7 +424,7 @@
         
                                 <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
                                     style="font-size: 25px; color:white;">
-                                    {{ $amount_phone_credit_val_pay ?? null }}
+                                    {{ formatDisplayAmount($amount_phone_credit_val_pay ?? null) }}
                                     {{ $usersCountry }}
                                 </div>
         
@@ -435,7 +435,7 @@
                                         *</span></label>
                                 <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
                                     style="font-size: 25px; color:white;">
-                                    {{ $amount_phone_credit_val_receive ?? null }}
+                                    {{ formatDisplayAmount($amount_phone_credit_val_receive ?? null) }}
                                     {{ $usersCountry }}
                                 </div>
                             </div>

@@ -1207,16 +1207,16 @@ class TransactionEurope extends Component
 
             if (sabdy()->country->code == 'CI') {
 
-                $message =  'Vous avez effectué un paiement de ' . $walletInter->amount .  sabdy()->wallet->currencie->code .
-                    ' ' .
-                    'par ' . $walletInter->provider->name .
-                    ' a ' . $walletInter->created_at .
-                    ' votre demande est en-cours de validation ' .
-                    'Robus vous remercie';
+                $message = \App\Support\SmsMessage::transaction($walletInter, (string) ($walletInter->status ?? 'PENDING'), sabdy()->wallet->currencie->code, 'Paiement');
 
                 $encode = substr(sabdy()->phone, -10);
 
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                Http::get("https://app.smspro.africa/api/http/sms/send", [
+                    'recipient' => "225$encode",
+                    'sender_id' => "ROBUS",
+                    'message' => \App\Support\SmsMessage::normalize($message),
+                    'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                ]);
             }
             // Percent admin 
             $valeur_percent_admin  = $percent_robus->percent_admin * $this->amount_inter_out_civ;
@@ -1679,16 +1679,16 @@ class TransactionEurope extends Component
 
             if (sabdy()->country->code == 'CI') {
 
-                $message =  'Vous avez effectué un paiement de ' . $walletInter->amount .  sabdy()->wallet->currencie->code .
-                    ' ' .
-                    'par ' . $walletInter->provider->name .
-                    ' a ' . $walletInter->created_at .
-                    ' votre demande est en-cours de validation ' .
-                    'Robus vous remercie';
+                $message = \App\Support\SmsMessage::transaction($walletInter, (string) ($walletInter->status ?? 'PENDING'), sabdy()->wallet->currencie->code, 'Paiement');
 
                 $encode = substr(sabdy()->phone, -10);
 
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                Http::get("https://app.smspro.africa/api/http/sms/send", [
+                    'recipient' => "225$encode",
+                    'sender_id' => "ROBUS",
+                    'message' => \App\Support\SmsMessage::normalize($message),
+                    'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                ]);
             }
             // Percent admin 
             $valeur_percent_admin  = $percent_robus->percent_admin * $this->amount_inter_out_civ;

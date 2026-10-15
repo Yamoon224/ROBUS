@@ -6,7 +6,7 @@
             <div class="amount-balance">
                 <div class="flex items-baseline justify-between">
                     <span class="amount-balance-value text-xl font-semibold">
-                        {{ $walletSolde ?? 0 }}
+                        {{ formatDisplayAmount($walletSolde ?? 0) }}
                     </span>
                     <span class="amount-balance-currency text-white">
                         {{ $usersCountry ?? 'CFA' }}
@@ -20,7 +20,7 @@
             <div class="amount-commission-balance">
                 <div class="flex items-baseline justify-between">
                     <span class="amount-balance-value text-xl font-semibold">
-                        {{ $walletCommissions ?? 0 }}
+                        {{ formatDisplayAmount($walletCommissions ?? 0) }}
                     </span>
                     <span class="amount-balance-currency text-white">
                         {{ $usersCountry ?? 'CFA' }}
@@ -48,7 +48,7 @@
             <div class="amount-remonte-balance">
                 <div class="flex items-baseline justify-between">
                     <span class="amount-balance-value text-xl font-semibold">
-                        {{ $sum_commissions ?? 0 }}
+                        {{ formatDisplayAmount($sum_commissions ?? 0) }}
                     </span>
                 </div>
             </div>

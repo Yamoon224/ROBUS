@@ -915,6 +915,7 @@ class TransfertPayment extends Component
             'providers.id'
         )
             ->where('country_services.country_id', $walletUser->country->id)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', 2)
             ->select('providers.*')

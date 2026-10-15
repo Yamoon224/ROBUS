@@ -127,7 +127,7 @@
                                                     </td>
                                                     <td class="w-40">
                                                         <p href="" class="font-medium whitespace-nowrap">
-                                                            {{ $item->amount ?? null }}
+                                                            {{ formatDisplayAmount($item->amount ?? null) }}
                                                             {{ $item->wallet->sidUser->country->currencie->code ?? null }}
                                                         </p>
                                                     </td>
@@ -140,7 +140,7 @@
                                                     </td>
                                                     <td class="w-40">
                                                         <p href="" class="font-medium whitespace-nowrap">
-                                                            {{ $item->commissions ?? null }}
+                                                            {{ formatDisplayAmount($item->commissions ?? null) }}
                                                             {{ $item->wallet->sidUser->country->currencie->code ?? null }}
                                                         </p>
                                                     </td>

@@ -77,6 +77,16 @@ class ProviderController extends Controller
         return $providers->concat($pixelProviders)->sortBy('name')->values();
     }
 
+    private function getDepositZoneProviders(int $countryId)
+    {
+        $providers = ProvidersService::getPixelInnovDepositZoneProviders($countryId);
+        $robusProvider = Provider::whereKey(9)->whereStatus(true)->first();
+
+        return $robusProvider
+            ? $providers->prepend($robusProvider)->values()
+            : $providers;
+    }
+
 
     public function index()
     {
@@ -87,18 +97,11 @@ class ProviderController extends Controller
 
         try {
 
-            $cacheKey = "dashboard_data_user_" . robus()->id . "_country_" . $countrieId;
+            $cacheKey = "dashboard_data_user_v5_" . robus()->id . "_country_" . $countrieId;
             // 1️⃣ Cas où l'app est indisponible
             if (!$appStatusResult['success']) {
 
                 $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
-
-                if (robus()->is_custumers) {
-                    $walletTransactionDepot = $this->withPixelInnovCashInProviders(
-                        $walletTransactionDepot,
-                        $countrieId
-                    );
-                }
 
                 $walletTransactionDrawal = $this->percentRobus->getProvidersDrawalByType(new Provider, $countrieId, 29);
                 $walletTransactionReload = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 30);
@@ -115,6 +118,11 @@ class ProviderController extends Controller
 
                 if ($zoneProviders->isNotEmpty()) {
                     $dashboard_data['Transfert mobile Zone'] = ProviderSingleCollection::collection($zoneProviders);
+                }
+
+                $depositZoneProviders = $this->getDepositZoneProviders($countrieId);
+                if (robus()->is_custumers && $depositZoneProviders->isNotEmpty()) {
+                    $dashboard_data['Dépôt zone'] = ProviderSingleCollection::collection($depositZoneProviders);
                 }
 
                 return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
@@ -191,11 +199,11 @@ class ProviderController extends Controller
                     'walletUv' => [30, 'relaodUv'],
                 ];
 
-                $providerCacheKey = "providers_country_{$countrieId}_v3";
+                $providerCacheKey = "providers_country_{$countrieId}_v5";
 
                 $providers = [];
 
-                $providerCacheKey = "providers_country_{$countrieId}_v3";
+                $providerCacheKey = "providers_country_{$countrieId}_v5";
                 $providers        = Cache::get($providerCacheKey, []);
 
 
@@ -203,15 +211,9 @@ class ProviderController extends Controller
                     // Cache vide → charger tous les providers depuis la BDD
                     foreach ($providerTypes as $key => [$type, $alias]) {
                         if ($alias === 'transaction') {
-                            $providers[$alias] = $this->withPixelInnovCashInProviders(
-                                $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, $type),
-                                $countrieId
-                            );
+                            $providers[$alias] = $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, $type);
                         } elseif ($alias === 'money') {
-                            $providers[$alias] = $this->withPixelInnovCashInProviders(
-                                $this->percentRobus->getProvidersMoneyByType(new Provider, $countrieId, $type),
-                                $countrieId
-                            );
+                            $providers[$alias] = $this->percentRobus->getProvidersMoneyByType(new Provider, $countrieId, $type);
                         } elseif ($alias === 'depot') {
                             $providers[$alias] = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, $type);
                         } elseif (is_array($type)) {
@@ -228,15 +230,9 @@ class ProviderController extends Controller
                     foreach ($providerTypes as $key => [$type, $alias]) {
                         if (!isset($providers[$alias])) {
                             if ($alias === 'transaction') {
-                                $providers[$alias] = $this->withPixelInnovCashInProviders(
-                                    $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, $type),
-                                    $countrieId
-                                );
+                                $providers[$alias] = $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, $type);
                             } elseif ($alias === 'money') {
-                                $providers[$alias] = $this->withPixelInnovCashInProviders(
-                                    $this->percentRobus->getProvidersMoneyByType(new Provider, $countrieId, $type),
-                                    $countrieId
-                                );
+                                $providers[$alias] = $this->percentRobus->getProvidersMoneyByType(new Provider, $countrieId, $type);
                             } elseif ($alias === 'depot') {
                                 $providers[$alias] = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, $type);
                             } elseif (is_array($type)) {
@@ -369,6 +365,11 @@ class ProviderController extends Controller
 
                 if ($zoneProviders->isNotEmpty()) {
                     $dashboard_data['Transfert mobile Zone'] = ProviderSingleCollection::collection($zoneProviders);
+                }
+
+                $depositZoneProviders = $this->getDepositZoneProviders($countrieId);
+                if (robus()->is_custumers && $canShowPixelInnov && $depositZoneProviders->isNotEmpty()) {
+                    $dashboard_data['Dépôt zone'] = ProviderSingleCollection::collection($depositZoneProviders);
                 }
 
                 return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);

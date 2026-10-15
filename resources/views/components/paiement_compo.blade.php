@@ -1,4 +1,4 @@
-  <div id="paiement" class="tab-pane {{ $activeTab === 'paiement' ? 'active show' : '' }}" class="tab-pane" role="tabpanel" aria-labelledby="paiement-tab">
+  <div wire:ignore.self id="paiement" class="tab-pane {{ $activeTab === 'paiement' ? 'active show' : '' }}" class="tab-pane" role="tabpanel" aria-labelledby="paiement-tab">
       <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
           <div class="hidden md:block mx-auto text-slate-500"></div>
           <div class="hidden md:block mx-auto text-slate-500"></div>

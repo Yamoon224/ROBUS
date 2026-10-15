@@ -73,7 +73,7 @@
                                     <label class="form-label required">Montant</label>
                                     <div class="field-value">
                                         <i class="fas fa-money-bill-wave"></i>
-                                        <span id="offer_paiement_edit_amount">{{ $offer_paiement_edit_amount ?? null }}
+                                        <span id="offer_paiement_edit_amount">{{ formatDisplayAmount($offer_paiement_edit_amount ?? null) }}
                                             {{ $devise_user ?? null }}</span>
                                     </div>
 
@@ -122,7 +122,7 @@
                                     <div class="field-value">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
-                                            id="paiement_amount_t_sodecie_edit">{{ $paiement_amount_t_sodecie_edit ?? null }}
+                                            id="paiement_amount_t_sodecie_edit">{{ formatDisplayAmount($paiement_amount_t_sodecie_edit ?? null) }}
                                             {{ $devise_user ?? null }}</span>
                                     </div>
                                 </div>
@@ -149,7 +149,7 @@
                                 <div class="field-value">
                                     <i class="fas fa-money-bill-wave"></i>
                                     <span
-                                        id="paiement_amount_t_sodecie_edit">{{ $paiement_amount_t_sodecie_edit ?? null }}
+                                        id="paiement_amount_t_sodecie_edit">{{ formatDisplayAmount($paiement_amount_t_sodecie_edit ?? null) }}
                                         {{ $devise_user ?? null }}</span>
                                 </div>
                             </div>

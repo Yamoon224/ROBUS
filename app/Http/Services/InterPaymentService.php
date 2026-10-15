@@ -332,12 +332,7 @@ class InterPaymentService
 
         if (robus()->country->code == 'CI') {
 
-            $message =  'Vous avez effectué un paiement de ' . $walletInter->amount .  robus()->wallet->currencie->code .
-                ' ' .
-                'par ' . $walletInter->provider->name .
-                ' a ' . $walletInter->created_at .
-                ' votre demande est en-cours de validation ' .
-                'Robus vous remercie';
+            $message = \App\Support\SmsMessage::transaction($walletInter, (string) ($walletInter->status ?? 'PENDING'), robus()->wallet->currencie->code, 'Paiement');
 
             sendTryCashMessage(robus()->phone, $message);
         }
@@ -1050,12 +1045,7 @@ class InterPaymentService
 
             if (robus()->country->code == 'CI') {
 
-                $message =  'Vous avez effectué un paiement de ' . $walletInter->amount .  robus()->wallet->currencie->code .
-                    ' ' .
-                    'par ' . $walletInter->provider->name .
-                    ' a ' . $walletInter->created_at .
-                    ' votre demande est en-cours de validation ' .
-                    'Robus vous remercie';
+                $message = \App\Support\SmsMessage::transaction($walletInter, (string) ($walletInter->status ?? 'PENDING'), robus()->wallet->currencie->code, 'Paiement');
 
                 sendTryCashMessage(robus()->phone, $message);
             }
@@ -1140,12 +1130,7 @@ class InterPaymentService
 
             if (robus()->country->code == 'CI') {
 
-                $message =  'Vous avez effectué un paiement de ' . $walletInter->amount .  robus()->wallet->currencie->code .
-                    ' ' .
-                    'par ' . $walletInter->provider->name .
-                    ' a ' . $walletInter->created_at .
-                    ' votre demande est en-cours de validation ' .
-                    'Robus vous remercie';
+                $message = \App\Support\SmsMessage::transaction($walletInter, (string) ($walletInter->status ?? 'PENDING'), robus()->wallet->currencie->code, 'Paiement');
 
                 sendTryCashMessage(robus()->phone, $message);
             }
@@ -1227,12 +1212,7 @@ class InterPaymentService
 
             if (robus()->country->code == 'CI') {
 
-                $message =  'Vous avez effectué un paiement de ' . $walletInter->amount .  robus()->wallet->currencie->code .
-                    ' ' .
-                    'par ' . $walletInter->provider->name .
-                    ' a ' . $walletInter->created_at .
-                    ' votre demande est en-cours de validation ' .
-                    'Robus vous remercie';
+                $message = \App\Support\SmsMessage::transaction($walletInter, (string) ($walletInter->status ?? 'PENDING'), robus()->wallet->currencie->code, 'Paiement');
 
                 sendTryCashMessage(robus()->phone, $message);
             }

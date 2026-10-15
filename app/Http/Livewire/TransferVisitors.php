@@ -150,11 +150,13 @@ class transferVisitors extends Component
     protected $listeners = [
 
         // Transactions events
-        'echo:wallet-xbet-vis-created,.Created_wallet_xbet_vis' => 'notifyNewXbet',
+        'echo:wallet-xbet-created-vis,.Created_wallet_xbet_vis' => 'notifyNewXbet',
         'echo:wallet-transfers-vis-created,.Created_wallet_transfers_vis' => 'notifyNewTransfers',
         'echo:wallet-inter-vis-created,.Created_wallet_inter_vis' => 'notifyNewInter',
         'echo:wallet-card-vis-created,.Created_wallet_card_vis' => 'notifyNewCard',
         'echo:wallet-phone-vis-created,.Created_wallet_phone_vis' => 'notifyNewPhone',
+
+        'echo:wallet-web-transactions-updated,.wallet_web_transaction_updated' => '$refresh',
 
         // Choose Event Channel
         'echo:wallet-transfers-choose-vis-created,.Created_wallet_transfers_vis_choose' =>
@@ -173,35 +175,35 @@ class transferVisitors extends Component
     {
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-transfers');
-        $this->TransactionActiveMenu();
+        // Livewire re-renders the lists without changing the current tab.
     }
 
     public function notifyNewInter()
     {
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-inters');
-        $this->InterActiveMenu();
+        // Livewire re-renders the lists without changing the current tab.
     }
 
     public function notifyNewCard()
     {
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-reloadCard');
-        $this->ReloadCardActiveMenu();
+        // Livewire re-renders the lists without changing the current tab.
     }
 
     public function notifyNewPhone()
     {
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-phoneCredit');
-        $this->phoneCreditActiveMenu();
+        // Livewire re-renders the lists without changing the current tab.
     }
 
     public function notifyNewXbet()
     {
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-phoneCredit');
-        $this->XbetActiveMenu();
+        // Livewire re-renders the lists without changing the current tab.
     }
 
     // Goto pagninated
@@ -299,98 +301,57 @@ class transferVisitors extends Component
         $this->XbetActiveMenu();
     }
 
-    // Choose Transactions
+    // Each web transaction is claimed independently; its PENDING status is kept
+    // because the web validation forms use that status for assigned transactions.
+    protected function takeWebTransaction(string $model, string $event, string $menu, int $id)
+    {
+        $user = sabdy();
+        if (!$user || !$user->hasPermissionTo('traitement-demande')) {
+            $this->emit('info', 'Prise en charge non autoris?e.');
+            return ['success' => false, 'message' => 'Prise en charge non autoris?e.'];
+        }
+
+        try {
+            $claims = app(\App\Services\TransactionClaimService::class);
+            $transaction = $claims->claim($model, $id, $user->id, true, 'PENDING');
+            $claims->notify($event, $transaction);
+            $this->{$menu}();
+            $this->emit('info', 'Transaction prise en charge.');
+            return ['success' => true, 'message' => 'Transaction prise en charge.'];
+        } catch (\Throwable $error) {
+            report($error);
+            $this->{$menu}();
+            $message = $error instanceof \DomainException
+                ? $error->getMessage()
+                : 'Prise en charge impossible. Veuillez réessayer.';
+            $this->emit('error', $message);
+            return ['success' => false, 'message' => $message];
+        }
+    }
+
     public function ChooseUpdatePhoneCredit($id)
     {
-        $walletUpdate = WalletPhoneCredit::findOrFail($id);
-
-        try {
-
-            $walletUpdate->update([
-                'updated_by' => sabdy()->id,
-            ]);
-            event(new ChoosePhoneVisEvent($walletUpdate));
-            $this->phoneCreditActiveMenu();
-            $this->emit('info', 'Vous avez choisi credit téléphonique');
-        } catch (\Exception $exception) {
-            $this->phoneCreditActiveMenu();
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
+        return $this->takeWebTransaction(WalletPhoneCredit::class, ChoosePhoneVisEvent::class, 'phoneCreditActiveMenu', $id);
     }
+
     public function ChooseUpdateReloadCard($id)
     {
-        $walletUpdate = WalletDeposit::findOrFail($id);
-
-        try {
-
-            $walletUpdate->update([
-                'updated_by' => sabdy()->id,
-            ]);
-            $this->ReloadCardActiveMenu();
-            $this->emit('info', 'Vous avez choisi rechargement de carte');
-            event(new ChooseCardVisEvent($walletUpdate));
-        } catch (\Exception $exception) {
-            $this->ReloadCardActiveMenu();
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
+        return $this->takeWebTransaction(WalletDeposit::class, ChooseCardVisEvent::class, 'ReloadCardActiveMenu', $id);
     }
 
-    // Choose User adminto validated transactions
     public function ChooseUpdateTransaction($id)
     {
-        $walletUpdate = WalletTransaction::findOrFail($id);
-        try {
-
-            $walletUpdate->update([
-                'updated_by' => sabdy()->id,
-            ]);
-
-            event(new ChooseTransactionVisEvent($walletUpdate));
-            $this->TransactionActiveMenu();
-            $this->emit('info', 'Vous avez choisi transaction');
-        } catch (\Exception $exception) {
-            $this->TransactionActiveMenu();
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
+        return $this->takeWebTransaction(WalletTransaction::class, ChooseTransactionVisEvent::class, 'TransactionActiveMenu', $id);
     }
 
-    // Choose 1xbets
     public function ChooseUpdateXbet($id)
     {
-        $walletUpdate = WalletXbet::findOrFail($id);
-
-        try {
-
-            $walletUpdate->update([
-                'updated_by' => sabdy()->id,
-            ]);
-            event(new ChooseXbetVisEvent($walletUpdate));
-            $this->XbetActiveMenu();
-            $this->emit('info', 'Vous avez choisi Xbet');
-        } catch (\Exception $exception) {
-            $this->XbetActiveMenu();
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
+        return $this->takeWebTransaction(WalletXbet::class, ChooseXbetVisEvent::class, 'XbetActiveMenu', $id);
     }
 
-    // Update informations
     public function ChooseUpdateInter($id)
     {
-        $walletUpdate = WalletInter::findOrFail($id);
-
-        try {
-
-            $walletUpdate->update([
-                'updated_by' => sabdy()->id,
-            ]);
-            event(new ChooseInterVisEvent($walletUpdate));
-            // $this->emit('modal-hide-inters');
-            $this->InterActiveMenu();
-            $this->emit('info', 'Vous avez choisi transfert international');
-        } catch (\Exception $exception) {
-            $this->InterActiveMenu();
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
+        return $this->takeWebTransaction(WalletInter::class, ChooseInterVisEvent::class, 'InterActiveMenu', $id);
     }
 
     // Edit valeurs informations
@@ -532,6 +493,10 @@ class transferVisitors extends Component
                         'updated_by' => sabdy()->id,
                         'status' => $this->phoneCreditStatus,
                     ]);
+                    app(\App\Services\TransactionClaimService::class)->notify(
+                        \App\Events\Visitors\WebTransactionUpdated::class,
+                        $check
+                    );
 
                     $this->password_transaction = "";
                     $this->phoneCreditStatus = "";
@@ -556,9 +521,7 @@ class transferVisitors extends Component
 
                                 $this->handleAdminCommission($check, $admin_civ);
 
-                                $message = 'Votre opération a été traitée avec succès. Vous recevrez une confirmation de l\'opérateur. 
-                                ROBUS vous remercie.'. ' le ' .
-                                    $check->updated_at ;
+                                $message = \App\Support\SmsMessage::transaction($check, (string) $check->status);
 
                                 $this->sendSuccessMessageNotification($check, $message);
 
@@ -674,6 +637,10 @@ class transferVisitors extends Component
                         'updated_by' => sabdy()->id,
                         'status' => $this->reloadcardStatus,
                     ]);
+                    app(\App\Services\TransactionClaimService::class)->notify(
+                        \App\Events\Visitors\WebTransactionUpdated::class,
+                        $check
+                    );
 
                     $this->password_transaction = "";
                     $this->reloadcardStatus = "";
@@ -699,9 +666,7 @@ class transferVisitors extends Component
     
                                 $this->notifyUsers($admins, 'Demande de rechargement de carte validé');
     
-                                $message = 'Votre opération a été traitée avec succès. Vous recevrez une confirmation de l\'opérateur. 
-                                ROBUS vous remercie.'. ' le ' .
-                                    $check->updated_at ;
+                                $message = \App\Support\SmsMessage::transaction($check, (string) $check->status);
     
     
                                 $this->sendSuccessMessageNotification($check, $message);
@@ -737,10 +702,7 @@ class transferVisitors extends Component
     
                                 $this->notifyUsers($admins, 'Demande de rechargement de carte refusée');
     
-                                // $message = 'Votre opération a été traitée avec succès. Vous recevrez une confirmation de l\'opérateur. 
-                                // ROBUS vous remercie.'. ' le ' .
-                                //     $check->updated_at .
-                                //     'Robus vous remercie';
+                                // $message = \App\Support\SmsMessage::transaction($check, (string) $check->status);
     
                                 // $this->sendSuccessMessageNotification($check, $message);
 
@@ -821,6 +783,10 @@ class transferVisitors extends Component
                         'updated_by' => sabdy()->id,
                         'status' => $this->transactionStatus,
                     ]);
+                    app(\App\Services\TransactionClaimService::class)->notify(
+                        \App\Events\Visitors\WebTransactionUpdated::class,
+                        $check
+                    );
 
                     $this->password_transaction = "";
                     $this->transactionStatus = "";
@@ -844,9 +810,7 @@ class transferVisitors extends Component
 
                                 $this->handleAdminCommission($check, $admin_civ);
 
-                                $message = 'Votre opération a été traitée avec succès. Vous recevrez une confirmation de l\'opérateur. 
-                                ROBUS vous remercie.'. ' le ' .
-                                    $check->updated_at ;
+                                $message = \App\Support\SmsMessage::transaction($check, (string) $check->status);
 
                                 $this->sendSuccessMessageNotification($check, $message);
 
@@ -950,6 +914,10 @@ class transferVisitors extends Component
                         'updated_by' => sabdy()->id,
                         'status' => $this->status_xbet_edit,
                     ]);
+                    app(\App\Services\TransactionClaimService::class)->notify(
+                        \App\Events\Visitors\WebTransactionUpdated::class,
+                        $check
+                    );
 
                     $this->password_transaction = "";
                     $this->status_xbet_edit = "";
@@ -973,9 +941,7 @@ class transferVisitors extends Component
 
                                 $this->handleAdminCommission($check, $admin_civ);
 
-                                $message = 'Votre opération a été traitée avec succès. Vous recevrez une confirmation de l\'opérateur. 
-                                ROBUS vous remercie.'. ' le ' .
-                                    $check->updated_at ;
+                                $message = \App\Support\SmsMessage::transaction($check, (string) $check->status);
 
                                 $this->sendSuccessMessageNotification($check, $message);
 
@@ -1087,6 +1053,10 @@ class transferVisitors extends Component
                         'updated_by' => sabdy()->id,
                         'status' => $this->interStatus,
                     ]);
+                    app(\App\Services\TransactionClaimService::class)->notify(
+                        \App\Events\Visitors\WebTransactionUpdated::class,
+                        $check
+                    );
 
                     $this->password_transaction = "";
                     $this->interStatus = "";
@@ -1109,9 +1079,7 @@ class transferVisitors extends Component
 
                                 $this->handleAdminCommission($check, $admin_civ);
 
-                                $message = 'Votre opération a été traitée avec succès. Vous recevrez une confirmation de l\'opérateur. 
-                                ROBUS vous remercie.'. ' le ' .
-                                    $check->updated_at ;
+                                $message = \App\Support\SmsMessage::transaction($check, (string) $check->status);
 
                                 $this->sendSuccessMessageNotification($check, $message);
 
@@ -1450,7 +1418,12 @@ class transferVisitors extends Component
     protected function sendSuccessMessageNotification($check, $message)
     {
         $encode = substr($check->phone_benef, -10);
-        http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+        http::get("https://app.smspro.africa/api/http/sms/send", [
+            'recipient' => "225$encode",
+            'sender_id' => "ROBUS",
+            'message' => \App\Support\SmsMessage::normalize($message),
+            'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+        ]);
     }
 
 

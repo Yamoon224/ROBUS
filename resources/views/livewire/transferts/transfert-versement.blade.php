@@ -232,7 +232,7 @@
 
                             <div
                                 class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                {{ $amount_versement ?? null }} {{ $usersCountry }}
+                                {{ formatDisplayAmount($amount_versement ?? null) }} {{ $usersCountry }}
                             </div>
                         </div>
 

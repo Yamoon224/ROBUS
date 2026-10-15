@@ -3,6 +3,46 @@
     <h2 class="intro-y text-lg font-medium mt-10">
         Liste des operateurs
     </h2>
+    @if (Auth::guard('web')->user()->hasPermissionTo('active-operateurs'))
+        <div class="intro-y box p-5 mt-5">
+            <h3 class="text-base font-medium">Activation des méthodes de paiement par pays</h3>
+            <p class="text-slate-500 mt-1">Choisissez un pays pour gérer toutes ses méthodes ou un groupe précis.</p>
+
+            <div class="grid grid-cols-12 gap-4 mt-4 items-end">
+                <div class="col-span-12 md:col-span-4">
+                    <label class="form-label">Pays</label>
+                    <select wire:model="managementCountryId" class="form-select">
+                        <option value="">Sélectionner un pays</option>
+                        @foreach ($countries as $country)
+                            <option value="{{ $country->id }}">{{ $country->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('managementCountryId') <div class="text-danger mt-1">Sélectionnez un pays.</div> @enderror
+                </div>
+
+                <div class="col-span-12 md:col-span-4">
+                    <label class="form-label">Groupe de méthodes</label>
+                    <select wire:model="managementProviderTypeId" class="form-select">
+                        <option value="">Sélectionner un groupe</option>
+                        @foreach ($providerTypes as $providerType)
+                            <option value="{{ $providerType->id }}">{{ $providerType->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('managementProviderTypeId') <div class="text-danger mt-1">Sélectionnez un groupe.</div> @enderror
+                </div>
+
+                <div class="col-span-12 md:col-span-4 flex flex-wrap gap-2">
+                    <button type="button" wire:click="setGroupStatus(true)" class="btn btn-success">Activer le groupe</button>
+                    <button type="button" wire:click="setGroupStatus(false)" class="btn btn-danger">Désactiver le groupe</button>
+                </div>
+
+                <div class="col-span-12 flex flex-wrap gap-2 border-t pt-4">
+                    <button type="button" wire:click="setCountryStatus(true)" class="btn btn-success">Activer toutes les méthodes du pays</button>
+                    <button type="button" wire:click="setCountryStatus(false)" class="btn btn-danger">Désactiver toutes les méthodes du pays</button>
+                </div>
+            </div>
+        </div>
+    @endif
     <div class="grid grid-cols-12 gap-6 mt-5 mb-3">
         {{-- @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-operateurs'))
             <a class="btn btn-primary mt-3" href="{{ route('services.add') }}">Créer</a>
@@ -65,9 +105,19 @@
                                 <td class="w-35 text-center">
 
                                     @foreach ($item->country_services as $service)
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $service->country->name ?? null }}</span>
+                                        @if (Auth::guard('web')->user()->hasPermissionTo('active-operateurs'))
+                                            <button type="button"
+                                                wire:click="setCountryServiceStatus({{ $service->id }}, {{ $service->status ? 'false' : 'true' }})"
+                                                class="inline-flex items-center justify-center px-2 py-1 mb-2 mr-1 text-xs font-bold text-white rounded {{ $service->status ? 'bg-success' : 'bg-danger' }}"
+                                                title="{{ $service->status ? 'Désactiver' : 'Activer' }} cette méthode pour {{ $service->country->name ?? 'ce pays' }}">
+                                                <i class="fas {{ $service->status ? 'fa-unlock-alt' : 'fa-lock' }} w-3 h-3 mr-1"></i>
+                                                {{ $service->country->name ?? null }}
+                                            </button>
+                                        @else
+                                            <span class="inline-flex items-center justify-center px-2 py-1 mb-2 mr-1 text-xs font-bold text-white rounded {{ $service->status ? 'bg-success' : 'bg-danger' }}">
+                                                {{ $service->country->name ?? null }}
+                                            </span>
+                                        @endif
                                     @endforeach
                                 </td>
                                 {{-- <td class="w-35 text-center">

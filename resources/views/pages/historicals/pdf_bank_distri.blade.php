@@ -246,7 +246,7 @@ Template Name: Rubick - HTML Admin Dashboard Template
                                                         <td class="w-56">
                                                             <div class="text-slate-300 text-xs  mt-0.5 mb-2">
                                                                 <div class="text-slate-300 text-xs  mt-0.5">
-                                                                    {{ $item->amount_distributer ?? null }}
+                                                                    {{ formatDisplayAmount($item->amount_distributer ?? null) }}
                                                                     {{ $item->sidUser->wallet->currencie->code ?? null }}
                                                                 </div>
                                                             </div>

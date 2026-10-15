@@ -12,6 +12,7 @@ use App\Models\Custumers\Country;
 use App\Models\Wallets\Wallet;
 use Illuminate\Http\Request;
 use App\Models\IntegrationClient;
+use App\Support\AccountValidation;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Endroid\QrCode\Builder\Builder;
@@ -422,7 +423,7 @@ class IntegrationController extends Controller
 
             return redirect()->route('admin.login_integration')
                 ->with('color', 'success')
-                ->with('status', 'Compte créé avec succès! Un commercial vous contactera sous peu.');
+                ->with('status', AccountValidation::REGISTRATION_MESSAGE);
         } catch (\Exception $exception) {
 
             return back()

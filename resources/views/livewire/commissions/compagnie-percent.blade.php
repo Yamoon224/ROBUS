@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <h2 class="intro-y text-lg font-medium mt-10">
         Commissions pour les transactions companies
     </h2>
@@ -33,7 +33,7 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
 
         </div>
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+        <div class="intro-y col-span-12 overflow-x-auto">
             <h2 class="alert alert-dark  intro-y text-lg font-medium">
                 Liste des commissions des transactions des companies
             </h2>

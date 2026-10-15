@@ -7,7 +7,7 @@
                 <div class="p-5 text-center">
                     <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
                     <div class="text-3xl mt-5">Action requise !!!</div>
-                    <div class="text-slate-500 mt-2">Êtes-vous sûr de vouloir rémonte la somme de   {{   $this->gain_amount ?? null }} {{ $user_currencie ?? null }} pour le  {{  $typeRemonte ?? null  }} ?</div>
+                    <div class="text-slate-500 mt-2">Êtes-vous sûr de vouloir rémonte la somme de   {{ formatDisplayAmount($this->gain_amount ?? null) }} {{ $user_currencie ?? null }} pour le  {{  $typeRemonte ?? null  }} ?</div>
                 </div>
                 <div class="px-5 pb-8 text-center">
                     <button wire:click="cancelField" type="button"

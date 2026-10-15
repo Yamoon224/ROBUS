@@ -177,7 +177,7 @@
                                 <td>
                                     @foreach ($order->paiements as $key => $orderDetail)
                                         @if ($order->paiements->last() === $orderDetail)
-                                            {{ $orderDetail->subamount }} Frcfa
+                                            {{ formatDisplayAmount($orderDetail->subamount) }} Frcfa
                                         @endif
                                     @endforeach
                                 </td>
@@ -211,8 +211,8 @@
                                         @if ($loop->last)
                                             <div class="progress-bar  w-3/4 mb-1 " role="progressbar" aria-valuenow="0"
                                                 aria-valuemin="0" aria-valuemax="100">
-                                                {{ $order->paie_sell - $orderDetail->rest_paie_sell ?? '0' }} /
-                                                {{ $order->paie_sell ?? '0' }}
+                                                {{ formatDisplayAmount($order->paie_sell - $orderDetail->rest_paie_sell ?? '0') }} /
+                                                {{ formatDisplayAmount($order->paie_sell ?? '0') }}
                                             </div>
                                         @endif
                                     @endforeach

@@ -1,4 +1,4 @@
-<div>
+<div wire:poll.10s.visible="$refresh">
     <!-- inject:js -->
     <script src="{{ asset('public/dist/js/app.js') }}"></script>
     <script src="{{ asset('public/css/app.css') }}"></script>
@@ -7,7 +7,7 @@
         <span
             class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3  font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
 
-            Solde : {{ $walletSolde ?? null }} {{ $usersCountry }}
+            Solde : {{ formatDisplayAmount($walletSolde ?? null) }} {{ $usersCountry }}
         </span>
     </h2>
    

@@ -14,7 +14,11 @@ class CountryService extends Model
 
     protected $table = 'country_services';
 
-    protected $fillable = ['country_id', 'provider_id'];
+    protected $fillable = ['country_id', 'provider_id', 'status'];
+
+    protected $casts = [
+        'status' => 'boolean',
+    ];
 
 
     public function country()

@@ -560,7 +560,7 @@ class UserControllerAMeliorer extends Controller
 
                 if (robus()->email != null) {
 
-                    Mail::to(robus()->email)->send(new UvSend('Vous avez transferé une commission de ' . $withRemonte->amount_with_draw . ' ' . robus()->wallet->currencie->code . ' le '
+                    Mail::to(robus()->email)->send(new UvSend('Vous avez transféré une commission de ' . $withRemonte->amount_with_draw . ' ' . robus()->wallet->currencie->code . ' le '
                         . $withRemonte->created_at  . ' Robus vous remercie'));
                 }
 
@@ -1534,18 +1534,23 @@ class UserControllerAMeliorer extends Controller
 
                 if ($wallet_user->country->code == "CI") {
 
-                    $message = 'Vous avez transferé une commission de ' . $valeur_received->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
-                        . $valeur_received->created_at  . ' Robus vous remercie';
+                    $message = 'Vous avez transféré une commission de ' . formatDisplayAmount($valeur_received->amount_with_draw) . ' ' . $wallet_user->wallet->currencie->code . ' le '
+                        . $valeur_received->created_at  . '. ROBUS vous remercie.';
 
                     $encode = substr(Auth::guard('api')->user()->phone,  -10);
 
-                    Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    Http::get("https://app.smspro.africa/api/http/sms/send", [
+                        'recipient' => "225$encode",
+                        'sender_id' => "ROBUS",
+                        'message' => \App\Support\SmsMessage::normalize($message),
+                        'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                    ]);
                 } else {
 
 
                     if ($wallet_user->email != null) {
 
-                        Mail::to($wallet_user->email)->send(new UvSend('Vous avez transferé une commission de ' . $valeur_received->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
+                        Mail::to($wallet_user->email)->send(new UvSend('Vous avez transféré une commission de ' . $valeur_received->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
                             . $valeur_received->created_at  . ' Robus vous remercie'));
                     }
                 }
@@ -1861,8 +1866,8 @@ class UserControllerAMeliorer extends Controller
 
                 if ($wallet_user->country->code == "CI") {
 
-                    $message = 'Vous avez transferé une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
-                        . $valeurReceived->created_at  . ' Robus vous remercie';
+                    $message = 'Vous avez transféré une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
+                        . $valeurReceived->created_at  . '. ROBUS vous remercie.';
 
                     $encode = substr(robus()->phone,  -10);
                 } else {
@@ -1870,7 +1875,7 @@ class UserControllerAMeliorer extends Controller
 
                     if ($wallet_user->email != null) {
 
-                        Mail::to($wallet_user->email)->send(new UvSend('Vous avez transferé une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
+                        Mail::to($wallet_user->email)->send(new UvSend('Vous avez transféré une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
                             . $valeurReceived->created_at  . ' Robus vous remercie'));
                     }
                 }

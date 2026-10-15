@@ -187,7 +187,7 @@
                     <label class="form-label">Montant <span class="text-danger">*</span></label>
                     <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
                         <i class="fas fa-money-bill-wave text-gray-500 mr-3"></i>
-                        <span class="text-gray-800 font-medium">{{ $amount_bank_edit ?? '0' }}</span>
+                        <span class="text-gray-800 font-medium">{{ formatDisplayAmount($amount_bank_edit ?? '0') }}</span>
                         <span class="ml-2 text-gray-600 font-mono">{{ $currency_custumers ?? '' }}</span>
                     </div>
                 </div>

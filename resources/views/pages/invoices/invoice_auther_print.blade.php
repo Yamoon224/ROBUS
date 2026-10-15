@@ -28,6 +28,7 @@
             </div>
             <div class="title-area">
                 <h1>FACTURE</h1>
+                <x-receipt-operation :transaction="$walletTransaction" />
                 <p>N° {{ $walletTransaction->transaction->transaction_id ?? 'N/A' }}</p>
             </div>
             <div class="clearfix"></div>
@@ -144,25 +145,25 @@
             <table class="amount-table">
                 <tr>
                     <td class="label">Montant demandé</td>
-                    <td class="value">{{ number_format($walletTransaction->amount ?? 0, 0, ',', ' ') }}
+                    <td class="value">{{ number_format($walletTransaction->amount ?? 0, 2, ',', ' ') }}
                         {{ $walletTransaction->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
                 <tr>
                     <td class="label">Montant reçu</td>
-                    <td class="value bold">{{ number_format($walletTransaction->amount_received ?? 0, 0, ',', ' ') }}
+                    <td class="value bold">{{ number_format($walletTransaction->amount_received ?? 0, 2, ',', ' ') }}
                         {{ $walletTransaction->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
                 @if ($walletTransaction->wallet->sidUser->is_custumers)
                     <tr>
                         <td class="label">Frais</td>
-                        <td class="value">{{ number_format($walletTransaction->costs_amount ?? 0, 0, ',', ' ') }}
+                        <td class="value">{{ number_format($walletTransaction->costs_amount ?? 0, 2, ',', ' ') }}
                             {{ $walletTransaction->wallet->currencie->code ?? 'FCFA' }}</td>
                     </tr>
                 @endif
 
                 <tr class="total-row">
                     <td class="label bold">TOTAL À PAYER</td>
-                    <td class="value bold">{{ number_format($walletTransaction->amount ?? 0, 0, ',', ' ') }}
+                    <td class="value bold">{{ number_format($walletTransaction->amount ?? 0, 2, ',', ' ') }}
                         {{ $walletTransaction->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
             </table>

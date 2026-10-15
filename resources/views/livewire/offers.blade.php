@@ -40,7 +40,7 @@
 
                                 </td>
                                 <td class="w-35 text-center">
-                                    <div class="text-slate-500 text-xs  mt-0.5">{{ $item->amount ?? null }}</div>
+                                    <div class="text-slate-500 text-xs  mt-0.5">{{ formatDisplayAmount($item->amount ?? null) }}</div>
 
                                 </td>
                                 <td class="w-35 text-center">

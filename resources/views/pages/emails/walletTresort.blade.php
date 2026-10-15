@@ -518,7 +518,7 @@
                                                             style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';font-size:16px;line-height:1.5em;margin-top:0;text-align:left">
                                                             Vous avez effectué une demande de rechargement Tresort Money
                                                             de
-                                                            {{ $content->amount ?? null }}
+                                                            {{ formatDisplayAmount($content->amount ?? null) }}
                                                             {{ $content->wallet->currencie->code ?? null }} par
                                                         <h1
                                                             style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';color:#3d4852;font-size:18px;font-weight:bold;margin-top:0;text-align:left">
@@ -531,7 +531,7 @@
 
                                                         <h1
                                                             style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';color:#3d4852;font-size:18px;font-weight:bold;margin-top:0;text-align:left">
-                                                            Votre solde est de : {{ $content->amount_solde ?? null }}
+                                                            Votre solde est de : {{ formatDisplayAmount($content->amount_solde ?? null) }}
                                                         </h1>
                                                         </p>
                                                         @if ($content->status == 'PENDING')

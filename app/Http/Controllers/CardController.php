@@ -64,7 +64,7 @@ class CardController extends Controller
             abort(403);
         }
 
-        $type_reload =  $this->getProvidersByTypepaddd(new Provider, sabdy()->country->id, 5);
+        $type_reload = $this->getProvidersByType(new Provider, sabdy()->country->id, 5);
 
 
         return view('pages.cards.add', compact('type_reload'));
@@ -77,6 +77,7 @@ class CardController extends Controller
         return $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', $providerType)
             ->select('providers.*')
@@ -239,13 +240,16 @@ class CardController extends Controller
         if (sabdy()->is_custumers) {
             if (sabdy()->country->code == "CI") {
 
-                $message = 'Vous avez effectué une commande de carte de  ' . $walletOrderCard->amount .  sabdy()->wallet->currencie->code . ' ' .   'par '
-                    . $walletOrderCard->provider->name  .  ' le '
-                    . $walletOrderCard->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                $message = \App\Support\SmsMessage::transaction($walletOrderCard, (string) ($walletOrderCard->status ?? 'PENDING'), sabdy()->wallet->currencie->code, 'Commande de carte');
 
                 $encode = substr(sabdy()->phone,  -10);
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                http::get("https://app.smspro.africa/api/http/sms/send", [
+                    'recipient' => "225$encode",
+                    'sender_id' => "ROBUS",
+                    'message' => \App\Support\SmsMessage::normalize($message),
+                    'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                ]);
             }
         }
         $msg = 'Votre demande est en cours de validation';
@@ -438,9 +442,14 @@ class CardController extends Controller
 
             $encode = substr($card->wallet->sidUser->phone,  -10);
 
-            $message = 'Votre carte a été activé ' . ' ' . 'Le code de la carte est ' . $card->ref_card;
+            $message = 'Votre carte a été activé ' . ' ' . 'Référence de la carte : ' . $card->ref_card;
 
-            Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+            Http::get("https://app.smspro.africa/api/http/sms/send", [
+                'recipient' => "225$encode",
+                'sender_id' => "ROBUS",
+                'message' => \App\Support\SmsMessage::normalize($message),
+                'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+            ]);
 
             $msg_title = 'Commande de carte';
             $msg = 'Votre commande de carte a été validé';
@@ -488,9 +497,14 @@ class CardController extends Controller
 
                 $encode = substr($card->phone,  -10);
 
-                $message = 'Votre carte a été desactivé ' . ' ' . 'Le code de la carte est ' . $card->ref_card;
+                $message = 'Votre carte a été desactivé ' . ' ' . 'Référence de la carte : ' . $card->ref_card;
 
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                Http::get("https://app.smspro.africa/api/http/sms/send", [
+                    'recipient' => "225$encode",
+                    'sender_id' => "ROBUS",
+                    'message' => \App\Support\SmsMessage::normalize($message),
+                    'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                ]);
             } else {
                 $card->status = '1';
                 $msg = 'Activation effectuée avec succès';
@@ -498,9 +512,14 @@ class CardController extends Controller
 
                 $encode = substr($card->phone,  -10);
 
-                $message = 'Votre carte a été activé ' . ' ' . 'Le code de la carte est ' . $card->ref_card;
+                $message = 'Votre carte a été activé ' . ' ' . 'Référence de la carte : ' . $card->ref_card;
 
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                Http::get("https://app.smspro.africa/api/http/sms/send", [
+                    'recipient' => "225$encode",
+                    'sender_id' => "ROBUS",
+                    'message' => \App\Support\SmsMessage::normalize($message),
+                    'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                ]);
             }
             $card->save();
             DB::commit();

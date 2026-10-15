@@ -310,9 +310,7 @@ class ReloadController extends Controller
                             $wallet_user->country->code == "CI"
                         ) {
 
-                            $message = 'Vous avez effectué un transafers de ' . $walletReload->amount .  $wallet_user->wallet->currencie->code .  'par '
-                                . $walletReload->provider->name  .  ' a '
-                                . $walletReload->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($walletReload, (string) ($walletReload->status ?? 'PENDING'), $wallet_user->wallet->currencie->code, 'Transfert');
 
                             sendTryCashMessage(robus()->phone, $message);
                         }
@@ -490,13 +488,16 @@ class ReloadController extends Controller
 
                             if ($wallet_user->country->code == "CI") {
 
-                                $message = 'Vous avez effectué un transafers de ' . $walletReload->amount .  $wallet_user->wallet->currencie->code .  'par '
-                                    . $walletReload->provider->name  .  ' a '
-                                    . $walletReload->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
+                                $message = \App\Support\SmsMessage::transaction($walletReload, (string) ($walletReload->status ?? 'PENDING'), $wallet_user->wallet->currencie->code, 'Transfert');
 
                                 $encode = substr(Auth::guard('api')->user()->phone,  -10);
 
-                                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                Http::get("https://app.smspro.africa/api/http/sms/send", [
+                                    'recipient' => "225$encode",
+                                    'sender_id' => "ROBUS",
+                                    'message' => \App\Support\SmsMessage::normalize($message),
+                                    'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                                ]);
                             }
 
                             $msg = 'Demande en cours de validation';
@@ -637,13 +638,16 @@ class ReloadController extends Controller
 
                             if ($wallet_user->country->code == "CI") {
 
-                                $message = 'Vous avez effectué un transafers de ' . $walletReload->amount .  $wallet_user->wallet->currencie->code .  'par '
-                                    . $walletReload->provider->name  .  ' a '
-                                    . $walletReload->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
+                                $message = \App\Support\SmsMessage::transaction($walletReload, (string) ($walletReload->status ?? 'PENDING'), $wallet_user->wallet->currencie->code, 'Transfert');
 
                                 $encode = substr(Auth::guard('api')->user()->phone,  -10);
 
-                                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                Http::get("https://app.smspro.africa/api/http/sms/send", [
+                                    'recipient' => "225$encode",
+                                    'sender_id' => "ROBUS",
+                                    'message' => \App\Support\SmsMessage::normalize($message),
+                                    'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                                ]);
                             }
 
                             $msg = 'Demande en cours de validation';
@@ -785,13 +789,16 @@ class ReloadController extends Controller
 
                             if ($wallet_user->country->code == "CI") {
 
-                                $message = 'Vous avez effectué un transafers de ' . $walletReload->amount .  $wallet_user->wallet->currencie->code .  'par '
-                                    . $walletReload->provider->name  .  ' a '
-                                    . $walletReload->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
+                                $message = \App\Support\SmsMessage::transaction($walletReload, (string) ($walletReload->status ?? 'PENDING'), $wallet_user->wallet->currencie->code, 'Transfert');
 
                                 $encode = substr(Auth::guard('api')->user()->phone,  -10);
 
-                                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                Http::get("https://app.smspro.africa/api/http/sms/send", [
+                                    'recipient' => "225$encode",
+                                    'sender_id' => "ROBUS",
+                                    'message' => \App\Support\SmsMessage::normalize($message),
+                                    'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                                ]);
                             }
 
                             $msg = 'Demande en cours de validation';
@@ -948,13 +955,16 @@ class ReloadController extends Controller
 
                         if ($wallet_user->country->code == "CI") {
 
-                            $message = 'Vous avez effectué un transafers de ' . $walletReload->amount .  $wallet_user->wallet->currencie->code .  'par '
-                                . $walletReload->provider->name  .  ' a '
-                                . $walletReload->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($walletReload, (string) ($walletReload->status ?? 'PENDING'), $wallet_user->wallet->currencie->code, 'Transfert');
 
                             $encode = substr(Auth::guard('api')->user()->phone,  -10);
 
-                            Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                            Http::get("https://app.smspro.africa/api/http/sms/send", [
+                                'recipient' => "225$encode",
+                                'sender_id' => "ROBUS",
+                                'message' => \App\Support\SmsMessage::normalize($message),
+                                'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                            ]);
                         }
 
                         $msg = 'Demande en cours de validation';

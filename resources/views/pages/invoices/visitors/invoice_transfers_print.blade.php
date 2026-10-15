@@ -66,6 +66,7 @@
 </head>
 
 <body>
+    <x-receipt-operation :transaction="$walletTransfers" />
     <div>
         <div style="padding:0px 19px;">
             <table>
@@ -226,20 +227,20 @@
                                 <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                     {{ 'Montant demandé' }}</td>
                                 <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletTransfers->amount ?? null }} FCFA</td>
+                                    {{ formatDisplayAmount($walletTransfers->amount ?? null) }} FCFA</td>
                             </tr>
                             <tr>
                                 <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                     {{ 'Montant recu' }}</td>
                                 <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletTransfers->amount_received ?? null }}
+                                    {{ formatDisplayAmount($walletTransfers->amount_received ?? null) }}
                                     {{ $wallet_info->country->currencie->name ?? null }}</td>
                             </tr>
                             <tr>
                                 <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                     {{ 'Frais' }}</td>
                                 <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletTransfers->transaction->fee_amount ?? null }}FCFA</td>
+                                    {{ formatDisplayAmount($walletTransfers->transaction->fee_amount ?? null) }}FCFA</td>
                             </tr>
                         @else
                             <tr>
@@ -253,19 +254,19 @@
                                 <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                     {{ 'Montant demandé' }}</td>
                                 <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletTransfers->amount ?? null }} FCFA</td>
+                                    {{ formatDisplayAmount($walletTransfers->amount ?? null) }} FCFA</td>
                             </tr>
                             <tr>
                                 <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                     {{ 'Montant recu' }}</td>
                                 <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletTransfers->amount_received ?? null }} FCFA</td>
+                                    {{ formatDisplayAmount($walletTransfers->amount_received ?? null) }} FCFA</td>
                             </tr>
                             <tr>
                                 <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                     {{ 'Frais' }}</td>
                                 <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletTransfers->transaction->fee_amount ?? null }} FCFA</td>
+                                    {{ formatDisplayAmount($walletTransfers->transaction->fee_amount ?? null) }} FCFA</td>
                             </tr>
                         @endif
 

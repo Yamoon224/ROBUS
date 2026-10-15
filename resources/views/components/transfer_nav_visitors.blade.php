@@ -3,7 +3,7 @@
 
         @if (sabdy()->country->code == 'CI')
             <li id="transfert-visitors-tab" class="nav-item" role="presentation">
-                <a href="javascript:;" class="nav-link py-4 flex items-center" id="transfert-visitors-nav" data-tw-target="#transfert-visitors"
+                <a wire:ignore.self href="javascript:;" class="nav-link py-4 flex items-center" id="transfert-visitors-nav" data-tw-target="#transfert-visitors"
                     aria-controls="transfert-visitors" aria-selected="false" role="tab"><svg xmlns="http://www.w3.org/2000/svg"
                         width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
@@ -13,7 +13,7 @@
             </li>
            
             <li id="carte-visitors-tab" class="nav-item" role="presentation">
-                <a href="javascript:;" class="nav-link py-4 flex items-center" id="carte-visitors-nav" data-tw-target="#carte-visitors"
+                <a wire:ignore.self href="javascript:;" class="nav-link py-4 flex items-center" id="carte-visitors-nav" data-tw-target="#carte-visitors"
                     aria-controls="carte-visitors" aria-selected="false" role="tab"> <svg xmlns="http://www.w3.org/2000/svg"
                         width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
@@ -24,7 +24,7 @@
             </li>
  
             <li id="phone-visitors-tab" class="nav-item" role="presentation">
-                <a href="javascript:;" class="nav-link py-4 flex items-center" id="phone-visitors-nav" data-tw-target="#phone-visitors"
+                <a wire:ignore.self href="javascript:;" class="nav-link py-4 flex items-center" id="phone-visitors-nav" data-tw-target="#phone-visitors"
                     aria-controls="phone-visitors" aria-selected="false" role="tab"> <svg xmlns="http://www.w3.org/2000/svg"
                         width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
@@ -34,7 +34,7 @@
                     telephonique</a>
             </li>
             <li id="xbet-visitors-tab" class="nav-item" role="presentation">
-                <a href="javascript:;" class="nav-link py-4 flex items-center" id="xbet-visitors-nav" data-tw-target="#xbet-visitors"
+                <a wire:ignore.self href="javascript:;" class="nav-link py-4 flex items-center" id="xbet-visitors-nav" data-tw-target="#xbet-visitors"
                     aria-controls="xbet-visitors" aria-selected="false" role="tab"> <svg
                         xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
@@ -44,7 +44,7 @@
                 </a>
             </li>
             <li id="inter-visitors-tab" class="nav-item" role="presentation">
-                <a href="javascript:;" class="nav-link py-4 flex items-center" id="inter-visitors-nav" data-tw-target="#inter-visitors"
+                <a wire:ignore.self href="javascript:;" class="nav-link py-4 flex items-center" id="inter-visitors-nav" data-tw-target="#inter-visitors"
                     aria-controls="inter-visitors" aria-selected="false" role="tab"> <svg
                         xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"

@@ -66,6 +66,7 @@
 </head>
 
 <body>
+    <x-receipt-operation :transaction="$walletInters" />
     <div>
         <div style="padding:0px 19px;">
             <table>
@@ -203,13 +204,13 @@
                                 <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                     {{ 'Montant demandé' }}</td>
                                 <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->amount ?? null }}</td>
+                                    {{ formatDisplayAmount($walletInters->amount ?? null) }}</td>
                             </tr>
                             <tr>
                                 <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                     {{ 'Montant recu' }}</td>
                                 <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->amount_received ?? null }}
+                                    {{ formatDisplayAmount($walletInters->amount_received ?? null) }}
                                     {{ $walletInters->country->currencie->name ?? null }}</td>
                             </tr>
                             <tr>
@@ -257,13 +258,13 @@
                                 <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                     {{ 'Montant demandé' }}</td>
                                 <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->amount ?? null }}</td>
+                                    {{ formatDisplayAmount($walletInters->amount ?? null) }}</td>
                             </tr>
                             <tr>
                                 <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                     {{ 'Montant recu' }}</td>
                                 <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->amount_received ?? null }}
+                                    {{ formatDisplayAmount($walletInters->amount_received ?? null) }}
                                     {{ $walletInters->country->currencie->name ?? null }}</td>
                             </tr>
                             <tr>
@@ -277,7 +278,7 @@
                                 <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                     {{ 'frais' }}</td>
                                 <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->transactionInter->fee_amount ?? null }}</td>
+                                    {{ formatDisplayAmount($walletInters->transactionInter->fee_amount ?? null) }}</td>
                             </tr>
                         @endif
                     </tbody>

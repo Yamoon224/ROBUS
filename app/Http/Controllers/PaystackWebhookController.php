@@ -1627,12 +1627,7 @@ class PaystackWebhookController extends Controller
 
                 // Envoyer un SMS pour la Côte d'Ivoire
                 if ($user->country && $user->country->code == "CI" && $user->phone) {
-                    $message = sprintf(
-                        'Vous avez rechargé votre compte Robus de %s FCFA via achat d\'UV. Référence: %s. Nouveau solde: %s FCFA. Robus vous remercie!',
-                        number_format($transaction->amount, 0, ',', ' '),
-                        $transaction->reference,
-                        number_format($transaction->wallet->balance, 0, ',', ' ')
-                    );
+                    $message = sprintf('ROBUS - Rechargement de compte : %s FCFA. Référence : %s. Nouveau solde : %s FCFA.', formatDisplayAmount($transaction->amount), $transaction->reference, formatDisplayAmount($transaction->wallet->balance));
 
                     $phoneNumber = '225' . substr($user->phone, -10);
 

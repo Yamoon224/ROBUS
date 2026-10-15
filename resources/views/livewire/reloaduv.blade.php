@@ -7,7 +7,7 @@
                 <div class="amount-balance">
                     <div class="flex items-baseline justify-between">
                         <span class="amount-balance-value text-xl font-semibold">
-                            {{ $walletSolde ?? 0 }}
+                            {{ formatDisplayAmount($walletSolde ?? 0) }}
                         </span>
                         <span class="amount-balance-currency text-white">
                             {{ $usersCountry ?? 'CFA' }}
@@ -25,7 +25,7 @@
                     <div class="amount-commission-balance">
                         <div class="flex items-baseline justify-between">
                             <span class="amount-balance-value text-xl font-semibold">
-                                {{ $walletCommissions ?? 0 }}
+                                {{ formatDisplayAmount($walletCommissions ?? 0) }}
                             </span>
                             <span class="amount-balance-currency text-white">
                                 {{ $usersCountry ?? 'CFA' }}
@@ -102,7 +102,7 @@
                                 d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ number_format($dailyStats['today']['total_amount'] ?? 0, 0, ',', ' ') }}
+                            {{ number_format($dailyStats['today']['total_amount'] ?? 0, 2, ',', ' ') }}
                         </div>
                         <div class="flex items-center gap-2 mt-1">
                             <span class="text-sm  rounded">
@@ -127,7 +127,7 @@
                                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ number_format($dailyStats['average'] ?? 0, 0, ',', ' ') }}
+                            {{ number_format($dailyStats['average'] ?? 0, 2, ',', ' ') }}
                         </div>
                         <div class="text-sm opacity-75 mt-1">{{ $usersCountry }}</div>
 
@@ -146,7 +146,7 @@
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ number_format($dailyStats['month']['total_amount'] ?? 0, 0, ',', ' ') }}
+                            {{ number_format($dailyStats['month']['total_amount'] ?? 0, 2, ',', ' ') }}
                         </div>
                         <div class="text-sm opacity-75 mt-1">{{ $dailyStats['month']['total'] ?? 0 }}
                             opérations</div>
@@ -169,7 +169,7 @@
                                 d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ number_format($dailyStatsSuperVisorSender['today']['total_amount'] ?? 0, 0, ',', ' ') }}
+                            {{ number_format($dailyStatsSuperVisorSender['today']['total_amount'] ?? 0, 2, ',', ' ') }}
                         </div>
                         <div class="flex items-center gap-2 mt-1">
                             <span class="text-sm  rounded">
@@ -194,7 +194,7 @@
                                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ number_format($dailyStatsSuperVisorSender['average'] ?? 0, 0, ',', ' ') }}
+                            {{ number_format($dailyStatsSuperVisorSender['average'] ?? 0, 2, ',', ' ') }}
                         </div>
                         <div class="text-sm opacity-75 mt-1">{{ $usersCountry }}</div>
 
@@ -213,7 +213,7 @@
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ number_format($dailyStatsSuperVisorSender['month']['total_amount'] ?? 0, 0, ',', ' ') }}
+                            {{ number_format($dailyStatsSuperVisorSender['month']['total_amount'] ?? 0, 2, ',', ' ') }}
                         </div>
                         <div class="text-sm opacity-75 mt-1">{{ $dailyStatsSuperVisorSender['month']['total'] ?? 0 }}
                             opérations</div>
@@ -238,7 +238,7 @@
                                 d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ number_format($dailyStatsSuperVisorReceved['today']['total_amount'] ?? 0, 0, ',', ' ') }}
+                            {{ number_format($dailyStatsSuperVisorReceved['today']['total_amount'] ?? 0, 2, ',', ' ') }}
                         </div>
                         <div class="flex items-center gap-2 mt-1">
                             <span class="text-sm  rounded">
@@ -263,7 +263,7 @@
                                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ number_format($dailyStatsSuperVisorReceved['average'] ?? 0, 0, ',', ' ') }}
+                            {{ number_format($dailyStatsSuperVisorReceved['average'] ?? 0, 2, ',', ' ') }}
                         </div>
                         <div class="text-sm opacity-75 mt-1">{{ $usersCountry }}</div>
 
@@ -282,7 +282,7 @@
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ number_format($dailyStatsSuperVisorReceved['month']['total_amount'] ?? 0, 0, ',', ' ') }}
+                            {{ number_format($dailyStatsSuperVisorReceved['month']['total_amount'] ?? 0, 2, ',', ' ') }}
                         </div>
                         <div class="text-sm opacity-75 mt-1">{{ $dailyStatsSuperVisorReceved['month']['total'] ?? 0 }}
                             opérations</div>

@@ -287,7 +287,7 @@
                     <div class="flex">
                         <div
                             class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                            {{ $amount_djamo ?? null }} {{ $usersCountry ?? null }}
+                            {{ formatDisplayAmount($amount_djamo ?? null) }} {{ $usersCountry ?? null }}
                         </div>
                     </div>
                 </div>

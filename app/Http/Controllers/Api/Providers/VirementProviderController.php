@@ -42,7 +42,8 @@ class VirementProviderController extends Controller
 {
     public function index()
     {
-        return new ProviderCollection(Provider::whereStatus(true)
+        return new ProviderCollection(Provider::query()
+            ->availableInCountry((int) Auth::user()->country_id)
             ->where('provider_type_id',  4)
             ->orderBy('name', 'asc')->get());
     }

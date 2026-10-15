@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 use App\Http\Services\AuthenticationService;
 use App\Models\AppStatus;
+use App\Support\AccountValidation;
 
 class Login extends Component
 {
@@ -43,6 +44,14 @@ class Login extends Component
             $this->isLoggedIn = true;
 
             $this->validate();
+
+            if ($user_sid && $user_sid->is_custumers && !$user_sid->is_active) {
+                Auth::guard('web')->logout();
+                $this->isLoggedIn = false;
+                $this->emit('error', AccountValidation::MESSAGE);
+
+                return;
+            }
 
             if (!$user_sid) {
                 $this->emit('error', 'Vous n\'etes pas identifiable veuillez contactez l\'admin ! Merci bien');

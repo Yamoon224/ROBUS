@@ -7,6 +7,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
+use App\Support\AccountValidation;
 
 class LoginProspect extends Component
 {
@@ -36,6 +37,14 @@ class LoginProspect extends Component
             $this->isLoggedIn = true;
 
             $this->validate();
+
+            if ($user_sid && $user_sid->is_api && !$user_sid->integrator?->is_active) {
+                Auth::guard('integration')->logout();
+                $this->isLoggedIn = false;
+                $this->emit('error', AccountValidation::MESSAGE);
+
+                return;
+            }
 
 
             if (!$user_sid) {

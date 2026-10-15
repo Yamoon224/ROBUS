@@ -23,6 +23,7 @@ use App\Models\Wallets\WalletTransaction;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
 
 class Provider extends Model
 {
@@ -69,6 +70,15 @@ class Provider extends Model
     public function countries()
     {
         return $this->belongsToMany(Country::class, 'country_services', 'country_id', 'provider_id');
+    }
+
+    public function scopeAvailableInCountry(Builder $query, int $countryId): Builder
+    {
+        return $query->where('providers.status', true)
+            ->whereHas('country_services', function (Builder $countryServices) use ($countryId) {
+                $countryServices->where('country_id', $countryId)
+                    ->where('status', true);
+            });
     }
 
     public function company()

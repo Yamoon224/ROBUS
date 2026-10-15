@@ -26,15 +26,15 @@
                         @foreach ($level_ivoires as $item)
                             <tr class="intro-x">
                                 <td class="w-35 text-center">
-                                    <div class="text-slate-500 text-xs  mt-0.5">{{ $item->amount_begin ?? null }}</div>
+                                    <div class="text-slate-500 text-xs  mt-0.5">{{ formatDisplayAmount($item->amount_begin ?? null) }}</div>
 
                                 </td>
                                 <td class="w-35 text-center">
-                                    <div class="text-slate-500 text-xs  mt-0.5">{{ $item->amount_end ?? null }}</div>
+                                    <div class="text-slate-500 text-xs  mt-0.5">{{ formatDisplayAmount($item->amount_end ?? null) }}</div>
 
                                 </td>
                                 <td class="w-35 text-center">
-                                    <div class="text-slate-500 text-xs  mt-0.5">{{ $item->amount ?? null }} Euro
+                                    <div class="text-slate-500 text-xs  mt-0.5">{{ formatDisplayAmount($item->amount ?? null) }} Euro
                                     </div>
 
                                 </td>

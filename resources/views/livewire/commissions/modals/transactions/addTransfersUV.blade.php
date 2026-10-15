@@ -302,7 +302,7 @@
 
                                             <div
                                                 class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                                {{ $transaction_amount_robus ?? null }}
+                                                {{ formatDisplayAmount($transaction_amount_robus ?? null) }}
                                                 {{ $user_send->wallet->currencie->code ?? null }}
                                             </div>
                                         </div>

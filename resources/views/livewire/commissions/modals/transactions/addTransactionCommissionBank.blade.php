@@ -31,7 +31,7 @@
                     <div class="amount-remonte-balance">
                         <div class="flex items-baseline justify-between">
                             <span class="amount-balance-value text-xl font-semibold">
-                                {{ $walletCommissions ?? 0 }}
+                                {{ formatDisplayAmount($walletCommissions ?? 0) }}
                             </span>
                             <span class="amount-balance-currency text-white">
                                 {{ $usersCountry ?? 'CFA' }}

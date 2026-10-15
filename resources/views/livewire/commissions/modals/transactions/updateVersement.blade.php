@@ -97,7 +97,7 @@
                             <label class="form-label required">Montant</label>
                             <div class="field-value">
                                 <i class="fas fa-money-bill-wave"></i>
-                                <span id="versementAmount">{{ $versementAmount ?? null }}
+                                <span id="versementAmount">{{ formatDisplayAmount($versementAmount ?? null) }}
                                     {{ $devise_user ?? null }}</span>
                             </div>
                         </div>

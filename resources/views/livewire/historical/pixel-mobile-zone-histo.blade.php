@@ -25,7 +25,7 @@
             </svg>
             <div class="font-medium text-historique mt-6">Total transferts</div>
             <div class="text-slate-500 mt-3">
-                {{ number_format((float) ($totalAmount ?? 0), 0, ',', ' ') }} {{ $usersCountry }}
+                {{ number_format((float) ($totalAmount ?? 0), 2, ',', ' ') }} {{ $usersCountry }}
             </div>
         </div>
 

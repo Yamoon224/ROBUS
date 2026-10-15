@@ -120,7 +120,7 @@
                                 </td>
                                 <td class="w-35 text-center">
                                     <div class="text-slate-500 text-xs  mt-0.5">
-                                        {{ $item->amount_max_send ?? '00' }}
+                                        {{ formatDisplayAmount($item->amount_max_send ?? '00') }}
                                     </div>
                                 </td>
                                 <td class="w-56">

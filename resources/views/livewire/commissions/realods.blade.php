@@ -1,4 +1,4 @@
-<div>
+﻿<div>
   
     <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
 
@@ -23,7 +23,7 @@
             </h2>
             <div class="hidden md:block ml-8 text-slate-500"></div>
         </div>
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+        <div class="intro-y col-span-12 overflow-x-auto">
             <table class="table table-bordered table-hover -mt-2 -intro-x ">
                 <thead class="table-dark">
                     <tr>
@@ -119,7 +119,7 @@
                 Commissions des rechargements Tresort Money
             </h2>
         </div>
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+        <div class="intro-y col-span-12 overflow-x-auto">
             <table class="table table-bordered table-hover -mt-2 -intro-x ">
                 <thead class="table-dark">
                     <tr>
@@ -207,7 +207,7 @@
                 Commissions des rechargements Djamo
             </h2>
         </div>
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+        <div class="intro-y col-span-12 overflow-x-auto">
             <table class="table table-bordered table-hover -mt-2 -intro-x ">
                 <thead class="table-dark">
                      <tr>
@@ -295,7 +295,7 @@
                 Commissions des rechargements Push
             </h2>
         </div>
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+        <div class="intro-y col-span-12 overflow-x-auto">
             <table class="table table-bordered table-hover -mt-2 -intro-x ">
                 <thead class="table-dark">
                     <tr>

@@ -14,6 +14,7 @@ Route::group(['prefix' => 'robus'], function () {
 
     Route::get('reloads/cartes',  [TransactionWebController::class, 'transactions_reloads'])->name('web.transactions_reloads');
     Route::get('reloads/push',  [TransactionWebController::class, 'transactions_pushs'])->name('web.transactions_pushs');
+    Route::get('reloads/credits-telephoniques', [TransactionWebController::class, 'transactions_phone_credits'])->name('web.transactions_phone_credits');
     Route::get('reloads/accompte',  [TransactionWebController::class, 'transactions_robus'])->name('web.transactions_robus');
     Route::get('transactions/accompte',  [TransactionWebController::class, 'transactions_transactions'])->name('web.transactions_transactions');
     Route::get('deposits/inters',  [TransactionWebController::class, 'transactions_inters'])->name('web.transactions_inters');
@@ -21,6 +22,7 @@ Route::group(['prefix' => 'robus'], function () {
     // Stores
     Route::post('reloads/store',  [TransactionWebController::class, 'transactions_reload_store'])->name('web.transactions_reloads.stores');
     Route::post('push/store',  [TransactionWebController::class, 'transactions_push_store'])->name('web.transactions_push.stores');
+    Route::post('phone-credits/store', [TransactionWebController::class, 'transactions_phone_credits_store'])->name('web.transactions_phone_credits.store');
     Route::post('transactions/store',  [TransactionWebController::class, 'transactions_deposits_store'])->name('web.transactions_deposits_store.stores');
     Route::post('xbets/store',  [TransactionWebController::class, 'transactions_xbets_store'])->name('web.transactions_xbets_store.stores');
     Route::post('robus/store',  [TransactionWebController::class, 'transactions_robus_store'])->name('web.transactions_robus_store.stores');

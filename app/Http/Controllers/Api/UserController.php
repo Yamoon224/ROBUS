@@ -53,6 +53,8 @@ use App\Models\Wallets\WalletVersement;
 use App\Models\Wallets\WalletBankSend;
 use App\Models\PixelMobileZoneTransfer;
 use App\Models\Wallets\WalletXbet;
+use App\Models\Wallets\WalletCommission;
+use App\Models\Wallets\WalletAdmin;
 use App\Models\WithMerchant;
 use App\Notifications\AdminNotification;
 use App\Notifications\UserNotification;
@@ -485,6 +487,50 @@ class UserController extends Controller
         ], 200);
     }
 
+    public function commissionsWalletTotal()
+    {
+        $user = robus();
+
+        if (!$user || !$user->is_under_distributer) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vous devez être un sous-distributeur pour accéder à cette ressource.',
+            ], 403);
+        }
+
+        $walletCommission = WalletCommission::find(1);
+        $globalPool = $walletCommission ? (float)$walletCommission->amount : 0.0;
+
+        $wallet = $user->wallet;
+        $walletId = $wallet ? $wallet->id : null;
+
+        $sdCommissionTotal = 0.0;
+        if ($walletId) {
+            $models = [
+                WalletTransaction::class,
+                WalletPayment::class,
+                WalletBank::class,
+                WalletXbet::class,
+                WalletPhoneCredit::class,
+                WalletDeposit::class,
+                WalletInter::class,
+                WalletPush::class,
+                WalletDjamo::class,
+                WalletBankSend::class,
+            ];
+            foreach ($models as $model) {
+                $sdCommissionTotal += (float)$model::where('wallet_id', $walletId)
+                    ->sum('commission');
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'wallet_commission_pool' => $globalPool,
+            'sd_commission_total' => $sdCommissionTotal,
+        ], 200);
+    }
+
     public function remonteCommissions($gain_amount, $commissions)
     {
 
@@ -584,6 +630,16 @@ class UserController extends Controller
 
                 $this->transactionAccount->updateWallet($withRemonte);
 
+                // Débit du compte des commissions total et versement admin
+                $walletCommission = WalletCommission::find(1);
+                $walletAdmin = WalletAdmin::find(1);
+                if ($walletCommission && $walletCommission->amount >= $gain_amount) {
+                    $walletCommission->decrement('amount', $gain_amount);
+                }
+                if ($walletAdmin) {
+                    $walletAdmin->increment('amount', $gain_amount);
+                }
+
                 if ($commissions == "Commission sur Paiements") {
                     $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletPayment::class);
                 } else if ($commissions == "Commission sur Transactions") {
@@ -629,7 +685,7 @@ class UserController extends Controller
 
                 if (robus()->email != null) {
 
-                    Mail::to(robus()->email)->send(new UvSend('Vous avez transferé une commission de ' . $withRemonte->amount_with_draw . ' ' . robus()->wallet->currencie->code . ' le '
+                    Mail::to(robus()->email)->send(new UvSend('Vous avez transféré une commission de ' . $withRemonte->amount_with_draw . ' ' . robus()->wallet->currencie->code . ' le '
                         . $withRemonte->created_at  . ' Robus vous remercie'));
                 }
 
@@ -1911,6 +1967,16 @@ class UserController extends Controller
 
                 ]);
 
+                // Débit du compte des commissions total et versement admin
+                $walletCommission = WalletCommission::find(1);
+                $walletAdmin = WalletAdmin::find(1);
+                if ($walletCommission && $walletCommission->amount >= $som_commissions) {
+                    $walletCommission->decrement('amount', $som_commissions);
+                }
+                if ($walletAdmin) {
+                    $walletAdmin->increment('amount', $som_commissions);
+                }
+
                 $msg = 'Vous avez transferé vos commission sur votre compte';
                 $msg_title = 'Demande de virement';
 
@@ -1921,18 +1987,23 @@ class UserController extends Controller
 
                 if ($wallet_user->country->code == "CI") {
 
-                    $message = 'Vous avez transferé une commission de ' . $valeur_received->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
-                        . $valeur_received->created_at  . ' Robus vous remercie';
+                    $message = 'Vous avez transféré une commission de ' . formatDisplayAmount($valeur_received->amount_with_draw) . ' ' . $wallet_user->wallet->currencie->code . ' le '
+                        . $valeur_received->created_at  . '. ROBUS vous remercie.';
 
                     $encode = substr(Auth::guard('api')->user()->phone,  -10);
 
-                    Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    Http::get("https://app.smspro.africa/api/http/sms/send", [
+                        'recipient' => "225$encode",
+                        'sender_id' => "ROBUS",
+                        'message' => \App\Support\SmsMessage::normalize($message),
+                        'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                    ]);
                 } else {
 
 
                     if ($wallet_user->email != null) {
 
-                        Mail::to($wallet_user->email)->send(new UvSend('Vous avez transferé une commission de ' . $valeur_received->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
+                        Mail::to($wallet_user->email)->send(new UvSend('Vous avez transféré une commission de ' . $valeur_received->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
                             . $valeur_received->created_at  . ' Robus vous remercie'));
                     }
                 }
@@ -2248,8 +2319,8 @@ class UserController extends Controller
 
                 if ($wallet_user->country->code == "CI") {
 
-                    $message = 'Vous avez transferé une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
-                        . $valeurReceived->created_at  . ' Robus vous remercie';
+                    $message = 'Vous avez transféré une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
+                        . $valeurReceived->created_at  . '. ROBUS vous remercie.';
 
                     $encode = substr(robus()->phone,  -10);
                 } else {
@@ -2257,7 +2328,7 @@ class UserController extends Controller
 
                     if ($wallet_user->email != null) {
 
-                        Mail::to($wallet_user->email)->send(new UvSend('Vous avez transferé une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
+                        Mail::to($wallet_user->email)->send(new UvSend('Vous avez transféré une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
                             . $valeurReceived->created_at  . ' Robus vous remercie'));
                     }
                 }

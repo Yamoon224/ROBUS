@@ -28,7 +28,7 @@
                         </svg>
                     </div>
                     <div class="font-medium text-historique mt-6">Montant total</div>
-                    <div class="text-slate-500 mt-3"> {{ $user->wallet->walletPayments->sum('amount') ?? null }}
+                    <div class="text-slate-500 mt-3"> {{ formatDisplayAmount($user->wallet->walletPayments->sum('amount') ?? null) }}
                         {{ $usersCountry }}
                     </div>
                 </div>
@@ -84,7 +84,7 @@
                         <line x1="1" y1="10" x2="23" y2="10"></line>
                     </svg>
                     <div class="font-medium text-historique mt-6">Gains</div>
-                    <div class="text-slate-500 mt-3"> {{ $sum_commissions }} {{ $usersCountry }}</div>
+                    <div class="text-slate-500 mt-3"> {{ formatDisplayAmount($sum_commissions) }} {{ $usersCountry }}</div>
                 </div>
             </div>
         </div>
@@ -205,7 +205,7 @@
                                                     </td>
                                                     <td class="w-40">
                                                         <p href="" class="font-medium whitespace-nowrap">
-                                                            {{ $item->amount ?? null }} {{ $usersCountry }}</p>
+                                                            {{ formatDisplayAmount($item->amount ?? null) }} {{ $usersCountry }}</p>
                                                     </td>
                                                     <td class="w-40">
                                                         <p href="" class="font-medium whitespace-nowrap">

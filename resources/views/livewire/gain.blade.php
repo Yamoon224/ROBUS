@@ -63,7 +63,7 @@
             </div>
             <div class="font-medium text-historique mt-6">Montant Banque journalier</div>
             <div class="text-slate-500 mt-3">
-                {{ $sum_gain_banques ?? null }} FCFA
+                {{ formatDisplayAmount($sum_gain_banques ?? null) }} FCFA
             </div>
         </div>
     </div>

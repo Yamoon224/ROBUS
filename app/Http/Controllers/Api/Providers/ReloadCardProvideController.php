@@ -43,19 +43,25 @@ class ReloadCardProvideController extends Controller
 {
     public function index()
     {
-        return new ProviderCollection(Provider::whereStatus(true)->where('provider_type_id',  5)
+        return new ProviderCollection(Provider::query()
+            ->availableInCountry((int) Auth::user()->country_id)
+            ->where('provider_type_id', 5)
             ->orderBy('name', 'asc')->get());
     }
 
     public function indexOrders ()
     {
-        return new ProviderCollection(Provider::whereStatus(true)->where('provider_type_id',  5)
+        return new ProviderCollection(Provider::query()
+        ->availableInCountry((int) Auth::user()->country_id)
+        ->where('provider_type_id', 5)
         ->orderBy('name', 'asc')->get());
     }
 
     public function indexXbets()
     {
-        return new ProviderCollection(Provider::whereStatus(true)->where('provider_type_id',  13)
+        return new ProviderCollection(Provider::query()
+        ->availableInCountry((int) Auth::user()->country_id)
+        ->where('provider_type_id', 13)
         ->orderBy('name', 'asc')->get());
     }
 }

@@ -29,6 +29,7 @@
             </div>
             <div class="title-area">
                 <h1>FACTURE</h1>
+                <x-receipt-operation :transaction="$order" />
                 <p>N° {{ $order->transaction->transaction_id ?? 'N/A' }}</p>
             </div>
             <div class="clearfix"></div>
@@ -136,19 +137,19 @@
             <table class="amount-table">
                 <tr>
                     <td class="label">Montant demandé</td>
-                    <td class="value">{{ number_format($order->amount ?? 0, 0, ',', ' ') }} {{ $order->wallet->currencie->code ?? 'FCFA' }}</td>
+                    <td class="value">{{ number_format($order->amount ?? 0, 2, ',', ' ') }} {{ $order->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
                 <tr>
                     <td class="label">Montant reçu</td>
-                    <td class="value bold">{{ number_format($order->amount_received ?? 0, 0, ',', ' ') }} {{ $order->wallet->currencie->code ?? 'FCFA' }}</td>
+                    <td class="value bold">{{ number_format($order->amount_received ?? 0, 2, ',', ' ') }} {{ $order->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
                 <tr>
                     <td class="label">Frais</td>
-                    <td class="value">{{ number_format($order->costs_amount ?? 0, 0, ',', ' ') }} {{ $order->wallet->currencie->code ?? 'FCFA' }}</td>
+                    <td class="value">{{ number_format($order->costs_amount ?? 0, 2, ',', ' ') }} {{ $order->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
                 <tr class="total-row">
                     <td class="label bold">TOTAL À PAYER</td>
-                    <td class="value bold">{{ number_format($order->amount ?? 0, 0, ',', ' ') }} {{ $order->wallet->currencie->code ?? 'FCFA' }}</td>
+                    <td class="value bold">{{ number_format($order->amount ?? 0, 2, ',', ' ') }} {{ $order->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
             </table>
 
@@ -330,7 +331,7 @@
                                 <td class="" style="border-bottom:1px solid #DEDEDE;">
                                     {{ $orderDetail->quantity }}</td>
                                 <td class="" style="border-bottom:1px solid #DEDEDE;">
-                                    {{ $orderDetail->price }}</td>
+                                    {{ formatDisplayAmount($orderDetail->price) }}</td>
                                 <td class="text-right bold" style="border-bottom:1px solid #DEDEDE;padding-right:20px;">
                                     {{ $orderDetail->total }}</td>
                             </tr>
@@ -358,7 +359,7 @@
                             <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                 {{ 'Montant total' }}</td>
                             <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                {{ $order->orderDetails->sum('total') }}</td>
+                                {{ formatDisplayAmount($order->orderDetails->sum('total')) }}</td>
                         </tr>
                     </tbody>
                 </table>

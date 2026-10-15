@@ -64,20 +64,20 @@ class TransactionWebService
                 ]);
         }
 
-        public function createRobusWalletReloadPushCard($amount_valeur, $percent_robus, $amount_cost, $num_carte, $name, $phone, $amountReceved)
+        public function createRobusWalletReloadPushCard($amount_valeur, $percent_robus, $amount_cost, $num_carte, $name, $phone, $amountReceved, $providerId)
         {
 
                 return  $this->reloadCardRepository->create([
                         'amount_solde' => 0,
                         'wallet_id' =>  0,
                         'amount' => $amount_valeur,
-                        'description'  => $description ?? 'Demande de rechargement de carte',
+                        'description'  => 'Demande de rechargement de carte ' . ($providerId === 121 ? 'Djamo' : 'Push'),
                         'num_carte'  => $num_carte,
                         'name'  => $name,
                         'deposit_cost_id' => $percent_robus->id,
                         'costs_amount' =>  $amount_cost,
                         'created_by' => 0,
-                        'provider_id'  =>  91,
+                        'provider_id'  =>  $providerId,
                         'phone'  => '+225' .  $phone,
                         'status'  => "PENDING",
                         'last_digits' => null,
@@ -175,10 +175,13 @@ class TransactionWebService
 
         // Phone Credits
 
-        public function createRobusWalletTransactionPhoneWeb($amount_valeur, $provider, $amount_cost, $phone_benef, $phone, $name_sender, $amountReceved)
+        public function createRobusWalletTransactionPhoneWeb($amount_valeur, $provider, $amount_cost, $phone_benef, $phone, $name_sender, $amountReceved, $dialCode = '225')
         {
-
-
+                $dialCode = preg_replace('/\D+/', '', (string) $dialCode) ?: '225';
+                $phone = preg_replace('/\D+/', '', (string) $phone);
+                $phoneBenef = preg_replace('/\D+/', '', (string) $phone_benef);
+                $phone = ltrim($phone, '0');
+                $phoneBenef = ltrim($phoneBenef, '0');
 
                 return $this->phoneCreditRepository->create([
                         'wallet_id' =>  0,
@@ -189,8 +192,8 @@ class TransactionWebService
                         'amount_solde'  => 0.0,
                         'provider_id'  =>  $provider,
                         'costs_amount' => $amount_cost,
-                        'phone'  =>  '+225' . $phone,
-                        'phone_benef'  =>  '+225' . $phone_benef,
+                        'phone'  =>  '+' . $dialCode . $phone,
+                        'phone_benef'  =>  '+' . $dialCode . $phoneBenef,
                         'status'  => "PENDING",
                         'name_benef'  =>   null,
                         'name_sender'  => $name_sender ?? null,

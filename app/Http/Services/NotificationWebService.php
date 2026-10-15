@@ -182,9 +182,7 @@ class NotificationWebService
         if (robus()->is_custumers) {
             if (robus()->country->code == "CI") {
 
-                $message = 'Votre demande de ' . $walletXbet->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                    . $walletXbet->provider->name  .  ' le '
-                    . $walletXbet->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                $message = \App\Support\SmsMessage::transaction($walletXbet, (string) ($walletXbet->status ?? 'PENDING'), robus()->wallet->currencie->code);
 
                 sendTryCashMessage(robus()->phone, $message);
             }
@@ -240,9 +238,7 @@ class NotificationWebService
         if (robus()->is_custumers) {
             if (robus()->country->code == "CI") {
 
-                $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   ' par '
-                    . $walletTransaction->provider->name  .  ' le '
-                    . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
+                $message = \App\Support\SmsMessage::transaction($walletTransaction, (string) ($walletTransaction->status ?? 'PENDING'), robus()->wallet->currencie->code);
 
                 sendTryCashMessage(robus()->phone, $message);
             }
@@ -303,9 +299,7 @@ class NotificationWebService
         if (robus()->is_custumers) {
             if (robus()->country->code == "CI") {
 
-                $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                    . $walletTransaction->provider->name  .  ' le '
-                    . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
+                $message = \App\Support\SmsMessage::transaction($walletTransaction, (string) ($walletTransaction->status ?? 'PENDING'), robus()->wallet->currencie->code);
 
                 sendTryCashMessage(robus()->phone, $message);
             }

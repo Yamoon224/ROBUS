@@ -2,7 +2,7 @@
     <div class="col-span-6">
         <label class="form-label">Commission</label>
         <div class="px-5 py-3 alert alert-primary font-medium text-white text-2xl">
-            {{ $commission ?? '-' }} {{ $currency }}
+            {{ formatDisplayAmount($commission ?? '-') }} {{ $currency }}
         </div>
     </div>
 @elseif(!$showCommission && $showFee)
@@ -16,7 +16,7 @@
     <div class="col-span-6">
         <label class="form-label">Frais</label>
         <div class="px-5 py-3 alert alert-success font-medium text-white text-2xl">
-            {{ $fee ?? '-' }} {{ $currency }}
+            {{ formatDisplayAmount($fee ?? '-') }} {{ $currency }}
         </div>
     </div>
 @endif
@@ -25,7 +25,7 @@
     <div class="col-span-12">
         <label class="form-label">Montant à traiter</label>
         <div class="px-5 py-3 alert alert-success font-medium text-white text-2xl">
-            {{ $total ?? '-' }} {{ $currency }}
+            {{ formatDisplayAmount($total ?? '-') }} {{ $currency }}
         </div>
     </div>
 @endif

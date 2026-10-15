@@ -9,6 +9,7 @@ use Illuminate\Support\Carbon;
 use App\Models\PaymentCountrie;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Costs\PaymentCost;
+use App\Models\Costs\PhoneCreditCost;
 use App\Models\Custumers\Country;
 use App\Models\Wallets\WalletBank;
 use App\Models\Wallets\WalletInter;
@@ -21,6 +22,7 @@ use App\Models\Wallets\WalletTransaction;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Collection;
 use App\Http\Services\HistoriqueService;
+use App\Models\PixelInnoveService;
 
 class CommissionController extends Controller
 {
@@ -898,6 +900,115 @@ class CommissionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function export_phones_excel()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-commissions')) {
+            abort(403);
+        }
+
+        $items = PhoneCreditCost::orderBy('name')->get();
+
+        $headers = [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="commissions_credit_telephonique.csv"',
+        ];
+
+        $callback = function () use ($items) {
+            $handle = fopen('php://output', 'w');
+            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($handle, ['Nom', 'Pourcentage (%)', 'Commission SD (%)', 'Compagnie (%)', 'Statut']);
+            foreach ($items as $item) {
+                $name    = is_array($item->name) ? implode(', ', $item->name) : ($item->name ?? '—');
+                $pct     = is_numeric($item->percent) ? number_format($item->percent * 100, 2) : '—';
+                $sd      = is_numeric($item->percent_merchands) ? number_format($item->percent_merchands * 100, 2) : '—';
+                $companie = is_numeric($item->percent_companie ?? null) ? number_format($item->percent_companie * 100, 2) : '—';
+                fputcsv($handle, [$name, $pct, $sd, $companie, $item->status ? 'Actif' : 'Inactif']);
+            }
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function export_phones_pdf()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-commissions')) {
+            abort(403);
+        }
+
+        $items = PhoneCreditCost::orderBy('name')->get();
+
+        $pdf = Pdf::loadView('pages.commissions.pdf_phones', compact('items'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('commissions_credit_telephonique.pdf');
+    }
+
+    public function browse_pixel_innov()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-commissions')) {
+            abort(403);
+        }
+        return view('pages.commissions.pixel_innov');
+    }
+
+    public function export_pixel_innov_excel()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-commissions')) {
+            abort(403);
+        }
+
+        $services = PixelInnoveService::with('country')
+            ->orderBy('country_id')
+            ->orderBy('operation_type')
+            ->orderBy('name')
+            ->get();
+
+        $headers = [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="commissions_pixel_innov.csv"',
+        ];
+
+        $callback = function () use ($services) {
+            $handle = fopen('php://output', 'w');
+            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF)); // UTF-8 BOM
+            fputcsv($handle, ['Pays', 'Service', 'Type', 'Frais direct (%)', 'Frais fixe', 'S-Distributeur (%)', 'Compagnie (%)', 'Statut']);
+            foreach ($services as $item) {
+                fputcsv($handle, [
+                    $item->country->name ?? '—',
+                    $item->name,
+                    $item->operation_type,
+                    number_format($item->commission_percent, 2),
+                    $item->fixed_fee ?? 0,
+                    number_format($item->commission_under_pct, 2),
+                    number_format($item->commission_companie_pct, 2),
+                    $item->status ? 'Actif' : 'Inactif',
+                ]);
+            }
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function export_pixel_innov_pdf()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-commissions')) {
+            abort(403);
+        }
+
+        $services = PixelInnoveService::with('country')
+            ->orderBy('country_id')
+            ->orderBy('operation_type')
+            ->orderBy('name')
+            ->get();
+
+        $pdf = Pdf::loadView('pages.commissions.pdf_pixel_innov', compact('services'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('commissions_pixel_innov.pdf');
+    }
+
     public function browse_reloads()
     {
         if (!Auth::guard('web')->user()->hasPermissionTo('voir-commissions')) {

@@ -587,6 +587,14 @@ $isAdminOrSupervisor = $user && ($user->is_admin || $user->is_supervisor);
                     </a>
                 </li>
                 <li>
+                    <a href="{{ route('commissions.browse_pixel_innov') }}"
+                        class="side-menu {{ $route == 'commissions.browse_pixel_innov' ? 'side-menu--active' : '' }}">
+                        <div class="side-menu__icon"> <i data-feather="globe" class="block mx-auto"></i>
+                        </div>
+                        <div class="side-menu__title"> Pixel Innov</div>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('commissions.browse_reloads') }}"
                         class="side-menu {{ $route == 'commissions.browse_reloads' ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>

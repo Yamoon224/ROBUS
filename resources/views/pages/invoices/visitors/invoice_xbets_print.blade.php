@@ -66,6 +66,7 @@
 </head>
 
 <body>
+    <x-receipt-operation :transaction="$walletxbet" />
     <div>
         <div style="padding:0px 19px;">
             <table>
@@ -206,20 +207,20 @@
                             <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                 {{ 'Montant' }}</td>
                             <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                {{ $walletxbet->amount ?? null }} FCFA</td>
+                                {{ formatDisplayAmount($walletxbet->amount ?? null) }} FCFA</td>
                         </tr>
                         <tr>
                             <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                 {{ 'Montant recu' }}</td>
                             <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                {{ $walletxbet->amount_received  ?? null }} FCFA</td>
+                                {{ formatDisplayAmount($walletxbet->amount_received  ?? null) }} FCFA</td>
                         </tr>
 
                         <tr>
                             <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                 {{ 'Frais' }}</td>
                             <td class="bold" style="border-bottom:1px dotted #B8B8B8">0
-                                {{ $walletxbet-> costs_amount ?? null }}</td>
+                                {{ formatDisplayAmount($walletxbet-> costs_amount ?? null) }}</td>
                         </tr>
                     </tbody>
                 </table>

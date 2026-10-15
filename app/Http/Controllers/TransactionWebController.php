@@ -27,6 +27,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 
 class TransactionWebController extends Controller
@@ -128,7 +129,10 @@ class TransactionWebController extends Controller
 
         $robus_percent = $deposit_cost ? $deposit_cost->percent_admin * 100 : 0;
 
-        $carte_reloads = Provider::whereStatus(true)->where('name',  'PUSH')->first();
+        $carte_reloads = Provider::whereStatus(true)
+            ->whereIn('id', [91, 121])
+            ->orderByRaw('FIELD(id, 91, 121)')
+            ->get();
 
         $total_percent =  $carte_percent +  $robus_percent;
 
@@ -142,6 +146,112 @@ class TransactionWebController extends Controller
             'total_percent' => $total_percent,
             'calcul_valeurs' => $calcul_valeurs,
         ]);
+    }
+
+    public function transactions_phone_credits()
+    {
+        $countries = Country::whereIn('id', [107, 39])
+            ->orderByRaw('FIELD(id, 107, 39)')
+            ->get(['id', 'name', 'indecative']);
+
+        $providers = Provider::query()
+            ->join('country_services', 'country_services.provider_id', '=', 'providers.id')
+            ->whereIn('country_services.country_id', [107, 39])
+            ->where('providers.provider_type_id', 6)
+            ->where('providers.status', true)
+            ->select('providers.id', 'providers.name', 'providers.image', 'country_services.country_id')
+            ->orderBy('providers.name')
+            ->get();
+
+        $phoneCreditCost = PhoneCreditCost::whereId(3)->first();
+        $phonePercent = $phoneCreditCost ? $phoneCreditCost->percent * 100 : 0;
+        $robusPercent = $phoneCreditCost ? $phoneCreditCost->percent_banque * 100 : 0;
+
+        return view('pages.transactionWeb.browse_phone_credits', [
+            'appStatusResult' => $this->appStatusResult,
+            'countries' => $countries,
+            'providers' => $providers,
+            'total_percent' => $phonePercent + $robusPercent,
+            'calcul_valeurs' => ($phonePercent + $robusPercent) / 100,
+        ]);
+    }
+
+    public function transactions_phone_credits_store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'country_id' => ['required', Rule::in([107, 39])],
+            'provider' => ['required', 'integer'],
+            'phone' => ['required', 'regex:/^[0-9]{8,15}$/'],
+            'amount' => ['required', 'numeric', 'min:300', 'max:500000'],
+        ], [
+            'country_id.required' => 'Veuillez sélectionner un pays.',
+            'provider.required' => 'Veuillez sélectionner un opérateur.',
+            'phone.required' => 'Le numéro de téléphone est obligatoire.',
+            'phone.regex' => 'Le numéro de téléphone est invalide.',
+            'amount.required' => 'Le montant est obligatoire.',
+            'amount.min' => 'Le montant minimum est de 300 FCFA.',
+            'amount.max' => 'Le montant maximum est de 500 000 FCFA.',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $provider = Provider::query()
+            ->join('country_services', 'country_services.provider_id', '=', 'providers.id')
+            ->where('providers.id', $request->integer('provider'))
+            ->where('country_services.country_id', $request->integer('country_id'))
+            ->where('providers.provider_type_id', 6)
+            ->where('providers.status', true)
+            ->select('providers.*')
+            ->first();
+
+        if (!$provider) {
+            return back()->withErrors(['provider' => 'Cet opérateur n’est pas disponible dans le pays sélectionné.'])->withInput();
+        }
+
+        $percentRobus = $this->percentRobus->getRobusPercentagePhoneCreditWeb();
+        if (!$percentRobus) {
+            return back()->with('color', 'danger')->with('status', 'Configuration des frais indisponible.')->withInput();
+        }
+
+        $amount = $this->validatedamountDays->search_amount($request->amount);
+        $amountProvider = $percentRobus->percent * $amount;
+        $amountAdmin = $percentRobus->percent_banque * $amount;
+        $amountCost = $amountProvider + $amountAdmin;
+        $amountReceived = $amount - $amountCost;
+        $country = Country::findOrFail($request->integer('country_id'));
+        $dialCode = preg_replace('/\D+/', '', (string) $country->indecative);
+
+        $walletTransaction = $this->reloadCardService->createRobusWalletTransactionPhoneWeb(
+            $request->amount,
+            $provider->id,
+            $amountCost,
+            $request->phone,
+            $request->phone,
+            null,
+            $amountReceived,
+            $dialCode
+        );
+
+        if (!$walletTransaction) {
+            return back()->with('color', 'danger')->with('status', 'Erreur lors de la création de la demande.')->withInput();
+        }
+
+        event(new CreateWalletTransfersVisEvent($walletTransaction));
+        $response = $this->reloadCardService->updateamountTransactionPhoneCreditReceveid(
+            $this->validatedamountDays->adminCiv(),
+            $amountAdmin,
+            $walletTransaction
+        );
+
+        if (!$response['success']) {
+            return back()->with('color', 'danger')->with('status', 'Erreur lors de la répartition des frais.')->withInput();
+        }
+
+        $this->notificationOrderCard->sendNotificationTransactionPhoneCreditWeb($walletTransaction);
+
+        return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/');
     }
 
 
@@ -408,6 +518,7 @@ class TransactionWebController extends Controller
                     'num_carte' => 'required',
                     'all_name' => 'required',
                     'my_phone' => 'required',
+                    'provider' => ['required', Rule::in([91, 121])],
                     'amount' => 'required'
                 ],
                 [
@@ -415,7 +526,8 @@ class TransactionWebController extends Controller
                     'num_carte.required' => 'Votre Id de la carte est obligatoire',
                     'amount.required' => 'Votre montant est obligatoire',
                     'all_name.required' => 'Votre nom est obligatoire',
-                    'provider.required' => 'Votre montant est obligatoire',
+                    'provider.required' => 'Veuillez sélectionner Push ou Djamo',
+                    'provider.in' => 'La carte sélectionnée est invalide',
                     'my_phone.required' => 'Votre numero est obligatoire',
                 ]
             );
@@ -445,7 +557,7 @@ class TransactionWebController extends Controller
 
                 $amountReceved = $reel_amount - (float)$amount_cost;
 
-                $walletTransaction =  $this->reloadCardService->createRobusWalletReloadPushCard($request->amount, $percent_robus, $amount_cost,  $request->num_carte, $request->all_name, $request->my_phone, $amountReceved);
+                $walletTransaction =  $this->reloadCardService->createRobusWalletReloadPushCard($request->amount, $percent_robus, $amount_cost,  $request->num_carte, $request->all_name, $request->my_phone, $amountReceved, (int) $request->provider);
 
                 if ($walletTransaction != null) {
 

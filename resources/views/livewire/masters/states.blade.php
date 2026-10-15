@@ -19,7 +19,7 @@
                             <line x1="1" y1="10" x2="23" y2="10"></line>
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $sum_gain ?? null }}
+                            {{ formatDisplayAmount($sum_gain ?? null) }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Gain Total {{ $user_currencie }} </div>
                     </div>
@@ -63,7 +63,7 @@
                             <line x1="1" y1="10" x2="23" y2="10"></line>
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $gain_transaction_days ?? null }}
+                            {{ formatDisplayAmount($gain_transaction_days ?? null) }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Transactions {{ $user_currencie }} </div>
                     </div>
@@ -107,7 +107,7 @@
                             <line x1="1" y1="10" x2="23" y2="10"></line>
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $gain_phone_credit_days ?? null }}
+                            {{ formatDisplayAmount($gain_phone_credit_days ?? null) }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Credit télephonique {{ $user_currencie }} </div>
                     </div>
@@ -151,7 +151,7 @@
                             <line x1="1" y1="10" x2="23" y2="10"></line>
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $gain_inter_days ?? null }}
+                            {{ formatDisplayAmount($gain_inter_days ?? null) }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">International {{ $user_currencie }} </div>
                     </div>
@@ -187,7 +187,7 @@
                             <line x1="1" y1="10" x2="23" y2="10"></line>
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $gain_ordercard_days ?? null }}
+                            {{ formatDisplayAmount($gain_ordercard_days ?? null) }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Commande carte {{ $user_currencie }} </div>
                     </div>
@@ -233,7 +233,7 @@
                             <line x1="1" y1="10" x2="23" y2="10"></line>
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $gain_bank_days ?? null }}
+                            {{ formatDisplayAmount($gain_bank_days ?? null) }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Banque {{ $user_currencie }} </div>
                     </div>
@@ -278,7 +278,7 @@
                             <line x1="1" y1="10" x2="23" y2="10"></line>
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $gain_deposit_days ?? null }}
+                            {{ formatDisplayAmount($gain_deposit_days ?? null) }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Rechargements {{ $user_currencie }} </div>
                     </div>
@@ -322,7 +322,7 @@
                             <line x1="1" y1="10" x2="23" y2="10"></line>
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $gain_payment_days ?? null }}
+                            {{ formatDisplayAmount($gain_payment_days ?? null) }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Paiements {{ $user_currencie }} </div>
                     </div>

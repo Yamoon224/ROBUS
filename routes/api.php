@@ -107,6 +107,10 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('/services', [PixelPaymentController::class, 'listServices'])
                 ->name('pixelInnov.services');
 
+            // Services Cash In du pays courant affichés dans « Dépôt zone ».
+            Route::get('/deposit-zone/services', [PixelPaymentController::class, 'listDepositZoneServices'])
+                ->name('pixelInnov.deposit-zone.services');
+
             // Services de transfert mobile zone (XOF ou XAF) groupés par pays
             Route::get('/zone-services', [PixelPaymentController::class, 'listZoneServices'])
                 ->name('pixelInnov.zone-services');
@@ -122,6 +126,10 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             // Vérifier le statut d'une transaction
             Route::post('/status', [PixelPaymentController::class, 'checkStatus'])
                 ->name('pixelInnov.status');
+
+            // Paiement direct via Wallet Robus (débit wallet sans appel Mobile Money)
+            Route::post('/initialize-wallet', [PixelPaymentController::class, 'initializeWalletPayment'])
+                ->name('pixelInnov.initialize-wallet');
 
             // ── Transfert Mobile Zone (deux legs : Cash Out expéditeur + Cash In destinataire) ──
             Route::prefix('mobile-transfer')->group(function () {
@@ -149,6 +157,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('messages', [UserController::class, 'messages_send']);
             Route::get('dashboardCommissions', [UserController::class, 'dashboardCommissions']);
             Route::get('blockCommissions', [UserController::class, 'BlockCommissions']);
+            Route::get('commissions/wallet-total', [UserController::class, 'commissionsWalletTotal']);
             Route::get('historicals', [UserController::class, 'dashboard_historique']);
             Route::get('visites/historicals', [VisiteController::class, 'userhistoricals']);
             Route::get('info', [UserController::class, 'info']);

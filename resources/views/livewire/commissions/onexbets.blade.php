@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <h2 class="intro-y text-lg font-medium mt-10">
         Commissions service 1xbets
     </h2>
@@ -9,7 +9,7 @@
 
         </div>
         
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+        <div class="intro-y col-span-12 overflow-x-auto">
 
             <h2 class="alert alert-dark  intro-y text-lg font-medium">
               Service  1xbets Mobile
@@ -88,7 +88,7 @@
             </table>
         </div>
 
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+        <div class="intro-y col-span-12 overflow-x-auto">
 
             <h2 class="alert alert-dark  intro-y text-lg font-medium">
               Service  1xbets visiteurs

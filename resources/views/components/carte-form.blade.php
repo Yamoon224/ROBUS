@@ -215,6 +215,46 @@
         font-size: 1rem;
     }
 
+    .txn-card-options {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        width: 100%;
+    }
+
+    .txn-card-choice {
+        cursor: pointer;
+        margin: 0;
+    }
+
+    .txn-card-choice input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .txn-card-choice-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 76px;
+        padding: 10px 14px;
+        border: 2px solid transparent;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, .72);
+        transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
+    }
+
+    .txn-card-choice input:checked + .txn-card-choice-content {
+        border-color: #a30071;
+        background: #ffffff;
+        box-shadow: 0 10px 24px rgba(163, 0, 113, .14);
+    }
+
+    .txn-card-choice-content img {
+        flex: 0 0 auto;
+    }
+
     /* ===== FORM BODY ===== */
     .txn-form-body {
         padding: 28px;
@@ -393,6 +433,10 @@
 
     @media (max-width: 575.98px) {
 
+        .txn-card-options {
+            grid-template-columns: 1fr;
+        }
+
         .txn-form-head,
         .txn-form-body {
             padding: 22px;
@@ -449,15 +493,15 @@
                                 </span>
                             </div>
                             @else
-                            <h2>Formulaire de rechargement PUSH</h2>
-                            <p>Renseignez le numéro PUSH, le nom du titulaire et le montant à recharger. Les frais
+                            <h2>Formulaire de rechargement PUSH ou Djamo</h2>
+                            <p>Choisissez la carte, puis renseignez le numéro du compte, le nom du titulaire et le montant. Les frais
                                 sont calculés automatiquement.</p>
                             <div class="txn-trust-list">
                                 <span class="txn-trust-chip">
                                     <i class="bi bi-shield-check"></i> Transaction sécurisée
                                 </span>
                                 <span class="txn-trust-chip">
-                                    <i class="bi bi-phone"></i> Compte PUSH
+                                    <i class="bi bi-phone"></i> Compte PUSH ou Djamo
                                 </span>
                                 <span class="txn-trust-chip">
                                     <i class="bi bi-receipt"></i> Demande suivie
@@ -495,10 +539,23 @@
                         {{-- Carte sélectionnée (push uniquement) --}}
                         @if ($type === 'push')
                         <div class="txn-selected-card">
-                            <img src="https://robus.home.ci/public/dist/providers/push.png" alt="Carte PUSH">
-                            <div>
+                            <div class="w-100">
                                 <small>Carte sélectionnée</small>
-                                <strong>{{ $cards->name ?? 'Carte PUSH' }}</strong>
+                                <div class="txn-card-options">
+                                    @foreach ($cards as $card)
+                                    <label class="txn-card-choice">
+                                        <input type="radio" name="provider" value="{{ $card->id }}"
+                                            @checked((string) old('provider', 91) === (string) $card->id) required>
+                                        <span class="txn-card-choice-content">
+                                            <img src="{{ $card->image }}" alt="Carte {{ $card->name }}">
+                                            <strong>{{ $card->name }}</strong>
+                                        </span>
+                                    </label>
+                                    @endforeach
+                                </div>
+                                @error('provider')
+                                <div class="text-danger small mt-2">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         @endif
@@ -506,7 +563,7 @@
                         <div class="txn-form-body">
                             <div class="txn-section-title">
                                 <span><i class="bi bi-person-vcard"></i></span>
-                                {{ $type === 'reload' ? 'Informations de la carte' : 'Informations du compte PUSH' }}
+                                {{ $type === 'reload' ? 'Informations de la carte' : 'Informations du compte' }}
                             </div>
 
                             <div class="row g-3">
@@ -518,7 +575,7 @@
                                             Identifiant ou numéro de la carte
                                             @else
                                             <i class="bi bi-phone text-primary"></i>
-                                            N° Téléphone PUSH
+                                            N° téléphone du compte
                                             @endif
                                             <span class="text-danger">*</span>
                                         </label>
@@ -528,7 +585,7 @@
                                             required>
                                         <div class="invalid-feedback">
                                             {{ $type === 'reload' ? "Veuillez saisir l'identifiant ou numéro de la
-                                            carte" : 'Veuillez saisir le numéro de téléphone PUSH' }}
+                                            carte" : 'Veuillez saisir le numéro de téléphone du compte' }}
                                         </div>
                                     </div>
                                 </div>
@@ -708,7 +765,7 @@
                     <p>Vérifiez le nom inscrit sur la carte, les 4 derniers chiffres et le montant. Une erreur peut
                         ralentir le traitement du rechargement.</p>
                     @else
-                    <p>Vérifiez le numéro PUSH, le nom du titulaire et votre numéro personnel. Ces informations
+                    <p>Vérifiez la carte choisie, le numéro du compte, le nom du titulaire et votre numéro personnel. Ces informations
                         facilitent le traitement du rechargement.</p>
                     @endif
                 </div>

@@ -304,7 +304,7 @@
                         <div class="text-center mb-4 animate-slide-up">
                             <div class="text-muted mb-2">Montant payé</div>
                             <div class="amount-display text-success">
-                                {{ number_format($transaction->amount, 0, ',', ' ') }} FCFA
+                                {{ number_format($transaction->amount, 2, ',', ' ') }} FCFA
                             </div>
                             <div class="text-muted mt-2 small">
                                 <i class="fas fa-calendar-check me-1"></i>

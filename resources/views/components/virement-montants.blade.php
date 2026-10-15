@@ -9,7 +9,7 @@
                         <div class="text-gray-500 text-sm">Entrer le montant</div>
                     @else
                         <div class="px-5 py-3 alert alert-primary text-white text-2xl font-medium">
-                            {{ $amount_virement_nation_pay ?? null }} {{ $usersCountry }}
+                            {{ formatDisplayAmount($amount_virement_nation_pay ?? null) }} {{ $usersCountry }}
                         </div>
                     @endif
                 </div>
@@ -26,7 +26,7 @@
                     <div class="text-gray-500 text-sm">Entrer le montant</div>
                 @else
                     <div class="px-5 py-3 alert alert-primary text-white text-2xl font-medium">
-                        {{ $amount_virement_nation_pay ?? null }} {{ $usersCountry }}
+                        {{ formatDisplayAmount($amount_virement_nation_pay ?? null) }} {{ $usersCountry }}
                     </div>
                 @endif
             </div>
@@ -39,7 +39,7 @@
                 <div class="text-gray-500 text-sm">Entrer le montant</div>
             @else
                 <div class="px-5 py-3 alert alert-success text-white text-2xl font-medium">
-                    {{ $amount_virement_nation_receive ?? null }} {{ $usersCountry }}
+                    {{ formatDisplayAmount($amount_virement_nation_receive ?? null) }} {{ $usersCountry }}
                 </div>
             @endif
         </div>

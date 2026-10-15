@@ -1,9 +1,9 @@
-<div>
+﻿<div>
     <h2 class="intro-y text-lg font-medium mt-10">
         Commissions pour les banks
     </h2>
 
-    <div class="intro-y col-span-12 overflow-auto lg:overflow-visible mt-5">
+    <div class="intro-y col-span-12 overflow-x-auto mt-5">
 
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
 
@@ -36,16 +36,16 @@
                             <tr class="intro-x">
                                 <td class="w-35 text-center">
                                     <div class="text-slate-500 text-xs  mt-0.5">
-                                        {{ $itemLevelbank->amount_begin ?? null }}</div>
+                                        {{ formatDisplayAmount($itemLevelbank->amount_begin ?? null) }}</div>
 
                                 </td>
                                 <td class="w-35 text-center">
-                                    <div class="text-slate-500 text-xs  mt-0.5">{{ $itemLevelbank->amount_end ?? null }}
+                                    <div class="text-slate-500 text-xs  mt-0.5">{{ formatDisplayAmount($itemLevelbank->amount_end ?? null) }}
                                     </div>
 
                                 </td>
                                 <td class="w-35 text-center">
-                                    <div class="text-slate-500 text-xs  mt-0.5">{{ $itemLevelbank->amount ?? null }}
+                                    <div class="text-slate-500 text-xs  mt-0.5">{{ formatDisplayAmount($itemLevelbank->amount ?? null) }}
                                     </div>
 
                                 </td>

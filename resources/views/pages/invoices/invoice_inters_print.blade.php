@@ -28,6 +28,7 @@
             </div>
             <div class="title-area">
                 <h1>FACTURE</h1>
+                <x-receipt-operation :transaction="$walletInters" />
                 <p>N° {{ $walletInters->transactionInter->transaction_id ?? 'N/A' }}</p>
             </div>
             <div class="clearfix"></div>
@@ -144,22 +145,22 @@
             <table class="amount-table">
                 <tr>
                     <td class="label">Montant demandé</td>
-                    <td class="value">{{ number_format($walletInters->amount ?? 0, 0, ',', ' ') }}
+                    <td class="value">{{ number_format($walletInters->amount ?? 0, 2, ',', ' ') }}
                         {{ $walletInters->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
                 <tr>
                     <td class="label">Montant reçu</td>
-                    <td class="value bold">{{ number_format($walletInters->amount_received ?? 0, 0, ',', ' ') }}
+                    <td class="value bold">{{ number_format($walletInters->amount_received ?? 0, 2, ',', ' ') }}
                         {{ $walletTransfers->wallet->currencie->name ?? null }}</td>
                 </tr>
                 <tr>
                     <td class="label">Frais</td>
-                    <td class="value">{{ number_format($walletInters->costs_amount ?? 0, 0, ',', ' ') }}
+                    <td class="value">{{ number_format($walletInters->costs_amount ?? 0, 2, ',', ' ') }}
                         {{ $walletInters->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
                 <tr class="total-row">
                     <td class="label bold">TOTAL À PAYER</td>
-                    <td class="value bold">{{ number_format($walletInters->amount ?? 0, 0, ',', ' ') }}
+                    <td class="value bold">{{ number_format($walletInters->amount ?? 0, 2, ',', ' ') }}
                         {{ $walletInters->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
             </table>

@@ -25,7 +25,7 @@
                     <div>
                         <p class="text-sm text-gray-500">Solde net</p>
                         <p class="text-2xl font-bold {{ $balance >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                            {{ number_format($balance, 2) }} FCFA
+                            {{ number_format($balance, 2, ',', ' ') }} FCFA
                         </p>
                     </div>
                     <div class="p-3 bg-blue-100 rounded-full">
@@ -42,7 +42,7 @@
                     <div>
                         <p class="text-sm text-gray-500">Total Crédits</p>
                         <p class="text-2xl font-bold text-green-600">
-                            {{ number_format($totalCredits, 2) }} FCFA
+                            {{ number_format($totalCredits, 2, ',', ' ') }} FCFA
                         </p>
                         <p class="text-xs text-gray-400">{{ $creditCount }} opérations</p>
                     </div>
@@ -60,7 +60,7 @@
                     <div>
                         <p class="text-sm text-gray-500">Total Débits</p>
                         <p class="text-2xl font-bold text-white">
-                            {{ number_format($totalDebits, 2) }} FCFA
+                            {{ number_format($totalDebits, 2, ',', ' ') }} FCFA
                         </p>
                         <p class="text-xs text-gray-400">{{ $debitCount }} opérations</p>
                     </div>
@@ -79,7 +79,7 @@
                         <p class="text-sm text-gray-500">Ratio C/D</p>
                         <p class="text-2xl font-bold text-indigo-600">
                             @if ($totalDebits > 0)
-                                {{ number_format($totalCredits / $totalDebits, 2) }}
+                                {{ number_format($totalCredits / $totalDebits, 2, ',', ' ') }}
                             @else
                                 ∞
                             @endif
@@ -100,7 +100,7 @@
                 <div class="amount-label text-sm text-white">Total Commissions Admin</div>
                 <div class="flex items-baseline justify-between">
                     <span class="amount-balance-value text-xl font-semibold">
-                        {{ number_format($totalCommissionsAdmin, 2) }} FCFA
+                        {{ number_format($totalCommissionsAdmin, 2, ',', ' ') }} FCFA
                     </span>
                 </div>
             </div>
@@ -111,7 +111,7 @@
                 <div class="amount-label text-sm text-white">Commissions Admin Aujourd'hui</div>
                 <div class="flex items-baseline justify-between">
                     <span class="amount-balance-value text-xl font-semibold">
-                        {{ number_format($commissionsAdminToday, 2) }} FCFA
+                        {{ number_format($commissionsAdminToday, 2, ',', ' ') }} FCFA
                     </span>
                 </div>
             </div>
@@ -125,7 +125,7 @@
                     <div class="text-base text-slate-500 mt-1">Commissions Admin achat UV Aujourd'hui </div>
 
                     <div class="text-3xl font-medium leading-8 mt-6">
-                        {{ number_format($commissionsAdminUVToday, 2) }} FCFA
+                        {{ number_format($commissionsAdminUVToday, 2, ',', ' ') }} FCFA
                     </div>
                 </div>
             </div>
@@ -140,7 +140,7 @@
                     <div class="text-base text-slate-500 mt-1">Total Achat UV Aujourd'hui </div>
 
                     <div class="text-3xl font-medium leading-8 mt-6">
-                        {{ number_format($ByUVToday, 2) }} FCFA
+                        {{ number_format($ByUVToday, 2, ',', ' ') }} FCFA
                     </div>
                 </div>
             </div>
@@ -151,7 +151,7 @@
                 <div class="amount-label text-sm text-white">Total Commissions Banque</div>
                 <div class="flex items-baseline justify-between">
                     <span class="amount-balance-value text-xl font-semibold">
-                        {{ number_format($totalCommissionsBanque, 2) }} FCFA
+                        {{ number_format($totalCommissionsBanque, 2, ',', ' ') }} FCFA
                     </span>
                 </div>
             </div>
@@ -162,7 +162,7 @@
                 <div class="amount-label text-sm text-white">Commissions Banque Aujourd'hui</div>
                 <div class="flex items-baseline justify-between">
                     <span class="amount-balance-value text-xl font-semibold">
-                        {{ number_format($commissionsBanqueToday, 2) }} FCFA
+                        {{ number_format($commissionsBanqueToday, 2, ',', ' ') }} FCFA
                     </span>
                 </div>
             </div>
@@ -176,7 +176,7 @@
                     <div class="text-base text-slate-500 mt-1">Total Commissions Admin Achat UV </div>
 
                     <div class="text-3xl font-medium leading-8 mt-6">
-                        {{ number_format($totalCommissionsAdminUV, 2) }} FCFA
+                        {{ number_format($totalCommissionsAdminUV, 2, ',', ' ') }} FCFA
                     </div>
                 </div>
             </div>
@@ -191,7 +191,7 @@
                     <div class="text-base text-slate-500 mt-1">Total Achat UV </div>
 
                     <div class="text-3xl font-medium leading-8 mt-6">
-                        {{ number_format($totalAchatUV, 2) }} FCFA
+                        {{ number_format($totalAchatUV, 2, ',', ' ') }} FCFA
                     </div>
                 </div>
             </div>
@@ -402,7 +402,7 @@
                                                 <td class="text-center">
                                                     @if ($item->debit > 0)
                                                         <span class="text-red-600 font-semibold">
-                                                            -{{ number_format($item->debit, 2) }} FCFA
+                                                            -{{ number_format($item->debit, 2, ',', ' ') }} FCFA
                                                         </span>
                                                     @else
                                                         -
@@ -412,7 +412,7 @@
                                                 <td class="text-center">
                                                     @if ($item->credit > 0)
                                                         <span class="text-green-600 font-semibold">
-                                                            +{{ number_format($item->credit, 2) }} FCFA
+                                                            +{{ number_format($item->credit, 2, ',', ' ') }} FCFA
                                                         </span>
                                                     @else
                                                         -
@@ -451,15 +451,15 @@
                                         <tr>
                                             <td colspan="2" class="text-right">TOTAUX DE LA PÉRIODE FILTRÉE :</td>
                                             <td class="text-center text-red-600">
-                                                {{ number_format($totalDebits, 2) }} FCFA
+                                                {{ number_format($totalDebits, 2, ',', ' ') }} FCFA
                                             </td>
                                             <td class="text-center text-green-600">
-                                                {{ number_format($totalCredits, 2) }} FCFA
+                                                {{ number_format($totalCredits, 2, ',', ' ') }} FCFA
                                             </td>
                                             <td colspan="2" class="text-center">
                                                 Solde: <span
                                                     class="{{ $balance >= 0 ? 'text-green-600' : 'text-red-600' }}">
-                                                    {{ number_format($balance, 2) }}
+                                                    {{ number_format($balance, 2, ',', ' ') }}
                                                     FCFA
                                                 </span>
                                             </td>

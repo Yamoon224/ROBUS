@@ -134,7 +134,7 @@
                                 </td>
                                 <td class="text-center">{{ number_format($service['counts']['filtered'] ?? 0, 0, ',', ' ') }}</td>
                                 <td class="text-right">{{ number_format($service['amounts']['filtered'] ?? 0, 2, ',', ' ') }}</td>
-                                <td class="text-center">{{ number_format($service['commission_counts']['filtered'] ?? 0, 0, ',', ' ') }}</td>
+                                <td class="text-center">{{ number_format($service['commission_counts']['filtered'] ?? 0, 2, ',', ' ') }}</td>
                                 <td class="text-right">{{ number_format($service['commission_amounts']['filtered'] ?? 0, 2, ',', ' ') }}</td>
                                 <td class="text-right">{{ number_format($service['commissions']['filtered'] ?? 0, 2, ',', ' ') }}</td>
                                 <td class="text-center text-xs text-slate-500">

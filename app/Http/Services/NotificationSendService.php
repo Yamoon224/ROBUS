@@ -219,9 +219,7 @@ class NotificationSendService
             if (robus()->is_custumers) {
                 if (robus()->country->code == "CI") {
 
-                    $message = 'Vous avez effectué une demande de rechargement de  ' . $walletRelaodCard->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                        . $walletRelaodCard->provider->name  .  ' le '
-                        . $walletRelaodCard->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletRelaodCard, (string) ($walletRelaodCard->status ?? 'PENDING'), robus()->wallet->currencie->code, 'Rechargement de carte');
 
 
 
@@ -289,9 +287,7 @@ class NotificationSendService
             if (robus()->is_custumers) {
                 if (robus()->country->code == "CI") {
 
-                    $message = 'Vous avez effectué une commande de carte de  ' . $walletOrderCard->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                        . $walletOrderCard->provider->name  .  ' le '
-                        . $walletOrderCard->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletOrderCard, (string) ($walletOrderCard->status ?? 'PENDING'), robus()->wallet->currencie->code, 'Commande de carte');
 
 
 
@@ -358,9 +354,7 @@ class NotificationSendService
             if (robus()->is_custumers) {
                 if (robus()->country->code == "CI") {
 
-                    $message = 'Votre transaction de ' . $walletPhone->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                        . $walletPhone->provider->name  .  ' le '
-                        . $walletPhone->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletPhone, (string) ($walletPhone->status ?? 'PENDING'), robus()->wallet->currencie->code, 'Crédit téléphonique');
 
 
 
@@ -430,9 +424,7 @@ class NotificationSendService
             if (robus()->is_custumers) {
                 if (robus()->country->code == "CI") {
 
-                    $message = 'Votre transaction de ' . $walletPush->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                        . $walletPush->provider->name  .  ' le '
-                        . $walletPush->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletPush, (string) ($walletPush->status ?? 'PENDING'), robus()->wallet->currencie->code);
 
 
 
@@ -502,9 +494,7 @@ class NotificationSendService
             if (robus()->is_custumers) {
                 if (robus()->country->code == "CI") {
 
-                    $message = 'Votre transaction de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                        . $walletTransaction->provider->name  .  ' le '
-                        . $walletTransaction->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletTransaction, (string) ($walletTransaction->status ?? 'PENDING'), robus()->wallet->currencie->code);
 
 
 
@@ -574,9 +564,7 @@ class NotificationSendService
             if (robus()->is_custumers) {
                 if (robus()->country->code == "CI") {
 
-                    $message = 'Votre transaction de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                        . $walletTransaction->provider->name  .  ' le '
-                        . $walletTransaction->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletTransaction, (string) ($walletTransaction->status ?? 'PENDING'), robus()->wallet->currencie->code);
 
 
 
@@ -644,9 +632,7 @@ class NotificationSendService
             if (robus()->is_custumers) {
                 if (robus()->country->code == "CI") {
 
-                    $message = 'Votre demande de ' . $walletXbet->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                        . $walletXbet->provider->name  .  ' le '
-                        . $walletXbet->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletXbet, (string) ($walletXbet->status ?? 'PENDING'), robus()->wallet->currencie->code);
 
 
 
@@ -715,9 +701,7 @@ class NotificationSendService
             if (robus()->is_custumers) {
                 if (robus()->country->code == "CI") {
 
-                    $message = 'Votre demande de ' . $walletWith->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                        . $walletWith->provider->name  .  ' le '
-                        . $walletWith->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletWith, (string) ($walletWith->status ?? 'PENDING'), robus()->wallet->currencie->code);
 
 
                     sendTryCashMessage(robus()->phone, $message);
@@ -817,9 +801,7 @@ class NotificationSendService
             if (robus()->is_custumers) {
                 if (robus()->country->code == "CI") {
 
-                    $message = 'Votre demande de ' . $walletWith->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                        . $walletWith->provider->name  .  ' le '
-                        . $walletWith->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletWith, (string) ($walletWith->status ?? 'PENDING'), robus()->wallet->currencie->code);
 
 
 
@@ -887,9 +869,7 @@ class NotificationSendService
             if (robus()->is_custumers) {
                 if (robus()->country->code == "CI") {
 
-                    $message = 'Votre demande de ' . $walletWaves->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                        . $walletWaves->provider->name  .  ' le '
-                        . $walletWaves->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletWaves, (string) ($walletWaves->status ?? 'PENDING'), robus()->wallet->currencie->code, 'Transaction Wave');
 
 
                     sendTryCashMessage(robus()->phone, $message);
@@ -958,9 +938,7 @@ class NotificationSendService
             if ($userAuth->is_custumers) {
                 if ($userAuth->country->code == "CI") {
 
-                    $message = 'Votre transaction de ' . $walletBank->amount .  $userAuth->wallet->currencie->code . ' ' .   'par '
-                        . $walletBank->provider->name  .  ' le '
-                        . $walletBank->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletBank, (string) ($walletBank->status ?? 'PENDING'), $userAuth->wallet->currencie->code, 'Versement bancaire');
 
                     sendTryCashMessage(robus()->phone, $message);
                 }
@@ -1031,9 +1009,7 @@ class NotificationSendService
             if (robus()->is_custumers) {
                 if (robus()->country->code == "CI") {
 
-                    $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   ' par '
-                        . $walletTransaction->provider->name  .  ' le '
-                        . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletTransaction, (string) ($walletTransaction->status ?? 'PENDING'), robus()->wallet->currencie->code);
 
 
 
@@ -1102,9 +1078,7 @@ class NotificationSendService
             if (robus()->is_custumers) {
                 if (robus()->country->code == "CI") {
 
-                    $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                        . $walletTransaction->provider->name  .  ' le '
-                        . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletTransaction, (string) ($walletTransaction->status ?? 'PENDING'), robus()->wallet->currencie->code);
 
 
 

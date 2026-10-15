@@ -155,7 +155,7 @@
 
                             <div
                                 class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                {{ $amount_phone_credit ?? null }} {{ $usersCountry }}
+                                {{ formatDisplayAmount($amount_phone_credit ?? null) }} {{ $usersCountry }}
                             </div>
                         </div>
 

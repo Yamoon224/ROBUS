@@ -346,6 +346,11 @@ Route::group(['prefix' => ''], function () {
 
             Route::get('/inters', [CommissionController::class, 'browse_inters'])->name('commissions.browse_inters');
             Route::get('/phones', [CommissionController::class, 'browse_phones'])->name('commissions.browse_phones');
+            Route::get('/phones/export/excel', [CommissionController::class, 'export_phones_excel'])->name('commissions.browse_phones.export.excel');
+            Route::get('/phones/export/pdf', [CommissionController::class, 'export_phones_pdf'])->name('commissions.browse_phones.export.pdf');
+            Route::get('/pixel-innov', [CommissionController::class, 'browse_pixel_innov'])->name('commissions.browse_pixel_innov');
+            Route::get('/pixel-innov/export/excel', [CommissionController::class, 'export_pixel_innov_excel'])->name('commissions.pixel_innov.export.excel');
+            Route::get('/pixel-innov/export/pdf', [CommissionController::class, 'export_pixel_innov_pdf'])->name('commissions.pixel_innov.export.pdf');
             Route::get('/reloads', [CommissionController::class, 'browse_reloads'])->name('commissions.browse_reloads');
             Route::get('/order_cards', [CommissionController::class, 'browse_orders'])->name('commissions.browse_orders');
             // Transactions

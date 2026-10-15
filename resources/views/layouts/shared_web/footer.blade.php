@@ -2,6 +2,7 @@
     $footerLinks = [
         ['label' => 'Récharger Visa / MasterCard', 'href' => route('web.transactions_reloads'),     'icon' => 'bi-credit-card'],
         ['label' => 'Récharger une carte Push',     'href' => route('web.transactions_pushs'),       'icon' => 'bi-lightning-charge'],
+        ['label' => 'Crédit téléphonique CI - Cameroun', 'href' => route('web.transactions_phone_credits'), 'icon' => 'bi-phone'],
         ['label' => 'Transfert et paiement',        'href' => route('web.transactions_transactions'),'icon' => 'bi-send-check'],
         ['label' => 'Compte ROBUS',                 'href' => route('web.transactions_robus'),       'icon' => 'bi-wallet2'],
         ['label' => 'Compte 1XBET',                 'href' => route('web.transactions_xbets'),       'icon' => 'bi-trophy'],

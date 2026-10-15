@@ -214,7 +214,7 @@
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
-                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 0, ',', ' ') }}</span>
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 2, ',', ' ') }}</span>
                                         <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
                                     </div>
                                 </div>
@@ -226,7 +226,7 @@
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
-                                            class="text-xl font-bold text-primary">{{ number_format($amount_virement_inter_edit ?? 0, 0, ',', ' ') }}</span>
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_virement_inter_edit ?? 0, 2, ',', ' ') }}</span>
                                         <span
                                             class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
                                     </div>
@@ -386,7 +386,7 @@
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
-                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 0, ',', ' ') }}</span>
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 2, ',', ' ') }}</span>
                                         <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
                                     </div>
                                 </div>
@@ -398,7 +398,7 @@
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
-                                            class="text-xl font-bold text-primary">{{ number_format($amount_virement_inter_edit ?? 0, 0, ',', ' ') }}</span>
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_virement_inter_edit ?? 0, 2, ',', ' ') }}</span>
                                         <span
                                             class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
                                     </div>
@@ -455,7 +455,7 @@
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
-                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 0, ',', ' ') }}</span>
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 2, ',', ' ') }}</span>
                                         <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
                                     </div>
                                 </div>
@@ -467,7 +467,7 @@
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
-                                            class="text-xl font-bold text-primary">{{ number_format($amount_phone_credit_inter_edit ?? 0, 0, ',', ' ') }}</span>
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_phone_credit_inter_edit ?? 0, 2, ',', ' ') }}</span>
                                         <span
                                             class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
                                     </div>
@@ -550,7 +550,7 @@
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
-                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 0, ',', ' ') }}</span>
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 2, ',', ' ') }}</span>
                                         <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
                                     </div>
                                 </div>
@@ -562,7 +562,7 @@
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
-                                            class="text-xl font-bold text-primary">{{ number_format($amount_virement_inter_edit ?? 0, 0, ',', ' ') }}</span>
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_virement_inter_edit ?? 0, 2, ',', ' ') }}</span>
                                         <span
                                             class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
                                     </div>
@@ -620,7 +620,7 @@
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
-                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 0, ',', ' ') }}</span>
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 2, ',', ' ') }}</span>
                                         <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
                                     </div>
                                 </div>
@@ -632,7 +632,7 @@
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
-                                            class="text-xl font-bold text-primary">{{ number_format($amount_virement_inter_edit ?? 0, 0, ',', ' ') }}</span>
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_virement_inter_edit ?? 0, 2, ',', ' ') }}</span>
                                         <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
                                     </div>
                                 </div>
@@ -728,7 +728,7 @@
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
-                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 0, ',', ' ') }}</span>
+                                            class="text-xl font-bold text-primary">{{ number_format($amount_sender ?? 0, 2, ',', ' ') }}</span>
                                         <span class="ml-2 text-sm text-gray-600">{{ $devise_user ?? 'XOF' }}</span>
                                     </div>
                                 </div>
@@ -740,7 +740,7 @@
                                     <div class="field-value amount-display">
                                         <i class="fas fa-money-bill-wave"></i>
                                         <span
-                                            class="text-xl font-bold text-primary">{{ number_format($versementAmount ?? 0, 0, ',', ' ') }}</span>
+                                            class="text-xl font-bold text-primary">{{ number_format($versementAmount ?? 0, 2, ',', ' ') }}</span>
                                         <span
                                             class="ml-2 text-sm text-gray-600">{{ $devise_user_sender ?? 'XOF' }}</span>
                                     </div>

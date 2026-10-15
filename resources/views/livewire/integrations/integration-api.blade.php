@@ -260,7 +260,7 @@
                                             <i class="fas fa-chart-line text-green-600 text-2xl"></i>
                                         </div>
                                         <h4 class="font-bold text-gray-900 text-3xl mb-2">
-                                            {{ number_format($integrationClient->transaction_limit ?? 0) }}
+                                            {{ number_format($integrationClient->transaction_limit ?? 0, 2, ',', ' ') }}
                                         </h4>
                                         <p class="text-gray-600 font-semibold">Limite de Transactions</p>
                                         <p class="text-gray-500 text-sm mt-2">Nombre maximum autorisé</p>

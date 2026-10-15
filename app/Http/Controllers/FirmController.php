@@ -381,12 +381,17 @@ class FirmController extends Controller
 
                 if ($user->country->code == "CI") {
 
-                    $message = 'Votre compte a été desactivez avec success';
+                    $message = 'Votre compte a été désactivé avec succès.';
 
                     $encode = substr($user->phone,  -10);
 
 
-                    Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    Http::get("https://app.smspro.africa/api/http/sms/send", [
+                        'recipient' => "225$encode",
+                        'sender_id' => "ROBUS",
+                        'message' => \App\Support\SmsMessage::normalize($message),
+                        'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                    ]);
                 } else {
 
                     $notify = new MailController;
@@ -397,15 +402,20 @@ class FirmController extends Controller
                 $user->is_active = '1';
                 $msg = 'Activation effectuée avec succès';
 
-                $message = 'Votre compte a été activé avec succès';
+                $message = 'Votre compte a été activé avec succès.';
 
                 if ($user->country->code == "CI") {
 
-                    $message = 'Votre compte a été activé avec succès';
+                    $message = 'Votre compte a été activé avec succès.';
 
                     $encode = substr($user->phone,  -10);
 
-                    Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    Http::get("https://app.smspro.africa/api/http/sms/send", [
+                        'recipient' => "225$encode",
+                        'sender_id' => "ROBUS",
+                        'message' => \App\Support\SmsMessage::normalize($message),
+                        'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                    ]);
                 } else {
 
                     $notify = new MailController;
@@ -445,11 +455,16 @@ class FirmController extends Controller
 
                 if ($user->country->code == "CI") {
 
-                    $message = 'Votre compte a été desactivé pour une raison';
+                    $message = 'Votre compte a été désactivé. Contactez le support ROBUS pour plus d’informations.';
 
                     $encode = substr($user->phone,  -10);
 
-                    Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    Http::get("https://app.smspro.africa/api/http/sms/send", [
+                        'recipient' => "225$encode",
+                        'sender_id' => "ROBUS",
+                        'message' => \App\Support\SmsMessage::normalize($message),
+                        'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                    ]);
                 } else {
 
                     $notify = new MailController;
@@ -463,15 +478,20 @@ class FirmController extends Controller
                 ]);
                 $msg = 'Activation effectuée avec succès';
 
-                $message = 'Votre compte a été activé avec succès';
+                $message = 'Votre compte a été activé avec succès.';
 
                 if ($user->country->code == "CI") {
 
-                    $message = 'Votre compte a été activé avec succès';
+                    $message = 'Votre compte a été activé avec succès.';
 
                     $encode = substr($user->phone,  -10);
 
-                    Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    Http::get("https://app.smspro.africa/api/http/sms/send", [
+                        'recipient' => "225$encode",
+                        'sender_id' => "ROBUS",
+                        'message' => \App\Support\SmsMessage::normalize($message),
+                        'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                    ]);
                 } else {
 
                     $notify = new MailController;
@@ -514,11 +534,16 @@ class FirmController extends Controller
 
                 if ($user->country->code == "CI") {
 
-                    $message = 'Votre compte a été desactivé pour une raison';
+                    $message = 'Votre compte a été désactivé. Contactez le support ROBUS pour plus d’informations.';
 
                     $encode = substr($user->phone,  -10);
 
-                    Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    Http::get("https://app.smspro.africa/api/http/sms/send", [
+                        'recipient' => "225$encode",
+                        'sender_id' => "ROBUS",
+                        'message' => \App\Support\SmsMessage::normalize($message),
+                        'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                    ]);
                 } else {
 
                     $notify = new MailController;
@@ -532,15 +557,20 @@ class FirmController extends Controller
                 ]);
                 $msg = 'Activation effectuée avec succès';
 
-                $message = 'Votre compte a été activé avec succès';
+                $message = 'Votre compte a été activé avec succès.';
 
                 if ($user->country->code == "CI") {
 
-                    $message = 'Votre compte a été activé avec succès';
+                    $message = 'Votre compte a été activé avec succès.';
 
                     $encode = substr($user->phone,  -10);
 
-                    Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    Http::get("https://app.smspro.africa/api/http/sms/send", [
+                        'recipient' => "225$encode",
+                        'sender_id' => "ROBUS",
+                        'message' => \App\Support\SmsMessage::normalize($message),
+                        'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                    ]);
                 } else {
 
                     $notify = new MailController;
@@ -696,11 +726,16 @@ class FirmController extends Controller
 
                     if ($user->country->code == "CI") {
 
-                        $message = 'Votre compte a été activé avec succès';
+                        $message = 'Votre compte a été activé avec succès.';
 
                         $encode = substr($user->phone,  -10);
 
-                        Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                        Http::get("https://app.smspro.africa/api/http/sms/send", [
+                            'recipient' => "225$encode",
+                            'sender_id' => "ROBUS",
+                            'message' => \App\Support\SmsMessage::normalize($message),
+                            'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                        ]);
                     } else {
 
                         $notify = new MailController;
@@ -729,11 +764,16 @@ class FirmController extends Controller
 
                     if ($user->country->code == "CI") {
 
-                        $message = 'Votre compte a été activé avec succès';
+                        $message = 'Votre compte a été activé avec succès.';
 
                         $encode = substr($user->phone,  -10);
 
-                        Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                        Http::get("https://app.smspro.africa/api/http/sms/send", [
+                            'recipient' => "225$encode",
+                            'sender_id' => "ROBUS",
+                            'message' => \App\Support\SmsMessage::normalize($message),
+                            'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                        ]);
                     } else {
 
                         $notify = new MailController;
@@ -762,11 +802,16 @@ class FirmController extends Controller
 
                     if ($user->country->code == "CI") {
 
-                        $message = 'Votre compte a été activé avec succès';
+                        $message = 'Votre compte a été activé avec succès.';
 
                         $encode = substr($user->phone,  -10);
 
-                        Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                        Http::get("https://app.smspro.africa/api/http/sms/send", [
+                            'recipient' => "225$encode",
+                            'sender_id' => "ROBUS",
+                            'message' => \App\Support\SmsMessage::normalize($message),
+                            'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                        ]);
                     } else {
 
                         $notify = new MailController;

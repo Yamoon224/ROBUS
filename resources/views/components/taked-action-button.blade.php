@@ -28,7 +28,7 @@
     $selectedSize = $sizeClasses[$size] ?? $sizeClasses['default'];
 @endphp
 
-<button class="btn-take-action {{ $selectedColor }} {{ $selectedSize }} {{ $icon ? 'with-icon' : '' }}"
+<button type="button" wire:target="{{ $action }}({{ $itemId }})" class="btn-take-action {{ $selectedColor }} {{ $selectedSize }} {{ $icon ? 'with-icon' : '' }}"
     wire:click="{{ $action }}({{ $itemId }})" wire:loading.attr="disabled" wire:loading.class="loading"
     {{ $attributes }}>
     <span class="flex items-center gap-2">
@@ -36,7 +36,7 @@
 
         @if ($loadingDots)
         
-            <div class="loading-dots transition-opacity duration-150" wire:loading.class="opacity-100"
+            <div class="loading-dots transition-opacity duration-150" wire:target="{{ $action }}({{ $itemId }})" wire:loading.class="opacity-100"
                 wire:loading.remove.class="opacity-0">
                 <div class="loading-dot"></div>
                 <div class="loading-dot"></div>
@@ -46,7 +46,7 @@
 
         @if ($icon)
             <!-- Icône de validation -->
-            <svg wire:loading.remove wire:target="{{ $action }}" class="btn-icon" viewBox="0 0 20 20"
+            <svg wire:loading.remove wire:target="{{ $action }}({{ $itemId }})" class="btn-icon" viewBox="0 0 20 20"
                 fill="currentColor">
                 <path fill-rule="evenodd"
                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -55,7 +55,7 @@
         @endif
 
         <!-- Animation pendant le loading -->
-        <svg wire:loading wire:target="{{ $action }}" class="w-4 h-4 animate-spin" fill="none"
+        <svg wire:loading wire:target="{{ $action }}({{ $itemId }})" class="w-4 h-4 animate-spin" fill="none"
             viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
             </circle>

@@ -27,9 +27,11 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
 use App\Models\IntegrationClient;
+use App\Support\AccountValidation;
 
 
 class AuthentificationController extends Controller
@@ -195,9 +197,27 @@ class AuthentificationController extends Controller
 
                 if ($user->country->code == "CI") {
 
-                    $message = 'Code activation ' . $user->activation_code;
+                    $message = 'Votre code d’activation ROBUS : ' . $user->activation_code;
 
-                    http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$user->phone&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    $smsResponse = Http::timeout(30)->get("https://app.smspro.africa/api/http/sms/send", [
+                        'recipient' => "225$user->phone",
+                        'sender_id' => "ROBUS",
+                        'message' => \App\Support\SmsMessage::normalize($message),
+                        'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                    ]);
+
+                    Log::info('Réponse SMSPro pour le code d’inscription client', [
+                        'user_id' => $user->id,
+                        'http_status' => $smsResponse->status(),
+                        'response' => $smsResponse->body(),
+                    ]);
+
+                    if (!$smsResponse->successful()) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => $this->smsProviderFailureMessage($smsResponse),
+                        ], 503);
+                    }
                 }
 
                 $notify = new MailController;
@@ -445,10 +465,8 @@ class AuthentificationController extends Controller
 
                         $originalLogoPath = public_path('dist/images/logo_orange.png');
 
-                        $tokenResult = $user->createToken('auth_token');
-
                         $msg_title = 'Inscriptions chez Robus';
-                        $msg = 'Votre compte a ete cree avec succès, veuillez attendre la validation de votre compte.';
+                        $msg = AccountValidation::REGISTRATION_MESSAGE;
                         $user->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
                         $notifs = $user->unreadNotifications;
                         event(new CustumersEvent($notifs));
@@ -494,7 +512,21 @@ class AuthentificationController extends Controller
                             );
                         }
 
-                        return $this->loginSuccess($tokenResult, $user);
+                        return response()->json(array_merge(
+                            [
+                                'success' => true,
+                                'user' => [
+                                    'id' => $user->id,
+                                    'firstname' => $user->firstname,
+                                    'lastname' => $user->lastname,
+                                    'email' => $user->email,
+                                    'phone' => $user->phone,
+                                    'wallet_id' => $user->wallet_id,
+                                ],
+                                'catch' => false,
+                            ],
+                            AccountValidation::payload(AccountValidation::REGISTRATION_MESSAGE)
+                        ));
                     } else {
                         return response()->json(
                             [
@@ -629,7 +661,12 @@ class AuthentificationController extends Controller
                     $recipient = $user->country->code == 'CI' ? '225' . substr($user->phone, -10) : $user->email;
 
                     if ($user->country->code == 'CI') {
-                        http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                        http::get("https://app.smspro.africa/api/http/sms/send", [
+                            'recipient' => "225$encode",
+                            'sender_id' => "ROBUS",
+                            'message' => \App\Support\SmsMessage::normalize($message),
+                            'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                        ]);
                     } else {
                         Mail::to($recipient)->send(new UpdatePassword($message));
                     }
@@ -653,8 +690,11 @@ class AuthentificationController extends Controller
                     return $this->loginSuccess($result['token'], $result['user']);
                 } else {
                     return response()->json(
-                        ['success' => false, 'message' => $result['message']],
-                        301
+                        array_merge(
+                            ['success' => false],
+                            collect($result)->except(['http_status'])->all()
+                        ),
+                        $result['http_status'] ?? 301
                     );
                 }
             }
@@ -904,11 +944,29 @@ class AuthentificationController extends Controller
 
             if ($resend_user->country->code == "CI") {
 
-                $message = "Votre code d'activation est: {$activation_code}";
+                $message = "Votre code d'activation ROBUS : {$activation_code}";
 
                 $phone_user = substr($resend_user->phone, -10);
 
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$phone_user&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                $smsResponse = Http::timeout(30)->get("https://app.smspro.africa/api/http/sms/send", [
+                    'recipient' => "225$phone_user",
+                    'sender_id' => "ROBUS",
+                    'message' => \App\Support\SmsMessage::normalize($message),
+                    'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                ]);
+
+                Log::info('Réponse SMSPro pour le renvoi du code client', [
+                    'user_id' => $resend_user->id,
+                    'http_status' => $smsResponse->status(),
+                    'response' => $smsResponse->body(),
+                ]);
+
+                if (!$smsResponse->successful()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $this->smsProviderFailureMessage($smsResponse),
+                    ], 503);
+                }
 
                 $notify = new MailController;
                 $notify->newOtp($resend_user);
@@ -920,7 +978,7 @@ class AuthentificationController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Votre code d\actualisation a ete envoyer.'
+                'message' => 'Votre code d’activation a été envoyé.'
             ], 200);
         } catch (\Throwable $th) {
 
@@ -998,9 +1056,14 @@ class AuthentificationController extends Controller
                     $user = SidUser::wherePhone('+225' . $request->phone)->first();
                     if (!empty($user)) {
                         $user->update(['forget_password' => $activation_code]);
-                        $message = 'Utilisez ce mot de passe temporaire pour vous connectez ' .  $activation_code;
+                        $message = 'Utilisez ce mot de passe temporaire pour vous connecter : ' .  $activation_code;
                         $phone = $request->phone;
-                        Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$phone&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                        Http::get("https://app.smspro.africa/api/http/sms/send", [
+                            'recipient' => "225$phone",
+                            'sender_id' => "ROBUS",
+                            'message' => \App\Support\SmsMessage::normalize($message),
+                            'api_token' => "20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af",
+                        ]);
 
                         $user = SidUser::whereEmail($request->phone)->first();
                         if (!empty($user)) {
@@ -1077,12 +1140,13 @@ class AuthentificationController extends Controller
     {
         $token = $tokenResult->token;
         $token->save();
-        return response()->json([
+        $isPendingValidation = $user->is_custumers && !$user->is_active;
+        $response = [
             'success' => true,
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
-            'verified' => true,
-            'message' => 'Success',
+            'verified' => !$isPendingValidation,
+            'message' => $isPendingValidation ? AccountValidation::REGISTRATION_MESSAGE : 'Success',
             'user' => [
                 'id' => $user->id,
                 'firstname' => $user->firstname,
@@ -1092,6 +1156,23 @@ class AuthentificationController extends Controller
                 'wallet_id' => $user->wallet_id,
             ],
             'catch' => false
-        ]);
+        ];
+
+        if ($isPendingValidation) {
+            $response = array_merge($response, AccountValidation::payload(AccountValidation::REGISTRATION_MESSAGE));
+        }
+
+        return response()->json($response);
+    }
+
+    private function smsProviderFailureMessage($response): string
+    {
+        $providerMessage = strtolower((string) ($response->json('message') ?? ''));
+
+        if (str_contains($providerMessage, 'exceeded your sending limit')) {
+            return 'Le service SMS est temporairement indisponible : la limite d’envoi a été atteinte. Veuillez contacter le support ROBUS.';
+        }
+
+        return 'Le fournisseur SMS a refusé l’envoi du code. Veuillez réessayer plus tard.';
     }
 }

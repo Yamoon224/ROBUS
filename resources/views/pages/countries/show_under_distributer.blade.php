@@ -35,7 +35,7 @@
                                 <i data-feather="users" class="report-box__icon text-secondary"></i>
                             </div>
                             <div class="text-3xl font-medium leading-8 mt-6">
-                                {{ $cumul_solde ?? null }} {{ $countrie->currencie->code ?? null }}
+                                {{ formatDisplayAmount($cumul_solde ?? null) }} {{ $countrie->currencie->code ?? null }}
                             </div>
                             <div class="text-base text-slate-500 mt-1">Montant commissions</div>
                         </div>
@@ -76,7 +76,7 @@
                         <div class="box p-5 style_table4">
 
                             <div class="text-3xl font-medium leading-8 mt-6">
-                                {{ $sum_wallet_drawer ?? null }} {{ $countrie->currencie->code ?? null }}
+                                {{ formatDisplayAmount($sum_wallet_drawer ?? null) }} {{ $countrie->currencie->code ?? null }}
                             </div>
                             <div class="text-base text-slate-500 mt-1">Rémontée sous-distributeurs
                             </div>
@@ -118,24 +118,24 @@
                 <div class="col-span-12 sm:col-span-4 2xl:col-span-4 box p-5 cursor-pointer zoom-in  style-tran  ">
                     <i data-feather="trending-down" class="font-medium-5"></i>
                     <div class="font-medium text-historique mt-6">Montant commissions en CFA</div>
-                    <div class="text-slate-500 mt-3">{{ $valeur_amount_receveid ?? null }} CFA</div>
+                    <div class="text-slate-500 mt-3">{{ formatDisplayAmount($valeur_amount_receveid ?? null) }} CFA</div>
                 </div>
                 <div class="col-span-12 sm:col-span-4 2xl:col-span-4 box p-5 cursor-pointer zoom-in ">
                     <i data-feather="trending-down" class="font-medium-5"></i>
                     <div class="font-medium text-historique mt-6">Total UV S-distributeur</div>
-                    <div class="text-slate-500 mt-3">{{ $sum_amount_distributer ?? null }}
+                    <div class="text-slate-500 mt-3">{{ formatDisplayAmount($sum_amount_distributer ?? null) }}
                         {{ $countrie->currencie->code ?? null }}</div>
                 </div>
                 <div class="col-span-12 sm:col-span-4 2xl:col-span-6 box p-5 cursor-pointer zoom-in  style-tran ">
                     <i data-feather="trending-down" class="font-medium-5"></i>
                     <div class="font-medium text-historique mt-6">Total Somme UV clients</div>
-                    <div class="text-slate-500 mt-3">{{ $sum_amount_custumers ?? null }}
+                    <div class="text-slate-500 mt-3">{{ formatDisplayAmount($sum_amount_custumers ?? null) }}
                         {{ $countrie->currencie->code ?? null }}</div>
                 </div>
                 <div class="col-span-12 sm:col-span-4 2xl:col-span-6 box p-5 cursor-pointer zoom-in">
                     <i data-feather="trending-down" class="font-medium-5"></i>
                     <div class="font-medium text-historique mt-6">Total Somme Compagnie</div>
-                    <div class="text-slate-500 mt-3">{{ $sum_wallet_companies ?? null }}
+                    <div class="text-slate-500 mt-3">{{ formatDisplayAmount($sum_wallet_companies ?? null) }}
                         {{ $countrie->currencie->code ?? null }}</div>
                 </div>
             @endif
@@ -159,7 +159,7 @@
                                 <div>{{ $reload->provider->name ?? null }}</div>
 
                             </div>
-                            <div class="ml-auto">{{ $reload->commissions ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->commissions ?? null) }}
                                 {{ $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
@@ -193,7 +193,7 @@
                                 <div>{{ $reload->provider->name ?? null }}</div>
 
                             </div>
-                            <div class="ml-auto">{{ $reload->commissions ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->commissions ?? null) }}
                                 {{ $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
@@ -228,7 +228,7 @@
                                 <div>{{ $reload->provider->name ?? null }}</div>
 
                             </div>
-                            <div class="ml-auto">{{ $reload->commissions ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->commissions ?? null) }}
                                 {{ $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
@@ -262,7 +262,7 @@
                                 <div>{{ $reload->provider->name ?? null }}</div>
 
                             </div>
-                            <div class="ml-auto">{{ $reload->commissions ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->commissions ?? null) }}
                                 {{ $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
@@ -295,7 +295,7 @@
                                 <div>{{ $reload->provider->name ?? null }}</div>
 
                             </div>
-                            <div class="ml-auto">{{ $reload->commissions ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->commissions ?? null) }}
                                 {{ $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
@@ -329,7 +329,7 @@
                                 <div>{{ $reload->provider->name ?? null }}</div>
 
                             </div>
-                            <div class="ml-auto">{{ $reload->commissions ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->commissions ?? null) }}
                                 {{ $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
@@ -366,7 +366,7 @@
 
                             </div>
 
-                            <div class="ml-auto">{{ $reload->amount_with_draw ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->amount_with_draw ?? null) }}
                                 {{ $countrie->currencie->code ?? null }} </div>
                         </div>
                     @endforeach
@@ -400,7 +400,7 @@
                                 <div>{{ $reload->provider->name ?? null }}</div>
 
                             </div>
-                            <div class="ml-auto">{{ $reload->commissions ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->commissions ?? null) }}
                                 {{ $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
@@ -434,7 +434,7 @@
                                 <div>{{ $reload->provider->name ?? null }}</div>
 
                             </div>
-                            <div class="ml-auto">{{ $reload->commissions ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->commissions ?? null) }}
                                 {{ $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
@@ -468,7 +468,7 @@
                                 <div>{{ $reload->provider->name ?? null }}</div>
 
                             </div>
-                            <div class="ml-auto">{{ $reload->commissions ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->commissions ?? null) }}
                                 {{ $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
@@ -502,7 +502,7 @@
                                 <div>{{ $reload->provider->name ?? null }}</div>
 
                             </div>
-                            <div class="ml-auto">{{ $reload->commissions ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->commissions ?? null) }}
                                 {{ $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
@@ -537,7 +537,7 @@
                                 <div>{{ $reload->provider->name ?? null }}</div>
 
                             </div>
-                            <div class="ml-auto">{{ $reload->commissions ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->commissions ?? null) }}
                                 {{ $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach

@@ -11,7 +11,7 @@
                         </svg>
                     </div>
                     <div class="font-medium text-historique mt-6">Total rechargement</div>
-                    <div class="text-slate-500 mt-3"> {{ $user_sum }}
+                    <div class="text-slate-500 mt-3"> {{ formatDisplayAmount($user_sum) }}
                         {{ $usersCountry }}
                     </div>
                 </div>
@@ -67,6 +67,6 @@
                         <line x1="1" y1="10" x2="23" y2="10"></line>
                     </svg>
                     <div class="font-medium text-historique mt-6">Gains</div>
-                    <div class="text-slate-500 mt-3"> {{ $sum_commissions }} {{ $usersCountry }}</div>
+                    <div class="text-slate-500 mt-3"> {{ formatDisplayAmount($sum_commissions) }} {{ $usersCountry }}</div>
                 </div>
             </div>

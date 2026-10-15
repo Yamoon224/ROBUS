@@ -15,7 +15,7 @@
                 <div class="amount-balance">
                     <div class="flex items-baseline justify-between">
                         <span class="amount-balance-value text-xl font-semibold">
-                            {{ $walletSolde ?? 0 }}
+                            {{ formatDisplayAmount($walletSolde ?? 0) }}
                         </span>
                         <span class="amount-balance-currency text-white">
                             {{ $usersCountry ?? 'CFA' }}
@@ -125,21 +125,21 @@
                         <div class="flex flex-wrap items-center gap-4">
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_transaction_robus_days ?? null }}
+                                    {{ formatDisplayAmount($amount_transaction_robus_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Robus {{ $user_currencie }}</div>
                             </div>
 
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_transaction_moov_days ?? null }}
+                                    {{ formatDisplayAmount($amount_transaction_moov_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Moov
                                     {{ $user_currencie }}</div>
                             </div>
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_transaction_wave_days ?? null }}
+                                    {{ formatDisplayAmount($amount_transaction_wave_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Wave {{ $user_currencie }}
                                 </div>
@@ -148,7 +148,7 @@
                         <div class="flex flex-wrap items-center gap-4 mt-3">
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_transaction_orange_days ?? null }}
+                                    {{ formatDisplayAmount($amount_transaction_orange_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Orange {{ $user_currencie }}
                                 </div>
@@ -156,14 +156,14 @@
 
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_transaction_mtn_days ?? null }}
+                                    {{ formatDisplayAmount($amount_transaction_mtn_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Mtn {{ $user_currencie }}
                                 </div>
                             </div>
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_transaction_days ?? null }}
+                                    {{ formatDisplayAmount($amount_transaction_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Total {{ $user_currencie }}
                                 </div>
@@ -174,7 +174,7 @@
 
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_transaction_days ?? null }}
+                                    {{ formatDisplayAmount($amount_transaction_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Montant Total {{ $user_currencie }}
                                 </div>
@@ -253,14 +253,14 @@
                         <div class="flex flex-wrap items-center gap-4 mt-3">
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_xbet_days ?? null }}
+                                    {{ formatDisplayAmount($amount_xbet_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Achat 1Xbets {{ $user_currencie }}</div>
                             </div>
 
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_deposit_days ?? null }}
+                                    {{ formatDisplayAmount($amount_deposit_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Réchargement cartes
                                     {{ $user_currencie }}</div>
@@ -270,21 +270,21 @@
                         <div class="flex flex-wrap items-center gap-4 mt-3">
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_payment_cie_days ?? null }}
+                                    {{ formatDisplayAmount($amount_payment_cie_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">CIE {{ $user_currencie }}</div>
                             </div>
 
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_payment_canal_days ?? null }}
+                                    {{ formatDisplayAmount($amount_payment_canal_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">CANAL
                                     {{ $user_currencie }}</div>
                             </div>
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_payment_sodeci_days ?? null }}
+                                    {{ formatDisplayAmount($amount_payment_sodeci_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">SODECI {{ $user_currencie }}
                                 </div>
@@ -294,7 +294,7 @@
 
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_payment_days ?? null }}
+                                    {{ formatDisplayAmount($amount_payment_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Montant Total Paiements {{ $user_currencie }}
                                 </div>
@@ -342,21 +342,21 @@
                         <div class="flex flex-wrap items-center gap-4 mt-3">
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_inter_moneyRobus ?? null }}
+                                    {{ formatDisplayAmount($amount_inter_moneyRobus ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Mobiles {{ $user_currencie }}</div>
                             </div>
 
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_inter_cie ?? null }}
+                                    {{ formatDisplayAmount($amount_inter_cie ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Factures
                                     {{ $user_currencie }}</div>
                             </div>
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_inter_credit ?? null }}
+                                    {{ formatDisplayAmount($amount_inter_credit ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Crédits {{ $user_currencie }}
                                 </div>
@@ -367,14 +367,14 @@
                         <div class="flex flex-wrap items-center gap-4 mt-3">
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_inter_virement ?? null }}
+                                    {{ formatDisplayAmount($amount_inter_virement ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Virements {{ $user_currencie }}</div>
                             </div>
 
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_inter_rechargement ?? null }}
+                                    {{ formatDisplayAmount($amount_inter_rechargement ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Rechargements
                                     {{ $user_currencie }}</div>
@@ -386,7 +386,7 @@
 
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_inter_days ?? null }}
+                                    {{ formatDisplayAmount($amount_inter_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Montant Total International
                                     {{ $user_currencie }}
@@ -447,14 +447,14 @@
                         <div class="flex flex-wrap items-center gap-4 mt-3">
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_push_days ?? null }}
+                                    {{ formatDisplayAmount($amount_push_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Push {{ $user_currencie }}</div>
                             </div>
 
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_djamo_days ?? null }}
+                                    {{ formatDisplayAmount($amount_djamo_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Djamo
                                     {{ $user_currencie }}</div>
@@ -466,7 +466,7 @@
                         <div class="flex flex-wrap items-center gap-4 mt-3">
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_versment_days ?? null }}
+                                    {{ formatDisplayAmount($amount_versment_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Versements {{ $user_currencie }}
                                 </div>
@@ -474,7 +474,7 @@
 
                             <div class="flex flex-col items-start">
                                 <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_tresortMoney_days ?? null }}
+                                    {{ formatDisplayAmount($amount_tresortMoney_days ?? null) }}
                                 </div>
                                 <div class="text-base text-slate-500">Tresort Money
                                     {{ $user_currencie }}</div>

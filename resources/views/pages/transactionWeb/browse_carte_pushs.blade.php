@@ -1,12 +1,12 @@
 @extends('layouts.master_web')
 
-@section('title', 'Rechargement carte PUSH')
+@section('title', 'Rechargement carte PUSH ou Djamo')
 
 @section('content')
 @include('components.hero-section', [
 'backgroundImage' => 'https://robus.home.ci/public/dist/images/wallet_reload.jpg',
-'title' => 'Rechargement Carte PUSH',
-'subtitle' => 'Rechargez votre carte PUSH en toute sécurité',
+'title' => 'Rechargement Carte PUSH ou Djamo',
+'subtitle' => 'Choisissez votre carte et rechargez-la en toute sécurité',
 'badgeText' => 'Transaction 100% sécurisée',
 'badgeIcon' => 'bi-currency-exchange',
 ])

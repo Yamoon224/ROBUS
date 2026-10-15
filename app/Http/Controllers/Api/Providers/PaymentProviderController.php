@@ -43,7 +43,15 @@ class PaymentProviderController extends Controller
 {
     public function index()
     {
-        return new ProviderCollection(Provider::whereStatus(true)->where('provider_type_id',  2)
-            ->orderBy('name', 'asc')->get());
+        $countryId = Auth::user()->country_id ?? null;
+        $providers = Provider::query()->where('provider_type_id', 2);
+
+        if ($countryId) {
+            $providers->availableInCountry((int) $countryId);
+        } else {
+            $providers->whereStatus(true);
+        }
+
+        return new ProviderCollection($providers->orderBy('name', 'asc')->get());
     }
 }

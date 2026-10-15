@@ -1,4 +1,4 @@
-<div id="xbet-visitors" class="tab-pane" role="tabpanel" aria-labelledby="xbet-visitors-tab">
+<div wire:ignore.self id="xbet-visitors" class="tab-pane" role="tabpanel" aria-labelledby="xbet-visitors-tab">
     <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
         <div class="hidden md:block mx-auto text-slate-500"></div>
         <div class="hidden md:block mx-auto text-slate-500"></div>

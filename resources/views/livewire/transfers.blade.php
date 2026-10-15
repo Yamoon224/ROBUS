@@ -5,7 +5,7 @@
 
 @endphp
 
-<div>
+<div wire:poll.10s.visible="$refresh">
 
 
     <h2 class="text-lg font-medium truncate mr-6 mt-6">
@@ -16,7 +16,7 @@
             <div class="amount-balance">
                 <div class="flex items-baseline justify-between">
                     <span class="amount-balance-value">
-                        {{ $walletSolde ?? null }}
+                        {{ formatDisplayAmount($walletSolde ?? null) }}
                     </span>
                     <span class="amount-balance-currency">
                         {{ $usersCountry ?? 'CFA' }}

@@ -430,6 +430,15 @@ class Transfers extends Component
         'echo:wallet-phone-created,.Created_wallet_phone' => 'notifyNewPhone',
         'echo:updated_phone,.update_wallet_phone' => 'notifyNewPhone',
 
+        // Status changes must refresh the lists as well as new requests.
+        'echo:updated_xbet,.update_wallet_xbet' => 'notifyNewXbet',
+        'echo:updated_versment,.update_wallet_versment' => 'notifyNewVersement',
+        'echo:updated_tresort,.update_wallet_tresort' => 'notifyNewTresort',
+        'echo:updated_push,.update_wallet_push' => 'notifyNewPush',
+        'echo:updated_djamo,.update_wallet_djamo' => 'notifyNewDjamo',
+        'echo:updated_bank_send,.update_wallet_bank_send' => 'notifyNewBankSend',
+        'echo:wallet-bank-send-choose-created,.Created_wallet_bank_send_choose' => 'notifyNewBankSend',
+
         // Choose Event Channel
         'echo:wallet-bank-choose-created,.Created_wallet_bank_choose' =>
         'notifyNewBank',
@@ -752,7 +761,7 @@ class Transfers extends Component
         // 1. VALIDATION DU TYPE
         if (!isset($this->transactionConfigs[$type])) {
             $this->emit('error', 'Type de transaction invalide');
-            return;
+            return ['success' => false, 'message' => 'Type de transaction invalide'];
         }
 
         $config = $this->transactionConfigs[$type];
@@ -761,35 +770,16 @@ class Transfers extends Component
         if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
             $this->emit('info', 'Vous n\'êtes pas autorisé à choisir cette transaction.');
             $this->emit($config['menu']);
-            return;
+            return ['success' => false, 'message' => 'Prise en charge non autorisée.'];
         }
 
         try {
 
             // 3. UNE SEULE REQUÊTE ATOMIQUE ⚡
 
-            DB::transaction(function () use ($config, $id) {
-                // Récupérer la transaction
-                $transaction = $config['model']::where('id', $id)
-                    ->where('status', 'PENDING')
-                    ->whereNull('updated_by')
-                    ->lockForUpdate()
-                    ->first();
-
-                // Vérifier si la transaction existe
-                if (!$transaction) {
-                    throw new \Exception('Transaction déjà traitée ou inexistante');
-                }
-
-                // Mettre à jour la transaction
-                $transaction->update([
-                    'updated_by' => sabdy()->id,
-                    'status' => 'PROCESSING',
-                    'updated_at' => now()
-                ]);
-
-                event(new $config['event']($transaction));
-            });
+            $claims = app(\App\Services\TransactionClaimService::class);
+            $transaction = $claims->claim($config['model'], $id, sabdy()->id, false, 'PROCESSING');
+            $claims->notify($config['event'], $transaction);
 
             // 5. SUCCÈS - UN SEUL EMIT ! 
             $this->emit('transaction-taken', [
@@ -804,11 +794,13 @@ class Transfers extends Component
 
             // 7. NOTIFICATION SUCCÈS
             $this->emit('success', $config['successMessage']);
+            return ['success' => true, 'message' => $config['successMessage']];
         } catch (\Throwable $e) {
             // 9. GESTION ERREUR
             report($e);
             $this->emit($config['menu']);
             $this->emit('error', 'Erreur système. Veuillez contacter le support.');
+            return ['success' => false, 'message' => 'Erreur système. Veuillez contacter le support.'];
         }
     }
 
@@ -1373,7 +1365,7 @@ class Transfers extends Component
 
                                     event(new CreateWalletTransfersEvent($verify_code));
 
-                                    $message = 'Vous venez d\'effectuer un retrait d\'un montant de ' . $verify_code->amount . $wallet_search->currencie->code . ' chez ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->code . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                    $message = 'Vous venez d\'effectuer un retrait d\'un montant de ' . formatDisplayAmount($verify_code->amount) . ' ' . $wallet_search->currencie->code . ' chez ' . sabdy()->firstname . ' ' . sabdy()->lastname . '. Votre nouveau solde est de ' . formatDisplayAmount($amount_solde_drawal) . ' ' . $wallet_search->currencie->code . "\nROBUS vous remercie pour votre fidélité.";
                                     app(NotificationServiceBackend::class)->notificationSmsDepotSend($wallet_search, $message);
 
                                     app(NotificationServiceBackend::class)->notifyCreateUsers($walletUser, $admins, 'Transactions', 'Demande de retrait est en cours de validation', 'Demande de Retrait effectuer par  ' . ' ' . $verify_code->wallet->sidUser->firstname);
@@ -1884,16 +1876,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Credit téléphonique', 'La demande de Transferts de credit téléphonique a été acceptée après analyse', 'La demande de Transferts de credit téléphonique a été acceptée après analyse');
 
-                            $message = 'Votre demande de credit de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été acceptée avec succès ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -1924,16 +1907,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Credit téléphonique', 'La demande de Transferts de credit téléphonique a été rejetée après analyse', 'La demande de Transferts de credit téléphonique a été rejetée après analyse');
 
-                            $message = 'Votre demande de crédit de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été refusée ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -2068,16 +2042,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Bank Send', 'La demande de Transferts Bank send a été acceptée après analyse', 'La demande de Transferts Bank send a été acceptée après analyse');
 
-                            $message = 'Votre demande de bank Send de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été acceptée avec succès ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -2107,16 +2072,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Bank Send', 'La demande de Transferts Bank send a été rejetée après analyse', 'La demande de Transferts Bank send a été rejetée après analyse');
 
-                            $message = 'Votre demande de Bank Send de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été refusée ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -2269,16 +2225,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, '1Xbet', 'La demande de Transferts Xbet a été acceptée après analyse', 'La demande de Transferts Xbet a été acceptée après analyse');
 
-                            $message = 'Votre demande de 1xbet de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été acceptée avec succès ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -2315,16 +2262,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, '1Xbet', 'La demande de Transferts Xbet a été rejetée après analyse', 'La Demande de 1Xbet rejetée');
 
-                            $message = 'Votre demande de 1xbet de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été refusée ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -2566,16 +2504,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Versement', 'La demande de versement bancaire a été acceptée après analyse', 'La demande de versement bancaire a été acceptée après analyse');
 
-                            $message = 'Votre demande de Versement de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été acceptée avec succès ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -2608,16 +2537,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Versement', 'La demande de Versement a été rejetée', 'La demande de versement bancaire a été rejetée après analyse.');
 
-                            $message = 'Votre demande de Versement de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été refusée ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -2770,16 +2690,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Push', 'La demande de transfert push a été acceptée après analyse', 'La demande de transfert push a été acceptée après analyse');
 
-                            $message = 'Votre demande de transacton Push de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été acceptée avec succès ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -2816,16 +2727,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Push', 'La demande de transfert push a été rejetée après analyse', 'La demande de transfert push a été rejetée après analyse');
 
-                            $message = 'Votre demande de transaction Push de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été refusée ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -2978,16 +2880,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Djamo', 'La demande de transfert Djamo a été acceptée après analyse', 'La demande de transfert Djamo a été acceptée après analyse');
 
-                            $message = 'Votre demande de transacton Djamo de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été acceptée avec succès ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -3025,16 +2918,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Djamo', 'La demande de transfert Djamo a été rejetée après analyse', 'La demande de transfert Djamo a été rejetée après analyse');
 
-                            $message = 'Votre demande de transaction Djamo de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été refusée ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -3189,16 +3073,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Tresort Money', 'La demande de transfert Tresort Money a été acceptée après analyse', 'La demande de transfert Tresort Money a été acceptée après analyse');
 
-                            $message = 'Votre demande de transacton Trésort Money de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été acceptée avec succès ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -3235,16 +3110,7 @@ class Transfers extends Component
                             $this->notifyUsers($check, $admins, 'Tresort Money', 'La demande de transfert Tresort Money a été rejetée après analyse', 'La demande de transfert Tresort Money a été rejetée après analyse');
 
 
-                            $message = 'Votre demande de transaction Tresort Money de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été refusée ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -3366,16 +3232,7 @@ class Transfers extends Component
                             $this->notifyUsers($check, $admins, 'Réchargement de carte', 'La demande de Rechargement de carte a été acceptée après analyse', 'La demande de Rechargement de carte a été acceptée après analyse');
 
 
-                            $message = 'Votre demande de rechargement de carte de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été acceptée avec succès ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -3427,16 +3284,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Réchargement de carte', 'La demande de Rechargement de carte a été rejetée après analyse', 'La demande de Rechargement de carte a été rejetée après analyse');
 
-                            $message = 'Votre demande de rechargement de carte de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été refusée ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -3740,17 +3588,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Versement bancaire', 'La demande de Virement bancaire a été accepté après vérification et validation.', 'La demande de Virement bancaire a été accepté après vérification et validation.');
 
-                            $message =
-                                'Votre demande de versement de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' a ' .
-                                $check->updated_at .
-                                ' a été validée avec succès ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -3807,22 +3645,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Versement bancaire', 'Demande de versement a été refusé', 'La demande de Virement a été rejetée après analyse.');
 
-                            $message =
-                                'Votre demande de virement de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' a ' .
-                                $check->firstname .
-                                ' ' .
-                                $check->firstname .
-                                ' a été refusée' .
-                                'le ' .
-                                $check->updated_at .
-                                ' ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -3988,17 +3811,7 @@ class Transfers extends Component
                                 $this->updateAdminCom($check, $commission_transaction);
                             }
 
-                            $message =
-                                'Votre demande de paiement de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été validé avec success \n' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code, 'Paiement');
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -4154,16 +3967,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Paiement interbational', 'Demande de paiement international a été rejetée', 'La demande de Transferts a l_\'internationnal a été rejetée après analyse.');
 
-                            $message = 'Votre demande de paiement de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' a ' .
-                                $check->updated_at .
-                                ' a été refusé  ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code, 'Paiement');
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -4268,16 +4072,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Paiement de facture', 'Demande de paiement de facture a été validé', 'Demande de paiement de facture validé');
 
-                            $message = 'Votre demande de paiement de facture de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été acceptée avec succès ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code, 'Paiement');
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -4337,16 +4132,7 @@ class Transfers extends Component
 
                             $this->notifyUsers($check, $admins, 'Paiement de facture', 'Demande de paiement de facture a été rejetée', 'La demande de paiement de facture a été rejetée après analyse.');
 
-                            $message = 'Votre demande de paiement de facture de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été refusé ' .
-                                'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code, 'Paiement');
 
                             if ($this->shouldNotifyCI($check)) {
 
@@ -5646,7 +5432,7 @@ class Transfers extends Component
 
     protected function sendSuccessNotification($check)
     {
-        $message = 'Vous demande de transaction de ' . $check->amount . $check->wallet->currencie->code . ' par ' . $check->provider->name . ' le ' . $check->updated_at . ' a été acceptée avec succès. Robus vous remercie';
+        $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
         $encode = substr($check->wallet->sidUser->phone, -10);
 
         sendTryCashMessage($check->wallet->sidUser->phone, $message);
@@ -5665,7 +5451,7 @@ class Transfers extends Component
 
     protected function sendErrorNotification($check)
     {
-        $message = 'Vous demande de transaction de ' . $check->amount . $check->wallet->currencie->code . ' par ' . $check->provider->name . ' le ' . $check->updated_at . ' a été refusée . Robus vous remercie';
+        $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
         $encode = substr($check->wallet->sidUser->phone, -10);
 
         sendTryCashMessage($check->wallet->sidUser->phone, $message);
@@ -5673,7 +5459,7 @@ class Transfers extends Component
 
     protected function sendRefundNotification($check)
     {
-        $message = 'Vous demande de transaction de ' . $check->amount . $check->wallet->currencie->code . ' par ' . $check->provider->name . ' le ' . $check->updated_at . ' a été remboursée . Robus vous remercie';
+        $message = \App\Support\SmsMessage::transaction($check, (string) ($check->status ?? 'PENDING'), $check->wallet->currencie->code);
         $encode = substr($check->wallet->sidUser->phone, -10);
 
         sendTryCashMessage($check->wallet->sidUser->phone, $message);
@@ -5910,6 +5696,7 @@ class Transfers extends Component
             'providers.id'
         )
             ->where('country_services.country_id', $walletUser->country->id)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', 1)
             ->select('providers.*')
@@ -5929,6 +5716,7 @@ class Transfers extends Component
             'providers.id'
         )
             ->where('country_services.country_id', $walletUser->country->id)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', 2)
             ->select('providers.*')
@@ -5950,6 +5738,7 @@ class Transfers extends Component
             'providers.id'
         )
             ->where('country_services.country_id', $walletUser->country->id)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', 4)
             ->select('providers.*')
@@ -6024,6 +5813,7 @@ class Transfers extends Component
             'providers.id'
         )
             ->where('country_services.country_id', $walletUser->country->id)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', 5)
             ->select('providers.*')
@@ -6044,6 +5834,7 @@ class Transfers extends Component
             'providers.id'
         )
             ->where('country_services.country_id', $walletUser->country->id)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', 6)
             ->select('providers.*')

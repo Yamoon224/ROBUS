@@ -1,21 +1,23 @@
-<div>
+﻿<div>
     <h2 class="intro-y text-lg font-medium mt-10">
         Commissions pour les credits telephoniques
     </h2>
 
-    <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-
-        <div class="hidden md:block mx-auto text-slate-500"></div>
-        
-        <div class="hidden md:block ml-8 text-slate-500"></div>
-        <div class="input-group input-group-md" style="margin-top: 13px;width: 250px;">
-            <div class="w-56 relative text-slate-500">
-
-                <input type="text" name="table_search" wire:model="search" class="form-control  w-56 box pr-10"
-                    style="height: 3rem;" placeholder="Rechercher">
-                <i class="w-4 h-4 absolute my-auto inset-y-0 mr-6 " style="margin-left: 12rem;"
-                    data-feather="search"></i>
-            </div>
+    <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2 gap-3">
+        <div class="w-56 relative text-slate-500">
+            <input type="text" name="table_search" wire:model="search" class="form-control w-56 box pr-10"
+                placeholder="Rechercher">
+            <i class="w-4 h-4 absolute my-auto inset-y-0 right-3" data-feather="search"></i>
+        </div>
+        <div class="flex gap-2 ml-auto">
+            <a href="{{ route('commissions.browse_phones.export.excel') }}"
+                class="btn btn-outline-secondary btn-sm flex items-center gap-1">
+                <i data-feather="file-text" class="w-4 h-4"></i> Excel
+            </a>
+            <a href="{{ route('commissions.browse_phones.export.pdf') }}"
+                class="btn btn-outline-danger btn-sm flex items-center gap-1">
+                <i data-feather="file" class="w-4 h-4"></i> PDF
+            </a>
         </div>
     </div>
     
@@ -28,7 +30,7 @@
         
         </div>
     
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+        <div class="intro-y col-span-12 overflow-x-auto">
             <table class="table table-bordered table-hover -mt-2 -intro-x ">
                 <thead class="table-dark">
                     <tr>
@@ -140,7 +142,7 @@
         
         </div>
 
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+        <div class="intro-y col-span-12 overflow-x-auto">
 
         
             <table class="table table-bordered table-hover -mt-2 -intro-x mt-6">

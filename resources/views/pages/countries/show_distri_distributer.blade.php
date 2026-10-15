@@ -36,7 +36,7 @@
                             <i data-feather="users" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $cumul_solde ?? null }} {{  $countrie->currencie->code ?? null }}
+                            {{ formatDisplayAmount($cumul_solde ?? null) }} {{  $countrie->currencie->code ?? null }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde Transactions</div>
                     </div>
@@ -93,7 +93,7 @@
                                 <div>{{ $reload->walletTransaction->provider->name ?? null }}</div>
     
                             </div>  
-                            <div class="ml-auto">{{ $reload->amount ?? null }}  {{  $countrie->currencie->code ?? null }}</div>
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->amount ?? null) }}  {{  $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
                     <a style="color: white;"  href="{{ route('countries.transactions.Show_distri_distributer', ['key' => $countrie->name]) }}"
@@ -125,7 +125,7 @@
                                 <div>{{ $reload->walletPayment->provider->name ?? null }}</div>
     
                             </div>
-                            <div class="ml-auto">{{ $reload->amount ?? null }}  {{  $countrie->currencie->code ?? null }}</div>
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->amount ?? null) }}  {{  $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
                  
@@ -159,7 +159,7 @@
                                 <div>{{ $reload->walletBank->provider->name ?? null }}</div>
     
                             </div>
-                            <div class="ml-auto">{{ $reload->amount_distributer ?? null }}  {{  $countrie->currencie->code ?? null }}</div>
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->amount_distributer ?? null) }}  {{  $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
                     <a style="color: white;" href="{{ route('countries.banks.Show_distri_distributer', ['key' => $countrie->name]) }}"
@@ -191,7 +191,7 @@
                                 <div>{{ $reload->walletInter->provider->name ?? null }}</div>
     
                             </div>
-                            <div class="ml-auto">{{ $reload->amount ?? null }}  {{  $countrie->currencie->code ?? null }}</div>
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->amount ?? null) }}  {{  $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
                     <a style="color: white;"href="{{ route('countries.inters.Show_distri_distributer', ['key' => $countrie->name]) }}"
@@ -223,7 +223,7 @@
                                 <div>{{ $reload->walletDeposit->provider->name ?? null }}</div>
     
                             </div>
-                            <div class="ml-auto">{{ $reload->amount ?? null }}  {{  $countrie->currencie->code ?? null }}</div>
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->amount ?? null) }}  {{  $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
                     <a style="color: white;" href="{{ route('countries.deposits.Show_distri_distributer', ['key' => $countrie->name]) }}"
@@ -255,7 +255,7 @@
                                 <div>{{ $reload->walletPhoneCredit->provider->name ?? null }}</div>
     
                             </div>
-                            <div class="ml-auto">{{ $reload->amount ?? null }}  {{  $countrie->currencie->code ?? null }}</div>
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->amount ?? null) }}  {{  $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
                     <a href="{{ route('countries.phones.Show_distri_distributer', ['key' => $countrie->name]) }}"
@@ -288,7 +288,7 @@
                                 <div>{{ $reload->provider->name ?? null }}</div>
 
                             </div>
-                            <div class="ml-auto">{{ $reload->commissions ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->commissions ?? null) }}
                                 {{ $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
@@ -322,7 +322,7 @@
                                 <div>{{ $reload->provider->name ?? null }}</div>
 
                             </div>
-                            <div class="ml-auto">{{ $reload->commissions ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->commissions ?? null) }}
                                 {{ $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
@@ -356,7 +356,7 @@
                                 <div>{{ $reload->provider->name ?? null }}</div>
 
                             </div>
-                            <div class="ml-auto">{{ $reload->commissions ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->commissions ?? null) }}
                                 {{ $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
@@ -390,7 +390,7 @@
                                 <div>{{ $reload->provider->name ?? null }}</div>
 
                             </div>
-                            <div class="ml-auto">{{ $reload->commissions ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->commissions ?? null) }}
                                 {{ $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach
@@ -425,7 +425,7 @@
                                 <div>{{ $reload->provider->name ?? null }}</div>
 
                             </div>
-                            <div class="ml-auto">{{ $reload->commissions ?? null }}
+                            <div class="ml-auto">{{ formatDisplayAmount($reload->commissions ?? null) }}
                                 {{ $countrie->currencie->code ?? null }}</div>
                         </div>
                     @endforeach

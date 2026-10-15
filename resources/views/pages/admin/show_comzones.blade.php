@@ -286,8 +286,8 @@ $reachedGoals = $dailyServices->where('goal_reached', true)->count();
                                 <span>Transactions : {{ $service['transactions_count'] }}/{{ $service['numbers_goal'] }}</span>
                             @endif
                             @if (($service['amount_goal'] ?? 0) > 0)
-                                <span> Volume : {{ number_format($service['transactions_amount'], 0, ',', ' ') }}/{{
-                                    number_format($service['amount_goal'], 0, ',', ' ') }}</span>
+                                <span> Volume : {{ number_format($service['transactions_amount'], 2, ',', ' ') }}/{{
+                                    number_format($service['amount_goal'], 2, ',', ' ') }}</span>
                             @endif
                         </div>
                     </div>

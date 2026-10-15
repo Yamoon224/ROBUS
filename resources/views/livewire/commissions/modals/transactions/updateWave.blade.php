@@ -52,7 +52,7 @@
                                 class="form-control style_edit_form alert alert-success  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                            text-indigo-100 bg-indigo-700 rounded"
                                 style="color: white;">
-                                {{ $amount_wave_edit ?? null }} {{ $devise_user ?? null }}
+                                {{ formatDisplayAmount($amount_wave_edit ?? null) }} {{ $devise_user ?? null }}
                             </span>
     
                         </div>

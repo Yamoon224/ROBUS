@@ -1,7 +1,7 @@
 @php
     $prefix = Request::route()->getPrefix();
     $route = Route::current()->getName();
-    $cardRoutes = ['web.transactions_reloads', 'web.transactions_pushs'];
+    $cardRoutes = ['web.transactions_reloads', 'web.transactions_pushs', 'web.transactions_phone_credits'];
 
     $mainLinks = [
         [
@@ -243,6 +243,13 @@
                                 href="{{ route('web.transactions_pushs') }}">
                                 <i class="bi bi-lightning-charge"></i>
                                 <span>Carte Push</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item robus-dropdown-item {{ $route == 'web.transactions_phone_credits' ? 'active' : '' }}"
+                                href="{{ route('web.transactions_phone_credits') }}">
+                                <i class="bi bi-phone"></i>
+                                <span>Crédit téléphonique CI - Cameroun</span>
                             </a>
                         </li>
                     </ul>

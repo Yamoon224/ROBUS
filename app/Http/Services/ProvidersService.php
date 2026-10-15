@@ -129,6 +129,7 @@ class ProvidersService
         }
 
         return Provider::whereIn('id', $providerIds)
+            ->availableInCountry($countryId)
             ->orderBy('name', 'asc')
             ->get();
     }
@@ -214,6 +215,7 @@ class ProvidersService
         }
 
         return Provider::whereIn('id', $providerIds)
+            ->availableInCountry($countryId)
             ->orderBy('name', 'asc')
             ->get();
     }
@@ -261,6 +263,7 @@ class ProvidersService
         return $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', $providerType)
             ->select('providers.*')
@@ -275,6 +278,7 @@ class ProvidersService
         return $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->whereIn('providers.provider_type_id', (array) $providerTypes)
             ->select('providers.*')
@@ -289,6 +293,7 @@ class ProvidersService
         return $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.id', 9)
             ->where('providers.provider_type_id', $providerType)
@@ -340,6 +345,22 @@ class ProvidersService
             ->get();
     }
 
+    public static function getPixelInnovDepositZoneProviders($countryId)
+    {
+        return self::getPixelInnovCashInProviders($countryId)
+            ->filter(function ($provider) {
+                $name = strtolower(trim((string) $provider->name));
+
+                return (bool) $provider->status && (
+                    str_starts_with($name, 'orange')
+                    || str_starts_with($name, 'mtn')
+                    || str_starts_with($name, 'moov')
+                    || str_starts_with($name, 'wave')
+                );
+            })
+            ->values();
+    }
+
       public static function getProvidersDrawalByType($query, $countryId, $providerType)
     {
 
@@ -347,6 +368,7 @@ class ProvidersService
         return $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.id', 128)
             ->where('providers.provider_type_id', $providerType)
@@ -360,6 +382,7 @@ class ProvidersService
         $query = $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->whereIn('providers.provider_type_id', $providerTypes);
 
@@ -382,6 +405,7 @@ class ProvidersService
         return $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.id', '!=', 9)
             ->where('providers.provider_type_id', $providerType)
@@ -419,7 +443,8 @@ class ProvidersService
         return $query
             ->join('country_services', function ($join) use ($countryId) {
                 $join->on('country_services.provider_id', '=', 'providers.id')
-                    ->where('country_services.country_id', '=', $countryId);
+                    ->where('country_services.country_id', '=', $countryId)
+                    ->where('country_services.status', '=', true);
             })
             ->where('providers.status', true)
             ->whereNotNull('providers.amount')
@@ -437,6 +462,7 @@ class ProvidersService
         return $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', $providerType)
             ->where('providers.name', 'ROBUS')
@@ -451,6 +477,7 @@ class ProvidersService
         return $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', $providerType)
             ->whereNotIn('providers.name', ['Wave', 'ORANGE', 'MTN', 'MOOV'])
@@ -465,6 +492,7 @@ class ProvidersService
         return $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', $providerType)
             ->whereNotIn('providers.name', ['CREER UN MASTER'])
@@ -480,6 +508,7 @@ class ProvidersService
         return $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', $providerType)
             // ->whereNotIn('providers.name', ['Wave', 'ORANGE', 'MTN', 'MOOV'])
@@ -495,6 +524,7 @@ class ProvidersService
         return $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.id', '!=', 51)
             ->where('providers.provider_type_id', $providerType)

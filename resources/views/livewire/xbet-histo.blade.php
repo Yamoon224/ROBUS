@@ -225,7 +225,7 @@
                                                     </td>
                                                     <td class="w-40">
                                                         <p href="" class="font-medium whitespace-nowrap">
-                                                            {{ $item->amount ?? null }} {{ $usersCountry }}</p>
+                                                            {{ formatDisplayAmount($item->amount ?? null) }} {{ $usersCountry }}</p>
 
                                                             <p class="mt-3">
                                                                 Solde : 

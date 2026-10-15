@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <h2 class="intro-y text-lg font-medium mt-10">
         Commissions au centre afrique <br>
         DEPOT D’UN COMPTE SOUS DISTRIBUTEUR VERS UN COMPTE CLIENT EN CENTRE AFRIQUE
@@ -9,7 +9,7 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
 
         </div>
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+        <div class="intro-y col-span-12 overflow-x-auto">
             <table class="table table-bordered table-hover -mt-2 -intro-x ">
                 <thead class="table-dark">
                     <tr>

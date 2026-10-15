@@ -247,7 +247,7 @@ class TransactionController extends Controller
 
                                     if ($walletTransaction != null) {
 
-                                        $message = 'Vous venez de recevoir un montant de ' . $request->amount . ' de la part de ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal_round . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                        $message = 'Vous venez de recevoir un montant de ' . formatDisplayAmount($request->amount) . ' de la part de ' . robus()->firstname . ' ' . robus()->lastname . '. Votre nouveau solde est de ' . formatDisplayAmount($amount_solde_drawal_round) . ' ' . $wallet_search->currencie->name . "\nROBUS vous remercie pour votre fidélité.";
 
                                         if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
@@ -301,7 +301,7 @@ class TransactionController extends Controller
 
                                 if ($walletTransaction != null) {
 
-                                    $message = 'Vous venez de recevoir un montant de ' . $request->amount . ' de la part de ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal_round . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                    $message = 'Vous venez de recevoir un montant de ' . formatDisplayAmount($request->amount) . ' de la part de ' . robus()->firstname . ' ' . robus()->lastname . '. Votre nouveau solde est de ' . formatDisplayAmount($amount_solde_drawal_round) . ' ' . $wallet_search->currencie->name . "\nROBUS vous remercie pour votre fidélité.";
 
                                     if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
@@ -378,7 +378,7 @@ class TransactionController extends Controller
 
                                     if ($walletTransaction != null) {
 
-                                        $message = 'Vous venez de recevoir un montant de ' . $request->amount . ' de la part de ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal_round . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                        $message = 'Vous venez de recevoir un montant de ' . formatDisplayAmount($request->amount) . ' de la part de ' . robus()->firstname . ' ' . robus()->lastname . '. Votre nouveau solde est de ' . formatDisplayAmount($amount_solde_drawal_round) . ' ' . $wallet_search->currencie->name . "\nROBUS vous remercie pour votre fidélité.";
 
                                         if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
@@ -706,7 +706,7 @@ class TransactionController extends Controller
 
                                     if ($this->transactionWalletDrawal->updateDrawalTransaction($walletTransaction, $walletUserSearch, $valuer_with_drawal, $percent_robus, $admin_civ)) {
 
-                                        $message = 'Vous venez d\'effectuer un retrait d\'un montant de ' . $walletTransaction->amount . $wallet_search->currencie->code . ' chez ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->code . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                        $message = 'Vous venez d\'effectuer un retrait d\'un montant de ' . formatDisplayAmount($walletTransaction->amount) . ' ' . $wallet_search->currencie->code . ' chez ' . robus()->firstname . ' ' . robus()->lastname . '. Votre nouveau solde est de ' . formatDisplayAmount($amount_solde_drawal) . ' ' . $wallet_search->currencie->code . "\nROBUS vous remercie pour votre fidélité.";
 
                                         if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
@@ -1181,7 +1181,7 @@ class TransactionController extends Controller
 
                                 if ($this->transactionWalletDrawal->updateDrawalTransaction($verify_code, $walletUserSearch, $valuer_with_drawal, $percent_robus, $admin_civ)) {
 
-                                    $message = 'Vous venez d\'effectuer un retrait d\'un montant de ' . $verify_code->amount . $wallet_search->currencie->code . ' chez ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->code . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                    $message = 'Vous venez d\'effectuer un retrait d\'un montant de ' . formatDisplayAmount($verify_code->amount) . ' ' . $wallet_search->currencie->code . ' chez ' . robus()->firstname . ' ' . robus()->lastname . '. Votre nouveau solde est de ' . formatDisplayAmount($amount_solde_drawal) . ' ' . $wallet_search->currencie->code . "\nROBUS vous remercie pour votre fidélité.";
 
                                     if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 

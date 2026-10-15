@@ -42,7 +42,8 @@ class ReloadProviderController extends Controller
 {
     public function index()
     {
-        return new ProviderCollection(Provider::whereStatus(true)
+        return new ProviderCollection(Provider::query()
+            ->availableInCountry((int) Auth::user()->country_id)
             ->where('name', '!=', 'Wave')
             ->where('provider_type_id',  1)
             ->orderBy('name', 'asc')->get());
@@ -51,7 +52,8 @@ class ReloadProviderController extends Controller
 
     public function index_masters()
     {
-        return new ProviderCollection(Provider::whereStatus(true)
+        return new ProviderCollection(Provider::query()
+            ->availableInCountry((int) Auth::user()->country_id)
             ->whereName('ROBUS')
             ->where('provider_type_id',  1)->get());
     }

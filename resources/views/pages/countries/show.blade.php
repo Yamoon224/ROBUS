@@ -37,7 +37,7 @@
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
 
-                            {{ $sum_wallet_custumers ?? null }}
+                            {{ formatDisplayAmount($sum_wallet_custumers ?? null) }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde cliens
                         </div>
@@ -51,7 +51,7 @@
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $sum_wallet_supervisors ?? null }}
+                            {{ formatDisplayAmount($sum_wallet_supervisors ?? null) }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde superviseurs
                         </div>
@@ -65,7 +65,7 @@
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $sum_wallet_companies ?? null }}
+                            {{ formatDisplayAmount($sum_wallet_companies ?? null) }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde Compagnie
                         </div>
@@ -79,7 +79,7 @@
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $sum_wallet_under_distributors ?? null }}
+                            {{ formatDisplayAmount($sum_wallet_under_distributors ?? null) }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde Sous distributeurs
                         </div>
@@ -93,7 +93,7 @@
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $sum_wallet_distributors ?? null }}
+                            {{ formatDisplayAmount($sum_wallet_distributors ?? null) }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde distributeurs
                         </div>
@@ -107,7 +107,7 @@
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $sum_wallet_masters ?? null }}
+                            {{ formatDisplayAmount($sum_wallet_masters ?? null) }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde masters
                         </div>
@@ -122,7 +122,7 @@
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $sum_wallet_comZones ?? null }}
+                            {{ formatDisplayAmount($sum_wallet_comZones ?? null) }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde COM ZONES
                         </div>
@@ -142,7 +142,7 @@
                                     <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                                 </div>
                                 <div class="text-3xl font-medium leading-8 mt-6">
-                                    {{ $sumTotalCommission ?? '0.00' }}
+                                    {{ formatDisplayAmount($sumTotalCommission ?? '0.00') }}
                                 </div>
                                 <div class="text-base text-slate-500 mt-1 mb-4">
                                     Solde commission SD
@@ -175,7 +175,7 @@
                                     <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                                 </div>
                                 <div class="text-3xl font-medium leading-8 mt-6">
-                                    {{ $sumCTotalCommission ?? '0.00' }}
+                                    {{ formatDisplayAmount($sumCTotalCommission ?? '0.00') }}
                                 </div>
                                 <div class="text-base text-slate-500 mt-1 mb-4">
                                    Solde commission Compagnies

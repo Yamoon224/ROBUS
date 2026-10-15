@@ -80,7 +80,7 @@
                         class="form-control style_edit_form alert alert-success  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                            text-indigo-100 bg-indigo-700 rounded"
                         style="color: white;">
-                        {{ $amount_xbet_ ?? null }}
+                        {{ formatDisplayAmount($amount_xbet_ ?? null) }}
                     </span>
 
                 </div>
@@ -92,7 +92,7 @@
                         class="form-control style_edit_form alert alert-success  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                            text-indigo-100 bg-indigo-700 rounded"
                         style="color: white;">
-                        {{ $amount_received_xbet_ ?? null }}
+                        {{ formatDisplayAmount($amount_received_xbet_ ?? null) }}
                     </span>
 
                 </div>

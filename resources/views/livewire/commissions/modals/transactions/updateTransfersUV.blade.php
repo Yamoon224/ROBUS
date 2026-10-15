@@ -138,7 +138,7 @@
                                 <div class="field-value">
                                     <i class="fas fa-money-bill-wave"></i>
                                     <span
-                                        id="transaction_amount_robus_edit">{{ $transaction_amount_robus_edit ?? null }}
+                                        id="transaction_amount_robus_edit">{{ formatDisplayAmount($transaction_amount_robus_edit ?? null) }}
                                         {{ $currency_custumers ?? null }}</span>
                                 </div>
                             </div>
@@ -168,7 +168,7 @@
                                 <div class="field-value">
                                     <i class="fas fa-money-bill-wave"></i>
                                     <span
-                                        id="transaction_amount_money_edit">{{ $transaction_amount_money_edit ?? null }}
+                                        id="transaction_amount_money_edit">{{ formatDisplayAmount($transaction_amount_money_edit ?? null) }}
                                         {{ $currency_custumers ?? null }}</span>
                                 </div>
                             </div>

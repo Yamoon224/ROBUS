@@ -1,4 +1,4 @@
-<div id="inter" class="tab-pane {{ $activeTab === 'inter' ? 'active show' : '' }}" role="tabpanel" aria-labelledby="inter-tab">
+<div wire:ignore.self id="inter" class="tab-pane {{ $activeTab === 'inter' ? 'active show' : '' }}" role="tabpanel" aria-labelledby="inter-tab">
     <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
 
         <div class="hidden md:block mx-auto text-slate-500"></div>

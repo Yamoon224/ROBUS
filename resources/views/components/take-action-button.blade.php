@@ -34,16 +34,31 @@
     error: false,
     errorMessage: ''
 }"
-{{-- wire:key="container-{{ $itemId }}" --}}
-@transaction-success.window="if($event.detail[0] === {{ $itemId }}) { 
-    processing = false; 
-    success = true; 
-    setTimeout(() => success = false, 2000);
-}"
-@transaction-error.window="processing = false; error = true; errorMessage = $event.detail[0]; setTimeout(() => error = false, 3000);">
+>
 
 <button 
-    x-on:click="processing = true; $wire.{{ $action }}({{ $itemId }})"
+    type="button"
+    x-on:click="
+        if (processing || success) return;
+        processing = true;
+        error = false;
+        errorMessage = '';
+        try {
+            const result = await $wire.{{ $action }}({{ $itemId }});
+            if (result &amp;&amp; result.success === true) {
+                success = true;
+                setTimeout(() => success = false, 2000);
+            } else {
+                error = true;
+                errorMessage = result?.message || 'Prise en charge impossible. Veuillez réessayer.';
+            }
+        } catch (failure) {
+            error = true;
+            errorMessage = 'Connexion interrompue. Vérifiez la transaction avant de réessayer.';
+        } finally {
+            processing = false;
+        }
+    "
     x-bind:disabled="processing || success"
     class="btn-take-action {{ $selectedColor }} {{ $selectedSize }} {{ $icon ? 'with-icon' : '' }} relative overflow-hidden transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
     x-bind:class="{

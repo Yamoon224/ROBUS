@@ -66,7 +66,7 @@
 
     <table class="summary">
         <tr>
-            <td><strong>Total montant</strong><br>{{ number_format((float) ($totalAmount ?? 0), 0, ',', ' ') }}</td>
+            <td><strong>Total montant</strong><br>{{ number_format((float) ($totalAmount ?? 0), 2, ',', ' ') }}</td>
             <td><strong>Success</strong><br>{{ $account_success ?? 0 }}</td>
             <td><strong>En attente</strong><br>{{ $account_penddings ?? 0 }}</td>
             <td><strong>Echec / rembourse</strong><br>{{ $account_errors ?? 0 }}</td>
@@ -100,13 +100,13 @@
                     </td>
                     <td>
                         Envoye :
-                        {{ number_format((float) $transfer->amount, 0, ',', ' ') }}
+                        {{ number_format((float) $transfer->amount, 2, ',', ' ') }}
                         {{ $transfer->sender_currency ?? $transfer->currency }}<br>
                         Recu :
-                        {{ number_format((float) $transfer->amount_received, 0, ',', ' ') }}
+                        {{ number_format((float) $transfer->amount_received, 2, ',', ' ') }}
                         {{ $transfer->recipient_currency ?? $transfer->currency }}<br>
                         Frais :
-                        {{ number_format((float) $transfer->total_fee, 0, ',', ' ') }}
+                        {{ number_format((float) $transfer->total_fee, 2, ',', ' ') }}
                         {{ $transfer->sender_currency ?? $transfer->currency }}
                     </td>
                     <td>

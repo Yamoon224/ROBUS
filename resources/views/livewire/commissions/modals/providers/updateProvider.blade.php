@@ -16,14 +16,34 @@
             </a>
             <div class="modal-body-transfers-transfers grid grid-cols-12 gap-4 gap-y-3">
                 <div class="col-span-12">
-                    {{-- @if ($image)
-                        <img class="object-none object-center bg-yellow-300 w-30 h-30"
-                            src="{{ asset('storage/' . $item->image ?? 'dist/images/preview-8.jpg') }}"
-                            alt="image"wire:model="image">
-                    @else
-                        <img class="object-none object-center bg-yellow-300 w-30 h-30"
-                            src="{{asset('public/dist/images/food-beverage-1.jpg') }}" alt="image"wire:model="image">
-                    @endif --}}
+                    <label class="form-label">Logo actuel</label>
+                    <div class="flex items-center gap-4 mb-2">
+                        @if ($currentLogo)
+                            <img src="{{ Str::startsWith($currentLogo, 'http') ? $currentLogo : asset($currentLogo) }}"
+                                 alt="logo actuel"
+                                 class="w-16 h-16 object-contain rounded border border-slate-200 bg-slate-50 p-1">
+                        @else
+                            <div class="w-16 h-16 flex items-center justify-center rounded border border-dashed border-slate-300 bg-slate-50 text-slate-400 text-xs text-center">
+                                Aucun logo
+                            </div>
+                        @endif
+                        <div class="flex-1">
+                            <label class="form-label text-xs text-slate-500">Changer le logo (PNG, JPG, SVG — max 2 Mo)</label>
+                            <input wire:model="image" type="file" accept="image/*"
+                                   class="form-control form-control-sm">
+                            @error('image')
+                                <span class="text-danger text-xs">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    @if ($image)
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-xs text-slate-500">Aperçu :</span>
+                            <img src="{{ $image->temporaryUrl() }}"
+                                 class="w-12 h-12 object-contain rounded border border-green-200 bg-green-50 p-1"
+                                 alt="aperçu">
+                        </div>
+                    @endif
                 </div>
             </div>
             <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">

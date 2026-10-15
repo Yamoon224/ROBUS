@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <h2 class="intro-y text-lg font-medium mt-10">
         Commissions service virements des banques
     </h2>
@@ -9,7 +9,7 @@
 
         </div>
         
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+        <div class="intro-y col-span-12 overflow-x-auto">
 
             <table class="table table-bordered table-hover -intro-x mt-6">
                 <thead class="table-dark">

@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <h2 class="intro-y text-lg font-medium mt-10">
         Commissions pour les depots 
     </h2>
@@ -48,17 +48,17 @@
                                     <div id="faq-accordion-collapse-1" class="accordion-collapse collapse show"
                                         aria-labelledby="faq-accordion-content-1" data-tw-parent="#faq-accordion-1">
                                         <div class="accordion-body text-slate-600 dark:text-slate-500 leading-relaxed">
-                                            {{ $itemLevelbank->amount_begin }} --
-                                            {{ $itemLevelbank->amount_end }}
+                                            {{ formatDisplayAmount($itemLevelbank->amount_begin) }} --
+                                            {{ formatDisplayAmount($itemLevelbank->amount_end) }}
                                             @if ($itemLevelbank->admin_percent == null)
                                                 <span class="mr-6 ml-6">
                                                     Montant client :
-                                                    {{ $itemLevelbank->amount ?? null }} Fcfa
+                                                    {{ formatDisplayAmount($itemLevelbank->amount ?? null) }} Fcfa
                                                 </span>
                                             @else
                                                 <span class="alert alert-dark show mb-2 mr-6 ml-6">
                                                     Montant distributeur(% / CFA):
-                                                    {{ $itemLevelbank->amount  ?? null }} {{ $itemLevelbank->percent  ?? null }} 
+                                                    {{ formatDisplayAmount($itemLevelbank->amount  ?? null) }} {{ $itemLevelbank->percent  ?? null }}
                                                 </span>
                                             @endif
                                         </div>
@@ -76,10 +76,10 @@
                                         aria-labelledby="faq-accordion-content-1" data-tw-parent="#faq-accordion-1">
                                         <div class="accordion-body text-slate-600 dark:text-slate-500 leading-relaxed">
 
-                                            {{ $itemLevelbank->amount_begin ?? null }} --
-                                            {{ $itemLevelbank->amount_end ?? null }} <span class="mr-6 ml-6">
+                                            {{ formatDisplayAmount($itemLevelbank->amount_begin ?? null) }} --
+                                            {{ formatDisplayAmount($itemLevelbank->amount_end ?? null) }} <span class="mr-6 ml-6">
                                                 Pourcentage/Montant(Frcfa) : {{ $itemLevelbank->percent ?? null }}
-                                                {{ $itemLevelbank->amount ?? null }}
+                                                {{ formatDisplayAmount($itemLevelbank->amount ?? null) }}
                                             </span>
                                         </div>
                                     </div>
@@ -98,7 +98,7 @@
         @endif
         <!-- END: Data List -->
     </div>
-    <div class="intro-y col-span-12 overflow-auto lg:overflow-visible mt-6">
+    <div class="intro-y col-span-12 overflow-x-auto mt-6">
         <h2 class="alert alert-dark  intro-y text-lg font-medium">
            Rechargement de carte Visiteurs
         </h2>

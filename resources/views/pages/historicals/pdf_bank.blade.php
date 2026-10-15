@@ -305,7 +305,7 @@ Template Name: Rubick - HTML Admin Dashboard Template
                                                         </td>
                                                         <td>
                                                             <p href="" class="font-medium whitespace-nowrap">
-                                                                {{ $item->amount ?? null }}
+                                                                {{ formatDisplayAmount($item->amount ?? null) }}
                                                                 {{ $item->wallet->currencie->code ?? null }}
                                                             </p>
                                                         </td>

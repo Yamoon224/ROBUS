@@ -50,7 +50,7 @@
                             <label class="form-label required">Montant</label>
                             <div class="field-value">
                                 <i class="fas fa-money-bill-wave"></i>
-                                <span id="amount_reloadcard_edit">{{ $amount_reloadcard_edit ?? null }}
+                                <span id="amount_reloadcard_edit">{{ formatDisplayAmount($amount_reloadcard_edit ?? null) }}
                                     {{ $currency_custumers ?? null }}</span>
                             </div>
                         </div>

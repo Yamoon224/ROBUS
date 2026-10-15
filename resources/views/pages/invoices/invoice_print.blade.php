@@ -27,6 +27,7 @@
             </div>
             <div class="title-area">
                 <h1>FACTURE</h1>
+                <x-receipt-operation :transaction="$walletReload" />
                 <p>N° {{ $walletReload->paymentReload->transaction_id ?? 'N/A' }}</p>
             </div>
             <div class="clearfix"></div>
@@ -181,22 +182,22 @@
             <table class="amount-table">
                 <tr>
                     <td class="label">Montant demandé</td>
-                    <td class="value">{{ number_format($walletReload->amount ?? 0, 0, ',', ' ') }}
+                    <td class="value">{{ number_format($walletReload->amount ?? 0, 2, ',', ' ') }}
                         {{ $walletReload->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
                 <tr>
                     <td class="label">Montant reçu</td>
-                    <td class="value bold">{{ number_format($walletReload->amount_received ?? 0, 0, ',', ' ') }}
+                    <td class="value bold">{{ number_format($walletReload->amount_received ?? 0, 2, ',', ' ') }}
                         {{ $wallet_info->currencie->code ?? 'FCFA' }}</td>
                 </tr>
                 <tr>
                     <td class="label">Frais</td>
-                    <td class="value">{{ number_format($walletReload->costs_amount ?? 0, 0, ',', ' ') }}
+                    <td class="value">{{ number_format($walletReload->costs_amount ?? 0, 2, ',', ' ') }}
                         {{ $walletReload->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
                 <tr class="total-row">
                     <td class="label bold">TOTAL À PAYER</td>
-                    <td class="value bold">{{ number_format($walletReload->amount ?? 0, 0, ',', ' ') }}
+                    <td class="value bold">{{ number_format($walletReload->amount ?? 0, 2, ',', ' ') }}
                         {{ $walletReload->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
             </table>

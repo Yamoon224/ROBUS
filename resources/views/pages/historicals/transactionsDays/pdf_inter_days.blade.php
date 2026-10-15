@@ -219,11 +219,11 @@ Template Name: Rubick - HTML Admin Dashboard Template
                                                     <tr>
                                                         <td>
                                                             <p href="" class="font-medium whitespace-nowrap">
-                                                                {{ $amount_total ?? null }}</p>
+                                                                {{ formatDisplayAmount($amount_total ?? null) }}</p>
                                                         </td>
                                                         <td>
                                                             <p href="" class="font-medium whitespace-nowrap">
-                                                                {{ $amount_total_banque ?? null }}</p>
+                                                                {{ formatDisplayAmount($amount_total_banque ?? null) }}</p>
                                                         </td>
 
                                                         

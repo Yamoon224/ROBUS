@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <h2 class="intro-y text-lg font-medium mt-10">
         Commissions pour les transactions en Asie
     </h2>
@@ -27,7 +27,7 @@
     </div>
     
     <div class="grid grid-cols-12 gap-6">
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+        <div class="intro-y col-span-12 overflow-x-auto">
 
             <h2 class="alert alert-dark  intro-y text-lg font-medium mt-3">
                 Liste des commissions des differentes transactions Robus Asie
@@ -125,7 +125,7 @@
             </table>
         </div>
 
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+        <div class="intro-y col-span-12 overflow-x-auto">
 
             <h2 class="alert alert-dark  intro-y text-lg font-medium mt-3">
                 Liste des commissions des differentes transactions Mobile Mooney Asie

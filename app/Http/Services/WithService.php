@@ -308,12 +308,7 @@ class WithService
 
             if ($user->country->code == 'CI') {
 
-                $message =  'Vous avez effectué un paiement de ' . $walletWith->amount .  $user->wallet->currencie->code .
-                    ' ' .
-                    'par ' . $walletWith->provider->name .
-                    ' a ' . $walletWith->created_at .
-                    ' votre demande est en-cours de validation ' .
-                    'Robus vous remercie';
+                $message = \App\Support\SmsMessage::transaction($walletWith, (string) ($walletWith->status ?? 'PENDING'), $user->wallet->currencie->code, 'Paiement');
 
                 sendTryCashMessage($user->phone, $message);
             }
@@ -417,12 +412,7 @@ class WithService
 
             if ($user->country->code == 'CI') {
 
-                $message =  'Vous avez effectué un paiement de ' . $walletWith->amount .  $user->wallet->currencie->code .
-                    ' ' .
-                    'par ' . $walletWith->provider->name .
-                    ' a ' . $walletWith->created_at .
-                    ' votre demande est en-cours de validation ' .
-                    'Robus vous remercie';
+                $message = \App\Support\SmsMessage::transaction($walletWith, (string) ($walletWith->status ?? 'PENDING'), $user->wallet->currencie->code, 'Paiement');
 
                 sendTryCashMessage($user->phone, $message);
             }
@@ -524,12 +514,7 @@ class WithService
 
             if ($user->country->code == 'CI') {
 
-                $message =  'Vous avez effectué un réchargement de ' . $walletWith->amount .  $user->wallet->currencie->code .
-                    ' ' .
-                    'par ' . $walletWith->provider->name .
-                    ' a ' . $walletWith->created_at .
-                    ' votre demande est en-cours de validation ' .
-                    'Robus vous remercie';
+                $message = \App\Support\SmsMessage::transaction($walletWith, (string) ($walletWith->status ?? 'PENDING'), $user->wallet->currencie->code);
 
                 sendTryCashMessage($user->phone, $message);
             }
@@ -632,12 +617,7 @@ class WithService
 
             if ($user->country->code == 'CI') {
 
-                $message =  'Vous avez effectué un paiement de ' . $walletWith->amount .  $user->wallet->currencie->code .
-                    ' ' .
-                    'par ' . $walletWith->provider->name .
-                    ' a ' . $walletWith->created_at .
-                    ' votre demande est en-cours de validation ' .
-                    'Robus vous remercie';
+                $message = \App\Support\SmsMessage::transaction($walletWith, (string) ($walletWith->status ?? 'PENDING'), $user->wallet->currencie->code, 'Paiement');
 
                 sendTryCashMessage($user->phone, $message);
             }

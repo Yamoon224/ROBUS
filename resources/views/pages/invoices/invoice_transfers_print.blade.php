@@ -28,6 +28,7 @@
             </div>
             <div class="title-area">
                 <h1>FACTURE</h1>
+                <x-receipt-operation :transaction="$walletTransfers" />
                 <p>N° {{ $walletTransfers->transaction->transaction_id ?? 'N/A' }}</p>
             </div>
             <div class="clearfix"></div>
@@ -147,28 +148,28 @@
             <table class="amount-table">
                 <tr>
                     <td class="label">Montant demandé</td>
-                    <td class="value">{{ number_format($walletTransfers->amount ?? 0, 0, ',', ' ') }}
+                    <td class="value">{{ number_format($walletTransfers->amount ?? 0, 2, ',', ' ') }}
                         {{ $walletTransfers->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
                 <tr>
                     <td class="label">Montant reçu</td>
                     @if ($walletTransfers->provider->name == 'ROBUS')
-                        <td class="value bold">{{ number_format($walletTransfers->amount_received ?? 0, 0, ',', ' ') }}
+                        <td class="value bold">{{ number_format($walletTransfers->amount_received ?? 0, 2, ',', ' ') }}
                             {{ $wallet_info->currencie->code ?? 'FCFA' }}</td>
                     @else
-                        <td class="value bold">{{ number_format($walletTransfers->amount_received ?? 0, 0, ',', ' ') }}
+                        <td class="value bold">{{ number_format($walletTransfers->amount_received ?? 0, 2, ',', ' ') }}
                             {{ $walletTransfers->wallet->currencie->code ?? 'FCFA' }}</td>
                     @endif
 
                 </tr>
                 <tr>
                     <td class="label">Frais</td>
-                    <td class="value">{{ number_format($walletTransfers->costs_amount ?? 0, 0, ',', ' ') }}
+                    <td class="value">{{ number_format($walletTransfers->costs_amount ?? 0, 2, ',', ' ') }}
                         {{ $walletTransfers->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
                 <tr class="total-row">
                     <td class="label bold">TOTAL À PAYER</td>
-                    <td class="value bold">{{ number_format($walletTransfers->amount ?? 0, 0, ',', ' ') }}
+                    <td class="value bold">{{ number_format($walletTransfers->amount ?? 0, 2, ',', ' ') }}
                         {{ $walletTransfers->wallet->currencie->code ?? 'FCFA' }}</td>
                 </tr>
             </table>

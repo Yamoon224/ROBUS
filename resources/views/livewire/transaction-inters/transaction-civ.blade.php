@@ -681,7 +681,7 @@
 
                             <div
                                 class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                {{ $transaction_bank_amount ?? null }} {{ $usersCountry }}
+                                {{ formatDisplayAmount($transaction_bank_amount ?? null) }} {{ $usersCountry }}
                             </div>
                         </div>
 

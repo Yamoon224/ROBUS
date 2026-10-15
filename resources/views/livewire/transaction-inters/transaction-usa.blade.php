@@ -234,7 +234,7 @@
 
                         <div class="px-5 py-3  flex-1 zoom-in  alert alert-pending   relative  font-medium leading-6 pl-3 2xl:pl-4"
                             style="font-size: 25px; color:white;">
-                            {{ $amount_transaction_nat_val_pay ?? null }}
+                            {{ formatDisplayAmount($amount_transaction_nat_val_pay ?? null) }}
                             {{ $usersCountry }}
                         </div>
                     </div>
@@ -245,7 +245,7 @@
 
                         <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
                             style="font-size: 25px; color:white;">
-                            {{ $amount_transaction_nat_commission_val_pay ?? null }}
+                            {{ formatDisplayAmount($amount_transaction_nat_commission_val_pay ?? null) }}
                             {{ $usersCountry }}
                         </div>
                     </div>
@@ -257,7 +257,7 @@
 
                         <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
                             style="font-size: 25px; color:white;">
-                            {{ $amount_transaction_nat_val_receive ?? null }}
+                            {{ formatDisplayAmount($amount_transaction_nat_val_receive ?? null) }}
                             {{ $countrie_indicative->currencie->code ?? null }}
                         </div>
                     </div>
@@ -269,7 +269,7 @@
 
                         <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
                             style="font-size: 25px; color:white;">
-                            {{ $amount_transaction_nat_commission_val_pay ?? null }}
+                            {{ formatDisplayAmount($amount_transaction_nat_commission_val_pay ?? null) }}
                             {{ $usersCountry }}
                         </div>
                     </div>
@@ -281,7 +281,7 @@
 
                         <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
                             style="font-size: 25px; color:white;">
-                            {{ $amount_transaction_nat_val_receive ?? null }}
+                            {{ formatDisplayAmount($amount_transaction_nat_val_receive ?? null) }}
                             {{ $countrie_indicative->currencie->code ?? null }}
                         </div>
                     </div>

@@ -16,6 +16,11 @@ class ReloadSingleCollection extends JsonResource
      */
     public function toArray($request)
     {
+        // Les dépôts Pixel Innov enregistrent le mobile crédité dans metadata.
+        // Ne jamais exposer le téléphone du titulaire du wallet comme bénéficiaire.
+        $destination = is_array($this->metadata)
+            ? ($this->metadata['destination'] ?? null)
+            : null;
         $wallet_send = Wallet::where('wallet_id',  $this->account_wallet)->first();
 
         if ($wallet_send != null) {
@@ -32,7 +37,7 @@ class ReloadSingleCollection extends JsonResource
             // 'amount_wallet' =>  optional($this->wallet)->amount . ' ' . optional($this->wallet->currencie)->code,
             'name_user_desti' =>  null,
             // 'name_user_desti' => isset(optional($wallet_send)->sidUser->firstname) ? (optional($wallet_send)->sidUser->firstname). ' ' . (optional($wallet_send)->sidUser->lastname)  : null,
-            'phone_user_desti' => null,
+            'phone_user_desti' => $destination,
             'name_user_send' => isset(optional($this->wallet)->sidUser->firstname) ? (optional($this->wallet)->sidUser->firstname) . ' ' . (optional($this->wallet)->sidUser->lastname) : null,
             // 'name_user_send' => isset(optional($this->wallet)->sidUser->firstname) ? (optional($this->wallet)->sidUser->firstname) . ' ' . (optional($this->wallet)->sidUser->lastname)  : null,
             'phone_user_send' => optional($this->wallet)->sidUser->phone ?? null,

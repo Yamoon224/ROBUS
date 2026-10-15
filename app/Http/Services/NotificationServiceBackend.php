@@ -31,9 +31,7 @@ class NotificationServiceBackend
             if (sabdy()->is_custumers) {
                 if (sabdy()->country->code == "CI") {
 
-                    $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   ' par '
-                        . $walletTransaction->provider->name  .  ' le '
-                        . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletTransaction, (string) ($walletTransaction->status ?? 'PENDING'), sabdy()->wallet->currencie->code);
 
                     sendTryCashMessage(sabdy()->phone, $message);
                 }
@@ -90,9 +88,7 @@ class NotificationServiceBackend
             if (sabdy()->is_custumers) {
                 if (sabdy()->country->code == "CI") {
 
-                    $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   'par '
-                        . $walletTransaction->provider->name  .  ' le '
-                        . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletTransaction, (string) ($walletTransaction->status ?? 'PENDING'), sabdy()->wallet->currencie->code);
 
 
 
@@ -153,9 +149,7 @@ class NotificationServiceBackend
             if (sabdy()->is_custumers) {
                 if (sabdy()->country->code == "CI") {
 
-                    $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   ' par '
-                        . $walletTransaction->provider->name  .  ' le '
-                        . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletTransaction, (string) ($walletTransaction->status ?? 'PENDING'), sabdy()->wallet->currencie->code);
 
 
 
@@ -413,9 +407,7 @@ class NotificationServiceBackend
             if (sabdy()->is_custumers) {
                 if (sabdy()->country->code == "CI") {
 
-                    $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   ' par '
-                        . $walletTransaction->provider->name  .  ' le '
-                        . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletTransaction, (string) ($walletTransaction->status ?? 'PENDING'), sabdy()->wallet->currencie->code);
 
 
 
@@ -470,9 +462,7 @@ class NotificationServiceBackend
             if (sabdy()->is_custumers) {
                 if (sabdy()->country->code == "CI") {
 
-                    $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   'par '
-                        . $walletTransaction->provider->name  .  ' le '
-                        . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
+                    $message = \App\Support\SmsMessage::transaction($walletTransaction, (string) ($walletTransaction->status ?? 'PENDING'), sabdy()->wallet->currencie->code);
 
 
 

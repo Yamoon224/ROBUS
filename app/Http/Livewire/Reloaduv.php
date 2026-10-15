@@ -579,9 +579,7 @@ class Reloaduv extends Component
 
                     if ($walletUser->country->code == "CI") {
 
-                        $message = 'Vous avez effectué un transafers de ' . $walletTransaction->amount .  $walletUser->wallet->currencie->code .  'par '
-                            . $walletTransaction->provider->name  .  ' a '
-                            . $walletTransaction->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
+                        $message = \App\Support\SmsMessage::transaction($walletTransaction, (string) ($walletTransaction->status ?? 'PENDING'), $walletUser->wallet->currencie->code, 'Transfert');
 
 
                         sendTryCashMessage($wallet_search->sidUser->phone, $message);
@@ -749,9 +747,7 @@ class Reloaduv extends Component
 
                         if ($walletUser->country->code == "CI") {
 
-                            $message = 'Vous avez effectué un transafers de ' . $walletTransaction->amount .  $walletUser->wallet->currencie->code .  'par '
-                                . $walletTransaction->provider->name  .  ' a '
-                                . $walletTransaction->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($walletTransaction, (string) ($walletTransaction->status ?? 'PENDING'), $walletUser->wallet->currencie->code, 'Transfert');
 
 
                             sendTryCashMessage($wallet_search->sidUser->phone, $message);
@@ -918,9 +914,7 @@ class Reloaduv extends Component
 
                         if ($walletUser->country->code == "CI") {
 
-                            $message = 'Vous avez effectué un transafers de ' . $walletTransaction->amount .  $walletUser->wallet->currencie->code .  'par '
-                                . $walletTransaction->provider->name  .  ' a '
-                                . $walletTransaction->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
+                            $message = \App\Support\SmsMessage::transaction($walletTransaction, (string) ($walletTransaction->status ?? 'PENDING'), $walletUser->wallet->currencie->code, 'Transfert');
 
 
                             sendTryCashMessage($wallet_search->sidUser->phone, $message);
@@ -1469,6 +1463,7 @@ class Reloaduv extends Component
 
         $payments = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $walletUser->country->id)
+            ->where('country_services.status', true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id',  1)
             ->where('providers.name', '!=', 'Wave')

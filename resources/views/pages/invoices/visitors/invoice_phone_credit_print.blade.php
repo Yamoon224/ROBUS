@@ -66,6 +66,7 @@
 </head>
 
 <body>
+    <x-receipt-operation :transaction="$walletPhoneCredit" />
     <div>
         <div style="padding:0px 19px;">
             <table>
@@ -202,13 +203,13 @@
                             <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                 {{ 'Montant demandé' }}</td>
                             <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                {{ $walletPhoneCredit->amount ?? null }} FCFA</td>
+                                {{ formatDisplayAmount($walletPhoneCredit->amount ?? null) }} FCFA</td>
                         </tr>
                         <tr>
                             <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                 {{ 'Montant recu' }}</td>
                             <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                {{ $walletPhoneCredit->paymentPhone->received_amount ?? null }} FCFA</td>
+                                {{ formatDisplayAmount($walletPhoneCredit->paymentPhone->received_amount ?? null) }} FCFA</td>
                         </tr>
                         <tr>
                             <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
@@ -221,7 +222,7 @@
                             <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                 {{ 'Frais' }}</td>
                             <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                {{ $walletPhoneCredit->paymentPhone->fee_amount ?? null }} FCFA</td>
+                                {{ formatDisplayAmount($walletPhoneCredit->paymentPhone->fee_amount ?? null) }} FCFA</td>
                         </tr>
                     </tbody>
                 </table>

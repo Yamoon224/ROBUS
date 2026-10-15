@@ -39,7 +39,7 @@
                             <i data-feather="trending-down" class="font-medium-5"></i>
                         </div>
                         <div class="font-medium text-historique mt-6">Solde </div>
-                        <div class="text-slate-500 mt-3"> {{ $walletSolde ?? null }} {{ $usersCountry }}
+                        <div class="text-slate-500 mt-3"> {{ formatDisplayAmount($walletSolde ?? null) }} {{ $usersCountry }}
                         </div>
                     </div>
 

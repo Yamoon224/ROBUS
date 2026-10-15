@@ -11,6 +11,7 @@ use App\Models\Custumers\Country;
 use App\Models\Providers\Provider;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class Service extends Component
 {
@@ -27,6 +28,8 @@ class Service extends Component
     public $providerType;
     public $countrys = [];
     public $image;
+    public $managementCountryId = '';
+    public $managementProviderTypeId = '';
 
     protected $rules = [
         'providerName' => 'required',
@@ -123,6 +126,54 @@ class Service extends Component
         }
     }
 
+    public function setCountryServiceStatus(int $countryServiceId, bool $status): void
+    {
+        $this->authorizeActivationManagement();
+
+        CountryService::findOrFail($countryServiceId)->update(['status' => $status]);
+        Artisan::call('cache:clear');
+
+        $this->emit('success', $status ? 'Méthode activée pour ce pays !' : 'Méthode désactivée pour ce pays !');
+    }
+
+    public function setGroupStatus(bool $status): void
+    {
+        $this->authorizeActivationManagement();
+        $this->validate([
+            'managementCountryId' => 'required|exists:countries,id',
+            'managementProviderTypeId' => 'required|exists:provider_types,id',
+        ]);
+
+        DB::table('country_services')
+            ->where('country_id', $this->managementCountryId)
+            ->whereIn('provider_id', function ($query) {
+                $query->select('id')->from('providers')
+                    ->where('provider_type_id', $this->managementProviderTypeId)
+                    ->whereNull('deleted_at');
+            })
+            ->update(['status' => $status, 'updated_at' => now()]);
+
+        Artisan::call('cache:clear');
+        $this->emit('success', $status ? 'Groupe activé pour ce pays !' : 'Groupe désactivé pour ce pays !');
+    }
+
+    public function setCountryStatus(bool $status): void
+    {
+        $this->authorizeActivationManagement();
+        $this->validate(['managementCountryId' => 'required|exists:countries,id']);
+
+        CountryService::where('country_id', $this->managementCountryId)
+            ->update(['status' => $status]);
+
+        Artisan::call('cache:clear');
+        $this->emit('success', $status ? 'Toutes les méthodes du pays sont activées !' : 'Toutes les méthodes du pays sont désactivées !');
+    }
+
+    private function authorizeActivationManagement(): void
+    {
+        abort_unless(Auth::guard('web')->user()->hasPermissionTo('active-operateurs'), 403);
+    }
+
     public function disableOrder()
     {
         $check = Provider::find($this->providerId);
@@ -148,7 +199,7 @@ class Service extends Component
 
     public function render()
     {
-        $provider = Provider::query();
+        $provider = Provider::with(['providerType', 'country_services.country']);
 
 
         if ($this->search != "") {

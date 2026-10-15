@@ -278,7 +278,7 @@
 
                             <div
                                 class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                {{ $amount_payment ?? null }} {{ $wallet_amount->currencie->code ?? null }}
+                                {{ formatDisplayAmount($amount_payment ?? null) }} {{ $wallet_amount->currencie->code ?? null }}
                             </div>
                         </div>
 

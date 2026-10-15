@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <h2 class="intro-y text-lg font-medium mt-10">
         Commissions pour les transactions en Cote d'Ivoire
     </h2>
@@ -28,7 +28,7 @@
 
     <div class="grid grid-cols-12 gap-6">
      
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+        <div class="intro-y col-span-12 overflow-x-auto">
 
             <h2 class="alert alert-dark  intro-y text-lg font-medium mt-3">
                 Liste des commissions des differentes transactions Robus en Cote d'Ivoire
@@ -124,7 +124,7 @@
 
             </table>
         </div>
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+        <div class="intro-y col-span-12 overflow-x-auto">
 
             <h2 class="alert alert-dark  intro-y text-lg font-medium mt-3">
                 Liste des commissions des differentes transactions Mobile Mooney en Cote d'Ivoire

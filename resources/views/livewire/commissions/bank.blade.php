@@ -50,11 +50,11 @@
                                     <div id="faq-accordion-collapse-1" class="accordion-collapse collapse show"
                                         aria-labelledby="faq-accordion-content-1" data-tw-parent="#faq-accordion-1">
                                         <div class="accordion-body text-slate-600 dark:text-slate-500 leading-relaxed">
-                                            {{ $itemLevelbank->amount_begin ?? null }} --
-                                            {{ $itemLevelbank->amount_end ?? null }}
+                                            {{ formatDisplayAmount($itemLevelbank->amount_begin ?? null) }} --
+                                            {{ formatDisplayAmount($itemLevelbank->amount_end ?? null) }}
                                             <span class="mr-6 ml-6">
                                                 Montant :
-                                                {{ $itemLevelbank->amount ?? null }} Fcfa
+                                                {{ formatDisplayAmount($itemLevelbank->amount ?? null) }} Fcfa
                                             </span>
                                             <span class="mr-6 ml-6">
                                                 Montant s-distruteur :
@@ -77,8 +77,8 @@
                                         aria-labelledby="faq-accordion-content-1" data-tw-parent="#faq-accordion-1">
                                         <div class="accordion-body text-slate-600 dark:text-slate-500 leading-relaxed">
 
-                                            {{ $itemLevelbank->amount_begin ?? null }} --
-                                            {{ $itemLevelbank->amount_end ?? null }} 
+                                            {{ formatDisplayAmount($itemLevelbank->amount_begin ?? null) }} --
+                                            {{ formatDisplayAmount($itemLevelbank->amount_end ?? null) }}
                                            <span class="mr-6 ml-6">
                                                 Pourcentage : {{ $itemLevelbank->percent ?? null }}
                                             </span>

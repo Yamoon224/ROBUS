@@ -1,4 +1,4 @@
-<div>
+﻿<div>
     <h2 class="intro-y text-lg font-medium mt-10">
         Commissions de commande de carte
     </h2>
@@ -26,7 +26,7 @@
         </div>
         <button wire:click="$emit('modal-show')" class="btn btn-primary shadow-md mr-2">Ajouter</button>
 
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
+        <div class="intro-y col-span-12 overflow-x-auto">
             <table class="table table-bordered table-hover -mt-2 -intro-x ">
                 <thead class="table-dark">
                     <tr>
@@ -61,7 +61,7 @@
                                 </td>
                                 <td class="text-center">
                                     <p href="" class="font-medium whitespace-nowrap">
-                                        {{ $item->amount ?? null }} Frcfa
+                                        {{ formatDisplayAmount($item->amount ?? null) }} Frcfa
                                     </p>
 
                                 </td>

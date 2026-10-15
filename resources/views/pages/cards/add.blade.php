@@ -118,7 +118,7 @@
                                     class="select2 form-select @error('type_card_id') is-invalid @enderror">
                                     <option disabled selected>-</option>
                                     @foreach ($type_reload as $type_card)
-                                        <option value="{{ $type_card->id }}" data-amount="{{ $type_card->amount }}"
+                                        <option value="{{ $type_card->id }}" data-amount="{{ formatDisplayAmount($type_card->amount) }}"
                                             @if ($type_card->id === $type_card->type_card_id) selected @endif>
                                             {{ $type_card->name }}
                                         </option>

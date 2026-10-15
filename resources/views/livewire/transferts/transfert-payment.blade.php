@@ -335,7 +335,7 @@
 
                                 <div
                                     class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                    {{ $paiement_amount_total ?? null }} {{ $usersCountry ?? null }}
+                                    {{ formatDisplayAmount($paiement_amount_total ?? null) }} {{ $usersCountry ?? null }}
                                 </div>
                             </div>
 
@@ -363,7 +363,7 @@
 
                                 <div
                                     class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                    {{ $paiement_amount_t_sodecie ?? null }} {{ $usersCountry }}
+                                    {{ formatDisplayAmount($paiement_amount_t_sodecie ?? null) }} {{ $usersCountry }}
                                 </div>
                             </div>
 
@@ -391,7 +391,7 @@
 
                                 <div
                                     class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                    {{ $amount_canal_send ?? null }} {{ $usersCountry }}
+                                    {{ formatDisplayAmount($amount_canal_send ?? null) }} {{ $usersCountry }}
                                 </div>
                             </div>
 
