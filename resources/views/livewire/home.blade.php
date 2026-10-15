@@ -1,866 +1,593 @@
-<div>
+<div class="rb-dash">
+    @php
+        $currency = $user_currencie ?? 'CFA';
+        $canSeeCommissions = Auth::guard('web')->user()->hasPermissionTo('voir-commission-admin');
 
-    <!-- inject:js -->
-   
+        // Statuts du jour : [service, succès, attente, échec]
+        $statuses = [
+            ['Transferts', $success_transaction, $pendding_transaction, $error_transaction],
+            ['Paiements de factures', $success_payment, $pendding_payment, $error_payment],
+            ['Crédits téléphoniques', $success_phone_credit, $pendding_phone_credit, $error_phone_credit],
+            ['Cartes bancaires', $success_bank, $pendding_bank, $error_bank],
+            ['Réchargements', $success_deposit, $pendding_deposit, $error_deposit],
+            ['1Xbet', $success_xbet, $pendding_xbet, $error_xbet],
+            ['International', $success_inter, $pendding_inter, $error_inter],
+            ['Versements', $versment_success, $versment_padding, $versment_error],
+            ['Push', $push_success, $push_pendding, $push_error],
+            ['Djamo', $djamo_success, $djamo_padding, $djamo_error],
+            ['Mobile Zone', $pixel_mobile_zone_success ?? 0, $pixel_mobile_zone_pendding ?? 0, $pixel_mobile_zone_error ?? 0],
+        ];
 
-    <div class="intro-y col-span-12 lg:col-span-12">
-        @if (sabdyHomeVerify())
-            <div class="grid grid-cols-12 gap-6">
+        // Transferts par opérateur : [opérateur, couleur, montant, nombre]
+        $operators = [
+            ['Robus', '#155e75', $amount_transaction_robus_days ?? 0, null],
+            ['Orange', '#ff7900', $amount_transaction_orange_days ?? 0, $count_transaction_orange_days ?? 0],
+            ['MTN', '#ffcc00', $amount_transaction_mtn_days ?? 0, $count_transaction_mtn_days ?? 0],
+            ['Moov', '#0066b3', $amount_transaction_moov_days ?? 0, $count_transaction_moov_days ?? 0],
+            ['Wave', '#1dc8ff', $amount_transaction_wave_days ?? 0, $count_transaction_wave_days ?? 0],
+        ];
 
-                <div class="col-span-12 2xl:col-span-12">
+        // Montants du jour par famille de services : [titre, lignes, [libellé du total, total]]
+        $amountGroups = [
+            ['Factures, cartes et paris', [
+                ['CIE', $amount_payment_cie_days ?? 0],
+                ['SODECI', $amount_payment_sodeci_days ?? 0],
+                ['Canal', $amount_payment_canal_days ?? 0],
+                ['Réchargement de cartes', $amount_deposit_days ?? 0],
+                ['Achats 1Xbet', $amount_xbet_days ?? 0],
+            ], ['Total des paiements', $amount_payment_days ?? 0]],
+            ['International', [
+                ['Mobiles', $amount_inter_moneyRobus ?? 0],
+                ['Factures', $amount_inter_cie ?? 0],
+                ['Crédits', $amount_inter_credit ?? 0],
+                ['Virements', $amount_inter_virement ?? 0],
+                ['Rechargements', $amount_inter_rechargement ?? 0],
+            ], ['Total international', $amount_inter_days ?? 0]],
+            ['Autres services', [
+                ['Push', $amount_push_days ?? 0],
+                ['Djamo', $amount_djamo_days ?? 0],
+                ['Versements', $amount_versment_days ?? 0],
+                ['Trésor Money', $amount_tresortMoney_days ?? 0],
+                ['Mobile Zone', $amount_pixel_mobile_zone_days ?? 0],
+            ], null],
+        ];
 
-                    <div class="grid grid-cols-12 gap-6 mt-5">
-                        <div class="col-span-12 sm:col-span-6 lg:col-span-2 intro-y style_user1">
-                            <div class="report-box zoom-in style_user1">
-                                <div class="box p-5 style_user1">
-                                    <div class="flex">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                        </svg>
+        // Raccourcis : [libellé, nombre du jour, lien]
+        $shortcuts = [
+            ['Transferts d\'argent', $account_transaction_days ?? 0, route('transactions.browse')],
+            ['Paiements de factures', $account_payment_days ?? 0, route('transactions.browse')],
+            ['Virements bancaires', $account_bank_days ?? 0, route('transactions.browse')],
+            ['Paiements internationaux', $account_inter_days ?? 0, route('transactions.browse')],
+            ['Réchargements de carte', $account_deposit_days ?? 0, route('transactions.browse')],
+            ['Réchargements', $account_reload_days ?? 0, route('transactions.uv.browse')],
+            ['Djamo', $account_djamo_days ?? 0, route('transactions.browse')],
+            ['Push', $account_push_days ?? 0, route('transactions.browse')],
+            ['Versements', $account_versment_days ?? 0, route('transactions.browse')],
+            ['Trésor Money', $account_tresort_days ?? 0, route('transactions.browse')],
+            ['Mobile Zone', $account_pixel_mobile_zone_days ?? 0, route('pixel-mobile-zone.historical')],
+        ];
+    @endphp
 
-                                    </div>
-                                    <div class="text-3xl font-medium leading-8 mt-6">
-                                        {{ $is_custumers ?? null }}
-                                    </div>
-                                    <div class="text-base text-slate-500 mt-1">Clients</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-span-12 sm:col-span-6 xl:col-span-2 intro-y style_2">
-                            <div class="report-box zoom-in style_2">
-                                <div class="box p-5 style_2">
-                                    <div class="flex">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                        </svg>
-                                    </div>
-                                    <div class="text-3xl font-medium leading-8 mt-6">
-                                        {{ $is_distributors ?? null }}
-                                    </div>
-                                    <div class="text-base text-slate-500 mt-1">Operatrices</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-span-12 sm:col-span-6 lg:col-span-2 intro-y style_user2">
-                            <div class="report-box zoom-in style_user2">
-                                <div class="box p-5 style_user2">
-                                    <div class="flex">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                        </svg>
-                                    </div>
-                                    <div class="text-3xl font-medium leading-8 mt-6">
-                                        {{ $is_underdistributors }}
-                                    </div>
-                                    <div class="text-base text-slate-500 mt-1">Sous-distributeurs</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-span-12 sm:col-span-6 lg:col-span-2 intro-y ">
-                            <div class="report-box zoom-in ">
-                                <div class="box p-5 ">
-                                    <div class="flex">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                        </svg>
-                                    </div>
-                                    <div class="text-3xl font-medium leading-8 mt-6">
-                                        {{ $is_compagnies }}
-                                    </div>
-                                    <div class="text-base text-slate-500 mt-1">Compagnies</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-span-12 sm:col-span-6 xl:col-span-2 intro-y style_user3">
-                            <div class="report-box zoom-in  style_user3">
-                                <div class="box p-5 style_user3">
-                                    <div class="flex">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                        </svg>
-                                    </div>
-                                    <div class="text-3xl font-medium leading-8 mt-6">
-                                        {{ $is_masters ?? null }}</div>
-                                    <div class="text-base text-slate-500 mt-1">Masters</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-span-12 sm:col-span-6 lg:col-span-2 intro-y">
-                            <div class="report-box zoom-in">
-                                <div class="box p-5">
-                                    <div class="flex">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                        </svg>
+    <style>
+        .rb-dash {
+            --rb-ink: #0f172a;
+            --rb-muted: #64748b;
+            --rb-line: #e2e8f0;
+            --rb-surface: #ffffff;
+            --rb-brand: rgb(var(--color-primary, 22 78 99));
+            --rb-ok: #15803d;
+            --rb-wait: #b45309;
+            --rb-fail: #b91c1c;
+            color: var(--rb-ink);
+            padding: 1.25rem 0 2rem;
+            display: grid;
+            gap: 1.5rem;
+            font-variant-numeric: tabular-nums;
+        }
 
-                                    </div>
-                                    <div class="text-3xl font-medium leading-8 mt-6">
-                                        {{ $is_supervisors ?? null }}
-                                    </div>
-                                    <div class="text-base text-slate-500 mt-1">Superviseurs</div>
-                                </div>
-                            </div>
-                        </div>
+        .rb-dash h2 {
+            font-size: 1.125rem;
+            font-weight: 500;
+            line-height: 1.3;
+            margin: 0;
+        }
 
+        .rb-dash h3 {
+            font-size: 0.9375rem;
+            font-weight: 500;
+            margin: 0;
+        }
 
-                    </div>
+        .rb-panel {
+            background: var(--rb-surface);
+            border: 1px solid var(--rb-line);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            min-width: 0;
+        }
 
+        .rb-panel > h3 {
+            margin-bottom: 0.875rem;
+        }
+
+        /* Soldes */
+        .rb-balances {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+            gap: 1px;
+            background: rgba(255, 255, 255, 0.18);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .rb-balance {
+            background: var(--rb-brand);
+            color: #fff;
+            padding: 1.25rem 1.5rem;
+            min-width: 0;
+        }
+
+        .rb-balance-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        .rb-balance-value {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 0.25rem 0.5rem;
+            margin-top: 0.375rem;
+            font-size: 1.75rem;
+            font-weight: 500;
+            line-height: 1.15;
+            overflow-wrap: anywhere;
+        }
+
+        .rb-balance-value small {
+            font-size: 0.875rem;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+
+        .rb-balance--main .rb-balance-value {
+            font-size: 2.25rem;
+        }
+
+        /* Comptes du réseau */
+        .rb-people {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+            gap: 1rem 1.5rem;
+            margin: 0;
+        }
+
+        .rb-people div {
+            border-left: 2px solid var(--rb-line);
+            padding-left: 0.75rem;
+        }
+
+        .rb-people dt {
+            font-size: 0.8125rem;
+            color: var(--rb-muted);
+        }
+
+        .rb-people dd {
+            margin: 0.125rem 0 0;
+            font-size: 1.5rem;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        /* Grille principale */
+        .rb-grid {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        /* Panneaux de même hauteur sur une rangée : aucun vide entre les blocs */
+        .rb-amounts {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .rb-amounts .rb-panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rb-amounts .rb-rows {
+            flex: 1;
+        }
+
+        .rb-status-cols {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+            gap: 0.5rem 3rem;
+            align-items: start;
+        }
+
+        @media (min-width: 1024px) {
+            .rb-amounts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+
+        /* Transferts par opérateur : une cellule par opérateur */
+        .rb-ops {
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+            gap: 1rem 1.5rem;
+        }
+
+        .rb-ops div {
+            border-left: 2px solid var(--rb-line);
+            padding-left: 0.75rem;
+            min-width: 0;
+        }
+
+        .rb-ops dt {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8125rem;
+            color: var(--rb-muted);
+        }
+
+        .rb-ops dd {
+            margin: 0.25rem 0 0;
+            font-size: 1.0625rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .rb-ops dd small {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: var(--rb-muted);
+        }
+
+        .rb-ops .rb-total {
+            border-left-color: var(--rb-brand);
+        }
+
+        .rb-ops .rb-total dt {
+            color: var(--rb-ink);
+        }
+
+        @media (max-width: 999px) {
+            .rb-balance--main { grid-column: 1 / -1; }
+        }
+
+        /* Statuts du jour */
+        .rb-status {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .rb-status th,
+        .rb-status td {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--rb-line);
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .rb-status tbody tr:last-child th,
+        .rb-status tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .rb-status th + th,
+        .rb-status td {
+            padding-left: 0.75rem;
+        }
+
+        .rb-status th:first-child {
+            text-align: left;
+            white-space: normal;
+            font-weight: 400;
+        }
+
+        .rb-status thead th {
+            font-size: 0.8125rem;
+            font-weight: 400;
+            color: var(--rb-muted);
+            padding-top: 0;
+        }
+
+        .rb-status td {
+            width: 1%;
+            font-weight: 500;
+        }
+
+        .rb-status thead th span::before {
+            content: '';
+            display: inline-block;
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            margin-right: 0.375rem;
+            background: currentColor;
+        }
+
+        .rb-ok { color: var(--rb-ok); }
+        .rb-wait { color: var(--rb-wait); }
+        .rb-fail { color: var(--rb-fail); }
+        .rb-status td.rb-zero { color: #cbd5e1; font-weight: 400; }
+
+        .rb-note {
+            margin: 0.875rem 0 0;
+            font-size: 0.8125rem;
+            color: var(--rb-muted);
+        }
+
+        /* Montants */
+        .rb-rows {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rb-rows div {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--rb-line);
+        }
+
+        .rb-rows dt {
+            font-size: 0.875rem;
+            color: var(--rb-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 0;
+        }
+
+        .rb-rows dd {
+            margin: 0;
+            font-weight: 500;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .rb-rows dd small {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: var(--rb-muted);
+        }
+
+        .rb-rows .rb-total {
+            margin-top: auto;
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .rb-rows .rb-total dt {
+            color: var(--rb-ink);
+        }
+
+        .rb-rows .rb-total dd {
+            font-size: 1.125rem;
+        }
+
+        .rb-rows div:last-child {
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .rb-swatch {
+            flex: none;
+            width: 0.625rem;
+            height: 0.625rem;
+            border-radius: 2px;
+        }
+
+        .rb-unit {
+            font-weight: 400;
+            font-size: 0.8125rem;
+            color: var(--rb-muted);
+        }
+
+        /* Raccourcis */
+        .rb-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+            gap: 0.75rem;
+        }
+
+        .rb-links a {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            min-height: 3rem;
+            padding: 0.625rem 0.875rem;
+            background: var(--rb-surface);
+            border: 1px solid var(--rb-line);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--rb-ink);
+            text-decoration: none;
+            transition: border-color 0.15s;
+        }
+
+        .rb-links a:hover {
+            border-color: var(--rb-brand);
+        }
+
+        .rb-links a:focus-visible {
+            outline: 2px solid var(--rb-brand);
+            outline-offset: 2px;
+        }
+
+        .rb-links b {
+            flex: none;
+            min-width: 1.75rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 999px;
+            background: #f1f5f9;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .rb-panel { padding: 1rem; }
+            .rb-balance { padding: 1rem 1.125rem; }
+            .rb-balance--main .rb-balance-value { font-size: 1.875rem; }
+            .rb-status th + th, .rb-status td { padding-left: 0.5rem; }
+            .rb-status thead th span::before { display: none; }
+            .rb-status th:first-child { overflow-wrap: anywhere; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .rb-links a { transition: none; }
+        }
+    </style>
+
+    <section class="rb-balances" aria-label="Soldes">
+        <div class="rb-balance rb-balance--main">
+            <div class="rb-balance-label">Solde actuel</div>
+            <div class="rb-balance-value">
+                {{ $walletSolde ?? 0 }} <small>{{ $usersCountry ?? 'CFA' }}</small>
+            </div>
+        </div>
+
+        @if ($canSeeCommissions)
+            <div class="rb-balance">
+                <div class="rb-balance-label">Commissions des sous-distributeurs</div>
+                <div class="rb-balance-value">
+                    {{ $walletCommissions ?? 0 }} <small>{{ $usersCountry ?? 'CFA' }}</small>
+                </div>
+            </div>
+            <div class="rb-balance">
+                <div class="rb-balance-label">Commissions admin</div>
+                <div class="rb-balance-value">
+                    {{ $walletAdmin ?? 0 }} <small>{{ $usersCountry ?? 'CFA' }}</small>
                 </div>
             </div>
         @endif
+    </section>
 
-        <div class="intro-y block sm:flex items-center h-10 mt-6">
-            <h2 class="text-lg font-medium truncate mr-5">
-                Les Activites du compte Aujourdh'ui
-            </h2>
+    @if (sabdyHomeVerify())
+        <section class="rb-panel" aria-label="Comptes du réseau">
+            <dl class="rb-people">
+                <div><dt>Clients</dt><dd>{{ $is_custumers ?? 0 }}</dd></div>
+                <div><dt>Opératrices</dt><dd>{{ $is_distributors ?? 0 }}</dd></div>
+                <div><dt>Sous-distributeurs</dt><dd>{{ $is_underdistributors ?? 0 }}</dd></div>
+                <div><dt>Compagnies</dt><dd>{{ $is_compagnies ?? 0 }}</dd></div>
+                <div><dt>Masters</dt><dd>{{ $is_masters ?? 0 }}</dd></div>
+                <div><dt>Superviseurs</dt><dd>{{ $is_supervisors ?? 0 }}</dd></div>
+            </dl>
+        </section>
+    @endif
+
+    <h2>Activité du jour</h2>
+
+    <div class="rb-grid">
+        <section class="rb-panel">
+            <h3>Opérations par statut</h3>
+            <div class="rb-status-cols">
+                @foreach (array_chunk($statuses, 6) as $chunk)
+                    <table class="rb-status">
+                        <thead>
+                            <tr>
+                                <th scope="col">Service</th>
+                                <th scope="col"><span class="rb-ok">Succès</span></th>
+                                <th scope="col"><span class="rb-wait">Attente</span></th>
+                                <th scope="col"><span class="rb-fail">Échec</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($chunk as [$label, $ok, $wait, $fail])
+                                <tr>
+                                    <th scope="row">{{ $label }}</th>
+                                    <td class="{{ empty($ok) ? 'rb-zero' : 'rb-ok' }}">{{ $ok ?? 0 }}</td>
+                                    <td class="{{ empty($wait) ? 'rb-zero' : 'rb-wait' }}">{{ $wait ?? 0 }}</td>
+                                    <td class="{{ empty($fail) ? 'rb-zero' : 'rb-fail' }}">{{ $fail ?? 0 }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endforeach
+            </div>
+            <p class="rb-note">Remboursements Mobile Zone : {{ $pixel_mobile_zone_refund ?? 0 }}</p>
+        </section>
+
+        <section class="rb-panel">
+            <h3>Transferts par opérateur <span class="rb-unit">({{ $currency }})</span></h3>
+            <dl class="rb-ops">
+                @foreach ($operators as [$name, $color, $amount, $count])
+                    <div>
+                        <dt><span class="rb-swatch" style="background: {{ $color }}"></span>{{ $name }}</dt>
+                        <dd>
+                            {{ $amount }}
+                            @if ($count !== null)
+                                <small>{{ $count }} transaction(s)</small>
+                            @endif
+                        </dd>
+                    </div>
+                @endforeach
+                <div>
+                    <dt>Directs (Orange, MTN, Moov, Wave)</dt>
+                    <dd>
+                        {{ $amount_transaction_direct_days ?? 0 }}
+                        <small>{{ $count_transaction_direct_days ?? 0 }} transaction(s)</small>
+                    </dd>
+                </div>
+                <div class="rb-total">
+                    <dt>Total des transferts</dt>
+                    <dd>{{ $amount_transaction_days ?? 0 }}</dd>
+                </div>
+            </dl>
+        </section>
+
+        <div class="rb-amounts">
+
+            @foreach ($amountGroups as [$title, $rows, $total])
+                <section class="rb-panel">
+                    <h3>{{ $title }} <span class="rb-unit">({{ $currency }})</span></h3>
+                    <dl class="rb-rows">
+                        @foreach ($rows as [$label, $amount])
+                            <div>
+                                <dt>{{ $label }}</dt>
+                                <dd>{{ $amount }}</dd>
+                            </div>
+                        @endforeach
+                        @if ($total)
+                            <div class="rb-total">
+                                <dt>{{ $total[0] }}</dt>
+                                <dd>{{ $total[1] }}</dd>
+                            </div>
+                        @endif
+                    </dl>
+                </section>
+            @endforeach
         </div>
-        <div class="grid grid-cols-12 gap-4 mt-6">
-            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
-                <div class="amount-label text-sm text-gray-500">Solde actuel</div>
-                <div class="amount-balance">
-                    <div class="flex items-baseline justify-between">
-                        <span class="amount-balance-value text-xl font-semibold">
-                            {{ $walletSolde ?? 0 }}
-                        </span>
-                        <span class="amount-balance-currency text-white">
-                            {{ $usersCountry ?? 'CFA' }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            @if (Auth::guard('web')->user()->hasPermissionTo('voir-commission-admin'))
-                <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
-                    <div class="amount-label text-sm text-gray-500">Compte des commissions SD total</div>
-                    <div class="amount-commission-balance">
-                        <div class="flex items-baseline justify-between">
-                            <span class="amount-balance-value text-xl font-semibold">
-                                {{ $walletCommissions ?? 0 }}
-                            </span>
-                            <span class="amount-balance-currency text-white">
-                                {{ $usersCountry ?? 'CFA' }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
-                    <div class="amount-label text-sm text-gray-500">Compte des commissions Admin </div>
-                    <div class="amount-admin-balance">
-                        <div class="flex items-baseline justify-between">
-                            <span class="amount-balance-value text-xl font-semibold">
-                                {{ $walletAdmin ?? 0 }}
-                            </span>
-                            <span class="amount-balance-currency text-white">
-                                {{ $usersCountry ?? 'CFA' }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            @endif
-
-        </div>
-
-        <div class="grid grid-cols-12 gap-6 mt-6">
-
-            <div class="col-span-12 sm:col-span-6 lg:col-span-6 intro-y info-paiement-show">
-                <div class="report-box zoom-in">
-                    <div class="box p-wallet style_facture_home3">
-
-
-                        <div class="flex flex-wrap gap-2 mb-transactions">
-                            <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                Succès transferts {{ $success_transaction }}
-                            </div>
-                            <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                Attente transferts {{ $pendding_transaction }}
-                            </div>
-                            <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                Echec transferts {{ $error_transaction }}
-                            </div>
-
-                            <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                Succès crédits {{ $success_phone_credit }}
-                            </div>
-                            <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                Attente crédits {{ $pendding_phone_credit }}
-                            </div>
-                            <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                Echec crédits {{ $error_phone_credit }}
-                            </div>
-                        </div>
-                        <div class="flex flex-wrap gap-2 mb-transactions">
-                            <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                Succès Cartes {{ $success_bank }}
-                            </div>
-                            <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                Attente Cartes {{ $pendding_bank }}
-                            </div>
-                            <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                Echec Cartes {{ $error_phone_credit }}
-                            </div>
-                            <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                Succès Versements {{ $versment_success }}
-                            </div>
-
-                            <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                Attente Versements {{ $versment_padding }}
-                            </div>
-
-                            <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                Echec Versements {{ $versment_error }}
-                            </div>
-                        </div>
-                        <div class="flex flex-wrap gap-2 mb-transactions">
-                            <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                Succès Mobile Zone {{ $pixel_mobile_zone_success ?? 0 }}
-                            </div>
-
-                            <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                Attente Mobile Zone {{ $pixel_mobile_zone_pendding ?? 0 }}
-                            </div>
-
-                            <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                Echec Mobile Zone {{ $pixel_mobile_zone_error ?? 0 }}
-                            </div>
-
-                            <div class="report-box__indicator bg-warning tooltip cursor-pointer">
-                                Remboursement Mobile Zone {{ $pixel_mobile_zone_refund ?? 0 }}
-                            </div>
-                        </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-
-                        <div class="flex flex-wrap items-center gap-4">
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_transaction_robus_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Robus {{ $user_currencie }}</div>
-                            </div>
-
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_transaction_moov_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Moov
-                                    {{ $user_currencie }}</div>
-                                <div class="text-xs text-slate-500">{{ $count_transaction_moov_days ?? 0 }} transaction(s)</div>
-                            </div>
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_transaction_wave_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Wave {{ $user_currencie }}
-                                </div>
-                                <div class="text-xs text-slate-500">{{ $count_transaction_wave_days ?? 0 }} transaction(s)</div>
-                            </div>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-4 mt-3">
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_transaction_orange_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Orange {{ $user_currencie }}
-                                </div>
-                                <div class="text-xs text-slate-500">{{ $count_transaction_orange_days ?? 0 }} transaction(s)</div>
-                            </div>
-
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_transaction_mtn_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Mtn {{ $user_currencie }}
-                                </div>
-                                <div class="text-xs text-slate-500">{{ $count_transaction_mtn_days ?? 0 }} transaction(s)</div>
-                            </div>
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_transaction_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Total {{ $user_currencie }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap items-center gap-4 mt-3">
-
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_transaction_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Montant Total {{ $user_currencie }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap items-center gap-4 mt-3">
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $count_transaction_direct_days ?? 0 }}
-                                </div>
-                                <div class="text-base text-slate-500">Nombre de transactions directes du jour
-                                </div>
-                            </div>
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_transaction_direct_days ?? 0 }}
-                                </div>
-                                <div class="text-base text-slate-500">Montant total direct (Orange, Mtn, Moov, Wave)
-                                    {{ $user_currencie }}</div>
-                            </div>
-                        </div>
-
-
-                    </div>
-                </div>
-            </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-6 intro-y info-paiement-show">
-                <div class="report-box zoom-in">
-                    <div class="box p-wallet style_table4">
-
-
-                        <div class="flex flex-wrap gap-2 mb-transactions">
-                            <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                Succès paiements {{ $success_payment }}
-                            </div>
-                            <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                Attente paiements {{ $pendding_payment }}
-                            </div>
-                            <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                Echec paiements {{ $error_payment }}
-                            </div>
-
-                            <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                Succès réchargements {{ $success_deposit }}
-                            </div>
-                            <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                Attente réchargements {{ $pendding_transaction }}
-                            </div>
-                            <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                Echec réchargements {{ $pendding_deposit }}
-                            </div>
-
-                            <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                Succès crédits {{ $success_phone_credit }}
-                            </div>
-                            <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                Attente crédits {{ $pendding_phone_credit }}
-                            </div>
-                            <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                Echec crédits {{ $error_phone_credit }}
-                            </div>
-                        </div>
-                        <div class="flex flex-wrap gap-2 mb-transactions">
-                            <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                Succès Xbets {{ $success_xbet }}
-                            </div>
-                            <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                Attente Xbets {{ $pendding_xbet }}
-                            </div>
-                            <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                Echec Xbets {{ $error_xbet }}
-                            </div>
-                            <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                Succès Cartes {{ $success_bank }}
-                            </div>
-                            <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                Attente Cartes {{ $pendding_bank }}
-                            </div>
-                            <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                Echec Cartes {{ $error_phone_credit }}
-                            </div>
-
-                        </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-
-                        <div class="flex flex-wrap items-center gap-4 mt-3">
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_xbet_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Achat 1Xbets {{ $user_currencie }}</div>
-                            </div>
-
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_deposit_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Réchargement cartes
-                                    {{ $user_currencie }}</div>
-                            </div>
-
-                        </div>
-                        <div class="flex flex-wrap items-center gap-4 mt-3">
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_payment_cie_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">CIE {{ $user_currencie }}</div>
-                            </div>
-
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_payment_canal_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">CANAL
-                                    {{ $user_currencie }}</div>
-                            </div>
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_payment_sodeci_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">SODECI {{ $user_currencie }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-4 mt-3">
-
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_payment_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Montant Total Paiements {{ $user_currencie }}
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-span-12 sm:col-span-6 lg:col-span-6 intro-y info-paiement-show">
-                <div class="report-box zoom-in">
-                    <div class="box p-wallet style_table2">
-
-
-                        <div class="flex flex-wrap gap-2 mb-transactions">
-                            <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                Succès International {{ $success_inter }}
-                            </div>
-                            <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                Attente International {{ $pendding_inter }}
-                            </div>
-                            <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                Echec International {{ $error_inter }}
-                            </div>
-
-                            <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                Succès crédits {{ $success_phone_credit }}
-                            </div>
-                            <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                Attente crédits {{ $pendding_phone_credit }}
-                            </div>
-                            <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                Echec crédits {{ $error_phone_credit }}
-                            </div>
-                        </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-
-                        <div class="flex flex-wrap items-center gap-4 mt-3">
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_inter_moneyRobus ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Mobiles {{ $user_currencie }}</div>
-                            </div>
-
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_inter_cie ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Factures
-                                    {{ $user_currencie }}</div>
-                            </div>
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_inter_credit ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Crédits {{ $user_currencie }}
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div class="flex flex-wrap items-center gap-4 mt-3">
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_inter_virement ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Virements {{ $user_currencie }}</div>
-                            </div>
-
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_inter_rechargement ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Rechargements
-                                    {{ $user_currencie }}</div>
-                            </div>
-
-                        </div>
-
-                        <div class="flex flex-wrap items-center gap-4 mt-3">
-
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_inter_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Montant Total International
-                                    {{ $user_currencie }}
-                                </div>
-                            </div>
-                        </div>
-
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-span-12 sm:col-span-6 lg:col-span-6 intro-y info-paiement-show">
-                <div class="report-box zoom-in">
-                    <div class="box p-wallet style_facture_home2">
-
-
-                        <div class="flex flex-wrap gap-2 mb-transactions">
-                            <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                Succès Push {{ $push_success }}
-                            </div>
-                            <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                Attente Push {{ $push_pendding }}
-                            </div>
-                            <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                Echec Push {{ $push_error }}
-                            </div>
-
-                            <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                Succès Djamo {{ $djamo_success }}
-                            </div>
-                            <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                Attente Djamo {{ $djamo_padding }}
-                            </div>
-                            <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                Echec Djamo {{ $djamo_error }}
-                            </div>
-                            <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                Succès Versements {{ $versment_success }}
-                            </div>
-
-                            <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                Attente Versements {{ $versment_padding }}
-                            </div>
-
-                            <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                Echec Versements {{ $versment_error }}
-                            </div>
-                        </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-
-                        <div class="flex flex-wrap items-center gap-4 mt-3">
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_push_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Push {{ $user_currencie }}</div>
-                            </div>
-
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_djamo_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Djamo
-                                    {{ $user_currencie }}</div>
-                            </div>
-
-                        </div>
-
-
-                        <div class="flex flex-wrap items-center gap-4 mt-3">
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_versment_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Versements {{ $user_currencie }}
-                                </div>
-                            </div>
-
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_tresortMoney_days ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500">Tresort Money
-                                    {{ $user_currencie }}</div>
-                            </div>
-
-                        </div>
-                        <div class="flex flex-wrap items-center gap-4 mt-3">
-                            <div class="flex flex-col items-start">
-                                <div class="text-3xl font-medium leading-8">
-                                    {{ $amount_pixel_mobile_zone_days ?? 0 }}
-                                </div>
-                                <div class="text-base text-slate-500">Mobile Zone {{ $user_currencie }}
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="menu-header mt-3">
-            <h3 class="menu-title">Cliquez pour voir les services Financiers</h3>
-            <div class="menu-badge">Robus</div>
-        </div>
-        <div class="intro-y grid grid-cols-12 gap-5 mt-6">
-
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in">
-                <div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                        class="lucide lucide-credit-card report-box__icon text-secondary">
-                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                        </rect>
-                        <line x1="1" y1="10" x2="23" y2="10"></line>
-                    </svg>
-                </div>
-                <div class="text-3xl font-medium leading-8 mt-6">{{ $account_transaction_days ?? null }}</div>
-                <div class="font-medium text-historique mt-6">
-
-                    <a href="{{ route('transactions.browse') }}">
-                        Transferts d'argents</a>
-
-                </div>
-
-            </div>
-
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_facture_home2">
-                <div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                        class="lucide lucide-credit-card report-box__icon text-secondary">
-                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                        </rect>
-                        <line x1="1" y1="10" x2="23" y2="10"></line>
-                    </svg>
-                </div>
-                <div class="text-3xl font-medium leading-8 mt-6">{{ $account_payment_days ?? null }}</div>
-                <div class="font-medium text-historique mt-6">
-                    <a href="{{ route('transactions.browse') }}">
-                        Paiement factures</a>
-                </div>
-            </div>
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                    class="lucide lucide-credit-card report-box__icon text-secondary">
-                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                    </rect>
-                    <line x1="1" y1="10" x2="23" y2="10"></line>
-                </svg>
-                <div class="text-3xl font-medium leading-8 mt-6">{{ $account_bank_days ?? null }}</div>
-
-                <div class="font-medium text-historique  mt-6">
-
-                    <a href="{{ route('transactions.browse') }}"> Virements bancaires</a>
-
-                </div>
-            </div>
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_facture_home ">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                    class="lucide lucide-credit-card report-box__icon text-secondary">
-                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                    </rect>
-                    <line x1="1" y1="10" x2="23" y2="10"></line>
-                </svg>
-                <div class="text-3xl font-medium leading-8 mt-6">{{ $account_inter_days ?? null }}</div>
-
-                <div class="font-medium text-historique mt-6">
-
-                    <a href="{{ route('transactions.browse') }}"> Paiements internationaux</a>
-
-                </div>
-            </div>
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in ">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                    class="lucide lucide-credit-card report-box__icon text-secondary">
-                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                    </rect>
-                    <line x1="1" y1="10" x2="23" y2="10"></line>
-                </svg>
-                <div class="text-3xl font-medium leading-8 mt-6">{{ $account_deposit_days ?? null }}</div>
-
-                <div class="font-medium text-historique mt-6">
-                    <a href="{{ route('transactions.browse') }}"> Réchargements de carte</a>
-                </div>
-            </div>
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_facture_home3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                    class="lucide lucide-credit-card report-box__icon text-secondary">
-                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                    </rect>
-                    <line x1="1" y1="10" x2="23" y2="10"></line>
-                </svg>
-                <div class="text-3xl font-medium leading-8 mt-6">{{ $account_reload_days ?? null }}</div>
-
-                <div class="font-medium text-historique mt-6">
-                    <a href="{{ route('transactions.uv.browse') }}"> Réchargements</a>
-
-
-                </div>
-            </div>
-
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_facture_home">
-                <div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                        class="lucide lucide-credit-card report-box__icon text-secondary">
-                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                        </rect>
-                        <line x1="1" y1="10" x2="23" y2="10"></line>
-                    </svg>
-                </div>
-                <div class="text-3xl font-medium leading-8 mt-6">{{ $account_djamo_days ?? null }}</div>
-                <div class="font-medium text-historique mt-6">
-                    <a href="{{ route('transactions.browse') }}">
-                        Transaction Djamo</a>
-                </div>
-            </div>
-
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_facture_home2">
-                <div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                        class="lucide lucide-credit-card report-box__icon text-secondary">
-                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                        </rect>
-                        <line x1="1" y1="10" x2="23" y2="10"></line>
-                    </svg>
-                </div>
-                <div class="text-3xl font-medium leading-8 mt-6">{{ $account_push_days ?? null }}</div>
-                <div class="font-medium text-historique mt-6">
-                    <a href="{{ route('transactions.browse') }}">
-                        Transaction Push</a>
-                </div>
-            </div>
-
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_facture_home3">
-                <div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                        class="lucide lucide-credit-card report-box__icon text-secondary">
-                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                        </rect>
-                        <line x1="1" y1="10" x2="23" y2="10"></line>
-                    </svg>
-                </div>
-                <div class="text-3xl font-medium leading-8 mt-6">{{ $account_versment_days ?? null }}</div>
-                <div class="font-medium text-historique mt-6">
-                    <a href="{{ route('transactions.browse') }}">
-                        Transaction Versement</a>
-                </div>
-            </div>
-
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_table2">
-                <div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                        class="lucide lucide-credit-card report-box__icon text-secondary">
-                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                        </rect>
-                        <line x1="1" y1="10" x2="23" y2="10"></line>
-                    </svg>
-                </div>
-                <div class="text-3xl font-medium leading-8 mt-6">{{ $account_tresort_days ?? null }}</div>
-                <div class="font-medium text-historique mt-6">
-                    <a href="{{ route('transactions.browse') }}">
-                        Transaction Tresort Money</a>
-                </div>
-            </div>
-
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_facture_home2">
-                <div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                        class="lucide lucide-credit-card report-box__icon text-secondary">
-                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                        </rect>
-                        <line x1="1" y1="10" x2="23" y2="10"></line>
-                    </svg>
-                </div>
-                <div class="text-3xl font-medium leading-8 mt-6">{{ $account_pixel_mobile_zone_days ?? 0 }}</div>
-                <div class="font-medium text-historique mt-6">
-                    <a href="{{ route('pixel-mobile-zone.historical') }}">
-                        Transfert Mobile Zone</a>
-                </div>
-            </div>
-        </div>
-
     </div>
-    @stack('scripts')
-    <script>
-        setInterval(function() {
-            const boxes = document.querySelectorAll('.style_app');
-            boxes.forEach((box, index) => {
-                const colors = ['grey', 'blue', 'green',
-                    '#6C0277', '#34C924', '#6600FF', '#F9429E'
-                ]; // Ajoutez d'autres couleurs si nécessaire
-                const color = colors[index % colors.length];
-                box.style.backgroundColor = color;
 
-            });
-        }, 1000);
-    </script>
-  
+    <h2>Ouvrir un service</h2>
+
+    <ul class="rb-links">
+        @foreach ($shortcuts as [$label, $count, $url])
+            <li>
+                <a href="{{ $url }}">
+                    <span>{{ $label }}</span>
+                    <b>{{ $count }}</b>
+                </a>
+            </li>
+        @endforeach
+    </ul>
+
+    @stack('scripts')
 </div>
