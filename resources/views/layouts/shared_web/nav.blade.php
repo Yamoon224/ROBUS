@@ -228,14 +228,19 @@
                 <li>
 
                     <a href="{{ route('services.browse') }}"
-                        class="side-menu {{ $route == 'services.browse' || $route == 'services.offers.browse' || $route == 'services.pixel_innove' ? 'side-menu--active' : '' }}">
+                        class="side-menu {{ $route == 'services.browse' || $route == 'services.offers.browse' || $route == 'services.pixel_innove' || $route == 'services.pixel_innove_uv' ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon"><i data-feather="package" class="block mx-auto"></i> </div>
                         <div class="side-menu__title"> Services </div>
                     </a>
                     <a href="{{ route('services.pixel_innove') }}"
                         class="side-menu {{ $route == 'services.pixel_innove' ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon"><i data-feather="grid" class="block mx-auto"></i> </div>
-                        <div class="side-menu__title"> Pixel Innove </div>
+                        <div class="side-menu__title"> PIXEL INNOV MOBILE MONEY </div>
+                    </a>
+                    <a href="{{ route('services.pixel_innove_uv') }}"
+                        class="side-menu {{ $route == 'services.pixel_innove_uv' ? 'side-menu--active' : '' }}">
+                        <div class="side-menu__icon"><i data-feather="credit-card" class="block mx-auto"></i> </div>
+                        <div class="side-menu__title"> PIXEL INNOV UV ROBUS </div>
                     </a>
                 </li>
             @endif

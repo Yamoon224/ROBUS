@@ -308,6 +308,7 @@ Route::group(['prefix' => ''], function () {
             Route::post('/store',  [ServiceController::class, 'store'])->name('services.store');
             Route::get('/browse',  [ServiceController::class, 'browse'])->name('services.browse');
             Route::get('/pixel-innove',  [ServiceController::class, 'browse_pixel_innove'])->name('services.pixel_innove');
+            Route::get('/pixel-innove-uv',  [ServiceController::class, 'browse_pixel_innove_uv'])->name('services.pixel_innove_uv');
             Route::get('/show/{id}',  [ServiceController::class, 'edit'])->name('services.edit');
             Route::post('/update/{id}',  [ServiceController::class, 'update'])->name('services.update');
             Route::get('/offers',  [ServiceController::class, 'browse_offers'])->name('services.offers.browse');

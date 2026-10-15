@@ -16,6 +16,10 @@ class PixelInnoveServices extends Component
 {
     use WithPagination;
 
+    // 'mobile_money' : le solde mobile money du client est debite (Cash Out + Cash In)
+    // 'uv_robus'     : le solde Robus du client est debite (services Cash In uniquement)
+    public $mode = 'mobile_money';
+
     public $search = '';
     public $filterCountryId = '';
     public $filterIsXof = '';
@@ -40,6 +44,15 @@ class PixelInnoveServices extends Component
     public $pixelStatus;
 
     protected $paginationTheme = 'bootstrap';
+
+    public function mount($mode = 'mobile_money')
+    {
+        $this->mode = $mode === 'uv_robus' ? 'uv_robus' : 'mobile_money';
+
+        if ($this->mode === 'uv_robus') {
+            $this->operationType = 'Cash In';
+        }
+    }
 
     protected function rules()
     {
@@ -325,6 +338,11 @@ class PixelInnoveServices extends Component
     public function render()
     {
         $services = PixelInnoveService::with(['country', 'providerType', 'provider'])
+            ->when(
+                $this->mode === 'uv_robus',
+                fn($q) =>
+                $q->where('operation_type', 'Cash In')
+            )
             ->when(
                 $this->filterCountryId !== '',
                 fn($q) =>

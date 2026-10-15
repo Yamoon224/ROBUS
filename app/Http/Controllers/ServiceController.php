@@ -36,7 +36,16 @@ class ServiceController extends Controller
             abort(403);
         }
 
-        return view('pages.services.pixel_innove');
+        return view('pages.services.pixel_innove', ['mode' => 'mobile_money']);
+    }
+
+    public function browse_pixel_innove_uv()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-operateurs')) {
+            abort(403);
+        }
+
+        return view('pages.services.pixel_innove', ['mode' => 'uv_robus']);
     }
 
     public function  browse_visitores()

@@ -19,12 +19,18 @@
                 </div>
                 <div>
                     <div class="flex flex-wrap items-center gap-2">
-                        <h2 class="text-xl font-semibold text-slate-800">Pixel Innove</h2>
+                        <h2 class="text-xl font-semibold text-slate-800">{{ $mode === 'uv_robus' ? 'Pixel Innov UV Robus' : 'Pixel Innov Mobile Money' }}</h2>
                         <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-500">
                             {{ $pixelServices->total() }} service(s)
                         </span>
                     </div>
-                    <p class="mt-1 text-sm text-slate-500">Configuration des services Pixel Innov par pays, provider et type d'operation.</p>
+                    <p class="mt-1 text-sm text-slate-500">
+                        @if ($mode === 'uv_robus')
+                            Envoi depuis le solde Robus : le solde Robus du client ou du sous-distributeur est debite.
+                        @else
+                            Envoi depuis le solde mobile money (Orange, MTN, Moov, Wave) : le solde mobile money est debite.
+                        @endif
+                    </p>
                 </div>
             </div>
 
