@@ -1,0 +1,10 @@
+.git
+.github
+node_modules
+vendor
+.env
+storage/logs/*
+laravel.log
+*.md
+tests
+docs
