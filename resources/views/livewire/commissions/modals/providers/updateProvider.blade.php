@@ -18,7 +18,7 @@
                 <div class="col-span-12">
                     <label class="form-label">Logo actuel</label>
                     <div class="flex items-center gap-4 mb-2">
-                        @if ($currentLogo)
+                        @if (!empty($currentLogo))
                             <img src="{{ Str::startsWith($currentLogo, 'http') ? $currentLogo : asset($currentLogo) }}"
                                  alt="logo actuel"
                                  class="w-16 h-16 object-contain rounded border border-slate-200 bg-slate-50 p-1">

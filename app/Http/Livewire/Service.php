@@ -28,6 +28,7 @@ class Service extends Component
     public $providerType;
     public $countrys = [];
     public $image;
+    public $currentLogo;
     public $managementCountryId = '';
     public $managementProviderTypeId = '';
 
@@ -58,6 +59,7 @@ class Service extends Component
         $this->providerName = $check->name;
         $this->providerDescription = $check->description;
         // $this->image = $check->image;
+        $this->currentLogo = $check->logo;
         $this->providerStatus = $check->status;
         $this->providerOrder = $check->is_order;
         $this->provider_amount = $check->amount ?? null;
