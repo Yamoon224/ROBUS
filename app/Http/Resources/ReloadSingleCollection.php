@@ -21,6 +21,30 @@ class ReloadSingleCollection extends JsonResource
         $destination = is_array($this->metadata)
             ? ($this->metadata['destination'] ?? null)
             : null;
+        // Source de paiement d'un dépôt/retrait Pixel Innov :
+        //  - 'robus'        : le solde Robus a été débité (Cash In) ;
+        //  - 'mobile_money' : l'opération passe par le mobile money (Orange, Moov, MTN…),
+        //                     le solde Robus n'a pas à être affiché.
+        $isPixelOperation = in_array($this->type_transaction, ['Cash In', 'Cash Out'], true);
+        $paymentSource = null;
+        if ($isPixelOperation) {
+            $paymentSource = ($this->type_transaction === 'Cash In' || $this->payment_method === 'robus_wallet')
+                ? 'robus'
+                : 'mobile_money';
+        }
+
+        $robusBalanceBefore = null;
+        $robusBalanceAfter = null;
+        if ($paymentSource === 'robus') {
+            $balanceCode = optional(optional($this->wallet)->currencie)->code ?? 'CFA';
+            $before = (float) $this->amount_solde; // solde Robus relevé avant le débit
+            $after = in_array($this->status, ['ERROR', 'FAILED'], true)
+                ? $before // débit remboursé
+                : $before - ((float) $this->amount + (float) $this->fees);
+            $robusBalanceBefore = number_format($before, 2, '.', ' ') . ' ' . $balanceCode;
+            $robusBalanceAfter = number_format($after, 2, '.', ' ') . ' ' . $balanceCode;
+        }
+
         $wallet_send = Wallet::where('wallet_id',  $this->account_wallet)->first();
 
         if ($wallet_send != null) {
@@ -71,6 +95,9 @@ class ReloadSingleCollection extends JsonResource
             'amount_solde_before_drawal' => ($this->amount_solde_before_drawal ?? '0') . ' ' . (optional(optional($wallet_send)->currencie)->code ?? "CFA"),
             'cost_conversion' => ($this->cost_conversion ?? '0') . ' ' . (optional(optional($wallet_send)->currencie)->code ?? "CFA"),
             'amount_conversion' => ($this->amount_conversion ?? '0') . ' ' . (optional(optional($wallet_send)->currencie)->code ?? "CFA"),
+            'payment_source' => $paymentSource,
+            'robus_balance_before' => $robusBalanceBefore,
+            'robus_balance_after' => $robusBalanceAfter,
         ];
     }
 }
