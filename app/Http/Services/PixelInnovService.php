@@ -24,6 +24,15 @@ class PixelInnovService
      */
     public function initializeTransaction(array $data): array
     {
+        if ($this->apiKey === '') {
+            Log::error('Pixel Innov — clé API absente (PIXEL_INNOV_API_KEY / PIXEL_INNOV_API_KEY_XAF non définie)');
+
+            return [
+                'statut_code' => 500,
+                'message'     => 'Clé API Pixel Innov non configurée sur le serveur.',
+            ];
+        }
+
         try {
             $response = Http::withHeaders(['Content-Type' => 'application/json'])
                 ->timeout(30)
