@@ -18,8 +18,14 @@ class ReloadSingleCollection extends JsonResource
     {
         // Les dépôts Pixel Innov enregistrent le mobile crédité dans metadata.
         // Ne jamais exposer le téléphone du titulaire du wallet comme bénéficiaire.
-        $destination = is_array($this->metadata)
-            ? ($this->metadata['destination'] ?? null)
+        // Les paiements depuis le solde Robus stockent metadata en JSON encodé en texte :
+        // on le décode pour retrouver le numéro du bénéficiaire.
+        $metadata = $this->metadata;
+        for ($i = 0; $i < 2 && is_string($metadata); $i++) {
+            $metadata = json_decode($metadata, true);
+        }
+        $destination = is_array($metadata)
+            ? ($metadata['destination'] ?? null)
             : null;
         // Source de paiement d'un dépôt/retrait Pixel Innov :
         //  - 'robus'        : le solde Robus a été débité (Cash In) ;
