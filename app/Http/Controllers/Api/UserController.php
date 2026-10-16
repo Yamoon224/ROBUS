@@ -414,7 +414,9 @@ class UserController extends Controller
             ->paginate($perPage, ['*'], 'page', $page);
 
 
-        $som_commissions =  $this->transactionAccount->getTransactionCommissionAmountTotal(WalletTransaction::class) +
+        // La somme des commissions parcourt 13 tables : l'écran Historique (light=1) n'en a pas besoin.
+        $som_commissions = request()->boolean('light') ? 0 :
+            $this->transactionAccount->getTransactionCommissionAmountTotal(WalletTransaction::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPayment::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletBank::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPhoneCredit::class) +
