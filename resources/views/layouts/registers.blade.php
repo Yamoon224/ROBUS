@@ -60,6 +60,7 @@
 
     @stack('scripts')
     @livewireScripts
+    @include('layouts.partials.livewire-page-expired')
 
     <script>
         Livewire.on('success', msg => {

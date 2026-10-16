@@ -43,6 +43,7 @@
 
     @stack('scripts')
     @livewireScripts
+    @include('layouts.partials.livewire-page-expired')
 
     @include('layouts.scripts_toastr')
 
