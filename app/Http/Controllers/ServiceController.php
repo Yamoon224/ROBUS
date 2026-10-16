@@ -20,14 +20,34 @@ class ServiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function browse()
+    public function browse(Request $request)
     {
 
         if (!Auth::guard('web')->user()->hasPermissionTo('voir-operateurs')) {
             abort(403);
         }
 
-        return view('pages.services.browse');
+        try {
+            return response(view('pages.services.browse')->render());
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('services.browse : ' . $e->getMessage(), [
+                'exception' => get_class($e),
+                'file'      => $e->getFile() . ':' . $e->getLine(),
+            ]);
+
+            // Diagnostic : /services/browse?diag=1 affiche l'erreur (réservé aux utilisateurs autorisés ci-dessus).
+            if ($request->boolean('diag')) {
+                return response(
+                    '<pre style="white-space:pre-wrap;padding:20px">'
+                    . e(get_class($e) . ': ' . $e->getMessage() . "
+" . $e->getFile() . ':' . $e->getLine())
+                    . '</pre>',
+                    500
+                );
+            }
+
+            throw $e;
+        }
     }
 
     public function browse_pixel_innove()
