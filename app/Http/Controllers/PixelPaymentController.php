@@ -383,6 +383,7 @@ class PixelPaymentController extends Controller
             'amount'           => 'required|numeric|min:1',
             'destination'      => 'required|string|min:8|max:15',
             'debit_number'     => 'nullable|string|min:8|max:15',
+            'debit_service_id' => 'nullable|integer|exists:pixel_innove_services,service_id',
             'om_otp'           => 'nullable|string',
         ]);
 
@@ -392,6 +393,35 @@ class PixelPaymentController extends Controller
                 'message' => 'Données invalides',
                 'errors' => $validator->errors(),
             ], 422);
+        }
+
+        // Mobile Money : le numéro à débiter est débité par un Cash Out chez son opérateur,
+        // puis le montant est envoyé au destinataire par un Cash In (flux Mobile Zone).
+        // Pixel Innov n'accepte pas d'attribut « debit_number » sur une seule transaction.
+        if ($request->filled('debit_number')) {
+            $recipientConfig = PixelInnoveService::where('service_id', $request->pixel_service_id)
+                ->where('status', true)
+                ->where('operation_type', 'Cash In')
+                ->first();
+
+            if ($recipientConfig) {
+                $debitService = $this->resolveDebitService($request->debit_number, $request->debit_service_id, $recipientConfig);
+                if (!$debitService) {
+                    return response()->json([
+                        'status'  => false,
+                        'message' => "Impossible de déterminer l'opérateur du numéro à débiter. Vérifiez le numéro saisi.",
+                    ], 422);
+                }
+
+                $request->merge([
+                    'sender_service_id'    => $debitService->service_id,
+                    'sender_phone'         => $this->normalizeDebitNumber($request->debit_number, $debitService),
+                    'recipient_service_id' => $recipientConfig->service_id,
+                    'recipient_phone'      => $request->destination,
+                ]);
+
+                return $this->initializeMobileZoneTransfer($request);
+            }
         }
 
         $user = robus();
@@ -518,9 +548,6 @@ class PixelPaymentController extends Controller
         ];
 
 
-        if ($request->filled('debit_number')) {
-            $pixelPayload['debit_number'] = $request->debit_number;
-        }
         if ($request->filled('om_otp')) {
             $pixelPayload['om_otp'] = $request->om_otp;
         }
@@ -1051,6 +1078,8 @@ class PixelPaymentController extends Controller
         $validator = Validator::make($request->all(), [
             'pixel_service_id' => 'required|integer|exists:pixel_innove_services,service_id',
             'amount'           => 'required|numeric|min:1',
+            'debit_number'     => 'nullable|string|min:8|max:15',
+            'debit_service_id' => 'nullable|integer|exists:pixel_innove_services,service_id',
         ]);
 
         if ($validator->fails()) {
@@ -1068,6 +1097,19 @@ class PixelPaymentController extends Controller
 
         if (!$pixelConfig) {
             return response()->json(['status' => false, 'message' => 'Service introuvable ou inactif'], 404);
+        }
+
+        // Mobile Money (Cash Out + Cash In) : frais cumulés des deux opérations
+        if ($request->filled('debit_number') && $pixelConfig->operation_type === 'Cash In') {
+            $debitService = $this->resolveDebitService($request->debit_number, $request->debit_service_id, $pixelConfig);
+            if ($debitService) {
+                $request->merge([
+                    'sender_service_id'    => $debitService->service_id,
+                    'recipient_service_id' => $pixelConfig->service_id,
+                ]);
+
+                return $this->calculateMobileZoneTransfer($request);
+            }
         }
 
         $iso2   = self::countryCode($pixelConfig->country) ?? '';
@@ -1890,6 +1932,67 @@ class PixelPaymentController extends Controller
     // =========================================================================
     // TRANSFERT MOBILE ZONE — calcul des frais (deux legs)
     // =========================================================================
+
+    /**
+     * Trouve le service Cash Out de l'opérateur du numéro à débiter.
+     * - debit_service_id explicite (doit être un Cash Out actif) ;
+     * - sinon pays du client (ou du destinataire), puis opérateur déduit du préfixe (Côte d'Ivoire)
+     *   ou service unique du pays.
+     */
+    private function resolveDebitService(?string $debitNumber, $debitServiceId, PixelInnoveService $recipient): ?PixelInnoveService
+    {
+        $base = PixelInnoveService::with(['country', 'provider'])
+            ->where('status', true)
+            ->where('operation_type', 'Cash Out');
+
+        if ($debitServiceId) {
+            return (clone $base)->where('service_id', $debitServiceId)->first();
+        }
+
+        $user      = robus();
+        $countryId = $user?->country_id ?? $recipient->country_id;
+        $services  = (clone $base)->where('country_id', $countryId)->get();
+
+        if ($services->isEmpty() && $countryId !== $recipient->country_id) {
+            $services = (clone $base)->where('country_id', $recipient->country_id)->get();
+        }
+        if ($services->isEmpty()) {
+            return null;
+        }
+
+        $iso2 = self::countryCode($services->first()->country);
+        if ($iso2 === 'CI') {
+            $number = preg_replace('/\D+/', '', (string) $debitNumber);
+            if (strlen($number) === 13 && str_starts_with($number, '225')) {
+                $number = substr($number, 3);
+            }
+            if (strlen($number) !== 10) {
+                return null;
+            }
+            $operator = match (substr($number, 0, 2)) {
+                '01', '02', '03' => 'moov',
+                '04', '05', '06' => 'mtn',
+                '07', '08', '09' => 'orange',
+                default          => null,
+            };
+
+            return $operator
+                ? $services->first(fn($s) => strtolower(trim($s->provider->name ?? '')) === $operator)
+                : null;
+        }
+
+        return $services->count() === 1 ? $services->first() : null;
+    }
+
+    private function normalizeDebitNumber(string $debitNumber, PixelInnoveService $debitService): string
+    {
+        $number = preg_replace('/\D+/', '', $debitNumber);
+        if (self::countryCode($debitService->country) === 'CI' && strlen($number) === 13 && str_starts_with($number, '225')) {
+            $number = substr($number, 3);
+        }
+
+        return $number;
+    }
 
     public function calculateMobileZoneTransfer(Request $request)
     {
