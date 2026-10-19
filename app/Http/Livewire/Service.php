@@ -155,6 +155,7 @@ class Service extends Component
             })
             ->update(['status' => $status, 'updated_at' => now()]);
 
+        \App\Support\UvPaymentSwitch::enforce();
         Artisan::call('cache:clear');
         $this->emit('success', $status ? 'Groupe activé pour ce pays !' : 'Groupe désactivé pour ce pays !');
     }
@@ -167,6 +168,7 @@ class Service extends Component
         CountryService::where('country_id', $this->managementCountryId)
             ->update(['status' => $status]);
 
+        \App\Support\UvPaymentSwitch::enforce();
         Artisan::call('cache:clear');
         $this->emit('success', $status ? 'Toutes les méthodes du pays sont activées !' : 'Toutes les méthodes du pays sont désactivées !');
     }

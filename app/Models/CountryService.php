@@ -14,6 +14,16 @@ class CountryService extends Model
 
     protected $table = 'country_services';
 
+    protected static function booted()
+    {
+        // Achat d'UV : Paystack actif dans un pays désactive Pixel Innov dans ce pays.
+        static::saved(function (self $service) {
+            if ($service->wasRecentlyCreated || $service->wasChanged('status')) {
+                \App\Support\UvPaymentSwitch::enforce();
+            }
+        });
+    }
+
     protected $fillable = ['country_id', 'provider_id', 'status'];
 
     protected $casts = [

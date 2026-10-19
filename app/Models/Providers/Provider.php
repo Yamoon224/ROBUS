@@ -27,6 +27,16 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Provider extends Model
 {
+    protected static function booted()
+    {
+        // Achat d'UV : l'activation de Paystack désactive Pixel Innov.
+        static::saved(function (self $provider) {
+            if ($provider->wasChanged('status')) {
+                \App\Support\UvPaymentSwitch::enforce();
+            }
+        });
+    }
+
     use \App\Models\Concerns\BatchesLazyLoads;
     use HasFactory;
     use SoftDeletes;
