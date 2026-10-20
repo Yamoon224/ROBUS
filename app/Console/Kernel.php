@@ -31,6 +31,11 @@ class Kernel extends ConsoleKernel
         $schedule->command('pixel:sync-pending')
             ->everyFiveMinutes()
             ->withoutOverlapping();
+
+        // Transferts Mobile Zone : relance du Cash In ou remboursement automatique de l'expéditeur
+        $schedule->command('pixel:reconcile-transfers --execute')
+            ->everyFiveMinutes()
+            ->withoutOverlapping();
     }
 
     /**

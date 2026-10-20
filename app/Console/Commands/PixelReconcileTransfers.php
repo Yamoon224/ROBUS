@@ -22,13 +22,17 @@ class PixelReconcileTransfers extends Command
 
     public function handle(): int
     {
-        $query = PixelMobileZoneTransfer::where('sender_status', 'SUCCESS')
+        // Transferts non terminés des 7 derniers jours, vieux d'au moins 3 min (laisse le temps à l'IPN) :
+        //  - expéditeur débité (SUCCESS) ou débit encore en attente (PENDING)
+        //  - ni réussi, ni remboursement confirmé
+        $query = PixelMobileZoneTransfer::whereIn('sender_status', ['PENDING', 'SUCCESS'])
+            ->where('status', '!=', 'SUCCESS')
             ->where(function ($q) {
-                $q->whereNull('recipient_status')->orWhere('recipient_status', '!=', 'SUCCESS');
+                $q->whereNull('refund_status')->orWhereIn('refund_status', ['PENDING', 'FAILED']);
             })
-            ->where(function ($q) {
-                $q->whereNull('refund_status')->orWhere('refund_status', 'FAILED');
-            })
+            ->whereNotNull('sender_transaction_id')
+            ->where('created_at', '<=', now()->subMinutes(3))
+            ->where('created_at', '>=', now()->subDays(7))
             ->when($this->option('id'), fn ($q, $ids) => $q->whereIn('id', $ids))
             ->orderBy('id');
 
