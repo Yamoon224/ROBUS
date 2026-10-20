@@ -20,8 +20,6 @@ const mztState = { sender: null, recipient: null };
         const providerStepId = isSender ? 'mztSenderProviderStep'   : 'mztRecipientProviderStep';
         const flagId         = isSender ? 'mztSenderCountryFlag'    : 'mztRecipientCountryFlag';
         const labelId        = isSender ? 'mztSenderCountryLabel'   : 'mztRecipientCountryLabel';
-        // Grille opposée : on y exclut ce pays
-        const oppositeGridId = isSender ? 'mztRecipientCountryStep' : 'mztSenderCountryStep';
 
         // Highlight country card
         card.closest('.mzt-country-grid')
@@ -45,22 +43,22 @@ const mztState = { sender: null, recipient: null };
         const targetGroup = providerStep.querySelector(`.mzt-op-group[data-country-id="${card.dataset.countryId}"]`);
         if (targetGroup) targetGroup.classList.remove('d-none');
 
-        // Exclure ce pays de la grille opposée (on ne peut pas envoyer dans son propre pays)
-        const oppGrid = document.getElementById(oppositeGridId);
-        if (oppGrid) {
-            // Réafficher toute carte précédemment exclue par ce côté
-            oppGrid.querySelectorAll('.mzt-ctry-card.mzt-excluded').forEach(c => c.classList.remove('mzt-excluded'));
-            // Masquer la carte du pays sélectionné
-            const toExclude = oppGrid.querySelector(`.mzt-ctry-card[data-country-id="${card.dataset.countryId}"]`);
-            if (toExclude) toExclude.classList.add('mzt-excluded');
-        }
-
         // Clear previous operator selection for this side
         mztState[side] = null;
         const sideEl = document.getElementById(isSender ? 'mztSideSender' : 'mztSideRecipient');
         if (sideEl) sideEl.classList.remove('has-selection');
 
         mztRefreshRouteBar();
+
+        // Pays expéditeur choisi : le pays destinataire est pré-sélectionné sur le même pays
+        // (tant que le destinataire n'a pas déjà un opérateur choisi). Modifiable via « retour ».
+        if (isSender && !mztState.recipient) {
+            const recipCard = document.querySelector(
+                `#mztRecipientCountryStep .mzt-ctry-card[data-country-id="${card.dataset.countryId}"]`
+            );
+            const recipStepVisible = !document.getElementById('mztRecipientCountryStep').classList.contains('d-none');
+            if (recipCard && recipStepVisible) mztPickCountry(recipCard, 'recipient');
+        }
     }
 
     /* ── Retour au choix du pays ────────────────────────────────── */
@@ -68,14 +66,8 @@ const mztState = { sender: null, recipient: null };
         const isSender       = side === 'sender';
         const countryStepId  = isSender ? 'mztSenderCountryStep'   : 'mztRecipientCountryStep';
         const providerStepId = isSender ? 'mztSenderProviderStep'   : 'mztRecipientProviderStep';
-        const oppositeGridId = isSender ? 'mztRecipientCountryStep' : 'mztSenderCountryStep';
-
         document.getElementById(providerStepId).classList.add('d-none');
         document.getElementById(countryStepId).classList.remove('d-none');
-
-        // Réafficher le pays exclu dans la grille opposée
-        const oppGrid = document.getElementById(oppositeGridId);
-        if (oppGrid) oppGrid.querySelectorAll('.mzt-ctry-card.mzt-excluded').forEach(c => c.classList.remove('mzt-excluded'));
 
         // Clear selection
         mztState[side] = null;
