@@ -15,7 +15,7 @@ const mztDistinct = !!(window._MZT && window._MZT.distinctCountries);
     }
 
     /* ── Sélection du pays ──────────────────────────────────────── */
-    function mztPickCountry(card, side) {
+    function mztPickCountry(card, side, sync = true) {
         const isSender       = side === 'sender';
         const countryStepId  = isSender ? 'mztSenderCountryStep'   : 'mztRecipientCountryStep';
         const providerStepId = isSender ? 'mztSenderProviderStep'   : 'mztRecipientProviderStep';
@@ -61,19 +61,22 @@ const mztDistinct = !!(window._MZT && window._MZT.distinctCountries);
 
         mztRefreshRouteBar();
 
-        // Pays expéditeur choisi : le pays destinataire est pré-sélectionné sur le même pays
-        // (tant que le destinataire n'a pas déjà un opérateur choisi). Modifiable via « retour ».
-        if (!mztDistinct && isSender && !mztState.recipient) {
-            const recipCard = document.querySelector(
-                `#mztRecipientCountryStep .mzt-ctry-card[data-country-id="${card.dataset.countryId}"]`
+        // Mobile Zone : le pays choisi d'un côté est répercuté de l'autre (sauf International Zone,
+        // où les deux pays doivent différer). L'opérateur de l'autre côté est alors à re-choisir.
+        if (!mztDistinct && sync) {
+            const otherSide = isSender ? 'recipient' : 'sender';
+            const otherCard = document.querySelector(
+                `#${isSender ? 'mztRecipientCountryStep' : 'mztSenderCountryStep'} .mzt-ctry-card[data-country-id="${card.dataset.countryId}"]`
             );
-            const recipStepVisible = !document.getElementById('mztRecipientCountryStep').classList.contains('d-none');
-            if (recipCard && recipStepVisible) mztPickCountry(recipCard, 'recipient');
+            const otherProviderStep = document.getElementById(isSender ? 'mztRecipientProviderStep' : 'mztSenderProviderStep');
+            const alreadyThere = otherCard && otherCard.classList.contains('selected')
+                && !otherProviderStep.classList.contains('d-none');
+            if (otherCard && !alreadyThere) mztPickCountry(otherCard, otherSide, false);
         }
     }
 
     /* ── Retour au choix du pays ────────────────────────────────── */
-    function mztBackToCountry(side) {
+    function mztBackToCountry(side, sync = true) {
         const isSender       = side === 'sender';
         const countryStepId  = isSender ? 'mztSenderCountryStep'   : 'mztRecipientCountryStep';
         const providerStepId = isSender ? 'mztSenderProviderStep'   : 'mztRecipientProviderStep';
@@ -91,6 +94,9 @@ const mztDistinct = !!(window._MZT && window._MZT.distinctCountries);
         if (sideEl) sideEl.classList.remove('has-selection');
 
         mztRefreshRouteBar();
+
+        // Mobile Zone : « Changer » d'un côté ramène aussi l'autre côté au choix du pays
+        if (!mztDistinct && sync) mztBackToCountry(isSender ? 'recipient' : 'sender', false);
     }
 
     /* ── Table de confirmation USSD / SMS / App ─────────────────── */
