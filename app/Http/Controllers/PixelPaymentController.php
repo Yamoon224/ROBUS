@@ -2566,6 +2566,15 @@ class PixelPaymentController extends Controller
             } elseif ($isRefund) {
                 $refundState = in_array($stateUpper, ['SUCCESS', 'SUCCESSFUL']) ? 'SUCCESS' : 'FAILED';
                 $transfer->update(['refund_status' => $refundState]);
+
+                // Remboursement échoué : nouvelle tentative immédiate
+                if ($refundState === 'FAILED' && in_array($stateUpper, ['FAILED', 'FAIL', 'ERROR', 'CANCELLED'])) {
+                    $this->retryFailedRefund(
+                        $transfer->fresh(),
+                        $pixelService,
+                        rtrim(config('services.pixel_innov.public_url'), '/')
+                    );
+                }
                 Log::info('Mobile Zone Transfer — remboursement IPN reçu', [
                     'transfer_id'    => $transfer->id,
                     'transaction_id' => $transactionId,
@@ -3047,26 +3056,7 @@ class PixelPaymentController extends Controller
                 if (in_array($refundRemote, ['SUCCESS', 'SUCCESSFUL'])) {
                     $transfer->update(['refund_status' => 'SUCCESS']);
                 } elseif (in_array($refundRemote, ['FAILED', 'FAIL', 'ERROR', 'CANCELLED'])) {
-                    $meta     = (array) $transfer->metadata;
-                    $attempts = (int) ($meta['refund_attempts'] ?? 0) + 1;
-                    $meta['refund_attempts']   = $attempts;
-                    $meta['failed_refund_ids'] = array_merge($meta['failed_refund_ids'] ?? [], [$transfer->refund_transaction_id]);
-
-                    $transfer->update([
-                        'metadata'              => $meta,
-                        'refund_status'         => 'FAILED',
-                        'refund_transaction_id' => null,
-                    ]);
-
-                    if ($attempts < 3) {
-                        $this->refundSender($transfer, $pixelService, $publicBase);
-                    } else {
-                        Log::critical('Mobile Zone Transfer — remboursement échoué après 3 tentatives, intervention manuelle requise', [
-                            'transfer_id'  => $transfer->id,
-                            'sender_phone' => $transfer->sender_phone,
-                            'amount'       => $transfer->amount,
-                        ]);
-                    }
+                    $this->retryFailedRefund($transfer, $pixelService, $publicBase);
                 }
                 $transfer->refresh();
             }
@@ -3181,6 +3171,38 @@ class PixelPaymentController extends Controller
             'GMD' => 'is_gmd',
             default => null,
         };
+    }
+
+    /**
+     * Un remboursement a échoué chez Pixel : on libère l'identifiant échoué et on relance
+     * un nouveau remboursement (3 tentatives maximum, puis alerte pour intervention manuelle).
+     */
+    private function retryFailedRefund(
+        PixelMobileZoneTransfer $transfer,
+        PixelInnovService $pixelService,
+        string $publicBase
+    ): void {
+        $meta     = (array) $transfer->metadata;
+        $attempts = (int) ($meta['refund_attempts'] ?? 0) + 1;
+        $meta['refund_attempts']   = $attempts;
+        $meta['failed_refund_ids'] = array_merge($meta['failed_refund_ids'] ?? [], [$transfer->refund_transaction_id]);
+
+        $transfer->update([
+            'metadata'              => $meta,
+            'refund_status'         => 'FAILED',
+            'refund_transaction_id' => null,
+        ]);
+
+        if ($attempts < 3) {
+            $this->refundSender($transfer, $pixelService, $publicBase);
+            return;
+        }
+
+        Log::critical('Mobile Zone Transfer — remboursement échoué après 3 tentatives, intervention manuelle requise', [
+            'transfer_id'  => $transfer->id,
+            'sender_phone' => $transfer->sender_phone,
+            'amount'       => $transfer->amount,
+        ]);
     }
 
     /**
