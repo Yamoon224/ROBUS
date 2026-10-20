@@ -323,12 +323,15 @@ class ServiceController extends Controller
             // }
 
 
-            $provider->country_services()->delete();
-            // $kits-> ()->delete();
+            // Les pays ne sont resynchronisés que s'ils sont fournis (sinon on conserve l'existant)
+            $countryIds = array_filter((array) $request->country_id);
+            if (!empty($countryIds)) {
+                $provider->country_services()->delete();
+            }
 
             if ($provider->save()) {
 
-                foreach ($request->country_id as $key => $country_s_id) {
+                foreach ($countryIds as $key => $country_s_id) {
 
                     $country_service = new CountryService;
                     $country_service->provider_id = $provider->id;
@@ -340,12 +343,11 @@ class ServiceController extends Controller
                     $root_countrie->save();
                 }
 
-                $root_countrie->save();
-
                 Artisan::call('cache:clear');
                 return redirect(route('services.browse'))->with('status', 'Service modifier avec succès');
             }
         } catch (\Throwable $th) {
+            \Log::error('Service update : ' . $th->getMessage(), ['provider_id' => $id]);
             return back()
                 ->withErrors($validator)
                 ->with('color', 'danger')
