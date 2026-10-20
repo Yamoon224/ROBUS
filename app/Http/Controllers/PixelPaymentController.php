@@ -2246,81 +2246,16 @@ class PixelPaymentController extends Controller
             'amount'         => $amount,
         ]);
 
-        // ── Déclencher le Cash In immédiatement — switcher vers la clé du service destinataire ──
-        $pixelService->setXaf($recipientService->is_xaf ?? false);
-        $cashInPayload = [
-            'amount'             => (int) $transfer->amount_received,
-            'destination'        => $request->recipient_phone,
-            'service_id'         => $recipientService->service_id,
-            'ipn_url'            => $publicBase . '/payment_pixelInnov/mobile-transfer/callback',
-            'custom_data'        => $customRef . '_CASHIN',
-            'redirect_url'       => $publicBase . '/payment_pixelInnov/success',
-            'redirect_error_url' => $publicBase . '/payment_pixelInnov/error',
-        ];
-        $cashInPayload = $this->withWaveBusinessNameId($cashInPayload, $recipientService);
-
-        $cashInResponse  = $pixelService->initializeTransaction($cashInPayload);
-        $cashInTxId      = $cashInResponse['data']['transaction_id'] ?? null;
-        $cashInStatut    = $cashInResponse['statut_code'] ?? null;
-        $cashInState     = $cashInResponse['data']['state'] ?? null;
-        $cashInFailed    = $cashInStatut !== 200 || empty($cashInTxId) || $cashInState === 'FAILED';
-
-        if ($cashInFailed) {
-            $cashInErrMsg = trim((string) ($cashInResponse['message'] ?? ''))
-                ?: trim((string) ($cashInResponse['data']['response'] ?? ''))
-                ?: 'Échec de l\'envoi vers le destinataire';
-
-            $transfer->update([
-                'recipient_status'       => 'FAILED',
-                'status'                 => 'FAILED',
-                'raw_response_recipient' => $cashInResponse,
-            ]);
-
-            Log::error('Mobile Zone Transfer — Cash In direct échoué', [
-                'transfer_id'      => $transfer->id,
-                'cash_in_response' => $cashInResponse,
-                'recipient_phone'  => $request->recipient_phone,
-                'amount_sent'      => $transfer->amount_received,
-                'cash_out_tx_id'   => $cashOutTxId,
-            ]);
-
-            // Tenter le remboursement automatique vers l'expéditeur
-            $refundResult = $this->refundSender($transfer, $pixelService, $publicBase);
-
-            return response()->json([
-                'status'          => false,
-                'message'         => 'Débit expéditeur initié mais envoi au destinataire échoué : ' . $cashInErrMsg
-                    . ($refundResult['initiated'] ? ' Un remboursement est en cours vers votre numéro.' : ' Contactez le support pour remboursement.'),
-                'transaction_id'  => (string) $transfer->id,
-                'cash_out_state'  => $cashOutResponse['data']['state'] ?? 'PENDING',
-                'cash_in_error'   => $cashInErrMsg,
-                'refund_initiated' => $refundResult['initiated'],
-                'refund_error'    => $refundResult['error'] ?? null,
-            ], 400);
-        }
-
-        $pixelWalletAfter = $cashInResponse['data']['p_last_wallet_amount'] ?? null;
-
-        $transfer->update([
-            'recipient_transaction_id' => $cashInTxId,
-            'recipient_status'         => 'PENDING',
-            'status'                   => 'PROCESSING',
-            'raw_response_recipient'   => $cashInResponse,
-            'pixel_wallet_after'       => $pixelWalletAfter,
-        ]);
-
-        Log::info('Mobile Zone Transfer — Cash In direct initié', [
-            'transfer_id'     => $transfer->id,
-            'cash_in_tx_id'   => $cashInTxId,
-            'recipient_phone' => $request->recipient_phone,
-            'amount_to_send'  => $transfer->amount_to_send,
-            'cash_in_state'   => $cashInState,
-        ]);
+        // Le Cash In vers le destinataire n'est PAS lancé ici : il est déclenché par l'IPN du Cash Out
+        // (handleMobileTransferCashOutIpn) uniquement une fois le débit de l'expéditeur confirmé SUCCESS.
+        // Si le débit échoue, rien n'est envoyé au destinataire et aucun remboursement n'est nécessaire.
+        $cashInTxId  = null;
+        $cashInState = 'PENDING';
 
         return response()->json([
             'status'          => true,
             'message'         => $this->initMessage($senderService->provider->name ?? '', $smsLink)
-                . ' Le montant est en cours d\'envoi au destinataire.',
+                . ' Le destinataire sera crédité dès que votre paiement sera confirmé.',
             'transaction_id'  => (string) $transfer->id,
             'sms_link'        => $smsLink,
             'state'           => $cashOutResponse['data']['state'] ?? 'PENDING',
@@ -2505,79 +2440,16 @@ class PixelPaymentController extends Controller
 
         $smsLink = $this->extractPixelPaymentLink($cashOutResponse);
 
-        $pixelService->setXaf($recipientService->is_xaf ?? false);
-        $cashInPayload = [
-            'amount'             => (int) $transfer->amount_received,
-            'destination'        => $request->recipient_phone,
-            'service_id'         => $recipientService->service_id,
-            'ipn_url'            => $publicBase . '/payment_pixelInnov/mobile-transfer/callback',
-            'custom_data'        => $customRef . '_CASHIN',
-            'redirect_url'       => $publicBase . '/payment_pixelInnov/success',
-            'redirect_error_url' => $publicBase . '/payment_pixelInnov/error',
-        ];
-        $cashInPayload = $this->withWaveBusinessNameId($cashInPayload, $recipientService);
-
-        $cashInResponse = $pixelService->initializeTransaction($cashInPayload);
-        $cashInTxId     = $cashInResponse['data']['transaction_id'] ?? null;
-        $cashInState    = $cashInResponse['data']['state'] ?? null;
-        $cashInFailed   = ($cashInResponse['statut_code'] ?? null) !== 200
-            || empty($cashInTxId)
-            || $cashInState === 'FAILED';
-
-        if ($cashInFailed) {
-            $cashInErrMsg = trim((string) ($cashInResponse['message'] ?? ''))
-                ?: trim((string) ($cashInResponse['data']['response'] ?? ''))
-                ?: 'Échec de l\'envoi vers le destinataire';
-
-            $transfer->update([
-                'recipient_status'       => 'FAILED',
-                'status'                 => 'FAILED',
-                'raw_response_recipient' => $cashInResponse,
-            ]);
-
-            Log::error('Mobile Zone Transfer Web — Cash In direct échoué', [
-                'transfer_id'      => $transfer->id,
-                'cash_in_response' => $cashInResponse,
-                'recipient_phone'  => $request->recipient_phone,
-                'amount_sent'      => $transfer->amount_received,
-                'cash_out_tx_id'   => $cashOutTxId,
-            ]);
-
-            $refundResult = $this->refundSender($transfer, $pixelService, $publicBase);
-
-            return response()->json([
-                'status'           => false,
-                'message'          => 'Débit expéditeur initié mais envoi au destinataire échoué : ' . $cashInErrMsg
-                    . ($refundResult['initiated'] ? ' Un remboursement est en cours vers votre numéro.' : ' Contactez le support pour remboursement.'),
-                'transaction_id'   => (string) $transfer->id,
-                'cash_out_state'   => $cashOutResponse['data']['state'] ?? 'PENDING',
-                'cash_in_error'    => $cashInErrMsg,
-                'refund_initiated' => $refundResult['initiated'],
-                'refund_error'     => $refundResult['error'] ?? null,
-            ], 400);
-        }
-
-        $transfer->update([
-            'recipient_transaction_id' => $cashInTxId,
-            'recipient_status'         => 'PENDING',
-            'status'                   => 'PROCESSING',
-            'raw_response_recipient'   => $cashInResponse,
-            'pixel_wallet_after'       => $cashInResponse['data']['p_last_wallet_amount'] ?? null,
-        ]);
-
-        Log::info('Mobile Zone Transfer Web — initié', [
-            'transfer_id'     => $transfer->id,
-            'cash_out_tx_id'  => $cashOutTxId,
-            'cash_in_tx_id'   => $cashInTxId,
-            'sender_phone'    => $request->sender_phone,
-            'recipient_phone' => $request->recipient_phone,
-            'amount'          => $amount,
-        ]);
+        // Le Cash In vers le destinataire n'est PAS lancé ici : il est déclenché par l'IPN du Cash Out
+        // (handleMobileTransferCashOutIpn) uniquement une fois le débit de l'expéditeur confirmé SUCCESS.
+        // Si le débit échoue, rien n'est envoyé au destinataire et aucun remboursement n'est nécessaire.
+        $cashInTxId  = null;
+        $cashInState = 'PENDING';
 
         return response()->json([
             'status'          => true,
             'message'         => $this->initMessage($senderService->provider->name ?? '', $smsLink)
-                . ' Le montant est en cours d\'envoi au destinataire.',
+                . ' Le destinataire sera crédité dès que votre paiement sera confirmé.',
             'transaction_id'  => (string) $transfer->id,
             'sms_link'        => $smsLink,
             'state'           => $cashOutResponse['data']['state'] ?? 'PENDING',
@@ -2731,7 +2603,7 @@ class PixelPaymentController extends Controller
             $customRef    = $transfer->metadata['custom_ref'] ?? ('ROBUS_MZ_' . $transfer->id);
 
             $cashInPayload = [
-                'amount'             => (int) $transfer->amount,
+                'amount'             => (int) $transfer->amount_received,
                 'destination'        => $transfer->recipient_phone,
                 'service_id'         => $recipientService->service_id,
                 'ipn_url'            => $publicBase . '/payment_pixelInnov/mobile-transfer/callback',
@@ -3103,8 +2975,34 @@ class PixelPaymentController extends Controller
                             ]);
                         }
                     }
+                } elseif (in_array($remoteState, ['FAILED', 'FAIL', 'ERROR', 'CANCELLED']) && $transfer->sender_status !== 'FAILED') {
+                    // Débit expéditeur échoué : rien n'a été prélevé, rien à envoyer ni à rembourser
+                    $transfer->update(['sender_status' => 'FAILED', 'status' => 'FAILED']);
                 }
 
+                $transfer->refresh();
+            }
+
+            // Cas 2 : Cash In initié mais échoué côté Pixel (IPN manqué) alors que l'expéditeur
+            // a été débité → remboursement automatique sur son mobile money.
+            $pendingCashIn = $transfer->sender_status === 'SUCCESS'
+                && !empty($transfer->recipient_transaction_id)
+                && $transfer->recipient_status !== 'SUCCESS'
+                && empty($transfer->refund_transaction_id);
+
+            if ($pendingCashIn) {
+                $pixelService->setXaf(optional(PixelInnoveService::find($transfer->recipient_pixel_service_id))->is_xaf ?? false);
+                $cashInRemote = strtoupper(
+                    $pixelService->checkTransactionStatus($transfer->recipient_transaction_id)['data']['state'] ?? ''
+                );
+
+                if (in_array($cashInRemote, ['SUCCESS', 'SUCCESSFUL'])) {
+                    $transfer->update(['recipient_status' => 'SUCCESS', 'status' => 'SUCCESS']);
+                    $this->creditMobileTransferCommission($transfer);
+                } elseif (in_array($cashInRemote, ['FAILED', 'FAIL', 'ERROR', 'CANCELLED'])) {
+                    $transfer->update(['recipient_status' => 'FAILED', 'status' => 'FAILED']);
+                    $this->refundSender($transfer, $pixelService, $publicBase);
+                }
                 $transfer->refresh();
             }
 
@@ -3229,6 +3127,16 @@ class PixelPaymentController extends Controller
         PixelInnovService $pixelService,
         string $publicBase
     ): array {
+        // Ne jamais rembourser un expéditeur qui n'a pas été débité, ni rembourser deux fois
+        if ($transfer->sender_status !== 'SUCCESS' || !empty($transfer->refund_transaction_id)) {
+            Log::warning('Mobile Zone Transfer — remboursement ignoré', [
+                'transfer_id'   => $transfer->id,
+                'sender_status' => $transfer->sender_status,
+                'refund_tx_id'  => $transfer->refund_transaction_id,
+            ]);
+            return ['initiated' => false, 'error' => 'Remboursement non applicable'];
+        }
+
         $senderPixelService = PixelInnoveService::find($transfer->sender_pixel_service_id);
 
         if (!$senderPixelService) {
