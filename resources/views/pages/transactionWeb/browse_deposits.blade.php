@@ -3,7 +3,7 @@
 @section('title', 'Transfert Mobile Zone')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('public/web/css/mzt-deposits.css') }}">
+<link rel="stylesheet" href="{{ asset('public/web/css/mzt-deposits.css') }}?v={{ @filemtime(public_path('web/css/mzt-deposits.css')) ?: time() }}">
 @endpush
 
 @section('content')
@@ -483,5 +483,5 @@ window._MZT = {
     csrf: document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
 };
 </script>
-<script src="{{ asset('public/web/js/mzt-deposits.js') }}"></script>
+<script src="{{ asset('public/web/js/mzt-deposits.js') }}?v={{ @filemtime(public_path('web/js/mzt-deposits.js')) ?: time() }}"></script>
 @endpush
