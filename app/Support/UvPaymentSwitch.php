@@ -59,6 +59,35 @@ final class UvPaymentSwitch
         return $changed;
     }
 
+    /**
+     * Pixel Innov est-il le moyen de paiement UV actif pour ce pays ?
+     * (opérateur actif, activé dans le pays, et Paystack non actif dans ce pays)
+     */
+    public static function pixelActiveForCountry(?int $countryId): bool
+    {
+        $pixel = self::findProvider('pixel innov');
+        if (!$pixel || !$pixel->status) {
+            return false;
+        }
+
+        $active = fn (int $providerId) => !$countryId || DB::table('country_services')
+            ->where('provider_id', $providerId)
+            ->where('country_id', $countryId)
+            ->where('status', true)
+            ->exists();
+
+        if (!$active($pixel->id)) {
+            return false;
+        }
+
+        $paystack = self::findProvider('paystack');
+        if ($paystack && $paystack->status && $active($paystack->id)) {
+            return false;
+        }
+
+        return true;
+    }
+
     private static function findProvider(string $namePrefix): ?Provider
     {
         return Provider::where('provider_type_id', self::PROVIDER_TYPE_UV)

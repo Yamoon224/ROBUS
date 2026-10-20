@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Tools\Image;
+use Illuminate\Support\Str;
 use App\Models\ProviderType;
 use Illuminate\Http\Request;
 use App\Models\CountryService;
@@ -285,6 +286,7 @@ class ServiceController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'image' => 'nullable|image|mimes:png,jpg,jpeg,webp|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -298,6 +300,14 @@ class ServiceController extends Controller
         try {
 
             $provider = Provider::findOrFail($id);
+
+            // Nouveau logo : stocké dans dist/providers (même emplacement que les logos existants)
+            if ($request->hasFile('image')) {
+                $file     = $request->file('image');
+                $fileName = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('dist/providers'), $fileName);
+                $provider->image = 'dist/providers/' . $fileName;
+            }
             $provider->name = $request->name;
             $provider->description  = $request->description;
             $provider->company_id = Auth::guard('web')->user()->company_id ?? null;

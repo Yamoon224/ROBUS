@@ -103,6 +103,10 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
         });
 
         Route::prefix('pixelInnov')->group(function () {
+            // Lien de paiement partagé : Pixel Innov (page web) ou Paystack selon l'API active
+            Route::get('/share-link', [PixelPaymentController::class, 'shareLink'])
+                ->name('pixelInnov.share-link');
+
             // Lister les services disponibles (par pays et/ou type d'opération)
             Route::get('/services', [PixelPaymentController::class, 'listServices'])
                 ->name('pixelInnov.services');

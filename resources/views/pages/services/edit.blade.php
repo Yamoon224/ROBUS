@@ -38,8 +38,15 @@
                             <div class="mx-auto xl:mr-0 xl:ml-6">
                                 <img class="object-none object-center bg-yellow-300 w-30 h-30"
                                     src="{{ asset($provider->image ?? 'public/dist/images/food-beverage-1.jpg') }}"
-                                    alt="image">
-
+                                    alt="image" id="profileImage">
+                                <div class="mx-auto cursor-pointer relative mt-5 mb-6">
+                                    <label for="imageUpload" class="btn btn-outline-secondary w-full cursor-pointer">Changer le logo</label>
+                                    <input id="imageUpload" type="file" name="image" style="display: none"
+                                        accept="image/png, image/jpeg, image/webp">
+                                    @error('image')
+                                        <span class="text-danger" role="alert"><strong>{{ $message }}</strong></span>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="crud-form-1 mt-3">
@@ -151,4 +158,12 @@
 @endsection
 
 @push('scripts')
+    <script>
+        document.getElementById('imageUpload')?.addEventListener('change', function () {
+            const file = this.files && this.files[0];
+            if (file) {
+                document.getElementById('profileImage').src = URL.createObjectURL(file);
+            }
+        });
+    </script>
 @endpush

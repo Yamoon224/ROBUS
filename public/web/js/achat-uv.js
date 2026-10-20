@@ -671,3 +671,12 @@ function acvPollSetTimeout() {
 }
 
 function acvAfterResult() { clearInterval(acvPollTimer); }
+
+/* ── Lien partagé : pré-remplissage de l'ID ROBUS (?robus_id=XXXX) ── */
+document.addEventListener('DOMContentLoaded', () => {
+    const id  = new URLSearchParams(window.location.search).get('robus_id');
+    const inp = document.getElementById('acvRobusIdInput');
+    if (!id || !inp) return;
+    inp.value = id.trim();
+    acvOnIdInput(inp.value);
+});

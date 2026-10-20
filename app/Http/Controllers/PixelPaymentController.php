@@ -184,6 +184,34 @@ class PixelPaymentController extends Controller
     }
 
     /**
+     * Lien de paiement à partager par le client : suit l'API active.
+     * Pixel Innov actif → page web Robus (Achat UV) pré-remplie avec l'ID Robus du client.
+     * Sinon → mode « paystack » (l'application génère le lien Paystack comme avant).
+     */
+    public function shareLink(Request $request)
+    {
+        $user = robus();
+        if (!$user) {
+            return response()->json(['status' => false, 'message' => 'Non authentifié'], 401);
+        }
+
+        if (!\App\Support\UvPaymentSwitch::pixelActiveForCountry($user->country_id)) {
+            return response()->json(['status' => true, 'mode' => 'paystack', 'link' => null]);
+        }
+
+        $walletId = Wallet::where('sid_user_id', $user->id)->value('wallet_id');
+        if (!$walletId) {
+            return response()->json(['status' => false, 'message' => 'Portefeuille introuvable'], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'mode'   => 'pixel',
+            'link'   => route('web.transactions_robus', ['robus_id' => $walletId]),
+        ]);
+    }
+
+    /**
      * Services de dépôt mobile disponibles dans le pays du client.
      * Cette liste est volontairement limitée aux opérateurs pris en charge
      * par l'écran « Dépôt zone » de l'application customers.
