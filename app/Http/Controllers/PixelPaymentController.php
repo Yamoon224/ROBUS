@@ -2088,6 +2088,17 @@ class PixelPaymentController extends Controller
 
     public function calculateMobileZoneTransferWeb(Request $request)
     {
+        if ($request->boolean('international')) {
+            $sender    = PixelInnoveService::where('service_id', $request->sender_service_id)->first();
+            $recipient = PixelInnoveService::where('service_id', $request->recipient_service_id)->first();
+            if ($sender && $recipient && $sender->country_id === $recipient->country_id) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Le pays expéditeur doit être différent du pays destinataire.',
+                ], 422);
+            }
+        }
+
         return $this->calculateMobileZoneTransfer($request);
     }
 
@@ -2351,6 +2362,14 @@ class PixelPaymentController extends Controller
         $senderIso2    = self::countryCode($senderService->country) ?? '';
         $recipientIso2 = self::countryCode($recipientService->country) ?? '';
         $senderLimits  = self::AMOUNT_LIMITS[$senderIso2] ?? ['min' => 200, 'max' => 1_500_000, 'currency' => 'XOF'];
+
+        // International Zone : le pays expéditeur doit différer du pays destinataire
+        if ($request->boolean('international') && $senderService->country_id === $recipientService->country_id) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Le pays expéditeur doit être différent du pays destinataire.',
+            ], 422);
+        }
 
         $amount = (float) $request->amount;
 

@@ -1,4 +1,5 @@
 const mztState = { sender: null, recipient: null };
+const mztDistinct = !!(window._MZT && window._MZT.distinctCountries);
 
     function mztMarkInvalid(fieldId) {
         const el = document.getElementById(fieldId);
@@ -43,6 +44,16 @@ const mztState = { sender: null, recipient: null };
         const targetGroup = providerStep.querySelector(`.mzt-op-group[data-country-id="${card.dataset.countryId}"]`);
         if (targetGroup) targetGroup.classList.remove('d-none');
 
+        // International Zone : le pays expéditeur doit différer du pays destinataire
+        if (mztDistinct) {
+            const oppGrid = document.getElementById(isSender ? 'mztRecipientCountryStep' : 'mztSenderCountryStep');
+            if (oppGrid) {
+                oppGrid.querySelectorAll('.mzt-ctry-card.mzt-excluded').forEach(c => c.classList.remove('mzt-excluded'));
+                const toExclude = oppGrid.querySelector(`.mzt-ctry-card[data-country-id="${card.dataset.countryId}"]`);
+                if (toExclude) toExclude.classList.add('mzt-excluded');
+            }
+        }
+
         // Clear previous operator selection for this side
         mztState[side] = null;
         const sideEl = document.getElementById(isSender ? 'mztSideSender' : 'mztSideRecipient');
@@ -52,7 +63,7 @@ const mztState = { sender: null, recipient: null };
 
         // Pays expéditeur choisi : le pays destinataire est pré-sélectionné sur le même pays
         // (tant que le destinataire n'a pas déjà un opérateur choisi). Modifiable via « retour ».
-        if (isSender && !mztState.recipient) {
+        if (!mztDistinct && isSender && !mztState.recipient) {
             const recipCard = document.querySelector(
                 `#mztRecipientCountryStep .mzt-ctry-card[data-country-id="${card.dataset.countryId}"]`
             );
@@ -68,6 +79,11 @@ const mztState = { sender: null, recipient: null };
         const providerStepId = isSender ? 'mztSenderProviderStep'   : 'mztRecipientProviderStep';
         document.getElementById(providerStepId).classList.add('d-none');
         document.getElementById(countryStepId).classList.remove('d-none');
+
+        if (mztDistinct) {
+            const oppGrid = document.getElementById(isSender ? 'mztRecipientCountryStep' : 'mztSenderCountryStep');
+            if (oppGrid) oppGrid.querySelectorAll('.mzt-ctry-card.mzt-excluded').forEach(c => c.classList.remove('mzt-excluded'));
+        }
 
         // Clear selection
         mztState[side] = null;
@@ -345,6 +361,7 @@ const mztState = { sender: null, recipient: null };
                     sender_service_id:    parseInt(mztState.sender.serviceId),
                     recipient_service_id: parseInt(mztState.recipient.serviceId),
                     amount,
+                    international: mztDistinct,
                 }),
             });
             const data = await res.json();
@@ -523,6 +540,7 @@ const mztState = { sender: null, recipient: null };
             recipient_service_id: parseInt(r.serviceId),
             recipient_phone:      mztSanitizePhone(document.getElementById('phone_benef')?.value),
             amount:               parseFloat(document.getElementById('mztAmount').value),
+            international:        mztDistinct,
         };
         const otp = document.getElementById('om_otp')?.value?.trim();
         if (otp) body.om_otp = otp;
