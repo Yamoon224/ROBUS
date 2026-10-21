@@ -134,18 +134,19 @@
                     <span><i class="bi bi-clock"></i></span>
                     Horaires d'ouverture
                 </div>
+                @php($svcSched = isset($mztAvail['today']) ? $mztAvail['today'] : getAppCloseWeb())
                 <span class="info-panel-schedule-badge">
                     <i class="bi bi-calendar3 me-2"></i>
-                    {{ getAppCloseWeb()->day_of_week ?? 'N/A' }}
+                    {{ $svcSched->day_of_week ?? 'N/A' }}
                 </span>
                 <div class="info-panel-time-row">
                     <span class="info-panel-time-sep">De</span>
                     <span class="info-panel-time-badge">
-                        {{ \Carbon\Carbon::createFromFormat('H:i:s', getAppCloseWeb()->time_start ?? '00:00:00')->format('H:i') }}
+                        {{ \Carbon\Carbon::createFromFormat('H:i:s', $svcSched->time_start ?? '00:00:00')->format('H:i') }}
                     </span>
                     <span class="info-panel-time-sep">à</span>
                     <span class="info-panel-time-badge">
-                        {{ \Carbon\Carbon::createFromFormat('H:i:s', getAppCloseWeb()->time_end ?? '00:00:00')->format('H:i') }}
+                        {{ \Carbon\Carbon::createFromFormat('H:i:s', $svcSched->time_end ?? '00:00:00')->format('H:i') }}
                     </span>
                 </div>
             </div>

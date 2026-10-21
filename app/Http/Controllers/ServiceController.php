@@ -114,6 +114,17 @@ class ServiceController extends Controller
         return view('pages.services.browse_close_app_visitors');
     }
 
+    public function browse_close_app_service($service)
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('close-robus')) {
+            abort(403);
+        }
+
+        abort_unless(array_key_exists($service, \App\Http\Services\ServiceAvailabilityService::SERVICES), 404);
+
+        return view('pages.services.browse_close_app_service', ['service' => $service]);
+    }
+
     public function browse_close_app_companies()
     {
         if (!Auth::guard('web')->user()->hasPermissionTo('close-robus')) {

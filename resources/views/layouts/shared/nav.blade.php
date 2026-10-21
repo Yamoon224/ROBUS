@@ -832,6 +832,18 @@ $isAdminOrSupervisor = $user && ($user->is_admin || $user->is_supervisor);
                 </li>
                 @endif
 
+                @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
+                @foreach (\App\Http\Services\ServiceAvailabilityService::SERVICES as $svcKey => $svcLabel)
+                <li>
+                    <a href="{{ route('browse_close_app_service.browse', $svcKey) }}"
+                        class="side-menu {{ $route == 'browse_close_app_service.browse' && request()->route('service') == $svcKey ? 'side-menu--active' : '' }}">
+                        <div class="side-menu__icon"> <i data-feather="clock" class="block mx-auto"></i></div>
+                        <div class="side-menu__title"> {{ $svcLabel }} </div>
+                    </a>
+                </li>
+                @endforeach
+                @endif
+
 
                 @if (Auth::guard('web')->user()->hasPermissionTo('Faqs'))
                 <li>

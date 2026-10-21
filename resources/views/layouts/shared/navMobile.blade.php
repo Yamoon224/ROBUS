@@ -714,6 +714,19 @@
                             </li>
                         @endif
 
+                        @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
+                            @foreach (\App\Http\Services\ServiceAvailabilityService::SERVICES as $svcKey => $svcLabel)
+                                <li>
+                                    <a href="{{ route('browse_close_app_service.browse', $svcKey) }}"
+                                        class="menu {{ $route == 'browse_close_app_service.browse' && request()->route('service') == $svcKey ? 'menu--active' : '' }}">
+                                        <div class="menu__icon"> <i data-feather="clock" class="block mx-auto"></i>
+                                        </div>
+                                        <div class="menu__title"> {{ $svcLabel }} </div>
+                                    </a>
+                                </li>
+                            @endforeach
+                        @endif
+
 
                         @if (Auth::guard('web')->user()->hasPermissionTo('Faqs'))
                             <li>

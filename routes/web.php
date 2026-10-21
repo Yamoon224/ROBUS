@@ -420,6 +420,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/browse_masters',  [ServiceController::class, 'browse_close_app_masters'])->name('browse_close_app_masters.browse');
             Route::get('/browse_comzones',  [ServiceController::class, 'browse_close_app_comzones'])->name('browse_close_app_comzones.browse');
             Route::get('/browse_visitors',  [ServiceController::class, 'browse_close_app_visitors'])->name('browse_close_app_visitors.browse');
+            Route::get('/browse_service/{service}',  [ServiceController::class, 'browse_close_app_service'])->name('browse_close_app_service.browse');
             Route::get('/browse_companies',  [ServiceController::class, 'browse_close_app_companies'])->name('browse_companies.browse');
         });
 

@@ -23,6 +23,12 @@
     @endphp
 
 
+    @php
+        $mztService = !empty($mztDistinct) ? 'international_zone' : 'mobile_zone';
+        $mztAvail = \App\Http\Services\ServiceAvailabilityService::status($mztService);
+    @endphp
+
+    @if ($mztAvail['open'])
     <section class="txn-page contact-info-section style_percent" data-txn-type="deposit">
         <div class="container">
             <div class="row txn-shell g-4 justify-content-center">
@@ -426,6 +432,17 @@
             </div>
         </div>
     </section>
+    @else
+    <section class="contact-info-section style_percent">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-11 col-sm-12">
+                    @include('layouts.shared_web.close_service', ['availability' => $mztAvail, 'serviceLabel' => \App\Http\Services\ServiceAvailabilityService::SERVICES[$mztService]])
+                </div>
+            </div>
+        </div>
+    </section>
+    @endif
 
     {{-- ── Modal Confirmation ── --}}
     <div class="modal fade" id="mztConfirmModal" tabindex="-1" aria-labelledby="mztConfirmModalLabel" aria-hidden="true">
@@ -468,6 +485,7 @@
         </div>
     </div>
 
+@if ($mztAvail['open'])
 @push('scripts')
 <script>
 window._MZT = {
@@ -480,3 +498,4 @@ window._MZT = {
 </script>
 <script src="{{ asset('public/web/js/mzt-deposits.js') }}?v={{ @filemtime(public_path('web/js/mzt-deposits.js')) ?: time() }}"></script>
 @endpush
+@endif

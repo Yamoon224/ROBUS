@@ -2317,6 +2317,15 @@ class PixelPaymentController extends Controller
 
     public function initializeMobileZoneTransferWeb(Request $request)
     {
+        $svcKey = $request->boolean('international') ? 'international_zone' : 'mobile_zone';
+        $svcStatus = \App\Http\Services\ServiceAvailabilityService::status($svcKey);
+        if (!$svcStatus['open']) {
+            return response()->json([
+                'status'  => false,
+                'message' => $svcStatus['message'] ?: "Ce service est momentanément indisponible. Merci de réessayer pendant les horaires d'ouverture.",
+            ], 403);
+        }
+
         $request->merge([
             'sender_phone'    => $request->input('sender_phone', $request->input('my_phone')),
             'recipient_phone' => $request->input('recipient_phone', $request->input('phone_benef')),
