@@ -720,6 +720,31 @@ class TransactionsAccountService
         ];
     }
 
+    /**
+     * Commissions sous-distributeur des opérations Pixel Innov (Cash In / Cash Out).
+     * Ces opérations sont dans wallet_reloads, reconnaissables à leur référence PIX_*.
+     */
+    private function pixelInnovCommissionQuery()
+    {
+        return \App\Models\Wallets\WalletReload::where('wallet_id', robus()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->where('reference', 'LIKE', 'PIX\_%')
+            ->where('commissions', '>', 0);
+    }
+
+    public function getTodayPixelInnovCommissionAmountTotal()
+    {
+        return (float) $this->pixelInnovCommissionQuery()->sum('commissions');
+    }
+
+    public function getUpdatePixelInnovCommissionAmountNullTotal()
+    {
+        $total = $this->getTodayPixelInnovCommissionAmountTotal();
+        $this->pixelInnovCommissionQuery()->update(['commissions' => 0]);
+
+        return $total;
+    }
+
     public function getTodayTransactionCommissionAmountTotal($walletModel)
     {
 

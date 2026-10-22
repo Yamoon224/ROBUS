@@ -354,6 +354,7 @@ class UserController extends Controller
             'Djamo' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletDjamo::class),
             'BankSend' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletBankSend::class),
             'Envoi Mobile Zone' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(PixelMobileZoneTransfer::class),
+            'Pixel Innov' => $this->transactionAccount->getTodayPixelInnovCommissionAmountTotal(),
             // 'Commission remonté' => RemonteSingleCollection::collection($this->transactionAccount->getUserRemonte(WithMerchant::class, robus()->id)),
         ];
 
@@ -566,6 +567,7 @@ class UserController extends Controller
             $walletDjamo = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletDjamo::class);
             $walletBankSend = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletBankSend::class);
             $walletMobileZone = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(PixelMobileZoneTransfer::class);
+            $walletPixelInnov = $this->transactionAccount->getTodayPixelInnovCommissionAmountTotal();
 
             if ($gain_amount <= 0) {
                 return response()->json([
@@ -619,6 +621,9 @@ class UserController extends Controller
             } else if ($commissions == "Commission Envoi Mobile Zone" &&  $walletMobileZone != 0) {
 
                 $gain_amount =  $walletMobileZone;
+            } else if ($commissions == "Commission Pixel Innov" &&  $walletPixelInnov != 0) {
+
+                $gain_amount =  $walletPixelInnov;
             } else {
                 return response()->json([
                     'success' => false,
@@ -674,6 +679,8 @@ class UserController extends Controller
                     $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletXbet::class);
                 } else if ($commissions == "Commission Envoi Mobile Zone") {
                     $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(PixelMobileZoneTransfer::class);
+                } else if ($commissions == "Commission Pixel Innov") {
+                    $this->transactionAccount->getUpdatePixelInnovCommissionAmountNullTotal();
                 } else {
 
                     return response()->json([
