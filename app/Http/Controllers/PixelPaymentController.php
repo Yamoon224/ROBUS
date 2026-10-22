@@ -1516,6 +1516,15 @@ class PixelPaymentController extends Controller
             // Mobile débité par Pixel → créditer le wallet Robus
             $this->creditWalletFromMobilePayment($reload, $ipnData);
         } else {
+            // Retrait déjà passé en ERROR : le wallet a été remboursé. Valider maintenant
+            // laisserait le client avec l'argent ET le retrait → vérification manuelle.
+            if (strtoupper((string) $reload->status) === 'ERROR') {
+                Log::critical('Pixel Innov — SUCCESS reçu après ERROR/remboursement, non validé (vérification manuelle)', [
+                    'wallet_reload_id' => $reload->id,
+                    'reference'        => $reload->reference,
+                ]);
+                return;
+            }
             // Wallet Robus déjà débité à l'init → juste marquer SUCCESS
             $this->markCashInCompleted($reload, $ipnData);
         }
@@ -1804,6 +1813,15 @@ class PixelPaymentController extends Controller
 
     private function handleFailure(WalletReload $reload, array $ipnData): void
     {
+        // Idempotence : un 2e IPN « échec » (ou une synchro simultanée) ne doit pas rembourser deux fois
+        $locked = WalletReload::lockForUpdate()->find($reload->id);
+        if ($locked && strtoupper((string) $locked->status) === 'ERROR') {
+            Log::warning('Pixel Innov — FAILED déjà traité, remboursement ignoré', [
+                'wallet_reload_id' => $reload->id,
+            ]);
+            return;
+        }
+
         $metadata      = $this->reloadMetadata($reload);
         $operationType = $metadata['operation_type'] ?? 'Cash Out';
 
@@ -3012,8 +3030,15 @@ class PixelPaymentController extends Controller
             // ── Récupération des transferts bloqués ─────────────────────────
             // Cas 1 : Cash Out SUCCESS mais Cash In jamais initié (recipient_transaction_id null)
             $cashOutTxId = $transfer->sender_transaction_id;
+            // Jamais de relance si l'expéditeur a déjà été remboursé (ou remboursement en cours) :
+            // sinon le destinataire serait payé en plus du remboursement.
+            $alreadyRefunded = !empty($transfer->refund_transaction_id)
+                || $transfer->status === 'REFUNDED'
+                || in_array($transfer->refund_status, ['PENDING', 'SUCCESS']);
+
             $needsCashIn = !in_array($transfer->recipient_status, ['SUCCESS', 'PROCESSING'])
                 && empty($transfer->recipient_transaction_id)
+                && !$alreadyRefunded
                 && $cashOutTxId;
 
             if ($needsCashIn) {
