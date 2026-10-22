@@ -2064,7 +2064,8 @@ class PixelPaymentController extends Controller
         $amountToSend  = round($amount - $senderFee, 2); // ce que Robus envoie au destinataire
 
         $recipientFeePct = (float) $recipientService->fixed_fee + (float) $recipientService->commission_percent;
-        $recipientFee    = round($amountToSend * $recipientFeePct / 100, 2);
+        // Frais simples : les deux taux s'appliquent sur le montant envoyé (pas en cascade)
+        $recipientFee    = round($amount * $recipientFeePct / 100, 2);
         $amountReceived  = round($amountToSend - $recipientFee, 2);
 
         $totalFee = round($senderFee + $recipientFee, 2);
@@ -2168,7 +2169,8 @@ class PixelPaymentController extends Controller
         $amountToSend  = round($amount - $senderFee, 2);
 
         $recipientFeePct = (float) $recipientService->fixed_fee + (float) $recipientService->commission_percent;
-        $recipientFee    = round($amountToSend * $recipientFeePct / 100, 2);
+        // Frais simples : les deux taux s'appliquent sur le montant envoyé (pas en cascade)
+        $recipientFee    = round($amount * $recipientFeePct / 100, 2);
         $amountReceived  = round($amountToSend - $recipientFee, 2);
         $totalFee        = round($senderFee + $recipientFee, 2);
 
@@ -2178,8 +2180,8 @@ class PixelPaymentController extends Controller
         if ($amountReceived < $recipientLimits['min']) {
             $senderCurrency    = self::AMOUNT_LIMITS[$senderIso2]['currency'] ?? 'XOF';
             $recipientCurrency = $recipientLimits['currency'] ?? 'XOF';
-            // Résoudre : amount * (1 - senderFeePct/100) * (1 - recipientFeePct/100) >= recipientLimits['min']
-            $factor      = (1 - $senderFeePct / 100) * (1 - $recipientFeePct / 100);
+            // Résoudre : amount * (1 - (senderFeePct + recipientFeePct)/100) >= recipientLimits['min']
+            $factor      = 1 - ($senderFeePct + $recipientFeePct) / 100;
             $minRequired = (int) ceil($recipientLimits['min'] / $factor);
             return response()->json([
                 'status'  => false,
@@ -2394,7 +2396,8 @@ class PixelPaymentController extends Controller
         $amountToSend  = round($amount - $senderFee, 2);
 
         $recipientFeePct = (float) $recipientService->fixed_fee + (float) $recipientService->commission_percent;
-        $recipientFee    = round($amountToSend * $recipientFeePct / 100, 2);
+        // Frais simples : les deux taux s'appliquent sur le montant envoyé (pas en cascade)
+        $recipientFee    = round($amount * $recipientFeePct / 100, 2);
         $amountReceived  = round($amountToSend - $recipientFee, 2);
         $totalFee        = round($senderFee + $recipientFee, 2);
 
@@ -2402,7 +2405,7 @@ class PixelPaymentController extends Controller
         if ($amountReceived < $recipientLimits['min']) {
             $senderCurrency    = $senderLimits['currency'] ?? 'XOF';
             $recipientCurrency = $recipientLimits['currency'] ?? 'XOF';
-            $factor            = (1 - $senderFeePct / 100) * (1 - $recipientFeePct / 100);
+            $factor            = 1 - ($senderFeePct + $recipientFeePct) / 100;
             $minRequired       = (int) ceil($recipientLimits['min'] / $factor);
 
             return response()->json([
@@ -2795,14 +2798,16 @@ class PixelPaymentController extends Controller
             throw new \Exception('Services Pixel Innov Mobile Zone introuvables pour la commission');
         }
 
-        // ── Commissions admin + banque ────────────────────────────────────────
-        $senderAdminCommission    = round((float) $transfer->amount      * (float) $senderService->fixed_fee    / 100, 2);
-        $senderBankCommission     = round((float) $transfer->amount      * (float) $senderService->commission_percent             / 100, 2);
-        $recipientAdminCommission = round((float) $transfer->amount_to_send * (float) $recipientService->commission_percent / 100, 2);
-        $recipientBankCommission  = round((float) $transfer->amount_to_send * (float) $recipientService->fixed_fee          / 100, 2);
-
-        $adminCommission = round($senderAdminCommission, 2);
-        $bankCommission  = round($senderBankCommission,  2);
+        // ── Commissions admin + SD TOTAL (frais cash-out + cash-in, sur le montant envoyé) ──
+        // frais fixes = part admin ; commission = part prélevée par Pixel / compte SD TOTAL
+        $adminCommission = round(
+            (float) $transfer->amount * ((float) $senderService->fixed_fee + (float) $recipientService->fixed_fee) / 100,
+            2
+        );
+        $bankCommission = round(
+            (float) $transfer->amount * ((float) $senderService->commission_percent + (float) $recipientService->commission_percent) / 100,
+            2
+        );
         $totalCommission = round($adminCommission + $bankCommission, 2);
 
         if ($totalCommission <= 0) {
@@ -2851,12 +2856,13 @@ class PixelPaymentController extends Controller
         }
 
         // Commission sous-distributeur : uniquement si showRemonterPixelButton est actif
+        $underPct = (float) ($senderService->commission_under_pct ?? 0) + (float) ($recipientService->commission_under_pct ?? 0);
         if (
             $isUnder
             && !empty($activeButtons['showRemonterPixelButton'])
-            && (float) ($senderService->commission_under_pct ?? 0) > 0
+            && $underPct > 0
         ) {
-            $underCommission = round((float) $transfer->amount * (float) $senderService->commission_under_pct / 100, 2);
+            $underCommission = round((float) $transfer->amount * $underPct / 100, 2);
         }
 
         // Commission compagnie : uniquement si showRemonterPixelInnovCButton est actif
@@ -2864,16 +2870,21 @@ class PixelPaymentController extends Controller
             && ($walletOwner->is_accepted_companie ?? false)
             && !empty($activeCButtons['showRemonterPixelInnovCButton']);
 
-        if ($isCompanie && (float) ($senderService->commission_companie_pct ?? 0) > 0) {
-            $companieCommission = round((float) $transfer->amount * (float) $senderService->commission_companie_pct / 100, 2);
+        $companiePct = (float) ($senderService->commission_companie_pct ?? 0) + (float) ($recipientService->commission_companie_pct ?? 0);
+        if ($isCompanie && $companiePct > 0) {
+            $companieCommission = round((float) $transfer->amount * $companiePct / 100, 2);
         }
 
         // Les commissions sous-dist et compagnie sont prélevées sur la part admin
+        // Source Mobile Money : Pixel a déjà prélevé sa part (cash-out + cash-in).
+        // Le compte SD TOTAL ne verse que la part admin + sous-dist./compagnie.
+        $sdTotalPayout               = $adminCommission;
+        $adminCommission             = max(0, round($adminCommission - $underCommission - $companieCommission, 2));
         $adminCommissionConversion   = round($adminCommission   * $conversionRate, 2);
         $bankCommissionConversion    = round($bankCommission        * $conversionRate, 2);
         $underCommissionConversion   = round($underCommission       * $conversionRate, 2);
         $companieCommissionConversion = round($companieCommission   * $conversionRate, 2);
-        $totalCommissionConversion   = round($totalCommission       * $conversionRate, 2);
+        $totalCommissionConversion   = round($sdTotalPayout         * $conversionRate, 2);
 
         // ── Crédit wallet Pixel Innov (part admin nette) ─────────────────────
         $walletPixel->increment('amount', $adminCommissionConversion);
@@ -2888,7 +2899,7 @@ class PixelPaymentController extends Controller
             'is_pixel'       => true,
         ]);
 
-        // ── Débit wallet commission Pixel Innov ──────────────────────────────
+        // ── Débit compte commissions SD TOTAL (part admin + SD uniquement) ───
         $walletPixelCommission->decrement('amount', $totalCommissionConversion);
 
         // ── Commission sous-distributeur ──────────────────────────────────────
