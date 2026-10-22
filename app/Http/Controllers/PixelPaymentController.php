@@ -490,7 +490,9 @@ class PixelPaymentController extends Controller
         $totalFeeAdmin    = (float) $pixelConfig->fixed_fee + (float) $pixelConfig->commission_percent;
         $fees           = round($amount * $totalFeePct / 100, 2);
         $amountReceived = round($amount - $fees, 2);
-        $amountPay = $amount + $fees;
+        // Les frais sont prélevés sur le montant envoyé (le destinataire reçoit amount - frais) :
+        // le wallet n'est débité que du montant, jamais montant + frais.
+        $amountPay = $amount;
         // Pour un dépôt vers un mobile, Pixel Innov doit créditer le net après frais.
         // Le montant brut reste enregistré pour l'historique et le calcul du débit.
         $amountToCredit = $operationType === 'Cash In' ? $amountReceived : $amount;
@@ -543,6 +545,7 @@ class PixelPaymentController extends Controller
                 'operation_type'     => $operationType,
                 'destination'        => $request->destination,
                 'debit_number'       => $request->debit_number ?? null,
+                'total_debited'      => ($operationType === 'Cash In' ? $amountPay : 0),
                 'custom_data'        => $customData,
             ]),
         ]);
@@ -718,7 +721,8 @@ class PixelPaymentController extends Controller
         $fixedFeePct    = (float) $pixelConfig->fixed_fee;
         $totalFeePct    = $commissionPct + $fixedFeePct;
         $fees           = round($amount * $totalFeePct / 100, 2);
-        $totalDebit     = $amount + $fees;
+        // Frais prélevés sur le montant envoyé : débit = montant (pas montant + frais)
+        $totalDebit     = $amount;
         $amountReceived = round($amount - $fees, 2);
         // Ce parcours est exclusivement un Cash In : le mobile reçoit le net.
         $amountToCredit = $amountReceived;
@@ -794,6 +798,7 @@ class PixelPaymentController extends Controller
                 'country_iso2'       => $iso2,
                 'operation_type'     => 'Cash In',
                 'destination'        => $request->destination,
+                'total_debited'      => $totalDebit,
                 'custom_data'        => $customData,
                 'source'             => 'robus_wallet',
             ]),
@@ -929,7 +934,9 @@ class PixelPaymentController extends Controller
         $totalFeeAdmin    = (float) $pixelConfig->fixed_fee + (float) $pixelConfig->commission_percent;
         $fees           = round($amount * $totalFeePct / 100, 2);
         $amountReceived = round($amount - $fees, 2);
-        $amountPay = $amount + $fees;
+        // Les frais sont prélevés sur le montant envoyé (le destinataire reçoit amount - frais) :
+        // le wallet n'est débité que du montant, jamais montant + frais.
+        $amountPay = $amount;
         // Le montant transmis à l'opérateur est celui que le bénéficiaire reçoit.
         $amountToCredit = $operationType === 'Cash In' ? $amountReceived : $amount;
 
@@ -980,6 +987,7 @@ class PixelPaymentController extends Controller
                 'country_iso2'       => $iso2,
                 'operation_type'     => $operationType,
                 'destination'        => $request->destination,
+                'total_debited'      => ($operationType === 'Cash In' ? $amountPay : 0),
                 'custom_data'        => $customData,
             ]),
         ]);
@@ -1878,7 +1886,10 @@ class PixelPaymentController extends Controller
         if ($operationType === 'Cash In') {
             $wallet = $reload->wallet;
             if ($wallet) {
-                $refundAmount = (float) $reload->amount + (float) ($reload->fees ?? $reload->costs_amount ?? 0);
+                // Montant réellement débité à l'init ; anciennes transactions (avant correction) : montant + frais
+                $refundAmount = isset($metadata['total_debited'])
+                    ? (float) $metadata['total_debited']
+                    : (float) $reload->amount + (float) ($reload->fees ?? $reload->costs_amount ?? 0);
                 $wallet->increment('amount', $refundAmount);
                 Log::info('Pixel Innov — Cash In IPN FAILED, wallet remboursé', [
                     'transaction_id'  => $ipnData['transaction_id'] ?? null,
