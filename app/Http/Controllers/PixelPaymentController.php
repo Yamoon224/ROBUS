@@ -3061,6 +3061,23 @@ class PixelPaymentController extends Controller
             // lockForUpdate : empêche deux appels simultanés de déclencher deux Cash In
             $transfer = PixelMobileZoneTransfer::lockForUpdate()->find($request->transfer_id);
 
+            if ($transfer->refundExhausted()) {
+                DB::rollBack();
+                return response()->json([
+                    'status'           => true,
+                    'local_status'     => $transfer->status,
+                    'sender_status'    => $transfer->sender_status,
+                    'recipient_status' => $transfer->recipient_status,
+                    'transfer_id'      => $transfer->id,
+                    'amount'           => $transfer->amount,
+                    'fees'             => $transfer->total_fee,
+                    'amount_received'  => $transfer->amount_received,
+                    'created_at'       => $transfer->created_at,
+                    'recovered'        => false,
+                    'cash_in_error'    => null,
+                ]);
+            }
+
             $senderServiceForRecovery = PixelInnoveService::find($transfer->sender_pixel_service_id);
             $pixelService = app(PixelInnovService::class)->setXaf($senderServiceForRecovery->is_xaf ?? false);
 
@@ -3318,8 +3335,14 @@ class PixelPaymentController extends Controller
         string $publicBase
     ): void {
         $meta     = (array) $transfer->metadata;
+        if ($transfer->refundExhausted()) {
+            return;
+        }
         $attempts = (int) ($meta['refund_attempts'] ?? 0) + 1;
         $meta['refund_attempts']   = $attempts;
+        // Après 3 échecs : on marque définitivement le transfert, sinon la tâche de rattrapage
+        // relance un nouveau remboursement toutes les 5 minutes.
+        $meta['refund_exhausted']  = $attempts >= 3;
         $meta['failed_refund_ids'] = array_merge($meta['failed_refund_ids'] ?? [], [$transfer->refund_transaction_id]);
 
         $transfer->update([
@@ -3349,6 +3372,11 @@ class PixelPaymentController extends Controller
         PixelInnovService $pixelService,
         string $publicBase
     ): array {
+        // Tentatives de remboursement épuisées : intervention manuelle, plus aucune relance automatique
+        if ($transfer->refundExhausted()) {
+            return ['initiated' => false, 'error' => 'Remboursement automatique abandonné (intervention manuelle)'];
+        }
+
         // Ne jamais rembourser un expéditeur qui n'a pas été débité, ni rembourser deux fois
         if ($transfer->sender_status !== 'SUCCESS' || !empty($transfer->refund_transaction_id)) {
             Log::warning('Mobile Zone Transfer — remboursement ignoré', [

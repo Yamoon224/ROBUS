@@ -27,6 +27,16 @@ class PixelMobileZoneTransfer extends Model
         'metadata'        => 'array',
     ];
 
+    /**
+     * Remboursement automatique abandonné (3 échecs) : intervention manuelle requise.
+     */
+    public function refundExhausted(): bool
+    {
+        $meta = (array) $this->metadata;
+
+        return !empty($meta['refund_exhausted']) || (int) ($meta['refund_attempts'] ?? 0) >= 3;
+    }
+
     public function senderService()
     {
         return $this->belongsTo(PixelInnoveService::class, 'sender_pixel_service_id');

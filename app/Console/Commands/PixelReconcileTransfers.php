@@ -36,7 +36,8 @@ class PixelReconcileTransfers extends Command
             ->when($this->option('id'), fn ($q, $ids) => $q->whereIn('id', $ids))
             ->orderBy('id');
 
-        $transfers = $query->get();
+        // Remboursements abandonnés après 3 échecs : traitement manuel, on ne relance plus
+        $transfers = $query->get()->reject(fn ($t) => $t->refundExhausted());
         $this->info($transfers->count() . ' transfert(s) à examiner.');
 
         foreach ($transfers as $t) {
