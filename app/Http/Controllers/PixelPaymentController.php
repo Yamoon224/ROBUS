@@ -1637,7 +1637,8 @@ class PixelPaymentController extends Controller
             'amount_conversion' => $amountTotalConversion,
             'amount_received'  => $amountReceived,
             'commissions'      => $underCommission,
-            'balance_before'  => $reload->amount_solde - ($reload->amount + $reload->fees),
+            // Solde après débit : montant réellement débité (anciennes opérations : montant + frais)
+            'balance_before'  => $reload->amount_solde - (float) ($metadata['total_debited'] ?? ($reload->amount + $reload->fees)),
             'reload_cost_id'   => $reload->reload_cost_id,
         ]);
 
