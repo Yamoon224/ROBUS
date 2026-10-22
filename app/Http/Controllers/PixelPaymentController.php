@@ -730,6 +730,43 @@ class PixelPaymentController extends Controller
             ], 422);
         }
 
+        // Anti-boucle : un retrait identique (même wallet, même numéro, même montant) encore en cours
+        // ou échoué depuis moins de 10 min est refusé, et 3 échecs en 1 h vers un numéro bloquent les nouvelles demandes.
+        $destinationLike = '%"destination":' . json_encode((string) $request->destination) . '%';
+        $recentToNumber  = WalletReload::where('wallet_id', $wallet->id)
+            ->where('payment_method', 'robus_wallet')
+            ->where('metadata', 'LIKE', $destinationLike)
+            ->where('created_at', '>=', now()->subHour());
+
+        $recentDuplicate = (clone $recentToNumber)
+            ->where('amount', $amount)
+            ->whereIn('status', ['PENDING', 'ERROR'])
+            ->where('created_at', '>=', now()->subMinutes(10))
+            ->exists();
+
+        if ($recentDuplicate) {
+            Log::warning('Pixel Innov — retrait doublon refusé', [
+                'user_id'     => $user->id,
+                'destination' => $request->destination,
+                'amount'      => $amount,
+            ]);
+            return response()->json([
+                'status'  => false,
+                'message' => 'Une opération identique vers ce numéro est en cours ou vient d\'échouer. Veuillez patienter 10 minutes avant de réessayer.',
+            ], 429);
+        }
+
+        if ((clone $recentToNumber)->where('status', 'ERROR')->count() >= 3) {
+            Log::warning('Pixel Innov — trop d\'échecs vers ce numéro, demande refusée', [
+                'user_id'     => $user->id,
+                'destination' => $request->destination,
+            ]);
+            return response()->json([
+                'status'  => false,
+                'message' => 'Trop d\'échecs récents vers ce numéro. Vérifiez le numéro ou réessayez dans une heure.',
+            ], 429);
+        }
+
         $customData = 'ROBUS_WALLET_' . $user->id . '_' . now()->timestamp;
 
         // Enregistrement optimiste AVANT appel API
