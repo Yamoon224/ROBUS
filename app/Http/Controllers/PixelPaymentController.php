@@ -1171,7 +1171,7 @@ class PixelPaymentController extends Controller
             'currency'        => $limits['currency'],
             'provider'        => $pixelConfig->provider->name ?? null,
             'operation_type'  => $pixelConfig->operation_type,
-        ]);
+        ] + $this->underCommissionPreview($request, [$pixelConfig], $amount, 'wallet'));
     }
 
     // =========================================================================
@@ -1405,6 +1405,40 @@ class PixelPaymentController extends Controller
     // =========================================================================
     // MÉTHODES PRIVÉES
     // =========================================================================
+
+    /**
+     * Commission du sous-distributeur affichée dans l'app (même règles que le versement réel).
+     * $services : services Pixel dont on cumule le taux commission_under_pct.
+     * $buttonKind : 'wallet' (bouton C, flux solde Robus) ou 'mobile_zone' (flux solde Mobile Money).
+     */
+    private function underCommissionPreview(Request $request, array $services, float $amount, string $buttonKind): array
+    {
+        $none = ['commission_under_pct' => 0.0, 'commission_under' => 0.0];
+        $user = $request->user();
+
+        if (!$user || !($user->is_under_distributer || $user->is_api)) {
+            return $none;
+        }
+
+        $restriction = app(OperatorRestrictionService::class);
+        $active = $buttonKind === 'wallet'
+            ? !empty($restriction->getActiveCButtons($user->id)['showRemonterPixelInnovCButton'])
+            : !empty($restriction->getActiveButtons($user->id)['showRemonterPixelButton']);
+
+        if (!$active) {
+            return $none;
+        }
+
+        $pct = 0.0;
+        foreach ($services as $service) {
+            $pct += (float) ($service->commission_under_pct ?? 0);
+        }
+
+        return [
+            'commission_under_pct' => $pct,
+            'commission_under'     => round($amount * $pct / 100, 2),
+        ];
+    }
 
     private function reloadMetadata(WalletReload $reload): array
     {
@@ -2084,7 +2118,7 @@ class PixelPaymentController extends Controller
             'currency'         => self::AMOUNT_LIMITS[self::countryCode($senderService->country) ?? '']['currency'] ?? 'XOF',
             'sender_provider'    => $senderService->provider->name ?? null,
             'recipient_provider' => $recipientService->provider->name ?? null,
-        ]);
+        ] + $this->underCommissionPreview($request, [$senderService, $recipientService], $amount, 'mobile_zone'));
     }
 
     public function calculateMobileZoneTransferWeb(Request $request)
