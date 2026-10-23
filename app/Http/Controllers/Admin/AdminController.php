@@ -2230,7 +2230,9 @@ class AdminController extends Controller
             "Commission sur Versement" => $this->getTodayTransactionCommissionAmountTotal(WalletVersement::class, $user->wallet->id),
             "Commission sur Tresort" => $this->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class, $user->wallet->id),
             "Commission sur Djamo" => $this->getTodayTransactionCommissionAmountTotal(WalletDjamo::class, $user->wallet->id),
-            "Commission sur BankSend" => $this->getTodayTransactionCommissionAmountTotal(WalletBankSend::class, $user->wallet->id)
+            "Commission sur BankSend" => $this->getTodayTransactionCommissionAmountTotal(WalletBankSend::class, $user->wallet->id),
+            "Commission Pixel Innov" => $this->getTodayTransactionCommissionAmountTotal(\App\Models\Wallets\WalletPixelReload::class, $user->wallet->id),
+            "Commission Envoi Mobile Zone" => $this->getTodayTransactionCommissionAmountTotal(\App\Models\PixelMobileZoneTransfer::class, $user->wallet->id)
         ];
 
 
@@ -2249,7 +2251,9 @@ class AdminController extends Controller
             "Commission sur Versement" => WalletVersement::class,
             "Commission sur Tresort" => WalletTresortMoney::class,
             "Commission sur Djamo" => WalletDjamo::class,
-            "Commission sur BankSend" => WalletBankSend::class
+            "Commission sur BankSend" => WalletBankSend::class,
+            "Commission Pixel Innov" => \App\Models\Wallets\WalletPixelReload::class,
+            "Commission Envoi Mobile Zone" => \App\Models\PixelMobileZoneTransfer::class
         ];
 
 
@@ -2789,6 +2793,8 @@ class AdminController extends Controller
                 "Commission sur Djamo"                 => WalletDjamo::class,
                 "Commission sur Tresort"         => WalletTresortMoney::class,
                 "Commission sur BankSend"            => WalletBankSend::class,
+                "Commission Pixel Innov"             => \App\Models\Wallets\WalletPixelReload::class,
+                "Commission Envoi Mobile Zone"       => \App\Models\PixelMobileZoneTransfer::class,
             ];
 
             foreach ($commissionModels as $type => $model) {
