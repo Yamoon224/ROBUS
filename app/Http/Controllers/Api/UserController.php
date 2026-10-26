@@ -522,6 +522,10 @@ class UserController extends Controller
                 WalletPush::class,
                 WalletDjamo::class,
                 WalletBankSend::class,
+                // Mêmes services que « Commission totale » (som_commission)
+                BankCard::class,
+                WalletVersement::class,
+                WalletTresortMoney::class,
             ];
             $models[] = PixelMobileZoneTransfer::class;
             $models[] = \App\Models\Wallets\WalletPixelReload::class;
@@ -532,10 +536,13 @@ class UserController extends Controller
             }
         }
 
+        // La carte « Compte commissions total » de l'app lit 'wallet_commission_pool' : elle doit montrer
+        // les commissions du sous-distributeur (comme « Commission totale »), pas le solde global SD TOTAL.
         return response()->json([
             'success' => true,
-            'wallet_commission_pool' => $globalPool,
+            'wallet_commission_pool' => $sdCommissionTotal,
             'sd_commission_total' => $sdCommissionTotal,
+            'sd_total_account' => $globalPool,
         ], 200);
     }
 
