@@ -523,9 +523,12 @@ class UserController extends Controller
                 WalletDjamo::class,
                 WalletBankSend::class,
             ];
+            $models[] = PixelMobileZoneTransfer::class;
+            $models[] = \App\Models\Wallets\WalletPixelReload::class;
             foreach ($models as $model) {
                 $sdCommissionTotal += (float)$model::where('wallet_id', $walletId)
-                    ->sum('commission');
+                    ->where('status', 'SUCCESS')
+                    ->sum('commissions');
             }
         }
 
@@ -1933,6 +1936,11 @@ class UserController extends Controller
                 $this->transactionAccount->getWalletSumGainUser(WalletXbet::class) +
                 $this->transactionAccount->getWalletSumGainUser(WalletInter::class);
 
+            // Mobile Zone + Pixel Innov : le compte SD TOTAL a déjà été débité de la part du
+            // sous-distributeur à l'opération, on ne le débite pas une 2e fois ci-dessous.
+            $pixelCommissions = $this->transactionAccount->getWalletSumGainUser(PixelMobileZoneTransfer::class)
+                + $this->transactionAccount->getTodayPixelInnovCommissionAmountTotal();
+            $som_commissions += $pixelCommissions;
 
             if ($som_commissions == 0) {
                 return response()->json([
@@ -1957,6 +1965,9 @@ class UserController extends Controller
                     $this->transactionAccount->getUpdateTransactionCommissionCreatedAmountNullTotal(WalletBankSend::class) +
 
                     $this->transactionAccount->getUpdateTransactionCommissionCreatedAmountNullTotal(WalletInter::class);
+
+                $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(PixelMobileZoneTransfer::class);
+                $this->transactionAccount->getUpdatePixelInnovCommissionAmountNullTotal();
 
                 $amount_solde = (float)robus()->wallet->amount + (float)$som_commissions;
 
@@ -1985,11 +1996,14 @@ class UserController extends Controller
                 // Débit du compte des commissions total et versement admin
                 $walletCommission = WalletCommission::find(1);
                 $walletAdmin = WalletAdmin::find(1);
-                if ($walletCommission && $walletCommission->amount >= $som_commissions) {
-                    $walletCommission->decrement('amount', $som_commissions);
-                }
-                if ($walletAdmin) {
-                    $walletAdmin->increment('amount', $som_commissions);
+                $som_pool = $som_commissions - $pixelCommissions;
+                if ($som_pool > 0) {
+                    if ($walletCommission && $walletCommission->amount >= $som_pool) {
+                        $walletCommission->decrement('amount', $som_pool);
+                    }
+                    if ($walletAdmin) {
+                        $walletAdmin->increment('amount', $som_pool);
+                    }
                 }
 
                 $msg = 'Vous avez transferé vos commission sur votre compte';
