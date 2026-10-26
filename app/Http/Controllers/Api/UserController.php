@@ -2076,6 +2076,8 @@ class UserController extends Controller
             $this->transactionAccount->getMonthTransactionGainUser(WalletDjamo::class) +
             $this->transactionAccount->getMonthTransactionGainUser(WalletTresortMoney::class) +
             $this->transactionAccount->getMonthTransactionGainUser(WalletVersement::class) +
+            // Mobile Zone (Pixel Innov Cash In est déjà compté dans WalletReload)
+            $this->transactionAccount->getMonthTransactionGainUser(PixelMobileZoneTransfer::class) +
 
             $this->transactionAccount->getMonthTransactionGainUser(WalletInter::class);
 
