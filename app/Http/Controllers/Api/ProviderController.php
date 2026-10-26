@@ -97,7 +97,13 @@ class ProviderController extends Controller
 
         try {
 
-            $cacheKey = "dashboard_data_user_v5_" . robus()->id . "_country_" . $countrieId;
+            // Disponibilité des services (fermeture manuelle ou horaires) : Mobile Zone = Dépôt zone,
+            // International Zone = Transfert mobile Zone. L'état est dans la clé de cache pour que
+            // l'activation / la désactivation soit prise en compte immédiatement.
+            $mzOpen = \App\Http\Services\ServiceAvailabilityService::isOpen('mobile_zone');
+            $izOpen = \App\Http\Services\ServiceAvailabilityService::isOpen('international_zone');
+
+            $cacheKey = "dashboard_data_user_v6_" . robus()->id . "_country_" . $countrieId . "_mz" . (int) $mzOpen . "_iz" . (int) $izOpen;
             // 1️⃣ Cas où l'app est indisponible
             if (!$appStatusResult['success']) {
 
@@ -116,12 +122,12 @@ class ProviderController extends Controller
 
                 $zoneProviders = ProvidersService::getPixelInnovZoneProviders($countrieId);
 
-                if ($zoneProviders->isNotEmpty()) {
+                if ($izOpen && $zoneProviders->isNotEmpty()) {
                     $dashboard_data['Transfert mobile Zone'] = ProviderSingleCollection::collection($zoneProviders);
                 }
 
                 $depositZoneProviders = $this->getDepositZoneProviders($countrieId);
-                if (robus()->is_custumers && $depositZoneProviders->isNotEmpty()) {
+                if ($mzOpen && robus()->is_custumers && $depositZoneProviders->isNotEmpty()) {
                     $dashboard_data['Dépôt zone'] = ProviderSingleCollection::collection($depositZoneProviders);
                 }
 
@@ -363,12 +369,12 @@ class ProviderController extends Controller
                     }
                 }
 
-                if ($zoneProviders->isNotEmpty()) {
+                if ($izOpen && $zoneProviders->isNotEmpty()) {
                     $dashboard_data['Transfert mobile Zone'] = ProviderSingleCollection::collection($zoneProviders);
                 }
 
                 $depositZoneProviders = $this->getDepositZoneProviders($countrieId);
-                if (robus()->is_custumers && $canShowPixelInnov && $depositZoneProviders->isNotEmpty()) {
+                if ($mzOpen && robus()->is_custumers && $canShowPixelInnov && $depositZoneProviders->isNotEmpty()) {
                     $dashboard_data['Dépôt zone'] = ProviderSingleCollection::collection($depositZoneProviders);
                 }
 

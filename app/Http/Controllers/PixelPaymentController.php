@@ -2123,6 +2123,25 @@ class PixelPaymentController extends Controller
         return $number;
     }
 
+    /**
+     * Services Mobile Zone / International Zone fermés depuis l'admin (manuel ou horaires).
+     * Même pays expéditeur et destinataire = Mobile Zone (dépôt local) ; sinon International Zone.
+     */
+    private function zoneClosedResponse(PixelInnoveService $sender, PixelInnoveService $recipient): ?\Illuminate\Http\JsonResponse
+    {
+        $svcKey    = $sender->country_id === $recipient->country_id ? 'mobile_zone' : 'international_zone';
+        $svcStatus = \App\Http\Services\ServiceAvailabilityService::status($svcKey);
+
+        if ($svcStatus['open']) {
+            return null;
+        }
+
+        return response()->json([
+            'status'  => false,
+            'message' => $svcStatus['message'] ?: "Ce service est momentanément indisponible. Merci de réessayer pendant les horaires d'ouverture.",
+        ], 403);
+    }
+
     public function calculateMobileZoneTransfer(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -2156,6 +2175,10 @@ class PixelPaymentController extends Controller
         }
         if (!$recipientService) {
             return response()->json(['status' => false, 'message' => 'Service destinataire introuvable ou inactif (Cash In requis)'], 404);
+        }
+
+        if ($closed = $this->zoneClosedResponse($senderService, $recipientService)) {
+            return $closed;
         }
 
         $amount = (float) $request->amount;
@@ -2249,6 +2272,10 @@ class PixelPaymentController extends Controller
         }
         if (!$recipientService) {
             return response()->json(['status' => false, 'message' => 'Service destinataire introuvable (Cash In requis)'], 404);
+        }
+
+        if ($closed = $this->zoneClosedResponse($senderService, $recipientService)) {
+            return $closed;
         }
 
         $senderIso2    = self::countryCode($senderService->country) ?? '';
