@@ -103,7 +103,7 @@ class ProviderController extends Controller
             $mzOpen = \App\Http\Services\ServiceAvailabilityService::isOpen('mobile_zone');
             $izOpen = \App\Http\Services\ServiceAvailabilityService::isOpen('international_zone');
 
-            $cacheKey = "dashboard_data_user_v6_" . robus()->id . "_country_" . $countrieId . "_mz" . (int) $mzOpen . "_iz" . (int) $izOpen;
+            $cacheKey = "dashboard_data_user_v7_" . robus()->id . "_country_" . $countrieId . "_mz" . (int) $mzOpen . "_iz" . (int) $izOpen;
             // 1️⃣ Cas où l'app est indisponible
             if (!$appStatusResult['success']) {
 
@@ -131,7 +131,15 @@ class ProviderController extends Controller
                     $dashboard_data['Dépôt zone'] = ProviderSingleCollection::collection($depositZoneProviders);
                 }
 
-                return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
+// 'closed_services' est hors de 'Wallets' : les anciennes versions des apps l'ignorent
+                return response()->json([
+                    'success' => true,
+                    'Wallets' => $dashboard_data,
+                    'closed_services' => array_values(array_filter([
+                        $mzOpen ? null : 'mobile_zone',
+                        $izOpen ? null : 'international_zone',
+                    ])),
+                ], 200);
             }
 
             // 2️⃣ Récupération des assignations et mapping restrictions
@@ -378,7 +386,15 @@ class ProviderController extends Controller
                     $dashboard_data['Dépôt zone'] = ProviderSingleCollection::collection($depositZoneProviders);
                 }
 
-                return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
+// 'closed_services' est hors de 'Wallets' : les anciennes versions des apps l'ignorent
+                return response()->json([
+                    'success' => true,
+                    'Wallets' => $dashboard_data,
+                    'closed_services' => array_values(array_filter([
+                        $mzOpen ? null : 'mobile_zone',
+                        $izOpen ? null : 'international_zone',
+                    ])),
+                ], 200);
             });
         } catch (\Exception $exception) {
             return response()->json([
