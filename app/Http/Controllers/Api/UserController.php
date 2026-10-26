@@ -429,7 +429,9 @@ class UserController extends Controller
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletTresortMoney::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletVersement::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletBankSend::class) +
-            $this->transactionAccount->getTransactionCommissionAmountTotal(WalletInter::class);
+            $this->transactionAccount->getTransactionCommissionAmountTotal(WalletInter::class) +
+            $this->transactionAccount->getTransactionCommissionAmountTotal(PixelMobileZoneTransfer::class) +
+            $this->transactionAccount->getTransactionCommissionAmountTotal(\App\Models\Wallets\WalletPixelReload::class);
 
 
         $transformPaginate = function ($paginator, $collectionClass) {
@@ -637,14 +639,18 @@ class UserController extends Controller
 
                 $this->transactionAccount->updateWallet($withRemonte);
 
-                // Débit du compte des commissions total et versement admin
-                $walletCommission = WalletCommission::find(1);
-                $walletAdmin = WalletAdmin::find(1);
-                if ($walletCommission && $walletCommission->amount >= $gain_amount) {
-                    $walletCommission->decrement('amount', $gain_amount);
-                }
-                if ($walletAdmin) {
-                    $walletAdmin->increment('amount', $gain_amount);
+                // Débit du compte des commissions total et versement admin.
+                // Pixel Innov / Mobile Zone : le compte SD TOTAL a déjà été débité de la part du
+                // sous-distributeur au moment de l'opération, il ne faut pas le débiter une 2e fois.
+                if (!in_array($commissions, ['Commission Pixel Innov', 'Commission Envoi Mobile Zone'], true)) {
+                    $walletCommission = WalletCommission::find(1);
+                    $walletAdmin = WalletAdmin::find(1);
+                    if ($walletCommission && $walletCommission->amount >= $gain_amount) {
+                        $walletCommission->decrement('amount', $gain_amount);
+                    }
+                    if ($walletAdmin) {
+                        $walletAdmin->increment('amount', $gain_amount);
+                    }
                 }
 
                 if ($commissions == "Commission sur Paiements") {
