@@ -136,7 +136,7 @@ class ProviderController extends Controller
 
             // 2️⃣ Récupération des assignations et mapping restrictions
 
-            return Cache::remember($cacheKey, 1800, function () use ($countrieId) {
+            return Cache::remember($cacheKey, 1800, function () use ($countrieId, $mzOpen, $izOpen) {
                 $assignations = $this->percentRobus->operatorServices();
                 $restrictionMap = [
                     'TRANSFERT CREDIT' => 'showCreditButton',
