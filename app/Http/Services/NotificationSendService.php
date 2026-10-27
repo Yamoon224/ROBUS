@@ -52,7 +52,7 @@ class NotificationSendService
             ]);
         }
         try {
-            event(new CreateWalletPaiementEvent($walletPayment));
+            safeEvent(new CreateWalletPaiementEvent($walletPayment));
         } catch (\Throwable $e) {
             Log::warning('Event CreateWalletPaiementEvent échoué', [
                 'error' => $e->getMessage()
@@ -77,7 +77,7 @@ class NotificationSendService
 
                     if ($admin_single) {
                         $notifs = $admin_single->unreadNotifications;
-                        event(new AdminNotifEvent($notifs));
+                        safeEvent(new AdminNotifEvent($notifs));
                     }
                 }
             }
@@ -128,7 +128,7 @@ class NotificationSendService
             ])
         );
         $notifs = robus()->unreadNotifications;
-        event(new CreateWalletVersementEvent($walletPayment));
+        safeEvent(new CreateWalletVersementEvent($walletPayment));
 
         safeNotifyMany(
             $admins,
@@ -143,7 +143,7 @@ class NotificationSendService
 
                 $notifs = $admin_single->unreadNotifications;
 
-                event(new AdminNotifEvent($notifs));
+                safeEvent(new AdminNotifEvent($notifs));
             }
         }
 
@@ -176,7 +176,7 @@ class NotificationSendService
             ])
         );
         $notifs = robus()->unreadNotifications;
-        event(new CreateWalletPaiementEvent($walletPayment));
+        safeEvent(new CreateWalletPaiementEvent($walletPayment));
 
         safeNotifyMany(
             $admins,
@@ -191,7 +191,7 @@ class NotificationSendService
 
                 $notifs = $admin_single->unreadNotifications;
 
-                event(new AdminNotifEvent($notifs));
+                safeEvent(new AdminNotifEvent($notifs));
             }
         }
 
@@ -245,7 +245,7 @@ class NotificationSendService
             ])
         );
         $notifs = robus()->unreadNotifications;
-        event(new CreateWalletReloadCardEvent($walletRelaodCard));
+        safeEvent(new CreateWalletReloadCardEvent($walletRelaodCard));
 
         safeNotifyMany(
             $admins,
@@ -261,7 +261,7 @@ class NotificationSendService
 
                 $notifs = $admin_single->unreadNotifications;
 
-                event(new AdminNotifEvent($notifs));
+                safeEvent(new AdminNotifEvent($notifs));
             }
         }
         if (robus()->email != null) {
@@ -314,7 +314,7 @@ class NotificationSendService
 
         $admins = $this->getAdminCIVProperty();
         $notifs = robus()->unreadNotifications;
-        event(new CreateCardOrderEvent($walletOrderCard));
+        safeEvent(new CreateCardOrderEvent($walletOrderCard));
         safeNotifyMany(
             $admins,
             new AdminNotification(NotificationMessages::ORDER_RELOAD_CARD)
@@ -327,7 +327,7 @@ class NotificationSendService
 
                 $notifs = $admin_single->unreadNotifications;
 
-                event(new AdminNotifEvent($notifs));
+                safeEvent(new AdminNotifEvent($notifs));
             }
 
             if (robus()->email != null) {
@@ -380,7 +380,7 @@ class NotificationSendService
             ])
         );
         $notifs = robus()->unreadNotifications;
-        event(new CreateWalletPhoneCreditEvent($walletPhone));
+        safeEvent(new CreateWalletPhoneCreditEvent($walletPhone));
 
         safeNotifyMany(
             $admins,
@@ -394,7 +394,7 @@ class NotificationSendService
 
                 $notifs = $admin_single->unreadNotifications;
 
-                event(new AdminNotifEvent($notifs));
+                safeEvent(new AdminNotifEvent($notifs));
             }
         }
 
@@ -450,7 +450,7 @@ class NotificationSendService
             ])
         );
         $notifs = robus()->unreadNotifications;
-        event(new CreateWalletPushEvent($walletPush));
+        safeEvent(new CreateWalletPushEvent($walletPush));
         safeNotifyMany(
             $admins,
             new AdminNotification(NotificationMessages::WALLET_RELOAD_PUSH)
@@ -464,7 +464,7 @@ class NotificationSendService
 
                 $notifs = $admin_single->unreadNotifications;
 
-                event(new AdminNotifEvent($notifs));
+                safeEvent(new AdminNotifEvent($notifs));
             }
         }
 
@@ -520,7 +520,7 @@ class NotificationSendService
             ])
         );
         $notifs = robus()->unreadNotifications;
-        event(new CreateWalletTresortEvent($walletTransaction));
+        safeEvent(new CreateWalletTresortEvent($walletTransaction));
         safeNotifyMany(
             $admins,
             new AdminNotification(NotificationMessages::WALLET_RELOAD_TRESORT)
@@ -533,7 +533,7 @@ class NotificationSendService
 
                 $notifs = $admin_single->unreadNotifications;
 
-                event(new AdminNotifEvent($notifs));
+                safeEvent(new AdminNotifEvent($notifs));
             }
         }
 
@@ -589,7 +589,7 @@ class NotificationSendService
             ])
         );
         $notifs = robus()->unreadNotifications;
-        event(new CreateWalletDjamoEvent($walletTransaction));
+        safeEvent(new CreateWalletDjamoEvent($walletTransaction));
         safeNotifyMany(
             $admins,
             new AdminNotification(NotificationMessages::WALLET_RELOAD_DJAMO)
@@ -602,7 +602,7 @@ class NotificationSendService
 
                 $notifs = $admin_single->unreadNotifications;
 
-                event(new AdminNotifEvent($notifs));
+                safeEvent(new AdminNotifEvent($notifs));
             }
         }
 
@@ -658,7 +658,7 @@ class NotificationSendService
             ])
         );
         $notifs = robus()->unreadNotifications;
-        event(new CreateWalletOneXbet($walletXbet));
+        safeEvent(new CreateWalletOneXbet($walletXbet));
 
         safeNotifyMany(
             $admins,
@@ -672,7 +672,7 @@ class NotificationSendService
 
                 $notifs = $admin_single->unreadNotifications;
 
-                event(new AdminNotifEvent($notifs));
+                safeEvent(new AdminNotifEvent($notifs));
             }
         }
 
@@ -730,23 +730,23 @@ class NotificationSendService
 
 
         if ($walletWith->choose_transaction == 2 && $walletWith->provider_id == 91 || $walletWith->provider_id == 143) {
-            event(new CreateWalletDrawalEvent($walletWith));
-            event(new CreateWalletPushEvent($walletWith));
+            safeEvent(new CreateWalletDrawalEvent($walletWith));
+            safeEvent(new CreateWalletPushEvent($walletWith));
         } else if ($walletWith->choose_transaction == 2 && $walletWith->provider_id == 122 || $walletWith->provider_id == 144) {
-            event(new CreateWalletDrawalEvent($walletWith));
-            event(new CreateWalletTresortEvent($walletWith));
+            safeEvent(new CreateWalletDrawalEvent($walletWith));
+            safeEvent(new CreateWalletTresortEvent($walletWith));
         } else if ($walletWith->choose_transaction == 2 && $walletWith->provider_id == 121 || $walletWith->provider_id == 142) {
-            event(new CreateWalletDrawalEvent($walletWith));
-            event(new CreateWalletDjamoEvent($walletWith));
+            safeEvent(new CreateWalletDrawalEvent($walletWith));
+            safeEvent(new CreateWalletDjamoEvent($walletWith));
         } else {
             if ($walletWith->provider_id == 91 || $walletWith->provider_id == 143) {
-                event(new CreateWalletPushEvent($walletWith));
+                safeEvent(new CreateWalletPushEvent($walletWith));
             } else if ($walletWith->provider_id == 122 || $walletWith->provider_id == 144) {
-                event(new CreateWalletTresortEvent($walletWith));
+                safeEvent(new CreateWalletTresortEvent($walletWith));
             } else if ($walletWith->provider_id == 121  || $walletWith->provider_id == 142) {
-                event(new CreateWalletDjamoEvent($walletWith));
+                safeEvent(new CreateWalletDjamoEvent($walletWith));
             } else {
-                event(new CreateWalletTresortEvent($walletWith));
+                safeEvent(new CreateWalletTresortEvent($walletWith));
             }
         }
 
@@ -764,7 +764,7 @@ class NotificationSendService
 
                 $notifs = $admin_single->unreadNotifications;
 
-                event(new AdminNotifEvent($notifs));
+                safeEvent(new AdminNotifEvent($notifs));
             }
         }
 
@@ -827,7 +827,7 @@ class NotificationSendService
             ])
         );
         $notifs = robus()->unreadNotifications;
-        event(new CreateWalletBankSend($walletWith));
+        safeEvent(new CreateWalletBankSend($walletWith));
         safeNotifyMany(
             $admins,
             new AdminNotification(NotificationMessages::WALLET_RELOAD_BANK)
@@ -841,7 +841,7 @@ class NotificationSendService
 
                 $notifs = $admin_single->unreadNotifications;
 
-                event(new AdminNotifEvent($notifs));
+                safeEvent(new AdminNotifEvent($notifs));
             }
         }
 
@@ -894,7 +894,7 @@ class NotificationSendService
             ])
         );
         $notifs = robus()->unreadNotifications;
-        event(new CreateWaveEvent($walletWaves));
+        safeEvent(new CreateWaveEvent($walletWaves));
 
         safeNotifyMany(
             $admins,
@@ -908,7 +908,7 @@ class NotificationSendService
 
                 $notifs = $admin_single->unreadNotifications;
 
-                event(new AdminNotifEvent($notifs));
+                safeEvent(new AdminNotifEvent($notifs));
             }
         }
 
@@ -963,7 +963,7 @@ class NotificationSendService
 
         $admins = $this->getAdminCIVProperty();
         $notifs =  $userAuth->unreadNotifications;
-        event(new CreateWalletBankEvent($walletBank));
+        safeEvent(new CreateWalletBankEvent($walletBank));
 
         safeNotifyMany(
             $admins,
@@ -979,7 +979,7 @@ class NotificationSendService
 
                 $notifs = $admin_single->unreadNotifications;
 
-                event(new AdminNotifEvent($notifs));
+                safeEvent(new AdminNotifEvent($notifs));
             }
         }
 
@@ -1033,7 +1033,7 @@ class NotificationSendService
             ])
         );
         $notifs = robus()->unreadNotifications;
-        event(new CreateWalletTransfersEvent($walletTransaction));
+        safeEvent(new CreateWalletTransfersEvent($walletTransaction));
         $admins = $this->getAdminCIVProperty();
 
         safeNotifyMany(
@@ -1050,7 +1050,7 @@ class NotificationSendService
 
                 $notifs = $admin_single->unreadNotifications;
 
-                event(new AdminNotifEvent($notifs));
+                safeEvent(new AdminNotifEvent($notifs));
             }
         }
 
@@ -1105,9 +1105,9 @@ class NotificationSendService
         $notifs = robus()->unreadNotifications;
 
         if ($walletTransaction->type_transaction == 'Retrait') {
-            event(new CreateWalletDrawalEvent($walletTransaction));
+            safeEvent(new CreateWalletDrawalEvent($walletTransaction));
         } else {
-            event(new CreateWalletTransfersEvent($walletTransaction));
+            safeEvent(new CreateWalletTransfersEvent($walletTransaction));
         }
 
         $admins = $this->getAdminCIVProperty();
@@ -1126,7 +1126,7 @@ class NotificationSendService
 
                 $notifs = $admin_single->unreadNotifications;
 
-                event(new AdminNotifEvent($notifs));
+                safeEvent(new AdminNotifEvent($notifs));
             }
         }
         return true;

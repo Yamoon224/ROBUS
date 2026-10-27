@@ -161,6 +161,23 @@ class TransactionController extends Controller
      * 
      *  ),
      */
+    /**
+     * Les notifications / diffusions arrivent APRÈS l'enregistrement du transfert : leur échec ne doit pas
+     * renvoyer une erreur au client (qui referait l'opération), seulement être journalisé.
+     */
+    private function notifySafely(callable $send): void
+    {
+        try {
+            $send();
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Notification après transfert ignorée', [
+                'exception' => get_class($e),
+                'error' => $e->getMessage(),
+                'file' => $e->getFile() . ':' . $e->getLine(),
+            ]);
+        }
+    }
+
     public function create_transaction(Request $request)
     {
 
@@ -261,7 +278,7 @@ class TransactionController extends Controller
 
                                         if ($this->robusTransactionService->updateAmountRobusReceived($request->num_wallet, $walletTransaction, $valeur_received)) {
                                             if ($this->robusTransactionService->processCommissionsDistributerRobus($request->amount, $percent_robus, $walletTransaction, $admin_civ)) {
-                                                $this->notifications->sendNotification($walletTransaction);
+                                                $this->notifySafely(fn () => $this->notifications->sendNotification($walletTransaction));
                                                 return $this->messageAfterValidated($walletTransaction);
                                             } else {
 
@@ -315,7 +332,7 @@ class TransactionController extends Controller
 
                                     if ($this->robusTransactionService->updateAmountRobusReceivedDistributer($request->num_wallet, $walletTransaction, $valeur_received)) {
                                         if ($this->robusTransactionService->processCommissionsRobusDistributer($request->amount)) {
-                                            $this->notifications->sendNotification($walletTransaction);
+                                            $this->notifySafely(fn () => $this->notifications->sendNotification($walletTransaction));
                                             return $this->messageAfterValidated($walletTransaction);
                                         } else {
 
@@ -392,7 +409,7 @@ class TransactionController extends Controller
 
                                         if ($this->robusTransactionService->updateAmountRobusReceived($request->num_wallet, $walletTransaction, $valeur_received)) {
                                             if ($this->robusTransactionService->processCommissionsCustumerRobus($request->amount, $percent_robus, $walletTransaction, $admin_civ)) {
-                                                $this->notifications->sendNotification($walletTransaction);
+                                                $this->notifySafely(fn () => $this->notifications->sendNotification($walletTransaction));
                                                 return $this->messageAfterValidated($walletTransaction);
                                             } else {
 
@@ -566,7 +583,7 @@ class TransactionController extends Controller
 
                                         if ($processCommission) {
 
-                                            $this->notifications->sendNotificationMobile($walletTransaction);
+                                            $this->notifySafely(fn () => $this->notifications->sendNotificationMobile($walletTransaction));
 
                                             return $this->messageAfterValidated($walletTransaction);
                                         } else {
@@ -594,7 +611,13 @@ class TransactionController extends Controller
                     return json_message_response(false, "Niveau de pourcentage introuvable", 333);
                 }
             };
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
+            \Illuminate\Support\Facades\Log::error('create_transaction: erreur inattendue', [
+                'exception' => get_class($exception),
+                'error' => $exception->getMessage(),
+                'file' => $exception->getFile() . ':' . $exception->getLine(),
+                'user_id' => optional(robus())->id,
+            ]);
             return response()->json([
                 'success' => false,
                 'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
@@ -916,7 +939,7 @@ class TransactionController extends Controller
 
                                 if ($processCommission) {
 
-                                    $this->notifications->sendNotificationMobile($walletTransaction);
+                                    $this->notifySafely(fn () => $this->notifications->sendNotificationMobile($walletTransaction));
 
                                     return $this->messageAfterValidated($walletTransaction);
                                 } else {

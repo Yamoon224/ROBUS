@@ -107,6 +107,27 @@ if (!function_exists('safeNotifyMany')) {
     }
 }
 
+if (!function_exists('safeEvent')) {
+
+    /**
+     * Diffuse un événement sans jamais faire échouer la requête : une panne de diffusion (Pusher lent,
+     * quota, payload trop gros…) ne doit pas transformer une opération déjà enregistrée en erreur 500.
+     */
+    function safeEvent($event): void
+    {
+        try {
+            event($event);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Diffusion ignorée (événement)', [
+                'event' => is_object($event) ? get_class($event) : (string) $event,
+                'exception' => get_class($e),
+                'error' => $e->getMessage(),
+                'file' => $e->getFile() . ':' . $e->getLine(),
+            ]);
+        }
+    }
+}
+
 if (!function_exists('safeNotify')) {
 
     function safeNotify($user, Notification $notification): void
