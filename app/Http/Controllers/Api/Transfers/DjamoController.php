@@ -207,7 +207,7 @@ class DjamoController extends Controller
                                 if ($walletPush != null) {
 
                                     if ($this->djamoService->updateamountDjamoReceveid($admin_civ, $percent_robus, $walletPush, $reel_amount)) {
-                                        $this->notificationPhone->sendNotificationDjamo($walletPush);
+                                        notifyQuietly(fn () => $this->notificationPhone->sendNotificationDjamo($walletPush));
                                         return $this->messageAfterValidated($walletPush);
                                     }
                                 } else {
@@ -236,7 +236,7 @@ class DjamoController extends Controller
                     'message' => 'Les fournisseurs ne sont pas des pays ',
                 ], 333);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
 
             return response()->json([
                 'success' => false,
@@ -316,7 +316,7 @@ class DjamoController extends Controller
                     'message' => 'Erreur de suppression du virement.'
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return   json_message_response(false, "Erreur de suppression !", 300);
         }
     }
@@ -400,7 +400,7 @@ class DjamoController extends Controller
                     'message' => 'Pas de Virement dans cette zone ...',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -486,7 +486,7 @@ class DjamoController extends Controller
                     'message' => 'Pas de Virement dans cette zone ...',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',

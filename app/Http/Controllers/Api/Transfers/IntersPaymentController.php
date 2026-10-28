@@ -480,7 +480,7 @@ class IntersPaymentController extends Controller
 
                                         if ($this->interServices->updateAmountRobusReceived($walletInter, $country_robus, $valeur_received, $request->number_compte)) {
                                             if ($this->interServices->processCommissionsRobus($request->amount, $percent_robus, $walletInter)) {
-                                                $this->interServices->sendNotificationRobus($walletInter);
+                                                notifyQuietly(fn () => $this->interServices->sendNotificationRobus($walletInter));
                                                 return $this->messageAfterValidated($walletInter);
                                             } else {
 
@@ -590,7 +590,7 @@ class IntersPaymentController extends Controller
                                                 if ($this->interServices->updateAmountReceived($walletInter, $country_robus, $valeur_received)) {
 
                                                     if ($this->interServices->processCommissionMobiles($request->amount, $percent_robus, $country_robus, $walletInter, $admin_civ)) {
-                                                        $this->interServices->sendNotificationRobus($walletInter);
+                                                        notifyQuietly(fn () => $this->interServices->sendNotificationRobus($walletInter));
                                                         return $this->messageAfterValidated($walletInter);
                                                     } else {
 
@@ -757,7 +757,7 @@ class IntersPaymentController extends Controller
                                     if ($this->interServices->updateAmountReceived($walletInter, $country_robus, $totalAmountRecevedUser)) {
 
                                         if ($this->interServices->processCommissionMobiles($request->amount, $percent_robus, $country_robus, $walletInter, $admin_civ)) {
-                                            $this->interServices->sendNotificationRobus($walletInter);
+                                            notifyQuietly(fn () => $this->interServices->sendNotificationRobus($walletInter));
                                             return $this->messageAfterValidated($walletInter);
                                         } else {
 
@@ -873,7 +873,7 @@ class IntersPaymentController extends Controller
                                             if ($this->interServices->updateAmountReceived($walletInter, $country_robus, $valeur_received)) {
 
                                                 if ($this->interServices->processCommissionWithMobiles($valeur_amount, $percent_djamo, $country_robus, $walletInter, $admin_civ)) {
-                                                    $this->interServices->sendNotificationRobus($walletInter);
+                                                    notifyQuietly(fn () => $this->interServices->sendNotificationRobus($walletInter));
                                                     return $this->messageAfterValidated($walletInter);
                                                 } else {
 
@@ -1042,7 +1042,7 @@ class IntersPaymentController extends Controller
                                 if ($walletPayment != null) {
 
                                     if ($this->paymentServices->updateAmountPaymentReceveid($admin_civ, $percent_robus, $walletPayment, $convertion_amount_pay)) {
-                                        $this->interServices->sendNotificationPayment($walletPayment);
+                                        notifyQuietly(fn () => $this->interServices->sendNotificationPayment($walletPayment));
                                         return $this->messageAfterValidated($walletPayment);
                                     }
                                 } else {
@@ -1054,7 +1054,7 @@ class IntersPaymentController extends Controller
                                 if ($walletPayment != null) {
 
                                     if ($this->paymentServices->updateAmountPaymentOfferReceveid($admin_civ, $percent_robus, $walletPayment, $convertion_amount_pay)) {
-                                        $this->interServices->sendNotificationPayment($walletPayment);
+                                        notifyQuietly(fn () => $this->interServices->sendNotificationPayment($walletPayment));
                                         return $this->messageAfterValidated($walletPayment);
                                     }
                                 } else {
@@ -1151,7 +1151,7 @@ class IntersPaymentController extends Controller
                                 if ($walletPhoneCredit != null) {
 
                                     if ($this->paymentCreditService->updateamountPhoneCreditReceveid($admin_civ, $percent_robus, $walletPhoneCredit, $request->amount)) {
-                                        $this->interServices->sendNotificationPayment($walletPhoneCredit);
+                                        notifyQuietly(fn () => $this->interServices->sendNotificationPayment($walletPhoneCredit));
                                         return $this->messageAfterValidated($walletPhoneCredit);
                                     }
                                 } else {
@@ -1321,7 +1321,7 @@ class IntersPaymentController extends Controller
                                                     if ($walletVirement != null) {
 
                                                         if ($this->virementInterService->updateamountVirementInterReceveid($admin_civ, $amount_commission_convertion, $walletVirement, $amount_valeur_convertion_send, $percent_distr_cfa, $amount_commission_compagnie)) {
-                                                            $this->interServices->sendNotificationPayment($walletVirement);
+                                                            notifyQuietly(fn () => $this->interServices->sendNotificationPayment($walletVirement));
                                                             return $this->messageAfterValidated($walletVirement);
                                                         }
                                                     } else {
@@ -1507,7 +1507,7 @@ class IntersPaymentController extends Controller
                                                 if ($walletReloadCard != null) {
 
                                                     if ($this->virementInterService->updateamountVirementInterReceveid($admin_civ, $amount_commission_convertion_under, $walletReloadCard, $amount_valeur_convertion_send, $percent_valeur, $amount_commission_convertion_compagnie)) {
-                                                        $this->interServices->sendNotificationPayment($walletReloadCard);
+                                                        notifyQuietly(fn () => $this->interServices->sendNotificationPayment($walletReloadCard));
                                                         return $this->messageAfterValidated($walletReloadCard);
                                                     }
                                                 } else {
@@ -1612,7 +1612,7 @@ class IntersPaymentController extends Controller
                                 if ($this->interServices->updateAmountReceived($walletVersement, $country_robus, $valeur_received)) {
 
                                     if ($this->interServices->processCommissionWithVersementMobiles($valeur_amount, $percent_robus, $country_robus, $walletVersement, $admin_civ)) {
-                                        $this->interServices->sendNotificationVirementInters($walletVersement);
+                                        notifyQuietly(fn () => $this->interServices->sendNotificationVirementInters($walletVersement));
                                         return $this->messageAfterValidated($walletVersement);
                                     } else {
 
@@ -1788,7 +1788,7 @@ class IntersPaymentController extends Controller
                                                 if ($walletReloadCard != null) {
 
                                                     if ($this->virementInterService->updateamountVirementInterReceveid($admin_civ, $amount_commission_convertion_under, $walletReloadCard, $amount_valeur_convertion_send, $percent_valeur, $amount_commission_convertion_compagnie)) {
-                                                        $this->interServices->sendNotificationPayment($walletReloadCard);
+                                                        notifyQuietly(fn () => $this->interServices->sendNotificationPayment($walletReloadCard));
                                                         return $this->messageAfterValidated($walletReloadCard);
                                                     }
                                                 } else {
@@ -1815,7 +1815,7 @@ class IntersPaymentController extends Controller
                     return   json_message_response(false, "Votre montant journalier est atteint !", 333);
                 }
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' => false,
                 'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
@@ -1880,7 +1880,7 @@ class IntersPaymentController extends Controller
                     'message' => 'Erreur de suppression du virement.'
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return json_message_response(false, "Erreur de suppression !", 300);
         }
     }
@@ -2172,7 +2172,7 @@ class IntersPaymentController extends Controller
                     'message' => 'Pas d\'utilisateur',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -2320,7 +2320,7 @@ class IntersPaymentController extends Controller
                     'amount_receive' => $commission_transaction_val_inter_receive . ' ' .  $countrie->currencie->code,
                 ],
             ], 200);
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' => false,
                 'message' => 'Une erreur s\'est produite lors de la recherche.',
@@ -2447,7 +2447,7 @@ class IntersPaymentController extends Controller
                     ],
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -2542,7 +2542,7 @@ class IntersPaymentController extends Controller
                     ],
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -2658,7 +2658,7 @@ class IntersPaymentController extends Controller
                     'amount_receive' => $commission_transaction_val_inter_receive . ' ' .  $countrie->currencie->code,
                 ],
             ], 200);
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' => false,
                 'message' => 'Une erreur s\'est produite lors de la recherche.',
@@ -2807,7 +2807,7 @@ class IntersPaymentController extends Controller
                     'amount_receive' => $commission_transaction_val_inter_receive,
                 ],
             ], 200);
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas Erreur de calcul des commissions',
@@ -2857,7 +2857,7 @@ class IntersPaymentController extends Controller
                     ],
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -2910,7 +2910,7 @@ class IntersPaymentController extends Controller
                     ],
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -3075,7 +3075,7 @@ class IntersPaymentController extends Controller
                     'message' => 'Pas de valeur disponible',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -3190,7 +3190,7 @@ class IntersPaymentController extends Controller
                     'message' => 'Pas de valeur disponible',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -3237,7 +3237,7 @@ class IntersPaymentController extends Controller
                     ],
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -3279,7 +3279,7 @@ class IntersPaymentController extends Controller
                     ],
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -3383,7 +3383,7 @@ class IntersPaymentController extends Controller
                     'message' => 'Donnez le montant',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -3483,7 +3483,7 @@ class IntersPaymentController extends Controller
                     'message' => 'Donnez le montant',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -3509,7 +3509,7 @@ class IntersPaymentController extends Controller
                     'image' => $data->sidUser->image ?? null,
                 ],
             ], 200);
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',

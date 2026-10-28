@@ -339,7 +339,7 @@ class ReloadController extends Controller
                             if ($wallet_user->email != null) {
 
                                 $notify = new MailController;
-                                $notify->newReloadUV($walletReload);
+                                notifyQuietly(fn () => $notify->newReloadUV($walletReload));
                             }
                             return response()->json([
                                 'success' => true,
@@ -357,7 +357,7 @@ class ReloadController extends Controller
                             if ($wallet_user->email != null) {
 
                                 $notify = new MailController;
-                                $notify->newReloadUV($walletReload);
+                                notifyQuietly(fn () => $notify->newReloadUV($walletReload));
                             }
                             return response()->json([
                                 'success' => true,
@@ -524,7 +524,7 @@ class ReloadController extends Controller
                                 if ($wallet_user->email != null) {
 
                                     $notify = new MailController;
-                                    $notify->newReloadUV($walletReload);
+                                    notifyQuietly(fn () => $notify->newReloadUV($walletReload));
                                 }
                                 return response()->json([
                                     'success' => true,
@@ -543,7 +543,7 @@ class ReloadController extends Controller
                                 if ($wallet_user->email != null) {
 
                                     $notify = new MailController;
-                                    $notify->newReloadUV($walletReload);
+                                    notifyQuietly(fn () => $notify->newReloadUV($walletReload));
                                 }
                                 return response()->json([
                                     'success' => true,
@@ -673,7 +673,7 @@ class ReloadController extends Controller
                                 if ($wallet_user->email != null) {
 
                                     $notify = new MailController;
-                                    $notify->newReloadUV($walletReload);
+                                    notifyQuietly(fn () => $notify->newReloadUV($walletReload));
                                 }
                                 return response()->json([
                                     'success' => true,
@@ -692,7 +692,7 @@ class ReloadController extends Controller
                                 if ($wallet_user->email != null) {
 
                                     $notify = new MailController;
-                                    $notify->newReloadUV($walletReload);
+                                    notifyQuietly(fn () => $notify->newReloadUV($walletReload));
                                 }
                                 return response()->json([
                                     'success' => true,
@@ -824,7 +824,7 @@ class ReloadController extends Controller
                                 if ($wallet_user->email != null) {
 
                                     $notify = new MailController;
-                                    $notify->newReloadUV($walletReload);
+                                    notifyQuietly(fn () => $notify->newReloadUV($walletReload));
                                 }
                                 return response()->json([
                                     'success' => true,
@@ -843,7 +843,7 @@ class ReloadController extends Controller
                                 if ($wallet_user->email != null) {
 
                                     $notify = new MailController;
-                                    $notify->newReloadUV($walletReload);
+                                    notifyQuietly(fn () => $notify->newReloadUV($walletReload));
                                 }
                                 return response()->json([
                                     'success' => true,
@@ -990,7 +990,7 @@ class ReloadController extends Controller
                             if ($wallet_user->email != null) {
 
                                 $notify = new MailController;
-                                $notify->newReloadUV($walletReload);
+                                notifyQuietly(fn () => $notify->newReloadUV($walletReload));
                             }
                             return response()->json([
                                 'success' => true,
@@ -1009,7 +1009,7 @@ class ReloadController extends Controller
                             if ($wallet_user->email != null) {
 
                                 $notify = new MailController;
-                                $notify->newReloadUV($walletReload);
+                                notifyQuietly(fn () => $notify->newReloadUV($walletReload));
                             }
                             return response()->json([
                                 'success' => true,
@@ -1107,7 +1107,7 @@ class ReloadController extends Controller
                     'message' => 'Erreur de suppression du virement.'
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return   json_message_response(false, "Erreur de suppression !", 300);
         }
     }
@@ -1230,7 +1230,7 @@ class ReloadController extends Controller
                     'message' => 'Pas de Virement dans cette zone ...',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -1288,7 +1288,7 @@ class ReloadController extends Controller
                     'message' => 'Pas de Virement dans cette zone ...',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -1340,7 +1340,7 @@ class ReloadController extends Controller
                     'message' => 'Pas de Virement dans cette zone ...',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -1392,7 +1392,7 @@ class ReloadController extends Controller
                     'message' => 'Pas de Virement dans cette zone ...',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',

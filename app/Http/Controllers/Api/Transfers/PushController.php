@@ -202,7 +202,7 @@ class PushController extends Controller
                                 if ($walletPush != null) {
 
                                     if ($this->pushService->updateamountPushReceveid($admin_civ, $percent_robus, $walletPush, $reel_amount)) {
-                                        $this->notificationPhone->sendNotificationPush($walletPush);
+                                        notifyQuietly(fn () => $this->notificationPhone->sendNotificationPush($walletPush));
                                         return $this->messageAfterValidated($walletPush);
                                     }
                                 } else {
@@ -231,7 +231,7 @@ class PushController extends Controller
                     'message' => 'Les fournisseurs ne sont pas des pays ',
                 ], 333);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
 
             return response()->json([
                 'success' => false,
@@ -311,7 +311,7 @@ class PushController extends Controller
                     'message' => 'Erreur de suppression du virement.'
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return   json_message_response(false, "Erreur de suppression !", 300);
         }
     }
@@ -397,7 +397,7 @@ class PushController extends Controller
                     'message' => 'Pas de Virement dans cette zone ...',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -484,7 +484,7 @@ class PushController extends Controller
                     'message' => 'Pas de Virement dans cette zone ...',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',

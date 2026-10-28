@@ -274,7 +274,9 @@ class MailController extends Controller
         try {
             Mail::to($data->wallet->sidUser->email)->queue(new WalletPhoneCredit($data));
         } catch (\Throwable $th) {
-            throw $th;
+            Log::error('Erreur mail crédit téléphonique', [
+                'error' => $th->getMessage(),
+            ]);
         }
     }
 

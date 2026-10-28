@@ -236,7 +236,7 @@ class withTransactionController extends Controller
 
                                                 if ($transactionResult['success']) {
 
-                                                        $this->notificationPhone->sendNotificationWiths($transactionResult['walletWith']);
+                                                        notifyQuietly(fn () => $this->notificationPhone->sendNotificationWiths($transactionResult['walletWith']));
                                                         return $this->messageAfterDjamoValidated($transactionResult['walletWith']);
                                                 } else {
                                                         return json_message_response(false, $transactionResult['message'], 333);
@@ -254,7 +254,7 @@ class withTransactionController extends Controller
                                         'message' => 'Selectionnez un fournisseur existant SVP ',
                                 ], 333);
                         }
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
 
                         return response()->json([
                                 'success' => false,
@@ -480,7 +480,7 @@ class withTransactionController extends Controller
                         /** ===============================
                          *  🔟 Notifications
                          * =============================== */
-                        $this->notificationPhone->sendNotificationBankSend($wallet);
+                        notifyQuietly(fn () => $this->notificationPhone->sendNotificationBankSend($wallet));
 
                         return $this->messageAfterBankSendValidated($wallet);
                 } catch (\Throwable $e) {
@@ -599,7 +599,7 @@ class withTransactionController extends Controller
 
                                                 if ($transactionResult['success']) {
 
-                                                        $this->notificationPhone->sendNotificationWiths($transactionResult['walletWith']);
+                                                        notifyQuietly(fn () => $this->notificationPhone->sendNotificationWiths($transactionResult['walletWith']));
                                                         return $this->messageAfterDjamoValidated($transactionResult['walletWith']);
                                                 } else {
                                                         return json_message_response(false, $transactionResult['message'], 333);
@@ -617,7 +617,7 @@ class withTransactionController extends Controller
                                         'message' => 'Selectionnez un fournisseur existant SVP ',
                                 ], 333);
                         }
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
 
                         return response()->json([
                                 'success' => false,
@@ -765,7 +765,7 @@ class withTransactionController extends Controller
 
                                                 if ($transactionResult['success']) {
 
-                                                        $this->notificationPhone->sendNotificationWiths($transactionResult['walletWith']);
+                                                        notifyQuietly(fn () => $this->notificationPhone->sendNotificationWiths($transactionResult['walletWith']));
                                                         return $this->messageAfterDjamoValidated($transactionResult['walletWith']);
                                                 } else {
                                                         return json_message_response(false, $transactionResult['message'], 333);
@@ -783,7 +783,7 @@ class withTransactionController extends Controller
                                         'message' => 'Selectionnez un fournisseur existant SVP ',
                                 ], 333);
                         }
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
 
                         return response()->json([
                                 'success' => false,
@@ -918,7 +918,7 @@ class withTransactionController extends Controller
                                         'message' => 'Erreur de suppression de la demande .'
                                 ], 200);
                         }
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
                         return   json_message_response(false, "Erreur de suppression !", 300);
                 }
         }
@@ -942,7 +942,7 @@ class withTransactionController extends Controller
                                         'message' => 'Erreur de suppression de la demande .'
                                 ], 200);
                         }
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
                         return   json_message_response(false, "Erreur de suppression !", 300);
                 }
         }
@@ -965,7 +965,7 @@ class withTransactionController extends Controller
                                         'message' => 'Erreur de suppression de la demande .'
                                 ], 200);
                         }
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
                         return   json_message_response(false, "Erreur de suppression !", 300);
                 }
         }
@@ -1022,7 +1022,7 @@ class withTransactionController extends Controller
                                         ], 200);
                                 }
                         }
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
                         return response()->json([
                                 'success' =>  false,
                                 'message' => 'Pas d\'utilisateur',
@@ -1253,7 +1253,7 @@ class withTransactionController extends Controller
                                         'amount_receive' => $net_amount,
                                 ],
                         ], 200);
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
                         return response()->json([
                                 'success' => false,
                                 'message' => 'Une erreur s\'est produite lors de la recherche.',
@@ -1300,7 +1300,7 @@ class withTransactionController extends Controller
                                         'amount_receive' => $net_amount,
                                 ],
                         ], 200);
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
                         return response()->json([
                                 'success' => false,
                                 'message' => 'Une erreur s\'est produite lors de la recherche.',

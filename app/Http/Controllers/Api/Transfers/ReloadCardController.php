@@ -281,7 +281,7 @@ class ReloadCardController extends Controller
                                                 if ($walletReloadCard != null) {
 
                                                     if ($this->reloadCardService->updateamountReloadCardReceveid($admin_civ, $valuer_deposit_com, $walletReloadCard, $valuer_admin_com, $amount_verify, $commissionCompanie)) {
-                                                        $this->notificationOrderCard->sendNotificationReloadCard($walletReloadCard);
+                                                        notifyQuietly(fn () => $this->notificationOrderCard->sendNotificationReloadCard($walletReloadCard));
                                                         return $this->messageAfterValidated($walletReloadCard);
                                                     }
                                                 } else {
@@ -313,7 +313,7 @@ class ReloadCardController extends Controller
                     'message' => 'Les fournisseurs ne sont pas des pays',
                 ], 333);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
 
             return response()->json([
                 'success' => false,
@@ -396,7 +396,7 @@ class ReloadCardController extends Controller
                     'message' => 'Erreur de suppression du virement.'
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return json_message_response(false, "Erreur de suppression !", 300);
         }
     }
@@ -468,7 +468,7 @@ class ReloadCardController extends Controller
                     'amount_receive' => $result['amount_receive'] ?? "Verifier le montant de saisie",
                 ],
             ], 200);
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -548,7 +548,7 @@ class ReloadCardController extends Controller
                     'amount_receive' => $result['amount_receive'],
                 ],
             ], 200);
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',

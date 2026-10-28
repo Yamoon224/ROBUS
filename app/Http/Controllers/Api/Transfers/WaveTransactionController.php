@@ -187,7 +187,7 @@ class WaveTransactionController extends Controller
                                                                 if ($transactionResult['success']) {
 
 
-                                                                        $this->notificationPhone->sendNotificationWaves($transactionResult['walletWave']);
+                                                                        notifyQuietly(fn () => $this->notificationPhone->sendNotificationWaves($transactionResult['walletWave']));
 
                                                                         return $this->messageAfterValidated($transactionResult['walletWave']);
                                                                 } else {
@@ -215,7 +215,7 @@ class WaveTransactionController extends Controller
                                         'message' => 'Les fournisseurs ne sont pas des pays ',
                                 ], 333);
                         }
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
 
                         return response()->json([
                                 'success' => false,
@@ -321,7 +321,7 @@ class WaveTransactionController extends Controller
                                         'message' => 'Erreur de suppression de la demande .'
                                 ], 200);
                         }
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
                         return   json_message_response(false, "Erreur de suppression !", 300);
                 }
         }
@@ -365,7 +365,7 @@ class WaveTransactionController extends Controller
                                         'message' => 'Pas de Rechargement dans cette zone ...',
                                 ], 200);
                         }
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
                         return response()->json([
                                 'success' =>  false,
                                 'message' => 'Pas d\'utilisateur',
@@ -412,7 +412,7 @@ class WaveTransactionController extends Controller
                                         'message' => 'Pas de Rechargement dans cette zone ...',
                                 ], 200);
                         }
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
                         return response()->json([
                                 'success' =>  false,
                                 'message' => 'Pas d\'utilisateur',

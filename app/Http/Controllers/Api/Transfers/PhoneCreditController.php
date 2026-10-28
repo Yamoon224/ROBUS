@@ -205,7 +205,13 @@ class PhoneCreditController extends Controller
                                 if ($walletPhoneCredit != null) {
 
                                     if ($this->phoneCreditService->updateamountPhoneCreditReceveid($admin_civ, $percent_robus, $walletPhoneCredit, $reel_amount)) {
-                                        $this->notificationPhone->sendNotificationPhoneCredit($walletPhoneCredit);
+                                        try {
+                                            notifyQuietly(fn () => $this->notificationPhone->sendNotificationPhoneCredit($walletPhoneCredit));
+                                        } catch (\Throwable $e) {
+                                            \Log::error('Notification après crédit téléphonique ignorée', [
+                                                'error' => $e->getMessage(),
+                                            ]);
+                                        }
                                         return $this->messageAfterValidated($walletPhoneCredit);
                                     }
                                 } else {
@@ -234,7 +240,11 @@ class PhoneCreditController extends Controller
                     'message' => 'Les fournisseurs ne sont pas des pays ',
                 ], 333);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
+            \Log::error('create_phone_credit: erreur inattendue', [
+                'error' => $exception->getMessage(),
+                'file' => $exception->getFile() . ':' . $exception->getLine(),
+            ]);
 
             return response()->json([
                 'success' => false,
@@ -314,7 +324,7 @@ class PhoneCreditController extends Controller
                     'message' => 'Erreur de suppression du virement.'
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return   json_message_response(false, "Erreur de suppression !", 300);
         }
     }
@@ -404,7 +414,7 @@ class PhoneCreditController extends Controller
                     'message' => 'Pas de Virement dans cette zone ...',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -491,7 +501,7 @@ class PhoneCreditController extends Controller
                     'message' => 'Pas de Virement dans cette zone ...',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',

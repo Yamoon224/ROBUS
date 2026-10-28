@@ -242,7 +242,7 @@ class VirementController extends Controller
                                                 if ($walletVirement != null) {
 
                                                     if ($this->virementServices->updateamountVirementReceveid($admin_civ, $amount_user, $walletVirement, $amount_valeur)) {
-                                                        $this->notificationVirement->sendNotificationVirement($walletVirement);
+                                                        notifyQuietly(fn () => $this->notificationVirement->sendNotificationVirement($walletVirement));
                                                         return $this->messageAfterValidated($walletVirement);
                                                     }
                                                 } else {
@@ -280,7 +280,7 @@ class VirementController extends Controller
                     'message' => 'Les fournisseurs ne sont pas des pays ',
                 ], 333);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' => false,
                 'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
@@ -378,7 +378,7 @@ class VirementController extends Controller
                     'message' => 'Pas de Virement dans cette zone ...',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -459,7 +459,7 @@ class VirementController extends Controller
                     'message' => 'Pas de Virement dans cette zone ...',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -524,7 +524,7 @@ class VirementController extends Controller
                     'message' => 'Erreur de suppression du virement.'
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return   json_message_response(false, "Erreur de suppression !", 300);
         }
     }

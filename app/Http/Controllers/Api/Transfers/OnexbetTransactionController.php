@@ -235,7 +235,7 @@ class OnexbetTransactionController extends Controller
                                                 $amountReceved =  $reel_amount - (float) ($percent_robus->percent_with_drawal *  $reel_amount);
                                                 $transactionResult = $this->processWithdrawalTransaction($request, $percent_robus, $amountReceved, $val_amount_send);
                                                 if ($transactionResult['success']) {
-                                                        $this->notificationPhone->sendNotification1xbets($transactionResult['walletXbet']);
+                                                        notifyQuietly(fn () => $this->notificationPhone->sendNotification1xbets($transactionResult['walletXbet']));
                                                         return $this->messageAfterValidated($transactionResult['walletXbet']);
                                                 } else {
                                                         return json_message_response(false, $transactionResult['message'], 333);
@@ -257,7 +257,7 @@ class OnexbetTransactionController extends Controller
 
                                                         if ($transactionResult['success']) {
 
-                                                                $this->notificationPhone->sendNotification1xbets($transactionResult['walletXbet']);
+                                                                notifyQuietly(fn () => $this->notificationPhone->sendNotification1xbets($transactionResult['walletXbet']));
                                                                 return $this->messageAfterValidated($transactionResult['walletXbet']);
                                                         } else {
                                                                 return json_message_response(false, $transactionResult['message'], 333);
@@ -273,7 +273,7 @@ class OnexbetTransactionController extends Controller
 
                                 return  json_message_response(false, "Pas de poucentage defini dans cette zone !", 333);
                         }
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
 
                         return response()->json([
                                 'success' => false,
@@ -401,7 +401,7 @@ class OnexbetTransactionController extends Controller
                                         'message' => 'Erreur de suppression de la demande .'
                                 ], 200);
                         }
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
                         return   json_message_response(false, "Erreur de suppression !", 300);
                 }
         }
@@ -458,7 +458,7 @@ class OnexbetTransactionController extends Controller
                                         'amount_receive' => $commission_conversion_val_nat_receive . ' ' . 'FCFA',
                                 ],
                         ], 200);
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
                         return response()->json([
                                 'success' => false,
                                 'message' => 'Une erreur s\'est produite lors de la recherche.',
@@ -505,7 +505,7 @@ class OnexbetTransactionController extends Controller
                                         'amount_receive' => $commission_wave_val_nat_receive,
                                 ],
                         ], 200);
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
                         return response()->json([
                                 'success' => false,
                                 'message' => 'Une erreur s\'est produite lors de la recherche.',
@@ -573,7 +573,7 @@ class OnexbetTransactionController extends Controller
                                 'success' => false,
                                 'message' => 'Aucun enregistrement trouvé pour ce numéro de Xbet.',
                         ], 404);
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
                         return response()->json([
                                 'success' => false,
                                 'message' => 'Une erreur s\'est produite lors de la recherche.',

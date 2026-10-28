@@ -290,7 +290,7 @@ class PaymentController extends Controller
                                 if ($walletPayment != null) {
 
                                     if ($this->paymentService->updateAmountPaymentReceveid($admin_civ, $percent_robus, $walletPayment, $amount_valeur)) {
-                                        $this->notificationPayment->sendNotificationPayment($walletPayment);
+                                        notifyQuietly(fn () => $this->notificationPayment->sendNotificationPayment($walletPayment));
                                         return $this->messageAfterValidated($walletPayment);
                                     } else {
                                         return  json_message_response(false, "Error sur la commission !", 333);
@@ -306,7 +306,7 @@ class PaymentController extends Controller
                                 if ($walletPayment != null) {
 
                                     if ($this->paymentService->updateAmountPaymentOfferReceveid($admin_civ, $percent_robus, $walletPayment, $amount_valeur)) {
-                                        $this->notificationPayment->sendNotificationPaymentOffer($walletPayment);
+                                        notifyQuietly(fn () => $this->notificationPayment->sendNotificationPaymentOffer($walletPayment));
                                         return $this->messageAfterValidated($walletPayment);
                                     } else {
                                         return  json_message_response(false, "Error sur la commission !", 333);
@@ -333,7 +333,7 @@ class PaymentController extends Controller
                 ], 333);
             }
             // Provider CIE
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' => false,
                 'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
@@ -411,7 +411,7 @@ class PaymentController extends Controller
                     'message' => 'Erreur de suppression du Paiement.'
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return  json_message_response(false, "Erreur de suppression !", 300);
         }
     }
@@ -462,7 +462,7 @@ class PaymentController extends Controller
                     ], 200);
                 }
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -514,7 +514,7 @@ class PaymentController extends Controller
                     ], 200);
                 }
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',

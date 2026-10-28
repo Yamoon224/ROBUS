@@ -107,6 +107,21 @@ if (!function_exists('safeNotifyMany')) {
     }
 }
 
+if (!function_exists('notifyQuietly')) {
+    function notifyQuietly(callable $callback): void
+    {
+        try {
+            $callback();
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Notification ignorée après opération', [
+                'exception' => get_class($e),
+                'error' => $e->getMessage(),
+                'file' => $e->getFile() . ':' . $e->getLine(),
+            ]);
+        }
+    }
+}
+
 if (!function_exists('safeEvent')) {
 
     /**

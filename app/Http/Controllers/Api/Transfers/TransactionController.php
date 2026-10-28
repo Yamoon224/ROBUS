@@ -771,7 +771,7 @@ class TransactionController extends Controller
                     'message' => 'Vous devez etre un distributer Robus.',
                 ], 500);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' => false,
                 'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
@@ -962,7 +962,7 @@ class TransactionController extends Controller
             } else {
                 return json_message_response(false, "Niveau de pourcentage introuvable", 333);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' => false,
                 'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
@@ -1101,7 +1101,7 @@ class TransactionController extends Controller
                     'message' => 'Vous devez etre un distributer Robus.',
                 ], 500);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' => false,
                 'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
@@ -1235,7 +1235,7 @@ class TransactionController extends Controller
                     'message' => (' Le code ou le numero n\'est pas correct, veuillez réessayer.')
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' => false,
                 'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
@@ -1299,7 +1299,7 @@ class TransactionController extends Controller
                     'message' => 'Erreur de suppression.'
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return   json_message_response(false, "Erreur de suppression !", 333);
         }
     }
@@ -1310,7 +1310,7 @@ class TransactionController extends Controller
         try {
 
             return $this->searchTransaction->searchTransaction($search);
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -1324,7 +1324,7 @@ class TransactionController extends Controller
         try {
 
             return $this->searchTransaction->searchTransaction($search);
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -1390,7 +1390,7 @@ class TransactionController extends Controller
                     ],
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -1434,7 +1434,7 @@ class TransactionController extends Controller
                     'message' => 'Saisie le montant SVP',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -1481,7 +1481,7 @@ class TransactionController extends Controller
                     'message' => 'Saisie le montant SVP',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -1553,7 +1553,7 @@ class TransactionController extends Controller
                     'message' => 'Saisie le montant SVP',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -1631,7 +1631,7 @@ class TransactionController extends Controller
                     'message' => 'Pas de montant',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -1704,7 +1704,7 @@ class TransactionController extends Controller
                     'message' => 'Pas de montant',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',

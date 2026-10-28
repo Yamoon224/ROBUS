@@ -201,7 +201,7 @@ class TresortMoneyController extends Controller
                                 if ($walletPush != null) {
 
                                     if ($this->tresortService->updateamountTresortReceveid($admin_civ, $percent_robus, $walletPush, $reel_amount)) {
-                                        $this->notificationPhone->sendNotificationTresort($walletPush);
+                                        notifyQuietly(fn () => $this->notificationPhone->sendNotificationTresort($walletPush));
                                         return $this->messageAfterValidated($walletPush);
                                     }
                                 } else {
@@ -230,7 +230,7 @@ class TresortMoneyController extends Controller
                     'message' => 'Les fournisseurs ne sont pas des pays ',
                 ], 333);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
 
             return response()->json([
                 'success' => false,
@@ -310,7 +310,7 @@ class TresortMoneyController extends Controller
                     'message' => 'Erreur de suppression du virement.'
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return   json_message_response(false, "Erreur de suppression !", 300);
         }
     }
@@ -394,7 +394,7 @@ class TresortMoneyController extends Controller
                     'message' => 'Pas de Virement dans cette zone ...',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',
@@ -480,7 +480,7 @@ class TresortMoneyController extends Controller
                     'message' => 'Pas de Virement dans cette zone ...',
                 ], 200);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' =>  false,
                 'message' => 'Pas d\'utilisateur',

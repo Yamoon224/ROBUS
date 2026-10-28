@@ -174,7 +174,7 @@ class BankCardController extends Controller
                         if ($walletOrderCard != null) {
 
                             if ($this->orderCardService->updateamountOrderCardReceveid($valeur_amount)) {
-                                $this->notificationOrderCard->sendNotificationOrderCard($walletOrderCard);
+                                notifyQuietly(fn () => $this->notificationOrderCard->sendNotificationOrderCard($walletOrderCard));
                                 return $this->messageAfterValidated($walletOrderCard);
                             }
                         } else {
@@ -191,7 +191,7 @@ class BankCardController extends Controller
 
                 return  json_message_response(false, "Pas de poucentage defini dans cette zone !", 333);
             }
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return response()->json([
                 'success' => false,
                 'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
@@ -366,7 +366,7 @@ class BankCardController extends Controller
                         if ($walletOrderCard != null) {
 
                             if ($this->orderCardService->updateamountOrderCardReceveid($valeur_amount)) {
-                                $this->notificationOrderCard->sendNotificationOrderCard($walletOrderCard);
+                                notifyQuietly(fn () => $this->notificationOrderCard->sendNotificationOrderCard($walletOrderCard));
                                 return $this->messageAfterValidated($walletOrderCard);
                             }
                         } else {
@@ -387,7 +387,7 @@ class BankCardController extends Controller
 
             //     return  json_message_response(false, "Selectionnez une carte visible !", 333);
             // }
-        // } catch (\Exception $exception) {
+        // } catch (\Throwable $exception) {
         //     return response()->json([
         //         'success' => false,
         //         'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
