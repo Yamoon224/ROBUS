@@ -710,8 +710,8 @@ class UserController extends Controller
 
                 if (robus()->email != null) {
 
-                    Mail::to(robus()->email)->send(new UvSend('Vous avez transféré une commission de ' . $withRemonte->amount_with_draw . ' ' . robus()->wallet->currencie->code . ' le '
-                        . $withRemonte->created_at  . ' Robus vous remercie'));
+                    notifyQuietly(fn () => Mail::to(robus()->email)->send(new UvSend('Vous avez transféré une commission de ' . $withRemonte->amount_with_draw . ' ' . robus()->wallet->currencie->code . ' le '
+                        . $withRemonte->created_at  . ' Robus vous remercie')));
                 }
 
                 return response()->json([
@@ -2039,8 +2039,8 @@ class UserController extends Controller
 
                     if ($wallet_user->email != null) {
 
-                        Mail::to($wallet_user->email)->send(new UvSend('Vous avez transféré une commission de ' . $valeur_received->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
-                            . $valeur_received->created_at  . ' Robus vous remercie'));
+                        notifyQuietly(fn () => Mail::to($wallet_user->email)->send(new UvSend('Vous avez transféré une commission de ' . $valeur_received->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
+                            . $valeur_received->created_at  . ' Robus vous remercie')));
                     }
                 }
 
@@ -2366,8 +2366,8 @@ class UserController extends Controller
 
                     if ($wallet_user->email != null) {
 
-                        Mail::to($wallet_user->email)->send(new UvSend('Vous avez transféré une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
-                            . $valeurReceived->created_at  . ' Robus vous remercie'));
+                        notifyQuietly(fn () => Mail::to($wallet_user->email)->send(new UvSend('Vous avez transféré une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
+                            . $valeurReceived->created_at  . ' Robus vous remercie')));
                     }
                 }
 
@@ -2507,7 +2507,7 @@ class UserController extends Controller
                 }
 
                 if (robus()->email != null) {
-                    Mail::to(robus()->email)->send(new NewAdmin("Vous avez fais une demande de liaison du sous distributeur "  . $wallet_search->sidUser->firstname  . ' ' .  $wallet_search->sidUser->firstname . env('APP_NAME')));
+                    notifyQuietly(fn () => Mail::to(robus()->email)->send(new NewAdmin("Vous avez fais une demande de liaison du sous distributeur "  . $wallet_search->sidUser->firstname  . ' ' .  $wallet_search->sidUser->firstname . env('APP_NAME'))));
                 }
 
                 return  json_message_response(true, "Sous distributeur " . $wallet_search->sidUser->firstname . ' ' . $wallet_search->sidUser->lastname .  " ajouté a votre reseau ", 333);

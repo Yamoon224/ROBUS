@@ -65,7 +65,7 @@ class CreateRobusWalletWithDrawalService
 
         if ($wallet_search->sidUser->email != null) {
 
-            Mail::to($wallet_search->sidUser->email)->send(new CodeValidated(' CODE : '  . $code_valdated));
+            notifyQuietly(fn () => Mail::to($wallet_search->sidUser->email)->send(new CodeValidated(' CODE : '  . $code_valdated)));
         }
 
         return  $this->transctionRepository->create([

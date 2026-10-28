@@ -111,7 +111,7 @@ class ReloadService
                 $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
                 $notifs = $walletUser->unreadNotifications;
                 $notifs = $wallet_search->sidUser->unreadNotifications;
-                event(new CreateReloadEvent($reload_unders));
+                safeEvent(new CreateReloadEvent($reload_unders));
                 Notification::send($admins, new AdminNotification('Demande de rechargement UV de ' . ' ' . $reload_unders->wallet->sidUser->firstname));
         
                 if ($admins->count() > 0) {
@@ -122,7 +122,7 @@ class ReloadService
                         $admin_single = SidUser::find($user->id);
         
                         $notifs = $admin_single->unreadNotifications;
-                        event(new AdminNotifEvent($notifs));
+                        safeEvent(new AdminNotifEvent($notifs));
                     }
         
                     if ($walletUser->email != null) {
@@ -133,7 +133,7 @@ class ReloadService
         
                     if ($wallet_search->sidUser->email != null) {
         
-                        Mail::to($wallet_search->sidUser->email)->send(new UvSend('Votre demande d\'achat d\'UV de ' . $reload_unders->amount_received . ' ' . $wallet_search->currencie->code  . ' chez  : '  . $walletUser->firstname . $walletUser->lastname . ' ' . ' Le ' .  $reload_unders->created_at  . ' Validé avec succes'));
+                        notifyQuietly(fn () => Mail::to($wallet_search->sidUser->email)->send(new UvSend('Votre demande d\'achat d\'UV de ' . $reload_unders->amount_received . ' ' . $wallet_search->currencie->code  . ' chez  : '  . $walletUser->firstname . $walletUser->lastname . ' ' . ' Le ' .  $reload_unders->created_at  . ' Validé avec succes')));
                     }
                 } else {
         
@@ -145,7 +145,7 @@ class ReloadService
         
                     if ($wallet_search->sidUser->email != null) {
         
-                        Mail::to($wallet_search->sidUser->email)->send(new UvSend('Votre demande d\'achat d\'UV de ' . $reload_unders->amount_received . ' ' . $wallet_search->currencie->code  . ' chez  : '  . $walletUser->firstname . $walletUser->lastname . ' ' . ' Le ' .  $reload_unders->created_at  . ' Validé avec succes'));
+                        notifyQuietly(fn () => Mail::to($wallet_search->sidUser->email)->send(new UvSend('Votre demande d\'achat d\'UV de ' . $reload_unders->amount_received . ' ' . $wallet_search->currencie->code  . ' chez  : '  . $walletUser->firstname . $walletUser->lastname . ' ' . ' Le ' .  $reload_unders->created_at  . ' Validé avec succes')));
                     }
                 }
 

@@ -111,7 +111,7 @@ class MasterService
 
                 if ($wallet_search->sidUser->email != null) {
 
-                        Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Robus vous a retiré la somme de  : ' . $walletTransaction->amount . ' Sur votre compte ' . ' Votre montant est de : ' .  $walletUser->wallet->amount));
+                        notifyQuietly(fn () => Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Robus vous a retiré la somme de  : ' . $walletTransaction->amount . ' Sur votre compte ' . ' Votre montant est de : ' .  $walletUser->wallet->amount)));
                 }
 
                 if ($walletUser->email != null) {
