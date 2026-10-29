@@ -29,10 +29,10 @@ class Provider extends Model
 {
     protected static function booted()
     {
-        // Achat d'UV : l'activation de Paystack désactive Pixel Innov.
+        // Achat d'UV : Paystack et Pixel Innov se remplacent l'un l'autre.
         static::saved(function (self $provider) {
             if ($provider->wasChanged('status')) {
-                \App\Support\UvPaymentSwitch::enforce();
+                \App\Support\UvPaymentSwitch::providerChanged($provider);
             }
         });
     }
