@@ -1709,16 +1709,17 @@ class PixelPaymentController extends Controller
             throw new \Exception('Configuration Pixel Innov introuvable (pixel_service_id absent des métadonnées)');
         }
 
-        // benefice = montant + frais Pixel (ce que le client a réellement payé depuis son mobile)
-        $pixelFee = (float) ($ipnData['fee'] ?? $ipnData['comission'] ?? 0);
-        $benefice  = (float) ($ipnData['benefice'] ?? ((float) $reload->amount + $pixelFee));
+        // Achat d'UV : le client paie le montant saisi depuis son mobile ; le compte SD TOTAL est
+        // débité de ce montant intégral (et non du « benefice » de l'IPN, qui est net des frais Pixel).
+        $benefice  = (float) $reload->amount;
 
         // Frais depuis la config du service Pixel Innov (identiques à ceux calculés à l'init)
         $fixedFeePct     = (float) $pixelConfig->fixed_fee;
         $commissionPct   = (float) $pixelConfig->commission_percent;
         $totalFeePct     = $fixedFeePct + $commissionPct;
         $totalCommission = round((float) $reload->amount * $totalFeePct / 100, 2);
-        $amountReceived  = (float) $reload->amount - $totalFeePct;
+        // Montant crédité = montant - frais (le pourcentage doit être appliqué au montant : 300 - 2,5 % = 292,5)
+        $amountReceived  = round((float) $reload->amount - $totalCommission, 2);
         $totalAdminCommission  = round((float) $reload->amount * $fixedFeePct / 100, 2);;
 
         $walletAdmin      = WalletAdmin::find(1);
