@@ -104,6 +104,15 @@
                                         'total_percent' => $total_percent,
                                         'calcul_valeurs' => $calcul_valeurs,
                                     ])
+                                    <div class="frais-card mt-3">
+                                        <div class="frais-card-body">
+                                            <div class="frais-card-result">
+                                                <small>Montant à recevoir (montant à envoyer − frais)</small>
+                                                <div class="frais-card-result-amount" id="amount-received">0 FCFA</div>
+                                                <div class="frais-card-result-detail">Montant crédité sur le numéro</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="col-12 text-center">
@@ -145,6 +154,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     country.addEventListener('change', refreshOperators);
     refreshOperators();
+
+    const amountInput = document.getElementById('amount');
+    const rate = parseFloat(document.getElementById('total-percent').dataset.totalPercent || 0) / 100;
+    const fmt = n => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n) + ' FCFA';
+
+    function refreshAmounts() {
+        const amount = parseFloat(amountInput.value) || 0;
+        const fees = Math.round(amount * rate);
+        document.getElementById('result').textContent = fmt(fees);
+        document.getElementById('amount-received').textContent = fmt(Math.max(amount - fees, 0));
+    }
+
+    amountInput.addEventListener('input', refreshAmounts);
+    refreshAmounts();
 });
 </script>
 @endpush

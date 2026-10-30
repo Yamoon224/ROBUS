@@ -238,20 +238,34 @@ class TransactionWebController extends Controller
             return back()->with('color', 'danger')->with('status', 'Erreur lors de la création de la demande.')->withInput();
         }
 
-        event(new CreateWalletTransfersVisEvent($walletTransaction));
-        $response = $this->reloadCardService->updateamountTransactionPhoneCreditReceveid(
-            $this->validatedamountDays->adminCiv(),
-            $amountAdmin,
-            $walletTransaction
-        );
+        try {
+            $response = $this->reloadCardService->updateamountTransactionPhoneCreditReceveid(
+                $this->validatedamountDays->adminCiv(),
+                $amountAdmin,
+                $walletTransaction
+            );
 
-        if (!$response['success']) {
-            return back()->with('color', 'danger')->with('status', 'Erreur lors de la répartition des frais.')->withInput();
+            if (!$response['success']) {
+                return back()->with('color', 'danger')->with('status', 'Erreur lors de la répartition des frais.')->withInput();
+            }
+        } catch (\Throwable $e) {
+            \Log::error('Crédit téléphonique web : répartition des frais impossible', ['id' => $walletTransaction->id, 'error' => $e->getMessage()]);
         }
 
-        $this->notificationOrderCard->sendNotificationTransactionPhoneCreditWeb($walletTransaction);
+        // Diffusion et notifications ne doivent jamais bloquer la demande déjà enregistrée
+        try {
+            event(new CreateWalletTransfersVisEvent($walletTransaction));
+        } catch (\Throwable $e) {
+            \Log::warning('Crédit téléphonique web : diffusion ignorée', ['id' => $walletTransaction->id, 'error' => $e->getMessage()]);
+        }
 
-        return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/');
+        try {
+            $this->notificationOrderCard->sendNotificationTransactionPhoneCreditWeb($walletTransaction);
+        } catch (\Throwable $e) {
+            \Log::warning('Crédit téléphonique web : notification ignorée', ['id' => $walletTransaction->id, 'error' => $e->getMessage()]);
+        }
+
+        return redirect()->away('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/');
     }
 
 
