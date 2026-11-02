@@ -1889,7 +1889,7 @@ class transferVisitors extends Component
 
         $admins = SidUser::whereStatus(true)
             ->whereIsAdmin(true)
-            ->where('country_id', sabdy()->country->id)
+            ->where('country_id', sabdy()?->country?->id)
             ->get();
 
         return  $admins;

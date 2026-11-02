@@ -1,7 +1,7 @@
 <ul class="nav nav-link-tabs flex-col sm:flex-row justify-center lg:justify-start text-center" role="tablist">
 
 
-        @if (sabdy()->country->code == 'CI')
+        @if (sabdy()?->country?->code == 'CI')
             <li id="transfert-visitors-tab" class="nav-item" role="presentation">
                 <a wire:ignore.self href="javascript:;" class="nav-link py-4 flex items-center" id="transfert-visitors-nav" data-tw-target="#transfert-visitors"
                     aria-controls="transfert-visitors" aria-selected="false" role="tab"><svg xmlns="http://www.w3.org/2000/svg"
