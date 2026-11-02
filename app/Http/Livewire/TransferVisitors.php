@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\Notification;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class transferVisitors extends Component
+class TransferVisitors extends Component
 {
 
     use WithPagination;

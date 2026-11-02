@@ -7,7 +7,7 @@ use App\Models\Wallets\WalletBank;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Services\ServiceStatisticBackend;
 
-class Bankstate extends Component
+class BankState extends Component
 {
 
     public  $startDate = "";
