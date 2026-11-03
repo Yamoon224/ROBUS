@@ -25953,7 +25953,14 @@
     (function () {
     "use strict"; // Side Menu
 
-    $(".side-menu").on("click", function () {
+    $(".side-menu").on("click", function (e) {
+        // Garde-fou : si ce gestionnaire est lié plusieurs fois (script chargé en double,
+        // plusieurs jQuery), le clic ouvrirait puis refermerait aussitôt le sous-menu.
+        var ev = e && e.originalEvent ? e.originalEvent : e;
+        if (ev) {
+        if (ev.__sideMenuHandled === this) return;
+        ev.__sideMenuHandled = this;
+        }
         if ($(this).parent().find("ul").length) {
         if ($(this).parent().find("ul").first()[0].offsetParent !== null) {
             $(this).find(".side-menu__sub-icon").removeClass("transform rotate-180");
