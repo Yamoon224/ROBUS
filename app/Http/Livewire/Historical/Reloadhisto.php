@@ -90,8 +90,7 @@ class Reloadhisto extends Component
             $walletsQuery->where('created_by', $walletUser->id);
         }
 
-        $wallets = $walletsQuery->get();
-
-        return $wallets->sum('amount'); // Utilisation de sum pour simplifier
+        // Somme calculée par la base : charger toutes les rechargements en mémoire provoquait un 500
+        return $walletsQuery->sum('amount');
     }
 }
