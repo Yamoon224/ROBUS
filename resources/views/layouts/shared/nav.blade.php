@@ -1076,6 +1076,27 @@ $isAdminOrSupervisor = $user && ($user->is_admin || $user->is_supervisor);
         </li>
     </ul>
 </nav>
+<script>
+    // Garde ouvert le groupe du menu qui contient la page courante : certains liens d'un groupe
+    // pointent hors de son préfixe d'URL, le groupe se refermait alors après chaque navigation.
+    (function () {
+        document.querySelectorAll('.side-nav .side-menu--active').forEach(function (link) {
+            var sub = link.closest('ul');
+            while (sub && !sub.classList.contains('side-nav')) {
+                var group = sub.parentElement && sub.parentElement.closest('li');
+                var parentLink = sub.previousElementSibling;
+                if (group && parentLink && parentLink.classList.contains('side-menu')) {
+                    sub.classList.add('side-menu__sub-open');
+                    sub.style.display = 'block';
+                    parentLink.classList.add('side-menu--open');
+                    var icon = parentLink.querySelector('.side-menu__sub-icon');
+                    if (icon) icon.classList.add('transform', 'rotate-180');
+                }
+                sub = group ? group.closest('ul') : null;
+            }
+        });
+    })();
+</script>
 @endif
 
 @else
