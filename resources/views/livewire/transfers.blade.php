@@ -1410,58 +1410,6 @@
         });
     });
 
-    // Contournement d'un défaut de rendu GPU de Chrome : certains textes des cartes (réseau,
-    // montants, solde, téléphone, en-têtes) ne sont pas dessinés tant que la zone n'est pas
-    // redessinée. On force un repaint de la liste après l'affichage et après chaque mise à jour.
-    (function() {
-        function forceRepaint() {
-            const zone = document.querySelector('.tab-content');
-            if (!zone) return;
-            requestAnimationFrame(() => {
-                const prev = zone.style.transform;
-                zone.style.transform = 'translateZ(0)';
-                void zone.offsetHeight;
-                requestAnimationFrame(() => {
-                    zone.style.transform = prev;
-                    zone.querySelectorAll('.amount-value, .amount-balance-value, .user-phone, .fc-event-title, .transaction-progress-alert, thead th')
-                        .forEach(el => {
-                            el.style.display = el.style.display === 'none' ? '' : el.style.display;
-                            const d = el.style.visibility;
-                            el.style.visibility = 'hidden';
-                            void el.offsetHeight;
-                            el.style.visibility = d;
-                        });
-                });
-            });
-        }
-        window.addEventListener('load', () => { forceRepaint(); setTimeout(forceRepaint, 600); setTimeout(forceRepaint, 1800); });
-        document.addEventListener('livewire:load', function() {
-            Livewire.hook('message.processed', () => { forceRepaint(); setTimeout(forceRepaint, 400); });
-        });
-    })();
-
-    // Auto-réparation : si une carte d'une ligne arrive vide (réseau, montant, solde, téléphone,
-    // nom de l'opératrice), on redemande aussitôt le rendu au serveur (3 essais max) au lieu
-    // d'obliger l'opératrice à rafraîchir la page.
-    document.addEventListener('livewire:load', function() {
-        let healTries = 0;
-        Livewire.hook('message.processed', (message, component) => {
-            setTimeout(() => {
-                const hasBlank = [...document.querySelectorAll('.tab-pane.active tbody tr.intro-x')].some(tr =>
-                    [...tr.querySelectorAll(
-                        '.amount-value, .amount-balance-value, .user-phone, .fc-event-title, .transaction-progress-alert'
-                    )].some(el => !el.textContent.trim())
-                );
-                if (!hasBlank) {
-                    healTries = 0;
-                } else if (healTries < 3) {
-                    healTries++;
-                    component.$wire.$refresh();
-                }
-            }, 300);
-        });
-    });
-
     // Écouter les événements Livewire mais NE PAS CHANGER D'ONGLET
     document.addEventListener('livewire:load', function() {
 

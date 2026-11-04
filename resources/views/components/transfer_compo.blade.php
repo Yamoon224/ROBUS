@@ -40,7 +40,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="new-products" class="tiny-slider py-5">
+                <div id="new-products" class="py-5">
                     <div class="px-5">
                         <div class="overflow-x-auto">
                             <table id="table_orders" class="table table-bordered">
