@@ -69,7 +69,7 @@
                               <tbody>
                                   @if ($pushs->count() > 0)
                                       @foreach ($pushs as $key => $item)
-                                          <tr class="intro-x">
+                                          <tr class="intro-x" wire:key="push-row-{{ $item->id }}-{{ $item->status }}-{{ $item->updated_by }}-{{ $item->amount_solde }}">
                                               <td class="text-center w-40">
                                                   @include('components.infoTypeDjamo')
 

@@ -155,7 +155,7 @@
                                                  $valeur_amount_receveid = (float) $item->amount_received ;
                                             }
                                         @endphp
-                                        <tr class="intro-x">
+                                        <tr class="intro-x" wire:key="xbet-row-{{ $item->id }}-{{ $item->status }}-{{ $item->updated_by }}-{{ $item->amount_solde }}">
                                             <td class="text-center w-40">
 
 

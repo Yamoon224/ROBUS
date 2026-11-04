@@ -3,7 +3,7 @@
         @if ($item->updated_by)
             <div class="transaction-progress-alert w-full text-center text-blue-500">
                 Choisi par
-                {{ sidUserInfo($item->updated_by) }}
+                {{ ($transactionOperators ?? [])[$item->updated_by] ?? sidUserInfo($item->updated_by) }}
             </div>
         @endif
         <div class="flex items-center justify-center text-pending mt-3">

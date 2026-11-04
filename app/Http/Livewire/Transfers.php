@@ -4780,6 +4780,30 @@ class Transfers extends Component
         $this->emit('menu-phoneCredit-active');
     }
 
+    /**
+     * Charge en une fois réseau, solde, expéditeur et nom de l'opératrice pour toutes les listes,
+     * afin que ces informations s'affichent immédiatement avec le reste de la ligne.
+     * Retourne la table [id opératrice => nom].
+     */
+    private function warmTransactionLists(array $paginators)
+    {
+        $ids = collect();
+        foreach ($paginators as $paginator) {
+            $items = $paginator->getCollection();
+            $items->loadMissing([
+                'provider',
+                'wallet.currencie',
+                'wallet.sidUser.country.currencie',
+                'wallet.sidUser.city',
+            ]);
+            $ids = $ids->merge($items->pluck('updated_by'));
+        }
+
+        return SidUser::whereIn('id', $ids->filter()->unique()->values())
+            ->get()
+            ->mapWithKeys(fn($u) => [$u->id => trim($u->firstname . ' ' . $u->lastname)]);
+    }
+
     public function render()
     {
 
@@ -4839,9 +4863,15 @@ class Transfers extends Component
                 $q->where('wallet_transactions.wallet_id', $walletUser->wallet->id);
             })
             ->select('wallet_transactions.*')
+            // Tout est chargé en une fois : réseau, solde et expéditeur s'affichent immédiatement
+            ->with([
+                'provider',
+                'wallet.currencie',
+                'wallet.sidUser.country.currencie',
+                'wallet.sidUser.city',
+            ])
             ->orderBy('wallet_transactions.created_at', 'desc')
             ->paginate(15);
-
 
         $paiements = $paiement
             ->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
@@ -5059,6 +5089,10 @@ class Transfers extends Component
                 $walletUser->id
             )->sum('amount'),
             'transactions' => $transactions,
+            'transactionOperators' => $this->warmTransactionLists([
+                $transactions, $paiements, $virements, $internationals, $reloadCards, $phoneCredits,
+                $xbets, $pushs, $versements, $djamos, $bankSends, $tresortMoneys,
+            ]),
             'paiements' => $paiements,
             'virements' => $virements,
             'Internationals' => $internationals,

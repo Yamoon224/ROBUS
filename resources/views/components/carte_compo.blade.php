@@ -70,7 +70,7 @@
                               <tbody>
                                   @if ($reloadCards->count() > 0)
                                       @foreach ($reloadCards as $key => $item)
-                                          <tr class="intro-x">
+                                          <tr class="intro-x" wire:key="carte-row-{{ $item->id }}-{{ $item->status }}-{{ $item->updated_by }}-{{ $item->amount_solde }}">
                                               <td class="text-center w-40">
 
                                                   <div

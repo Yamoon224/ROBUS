@@ -70,7 +70,7 @@
                               <tbody>
                                   @if ($versements->count() > 0)
                                       @foreach ($versements as $key => $item)
-                                          <tr class="intro-x">
+                                          <tr class="intro-x" wire:key="versement-row-{{ $item->id }}-{{ $item->status }}-{{ $item->updated_by }}-{{ $item->amount_solde }}">
                                               <td class="text-center w-40">
                                                   <div
                                                       class="px-3 py-2 text-dark btn-teal dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">

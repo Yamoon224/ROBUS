@@ -67,7 +67,7 @@
                               <tbody>
                                   @if ($phoneCredits->count() > 0)
                                       @foreach ($phoneCredits as $key => $item)
-                                          <tr class="intro-x">
+                                          <tr class="intro-x" wire:key="credit-row-{{ $item->id }}-{{ $item->status }}-{{ $item->updated_by }}-{{ $item->amount_solde }}">
                                               <td class="text-center w-40">
 
                                                   <div
@@ -175,7 +175,7 @@
                                                                           style="color: white;">
                                                                           @if ($item->updated_by)
                                                                               Déjà choisir
-                                                                              {{ sidUserInfo($item->updated_by) }}
+                                                                              {{ ($transactionOperators ?? [])[$item->updated_by] ?? sidUserInfo($item->updated_by) }}
                                                                           @endif
                                                                       </span>
 
