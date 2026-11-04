@@ -302,9 +302,9 @@
 
                             </div>
                             <div class="crud-form-1 mt-3">
-                                <label class="form-label">Mot de passe <span class="text-danger"> *</label>
+                                <label class="form-label">Mot de passe</label>
                                 <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                    name="password" id="password" required maxlength="4">
+                                    name="password" id="password" maxlength="4" autocomplete="new-password" placeholder="Laisser vide pour ne pas changer">
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -313,11 +313,10 @@
 
                             </div>
                             <div class="crud-form-1 mt-3">
-                                <label class="form-label">Confirmer Mot de passe <span
-                                        class="text-danger">*</span></label>
+                                <label class="form-label">Confirmer Mot de passe</label>
                                 <input type="password"
                                     class="form-control @error('password_confirmation') is-invalid @enderror"
-                                    name="password_confirmation" id="password_confirmation" required maxlength="4">
+                                    name="password_confirmation" id="password_confirmation" maxlength="4" autocomplete="new-password">
                             </div>
 
                         </div>

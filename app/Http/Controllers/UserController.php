@@ -793,7 +793,7 @@ class UserController extends Controller
             return back()
                 ->withErrors($validator)
                 ->with('color', 'danger')
-                ->with('status', 'Champ requise')
+                ->with('status', $validator->errors()->first())
                 ->withInput();
         }
 
@@ -817,8 +817,16 @@ class UserController extends Controller
 
                 $valeur_message = ' Profil ';
 
-                Mail::to($user->email)->send(new NewAdmin('Vous etes désormais ' . $valeur_message . env('APP_NAME') .
-                    ' Votre email : '  . $user->email . ' Votre mot de passe : ' . $request->password));
+                // E-mail uniquement si le mot de passe a été changé ; un échec d'envoi ne doit
+                // pas faire croire que la modification (déjà enregistrée) a échoué.
+                if (!empty($request->password)) {
+                    try {
+                        Mail::to($user->email)->send(new NewAdmin('Vous etes désormais ' . $valeur_message . env('APP_NAME') .
+                            ' Votre email : '  . $user->email . ' Votre mot de passe : ' . $request->password));
+                    } catch (\Throwable $mailError) {
+                        report($mailError);
+                    }
+                }
 
                 $msg = "Modification de profil avec succès";
                 $color = 'success';
@@ -834,10 +842,10 @@ class UserController extends Controller
                     ->withInput();
             }
         } catch (\Throwable $th) {
+            report($th);
             return back()
-                ->withErrors($validator)
                 ->with('color', 'danger')
-                ->with('status', 'Erreur de création')
+                ->with('status', 'Erreur lors de la modification : ' . $th->getMessage())
                 ->withInput();
         }
     }
