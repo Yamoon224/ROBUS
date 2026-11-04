@@ -11,11 +11,11 @@
 @php
     // Classes de couleur selon la prop
     $colorClasses = [
-        'warning' => 'bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600',
-        'success' => 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700',
-        'danger' => 'bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700',
-        'primary' => 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700',
-        'purple' => 'bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700',
+        'warning' => 'take-warning',
+        'success' => 'take-success',
+        'danger' => 'take-danger',
+        'primary' => 'take-primary',
+        'purple' => 'take-purple',
     ];
 
     $sizeClasses = [

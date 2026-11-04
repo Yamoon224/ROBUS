@@ -22387,3 +22387,140 @@ html body {
     color: rgb(var(--color-success) / var(--tw-text-opacity));
   }
 }
+
+/* ── Correctif rendu GPU ─────────────────────────────────────────────────────
+   Sur certains postes (Chrome avec accélération graphique), le texte des cartes
+   des listes de transactions (réseau, montants, solde, téléphone, opératrice)
+   n'était pas dessiné après une mise à jour de la page. Cause : animations
+   infinies, transitions et transformations qui créent des couches GPU. On les
+   neutralise sur ces cartes uniquement. */
+.amount-balance::after,
+.amount-commission-balance::after {
+    animation: none !important;
+}
+
+.amount-balance,
+.amount-cfa,
+.amount-received,
+.user-phone,
+.user-badge,
+.user-location,
+.user-name,
+.transaction-progress-alert,
+.transaction-badge,
+.amount-section {
+    transition: none !important;
+    animation: none !important;
+}
+
+.amount-balance:hover,
+.amount-commission-balance:hover,
+.user-badge:hover,
+.user-phone:hover,
+.user-location:hover {
+    transform: none !important;
+}
+
+.tab-pane tbody tr.intro-x {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+
+/* ── Boutons « Je prends en charge » : fond explicite ───────────────────────
+   Les classes Tailwind de degrade (from, to) ne sont pas dans le CSS compilé : le dégradé
+   restait vide et le bouton apparaissait transparent (texte blanc sur fond clair). */
+.btn-take-action.take-warning { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important; }
+.btn-take-action.take-warning:hover { background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important; }
+.btn-take-action.take-success { background: linear-gradient(135deg, #22c55e 0%, #059669 100%) !important; }
+.btn-take-action.take-success:hover { background: linear-gradient(135deg, #16a34a 0%, #047857 100%) !important; }
+.btn-take-action.take-danger { background: linear-gradient(135deg, #ef4444 0%, #e11d48 100%) !important; }
+.btn-take-action.take-danger:hover { background: linear-gradient(135deg, #dc2626 0%, #be123c 100%) !important; }
+.btn-take-action.take-primary { background: linear-gradient(135deg, #3b82f6 0%, #4f46e5 100%) !important; }
+.btn-take-action.take-primary:hover { background: linear-gradient(135deg, #2563eb 0%, #4338ca 100%) !important; }
+.btn-take-action.take-purple { background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%) !important; }
+.btn-take-action.take-purple:hover { background: linear-gradient(135deg, #9333ea 0%, #6d28d9 100%) !important; }
+
+
+/* Listes de transactions : pas d'animation d'entree sur les conteneurs de la liste.
+   Les animations intro-x / intro-y (opacite + transformation) laissent le contenu
+   dans une couche GPU dont le texte n'est parfois pas dessine avant un rafraichissement. */
+.tab-pane .intro-x,
+.tab-pane .intro-y,
+.tab-pane .box,
+.tab-pane .table,
+.tab-pane .table td,
+.tab-pane .table th {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    will-change: auto !important;
+}
+
+
+/* Listes de transactions : ombres retirees (defaut de rendu GPU : texte non dessine).
+   Le texte est present et visible dans le DOM, mais Chrome ne le peint pas sur certains
+   postes ; les ombres de texte et les grosses ombres portees sont les declencheurs connus. */
+.tab-pane .amount-balance,
+.tab-pane .amount-balance *,
+.tab-pane .amount-cfa,
+.tab-pane .amount-cfa *,
+.tab-pane .amount-received,
+.tab-pane .amount-received *,
+.tab-pane .user-phone,
+.tab-pane .user-badge,
+.tab-pane .user-location,
+.tab-pane .user-name,
+.tab-pane .user-info-card,
+.tab-pane .transaction-progress-alert,
+.tab-pane .transaction-badge,
+.tab-pane .btn-take-action,
+.tab-pane thead th {
+    text-shadow: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+    -webkit-font-smoothing: antialiased;
+}
+
+
+/* Onglets non actifs : retires de l'affichage au lieu d'etre gardes a -9999px.
+   Les onglets caches (tableaux complets, transparents, hors ecran) restaient comme
+   couches graphiques geantes ; sur certains postes le rendu GPU laissait alors des
+   textes non dessines dans l'onglet visible. */
+.tab-content > .tab-pane:not(.active) {
+    display: none !important;
+}
+
+
+/* Listes de transactions : couleur du texte imposee.
+   La declaration color: rgb(255 255 255 / var(--tw-text-opacity)) de .btn-primary reste
+   ignoree (barree) apres une mise a jour en direct de la page : le texte du reseau, du
+   solde, du telephone et des en-tetes devient invisible jusqu'au rafraichissement. */
+.tab-pane .btn-primary,
+.tab-pane .fc-event-title,
+.tab-pane .fc-event-title-container,
+.tab-pane .amount-balance,
+.tab-pane .amount-balance *,
+.tab-pane .user-phone,
+.tab-pane .user-phone *,
+.tab-pane .amount-cfa,
+.tab-pane .amount-cfa *,
+.tab-pane .amount-received,
+.tab-pane .amount-received *,
+.tab-pane thead th {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.tab-pane .amount-value,
+.tab-pane .amount-currency,
+.tab-pane .transaction-progress-alert {
+    -webkit-text-fill-color: currentColor !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}

@@ -67,7 +67,7 @@
                                         @endif
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody wire:key="transfers-body-{{ md5($transactions->map(fn($t) => $t->id . $t->status . $t->updated_by)->implode('|')) }}">
                                     @if ($transactions->count() > 0)
                                         @foreach ($transactions as $key => $item)
                                             <tr class="intro-x"

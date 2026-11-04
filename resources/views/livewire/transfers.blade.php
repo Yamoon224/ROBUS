@@ -1318,7 +1318,6 @@
     @include('livewire.commissions.modals.transactions.addVirementBank')
     @include('livewire.commissions.modals.transactions.reloadModalPage')
 
-</div>
 
 <script>
     // Variable pour suivre l'onglet actif
@@ -1336,11 +1335,53 @@
         }
     });
 
-    document.addEventListener('livewire:update', () => {
-        const activeTab = localStorage.getItem('activeTab') || 'transfers';
-        const tab = document.getElementById(activeTab + '-nav');
-        if (tab) tab.click();
-    });
+    // Navigation par onglets : une transaction qui arrive dans un autre onglet (ou la mise à
+    // jour automatique) ne doit jamais changer l'onglet affiché. On mémorise l'onglet réellement
+    // visible avant chaque mise à jour de la page, puis on le rétablit à l'identique après,
+    // sans cliquer (donc sans relancer de transition).
+    (function() {
+        let paneAvantMaj = null;
+
+        function paneVisible() {
+            const p = document.querySelector('.tab-content > .tab-pane.active');
+            return p ? p.id : null;
+        }
+
+        function rafraichirBoutons(id) {
+            document.querySelectorAll('.nav-link').forEach(l => {
+                const on = l.getAttribute('data-tw-target') === '#' + id;
+                l.classList.toggle('active', on);
+                l.setAttribute('aria-selected', on ? 'true' : 'false');
+            });
+        }
+
+        function restaurer() {
+            const id = paneAvantMaj;
+            if (!id) return;
+            const cible = document.getElementById(id);
+            if (!cible) return;
+            if (paneVisible() !== id) {
+                document.querySelectorAll('.tab-content > .tab-pane').forEach(p => {
+                    const on = p === cible;
+                    p.classList.toggle('active', on);
+                    p.classList.toggle('show', on);
+                });
+            }
+            rafraichirBoutons(id);
+            try { localStorage.setItem('activeTab', id); } catch (e) {}
+        }
+
+        document.addEventListener('livewire:load', function() {
+            Livewire.hook('message.sent', () => {
+                paneAvantMaj = paneVisible() || paneAvantMaj;
+            });
+            Livewire.hook('message.processed', () => {
+                restaurer();
+                // La mise à jour peut aussi modifier les panneaux un instant plus tard
+                setTimeout(restaurer, 50);
+            });
+        });
+    })();
 
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', () => {
@@ -1366,6 +1407,58 @@
                 navId: $(this).attr('id'),
                 tabId: $(this).attr('data-tw-target').replace('#', '')
             };
+        });
+    });
+
+    // Contournement d'un défaut de rendu GPU de Chrome : certains textes des cartes (réseau,
+    // montants, solde, téléphone, en-têtes) ne sont pas dessinés tant que la zone n'est pas
+    // redessinée. On force un repaint de la liste après l'affichage et après chaque mise à jour.
+    (function() {
+        function forceRepaint() {
+            const zone = document.querySelector('.tab-content');
+            if (!zone) return;
+            requestAnimationFrame(() => {
+                const prev = zone.style.transform;
+                zone.style.transform = 'translateZ(0)';
+                void zone.offsetHeight;
+                requestAnimationFrame(() => {
+                    zone.style.transform = prev;
+                    zone.querySelectorAll('.amount-value, .amount-balance-value, .user-phone, .fc-event-title, .transaction-progress-alert, thead th')
+                        .forEach(el => {
+                            el.style.display = el.style.display === 'none' ? '' : el.style.display;
+                            const d = el.style.visibility;
+                            el.style.visibility = 'hidden';
+                            void el.offsetHeight;
+                            el.style.visibility = d;
+                        });
+                });
+            });
+        }
+        window.addEventListener('load', () => { forceRepaint(); setTimeout(forceRepaint, 600); setTimeout(forceRepaint, 1800); });
+        document.addEventListener('livewire:load', function() {
+            Livewire.hook('message.processed', () => { forceRepaint(); setTimeout(forceRepaint, 400); });
+        });
+    })();
+
+    // Auto-réparation : si une carte d'une ligne arrive vide (réseau, montant, solde, téléphone,
+    // nom de l'opératrice), on redemande aussitôt le rendu au serveur (3 essais max) au lieu
+    // d'obliger l'opératrice à rafraîchir la page.
+    document.addEventListener('livewire:load', function() {
+        let healTries = 0;
+        Livewire.hook('message.processed', (message, component) => {
+            setTimeout(() => {
+                const hasBlank = [...document.querySelectorAll('.tab-pane.active tbody tr.intro-x')].some(tr =>
+                    [...tr.querySelectorAll(
+                        '.amount-value, .amount-balance-value, .user-phone, .fc-event-title, .transaction-progress-alert'
+                    )].some(el => !el.textContent.trim())
+                );
+                if (!hasBlank) {
+                    healTries = 0;
+                } else if (healTries < 3) {
+                    healTries++;
+                    component.$wire.$refresh();
+                }
+            }, 300);
         });
     });
 
@@ -1433,3 +1526,5 @@
         }
     });
 </script>
+
+</div>
