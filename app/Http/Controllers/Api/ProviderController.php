@@ -103,7 +103,18 @@ class ProviderController extends Controller
             $mzOpen = \App\Http\Services\ServiceAvailabilityService::isOpen('mobile_zone');
             $izOpen = \App\Http\Services\ServiceAvailabilityService::isOpen('international_zone');
 
-            $cacheKey = "dashboard_data_user_v7_" . robus()->id . "_country_" . $countrieId . "_mz" . (int) $mzOpen . "_iz" . (int) $izOpen;
+            // Empreinte des services attribués à l'utilisateur : dès que l'administrateur ajoute ou
+            // retire un service, la clé change et le tableau de bord est recalculé immédiatement
+            // (sinon l'ancien tableau de bord restait servi jusqu'à 30 minutes).
+            $assignmentsStamp = md5(json_encode(
+                \DB::table('operator_services')
+                    ->where('sid_user_id', robus()->id)
+                    ->whereNull('deleted_at')
+                    ->selectRaw('count(*) as c, coalesce(max(id), 0) as m, coalesce(max(updated_at), 0) as u')
+                    ->first()
+            ));
+
+            $cacheKey = "dashboard_data_user_v8_" . robus()->id . "_country_" . $countrieId . "_mz" . (int) $mzOpen . "_iz" . (int) $izOpen . "_a" . $assignmentsStamp;
             // 1️⃣ Cas où l'app est indisponible
             if (!$appStatusResult['success']) {
 
