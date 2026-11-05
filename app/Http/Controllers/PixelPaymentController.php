@@ -277,18 +277,6 @@ class PixelPaymentController extends Controller
         $userCountryCode = self::countryCode($user?->country);
         $userZone = self::AMOUNT_LIMITS[$userCountryCode ?? '']['currency'] ?? null;
 
-        $zoneColumn = $this->currencyZoneColumn($userZone);
-
-        // Zone inconnue → pas de transfert zone disponible
-        if (!$zoneColumn) {
-            return response()->json([
-                'status'       => true,
-                'zone'         => null,
-                'user_country' => ['code' => $userCountryCode, 'name' => $user?->country?->name],
-                'countries'    => [],
-            ]);
-        }
-
         // Récupérer tous les services actifs (toutes zones), en excluant le pays de l'utilisateur
         // Les transferts cross-zone (XAF→XOF, XOF→XAF…) sont autorisés :
         // l'API key correcte est sélectionnée dynamiquement via setXaf() lors de l'initiation.

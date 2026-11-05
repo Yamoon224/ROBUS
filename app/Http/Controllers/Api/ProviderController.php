@@ -114,7 +114,7 @@ class ProviderController extends Controller
                     ->first()
             ));
 
-            $cacheKey = "dashboard_data_user_v8_" . robus()->id . "_country_" . $countrieId . "_mz" . (int) $mzOpen . "_iz" . (int) $izOpen . "_a" . $assignmentsStamp;
+            $cacheKey = "dashboard_data_user_v9_" . robus()->id . "_country_" . $countrieId . "_mz" . (int) $mzOpen . "_iz" . (int) $izOpen . "_a" . $assignmentsStamp;
             // 1️⃣ Cas où l'app est indisponible
             if (!$appStatusResult['success']) {
 

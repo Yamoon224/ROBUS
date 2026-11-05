@@ -304,9 +304,18 @@ class ProvidersService
 
     public static function getPixelInnovZoneProviders($countryId)
     {
+        $own = self::queryPixelInnovZoneProviders($countryId);
+
+        // Pays sans service Pixel Innov propre (ex. Tunisie) : l'utilisateur peut quand même
+        // envoyer depuis son portefeuille vers les pays desservis (taux de change de l'admin).
+        return $own->isNotEmpty() ? $own : self::queryPixelInnovZoneProviders(null);
+    }
+
+    private static function queryPixelInnovZoneProviders($countryId)
+    {
         return Provider::query()
             ->join('pixel_innove_services', 'pixel_innove_services.provider_id', 'providers.id')
-            ->where('pixel_innove_services.country_id', $countryId)
+            ->when($countryId, fn($q) => $q->where('pixel_innove_services.country_id', $countryId))
             ->where(function ($q) {
                 $q->where('pixel_innove_services.is_xof', true)
                   ->orWhere('pixel_innove_services.is_xaf', true)
