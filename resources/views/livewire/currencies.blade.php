@@ -1,8 +1,13 @@
 <div>
     
     <h2 class="intro-y text-lg font-medium mt-10">
-        Liste des devises
+        Liste des devises et taux de change
     </h2>
+    <p class="intro-y text-slate-500 mt-2">
+        Le <strong>taux</strong> est la valeur de 1 unité de la devise en FCFA (ex. 1 Dt = 200, 1 FCFA = 1).
+        Il sert à convertir les transferts internationaux : 100 Dt envoyés = 100 &times; 200 = 20&nbsp;000 FCFA,
+        puis les frais sont retirés dans la devise du destinataire.
+    </p>
     <div class="grid grid-cols-12 gap-6 mt-5 mb-3">
         {{-- @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-devise'))
             <button wire:click="$emit('modal-show')" class="btn btn-primary shadow-md mr-2">Ajouter</button>
@@ -27,8 +32,8 @@
                 <thead class="table-dark">
                     <tr>
                         <th class="whitespace-nowrap text-center">Code</th>
-                        <th class="text-center whitespace-nowrap text-center">Name</th>
-                        <th class="text-center whitespace-nowrap text-center">Value</th>
+                        <th class="text-center whitespace-nowrap text-center">Nom</th>
+                        <th class="text-center whitespace-nowrap text-center">Taux (1 unité = ? FCFA)</th>
                         <th class="text-center whitespace-nowrap text-center">Status</th>
                         <th class="text-center whitespace-nowrap text-center">Actions</th>
                     </tr>

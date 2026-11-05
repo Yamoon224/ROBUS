@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Models\Wallets\WalletCommission;
+use App\Support\TransferConversion;
 
 /**
  * @OA\Tag(
@@ -569,7 +570,7 @@ class PixelPaymentController extends Controller
 
         $publicBase = rtrim(config('services.pixel_innov.public_url'), '/');
         $pixelPayload = [
-            'amount'             => $amountToCredit,
+            'amount'             => $converted ? (int) $amountToCredit : $amountToCredit,
             'destination'        => $request->destination,
             'service_id'         => $pixelConfig->service_id,
             'ipn_url'            => $publicBase . '/payment_pixelInnov/callback',
@@ -707,30 +708,51 @@ class PixelPaymentController extends Controller
 
         $iso2   = self::countryCode($pixelConfig->country) ?? '';
         $limits = self::AMOUNT_LIMITS[$iso2] ?? ['min' => 200, 'max' => 1_500_000, 'currency' => 'XOF'];
+        // Montant saisi : dans la devise du portefeuille de l'expéditeur
         $amount = (float) $request->amount;
 
-        if ($amount < $limits['min'] || $amount > $limits['max']) {
+        // Conversion vers la devise du destinataire (taux de la page d'administration « Devises »)
+        $conversion = $this->walletConversion($pixelConfig, $limits['currency']);
+        if ($conversion === false) {
             return response()->json([
                 'status'  => false,
-                'message' => "Montant invalide pour {$pixelConfig->country->name}. Min : {$limits['min']}, Max : {$limits['max']}.",
+                'message' => $this->missingRateMessageFor($limits['currency']),
             ], 422);
         }
+        $rate      = $conversion['rate'] ?? 1.0;
+        $converted = $rate != 1.0;
 
         // Frais directs (commission_percent) — structure tarifaire directe Robus
         $commissionPct  = (float) $pixelConfig->commission_percent;
         $fixedFeePct    = (float) $pixelConfig->fixed_fee;
         $totalFeePct    = $commissionPct + $fixedFeePct;
-        $fees           = round($amount * $totalFeePct / 100, 2);
+        $calc           = TransferConversion::amounts($amount, $rate, $totalFeePct);
+
+        // Minimum / maximum : exprimés dans la devise du destinataire (montant converti)
+        if ($calc['converted'] < $limits['min'] || $calc['converted'] > $limits['max']) {
+            return response()->json([
+                'status'  => false,
+                'message' => "Montant invalide pour {$pixelConfig->country->name}. Min : {$limits['min']}, Max : {$limits['max']} {$limits['currency']}"
+                    . ($converted ? ' (montant converti : ' . number_format($calc['converted'], 0, ',', ' ') . " {$limits['currency']})." : '.'),
+            ], 422);
+        }
+
+        // Frais calculés sur le montant converti (devise du destinataire), enregistrés aussi
+        // dans la devise de l'expéditeur pour la comptabilité du portefeuille
+        $feesConverted  = $calc['fees'];
+        $fees           = $converted ? round($feesConverted / $rate, 2) : $feesConverted;
         // Frais prélevés sur le montant envoyé : débit = montant (pas montant + frais)
         $totalDebit     = $amount;
-        $amountReceived = round($amount - $fees, 2);
+        // Net crédité au destinataire, dans sa devise
+        $amountReceived = $calc['received'];
         // Ce parcours est exclusivement un Cash In : le mobile reçoit le net.
         $amountToCredit = $amountReceived;
+        $senderCurrency = $conversion['from'] ?? $limits['currency'];
 
         if ((float) $wallet->amount < $totalDebit) {
             return response()->json([
                 'status'  => false,
-                'message' => "Solde Robus insuffisant. Disponible : " . number_format($wallet->amount, 0) . " {$limits['currency']}, requis : " . number_format($totalDebit, 0) . " {$limits['currency']}.",
+                'message' => "Solde Robus insuffisant. Disponible : " . number_format($wallet->amount, 0) . " {$senderCurrency}, requis : " . number_format($totalDebit, 0)
             ], 422);
         }
 
@@ -781,10 +803,12 @@ class PixelPaymentController extends Controller
             'amount'          => $amount,
             'fees'            => $fees,
             'costs_amount'    => $fees,
-            'amount_received' => $amountReceived,
+            // Converti : le net est enregistré dans la devise du portefeuille (le net crédité au
+            // destinataire, dans sa devise, est conservé dans les métadonnées)
+            'amount_received' => $converted ? round($amount - $fees, 2) : $amountReceived,
             'amount_solde'    => $wallet->amount,
             'balance_before'  => $wallet->amount,
-            'currency'        => $limits['currency'] ?? 'XOF',
+            'currency'        => $converted ? $senderCurrency : ($limits['currency'] ?? 'XOF'),
             'status'          => 'PENDING',
             'payment_method'  => 'robus_wallet',
             'type_transaction' => 'Cash In',
@@ -801,6 +825,12 @@ class PixelPaymentController extends Controller
                 'total_debited'      => $totalDebit,
                 'custom_data'        => $customData,
                 'source'             => 'robus_wallet',
+                'sender_currency'    => $senderCurrency,
+                'recipient_currency' => $limits['currency'],
+                'exchange_rate'      => $rate,
+                'converted_amount'   => $calc['converted'],
+                'fees_converted'     => $feesConverted,
+                'amount_credited'    => $amountToCredit,
             ]),
         ]);
 
@@ -880,7 +910,7 @@ class PixelPaymentController extends Controller
             'country'         => $pixelConfig->country->name ?? null,
             'sms_link'        => $this->extractPixelPaymentLink($response),
             'state'           => $response['data']['state'] ?? 'PENDING',
-        ], 200);
+        ] + $this->conversionFields($conversion, $amount, $calc, $limits['currency']), 200);
     }
 
     public function initializeWebPayment(Request $request)
@@ -1187,23 +1217,40 @@ class PixelPaymentController extends Controller
 
         $iso2   = self::countryCode($pixelConfig->country) ?? '';
         $limits = self::AMOUNT_LIMITS[$iso2] ?? ['min' => 100, 'max' => 1_500_000, 'currency' => 'XOF'];
+        // Montant saisi : dans la devise du portefeuille de l'expéditeur
         $amount = (float) $request->amount;
 
-        if ($amount < $limits['min'] || $amount > $limits['max']) {
+        // Envoi depuis le portefeuille (Cash In) : conversion vers la devise du destinataire
+        $conversion = $this->walletConversion($pixelConfig, $limits['currency']);
+        if ($conversion === false) {
             return response()->json([
                 'status'  => false,
-                'message' => "Montant invalide. Min : {$limits['min']}, Max : {$limits['max']} {$limits['currency']}.",
+                'message' => $this->missingRateMessageFor($limits['currency']),
+            ], 422);
+        }
+        $rate = $conversion['rate'] ?? 1.0;
+
+        $fixedFeePct    = (float) $pixelConfig->fixed_fee;
+        $commissionPct  = (float) $pixelConfig->commission_percent;
+        $totalFeePct    = $fixedFeePct + $commissionPct;
+        $calc           = TransferConversion::amounts($amount, $rate, $totalFeePct);
+
+        // Minimum / maximum : exprimés dans la devise du destinataire (montant converti)
+        if ($calc['converted'] < $limits['min'] || $calc['converted'] > $limits['max']) {
+            return response()->json([
+                'status'  => false,
+                'message' => "Montant invalide. Min : {$limits['min']}, Max : {$limits['max']} {$limits['currency']}"
+                    . ($rate != 1.0 ? ' (montant converti : ' . number_format($calc['converted'], 0, ',', ' ') . " {$limits['currency']})." : '.'),
                 'amount_min' => $limits['min'],
                 'amount_max' => $limits['max'],
                 'currency'   => $limits['currency'],
             ], 422);
         }
 
-        $fixedFeePct    = (float) $pixelConfig->fixed_fee;
-        $commissionPct  = (float) $pixelConfig->commission_percent;
-        $totalFeePct    = $fixedFeePct + $commissionPct;
-        $fees           = round($amount * $totalFeePct / 100, 2);
-        $amountReceived = round($amount - $fees, 2);
+        // Frais : calculés sur le montant converti (devise du destinataire)
+        $feesConverted  = $calc['fees'];
+        $fees           = $rate != 1.0 ? round($feesConverted / $rate, 2) : $feesConverted; // devise de l'expéditeur
+        $amountReceived = $calc['received'];
 
         return response()->json([
             'status'          => true,
@@ -1216,7 +1263,8 @@ class PixelPaymentController extends Controller
             'currency'        => $limits['currency'],
             'provider'        => $pixelConfig->provider->name ?? null,
             'operation_type'  => $pixelConfig->operation_type,
-        ] + $this->underCommissionPreview($request, [$pixelConfig], $amount, 'wallet'));
+        ] + $this->conversionFields($conversion, $amount, $calc, $limits['currency'])
+          + $this->underCommissionPreview($request, [$pixelConfig], $amount, 'wallet'));
     }
 
     // =========================================================================
@@ -1452,6 +1500,65 @@ class PixelPaymentController extends Controller
     // =========================================================================
 
     /**
+     * Conversion d'un transfert Mobile Zone / International Zone entre deux pays à devises différentes.
+     * XOF et XAF sont à parité (même ligne « CFA » de la table des devises) : aucune conversion.
+     *
+     * @return array{rate: float, from: string, to: string, converted: bool}|false  false = taux introuvable
+     */
+    private function mobileZoneConversion(string $senderCurrency, string $recipientCurrency)
+    {
+        if (strtoupper($senderCurrency) === strtoupper($recipientCurrency)) {
+            return ['rate' => 1.0, 'from' => $senderCurrency, 'to' => $recipientCurrency, 'converted' => false];
+        }
+
+        return TransferConversion::rateBetweenPixelCodes($senderCurrency, $recipientCurrency) ?? false;
+    }
+
+    /**
+     * Conversion d'un envoi depuis le portefeuille Robus (Cash In) vers la devise du destinataire.
+     *
+     * @return array|false|null  tableau du taux ; null = pas de conversion (autre type d'opération
+     *                           ou portefeuille sans devise connue) ; false = taux introuvable
+     */
+    private function walletConversion(PixelInnoveService $pixelConfig, string $recipientCurrency)
+    {
+        if ($pixelConfig->operation_type !== 'Cash In') {
+            return null;
+        }
+
+        $user   = robus();
+        $wallet = $user ? Wallet::with(['currencie', 'country.currencie'])->where('sid_user_id', $user->id)->first() : null;
+        $from   = $wallet ? ($wallet->currencie ?: optional($wallet->country)->currencie) : null;
+
+        if (!$from) {
+            return null; // devise inconnue : comportement historique (sans conversion)
+        }
+
+        return TransferConversion::rate($from, $recipientCurrency) ?? false;
+    }
+
+    private function missingRateMessageFor(string $recipientCurrency): string
+    {
+        $user   = robus();
+        $wallet = $user ? Wallet::with(['currencie', 'country.currencie'])->where('sid_user_id', $user->id)->first() : null;
+        $from   = $wallet ? ($wallet->currencie ?: optional($wallet->country)->currencie) : null;
+
+        return TransferConversion::missingRateMessage($from, $recipientCurrency);
+    }
+
+    /** Champs de conversion ajoutés aux réponses (calcul et envoi) pour l'affichage du détail. */
+    private function conversionFields($conversion, float $amount, array $calc, string $recipientCurrency): array
+    {
+        return [
+            'sender_currency'    => $conversion['from'] ?? null,
+            'recipient_currency' => $recipientCurrency,
+            'exchange_rate'      => $conversion['rate'] ?? 1.0,
+            'converted_amount'   => $calc['converted'],
+            'fees_converted'     => $calc['fees'],
+        ];
+    }
+
+    /**
      * Commission du sous-distributeur affichée dans l'app (même règles que le versement réel).
      * $services : services Pixel dont on cumule le taux commission_under_pct.
      * $buttonKind : 'wallet' (bouton C, flux solde Robus) ou 'mobile_zone' (flux solde Mobile Money).
@@ -1592,6 +1699,12 @@ class PixelPaymentController extends Controller
         // benefice = montant + frais Pixel côté IPN
         $pixelFee = (float) ($ipnData['fee'] ?? $ipnData['comission'] ?? 0);
         $benefice  = (float) ($ipnData['benefice'] ?? ((float) $reload->amount + $pixelFee));
+
+        // Transfert converti : l'IPN donne ses montants dans la devise du destinataire, alors que la
+        // comptabilité ci-dessous (conversion en FCFA) part du montant débité, dans la devise du portefeuille.
+        if (!empty($metadata['exchange_rate']) && (float) $metadata['exchange_rate'] != 1.0) {
+            $benefice = (float) $reload->amount;
+        }
 
         // Frais depuis la config du service Pixel Innov (identiques à ceux calculés à l'init)
         $fixedFeePct     = (float) $pixelConfig->fixed_fee;
@@ -2195,6 +2308,29 @@ class PixelPaymentController extends Controller
 
         $totalFee = round($senderFee + $recipientFee, 2);
 
+        // Conversion entre devises différentes (taux de la page d'administration « Devises »)
+        $mzSenderCode    = self::AMOUNT_LIMITS[self::countryCode($senderService->country) ?? '']['currency'] ?? 'XOF';
+        $mzRecipientCode = self::AMOUNT_LIMITS[self::countryCode($recipientService->country) ?? '']['currency'] ?? 'XOF';
+        $mzConversion    = $this->mobileZoneConversion($mzSenderCode, $mzRecipientCode);
+        if ($mzConversion === false) {
+            return response()->json([
+                'status'  => false,
+                'message' => TransferConversion::missingRateMessage(TransferConversion::currencyForPixelCode($mzSenderCode), $mzRecipientCode),
+            ], 422);
+        }
+        $mzRate = $mzConversion['rate'];
+        if ($mzRate != 1.0) {
+            // Montant converti moins les frais (convertis), dans la devise du destinataire : c est le montant crédité
+            $amountReceived = (float) (round($amount * $mzRate) - round($totalFee * $mzRate));
+        }
+        $mzConversionFields = [
+            'sender_currency'    => $mzSenderCode,
+            'recipient_currency' => $mzRecipientCode,
+            'exchange_rate'      => $mzRate,
+            'converted_amount'   => (float) round($amount * $mzRate, $mzRate != 1.0 ? 0 : 2),
+            'fees_converted'     => (float) round($totalFee * $mzRate, $mzRate != 1.0 ? 0 : 2),
+        ];
+
         return response()->json([
             'status'           => true,
             'amount'           => $amount,
@@ -2209,7 +2345,7 @@ class PixelPaymentController extends Controller
             'currency'         => self::AMOUNT_LIMITS[self::countryCode($senderService->country) ?? '']['currency'] ?? 'XOF',
             'sender_provider'    => $senderService->provider->name ?? null,
             'recipient_provider' => $recipientService->provider->name ?? null,
-        ] + $this->underCommissionPreview($request, [$senderService, $recipientService], $amount, 'mobile_zone'));
+        ] + $mzConversionFields + $this->underCommissionPreview($request, [$senderService, $recipientService], $amount, 'mobile_zone'));
     }
 
     public function calculateMobileZoneTransferWeb(Request $request)
@@ -2305,13 +2441,30 @@ class PixelPaymentController extends Controller
 
         $recipientLimits = self::AMOUNT_LIMITS[$recipientIso2] ?? ['min' => 200, 'max' => 1_500_000, 'currency' => 'XOF'];
 
+        // Conversion entre devises différentes (taux de la page d'administration « Devises »)
+        $mzConversion = $this->mobileZoneConversion($senderLimits['currency'] ?? 'XOF', $recipientLimits['currency'] ?? 'XOF');
+        if ($mzConversion === false) {
+            return response()->json([
+                'status'  => false,
+                'message' => TransferConversion::missingRateMessage(
+                    TransferConversion::currencyForPixelCode($senderLimits['currency'] ?? 'XOF'),
+                    $recipientLimits['currency'] ?? 'XOF'
+                ),
+            ], 422);
+        }
+        $mzRate = $mzConversion['rate'];
+        if ($mzRate != 1.0) {
+            // Montant converti moins les frais (convertis), dans la devise du destinataire : c est le montant crédité
+            $amountReceived = (float) (round($amount * $mzRate) - round($totalFee * $mzRate));
+        }
+
         // Vérifier que le montant reçu par le destinataire après frais est >= au minimum requis
         if ($amountReceived < $recipientLimits['min']) {
             $senderCurrency    = self::AMOUNT_LIMITS[$senderIso2]['currency'] ?? 'XOF';
             $recipientCurrency = $recipientLimits['currency'] ?? 'XOF';
             // Résoudre : amount * (1 - (senderFeePct + recipientFeePct)/100) >= recipientLimits['min']
             $factor      = 1 - ($senderFeePct + $recipientFeePct) / 100;
-            $minRequired = (int) ceil($recipientLimits['min'] / $factor);
+            $minRequired = (int) ceil($recipientLimits['min'] / ($factor * $mzRate));
             return response()->json([
                 'status'  => false,
                 'message' => "Après déduction des frais, le destinataire recevrait " . number_format($amountReceived, 0) . " {$recipientCurrency}, en dessous du minimum autorisé de {$recipientLimits['min']} {$recipientCurrency}. Veuillez saisir au moins {$minRequired} {$senderCurrency}.",
@@ -2431,6 +2584,11 @@ class PixelPaymentController extends Controller
             'state'           => $cashOutResponse['data']['state'] ?? 'PENDING',
             'fees'            => $totalFee,
             'amount_received' => $amountReceived,
+            'sender_currency'    => $senderLimits['currency'] ?? 'XOF',
+            'recipient_currency' => $recipientLimits['currency'] ?? 'XOF',
+            'exchange_rate'      => $mzRate,
+            'converted_amount'   => (float) round($amount * $mzRate, $mzRate != 1.0 ? 0 : 2),
+            'fees_converted'     => (float) round($totalFee * $mzRate, $mzRate != 1.0 ? 0 : 2),
             'sender'          => [
                 'phone'    => $request->sender_phone,
                 'operator' => $senderService->provider->name ?? null,
@@ -2531,11 +2689,28 @@ class PixelPaymentController extends Controller
         $totalFee        = round($senderFee + $recipientFee, 2);
 
         $recipientLimits = self::AMOUNT_LIMITS[$recipientIso2] ?? ['min' => 200, 'max' => 1_500_000, 'currency' => 'XOF'];
+
+        // Conversion entre devises différentes (taux de la page d'administration « Devises »)
+        $mzConversion = $this->mobileZoneConversion($senderLimits['currency'] ?? 'XOF', $recipientLimits['currency'] ?? 'XOF');
+        if ($mzConversion === false) {
+            return response()->json([
+                'status'  => false,
+                'message' => TransferConversion::missingRateMessage(
+                    TransferConversion::currencyForPixelCode($senderLimits['currency'] ?? 'XOF'),
+                    $recipientLimits['currency'] ?? 'XOF'
+                ),
+            ], 422);
+        }
+        $mzRate = $mzConversion['rate'];
+        if ($mzRate != 1.0) {
+            // Montant converti moins les frais (convertis), dans la devise du destinataire : c est le montant crédité
+            $amountReceived = (float) (round($amount * $mzRate) - round($totalFee * $mzRate));
+        }
         if ($amountReceived < $recipientLimits['min']) {
             $senderCurrency    = $senderLimits['currency'] ?? 'XOF';
             $recipientCurrency = $recipientLimits['currency'] ?? 'XOF';
             $factor            = 1 - ($senderFeePct + $recipientFeePct) / 100;
-            $minRequired       = (int) ceil($recipientLimits['min'] / $factor);
+            $minRequired       = (int) ceil($recipientLimits['min'] / ($factor * $mzRate));
 
             return response()->json([
                 'status'  => false,
@@ -2643,6 +2818,11 @@ class PixelPaymentController extends Controller
             'state'           => $cashOutResponse['data']['state'] ?? 'PENDING',
             'fees'            => $totalFee,
             'amount_received' => $amountReceived,
+            'sender_currency'    => $senderLimits['currency'] ?? 'XOF',
+            'recipient_currency' => $recipientLimits['currency'] ?? 'XOF',
+            'exchange_rate'      => $mzRate,
+            'converted_amount'   => (float) round($amount * $mzRate, $mzRate != 1.0 ? 0 : 2),
+            'fees_converted'     => (float) round($totalFee * $mzRate, $mzRate != 1.0 ? 0 : 2),
             'sender'          => [
                 'phone'    => $request->sender_phone,
                 'operator' => $senderService->provider->name ?? null,

@@ -417,10 +417,28 @@ const mztDistinct = !!(window._MZT && window._MZT.distinctCountries);
         const received = Number(data.amount_received ?? 0).toLocaleString('fr-FR');
         const cur      = data.currency ?? 'XOF';
         const rCur     = data.recipient_currency ?? cur;
-        prev.innerHTML = `<div class="mzt-fees-card">
+        /* Devises différentes : taux, montant converti, frais dans la devise du destinataire */
+        const rate      = Number(data.exchange_rate ?? 1);
+        const isConv    = Math.abs(rate - 1) > 1e-9 && data.converted_amount != null;
+        const sCur      = data.sender_currency ?? cur;
+        const convFmt   = isConv ? Number(data.converted_amount).toLocaleString('fr-FR') : '';
+        const feesShown = isConv && data.fees_converted != null
+            ? `${Number(data.fees_converted).toLocaleString('fr-FR')} ${rCur}` : `${fees} ${cur}`;
+        const rateFmt   = rate >= 10 ? rate.toLocaleString('fr-FR', { maximumFractionDigits: 0 })
+            : rate.toLocaleString('fr-FR', { maximumFractionDigits: 4 });
+        const convRows  = isConv ? `
+            <div class="mzt-fees-row">
+                <span><i class="bi bi-currency-exchange me-1" style="font-size:.75rem"></i>Taux de change</span>
+                <span>1 ${sCur} = ${rateFmt} ${rCur}</span>
+            </div>
+            <div class="mzt-fees-row">
+                <span><i class="bi bi-arrow-left-right me-1" style="font-size:.75rem"></i>Montant converti</span>
+                <span>${convFmt} ${rCur}</span>
+            </div>` : '';
+        prev.innerHTML = `<div class="mzt-fees-card">${convRows}
             <div class="mzt-fees-row">
                 <span><i class="bi bi-dash-circle me-1 text-danger" style="font-size:.75rem"></i>Frais (${pct}%)</span>
-                <span>${fees} ${cur}</span>
+                <span>${feesShown}</span>
             </div>
             <hr class="mzt-fees-divider">
             <div class="mzt-fees-row mzt-fees-highlight">
@@ -509,6 +527,14 @@ const mztDistinct = !!(window._MZT && window._MZT.distinctCountries);
         const received = Number(calcData?.amount_received ?? 0).toLocaleString('fr-FR');
         const feePct   = (calcData?.total_fee_pct ?? 0).toFixed(1);
         const amountFmt = Number(amount).toLocaleString('fr-FR');
+        const rate      = Number(calcData?.exchange_rate ?? 1);
+        const isConv    = Math.abs(rate - 1) > 1e-9 && calcData?.converted_amount != null;
+        const sCur      = calcData?.sender_currency ?? cur;
+        const convFmt   = isConv ? Number(calcData.converted_amount).toLocaleString('fr-FR') : '';
+        const feesShown = isConv && calcData?.fees_converted != null
+            ? `${Number(calcData.fees_converted).toLocaleString('fr-FR')} ${rCur}` : `${fees} ${cur}`;
+        const rateFmt   = rate >= 10 ? rate.toLocaleString('fr-FR', { maximumFractionDigits: 0 })
+            : rate.toLocaleString('fr-FR', { maximumFractionDigits: 4 });
         const sPhone = mztSanitizePhone(document.getElementById('my_phone')?.value) || '—';
         const rPhone = mztSanitizePhone(document.getElementById('phone_benef')?.value) || '—';
 
@@ -526,9 +552,11 @@ const mztDistinct = !!(window._MZT && window._MZT.distinctCountries);
             ${row('bi-telephone-inbound', 'Destinataire', `${r.name} — ${r.country}`)}
             ${row('bi-phone-fill', 'N° destinataire', rPhone)}
             <hr style="margin:8px 0;border-color:rgba(15,23,42,.07)">
-            ${row('bi-cash', 'Montant', `${amountFmt} ${cur}`)}
-            ${row('bi-percent', `Frais (${feePct}%)`, `${fees} ${cur}`)}
-            ${row('bi-wallet-fill', 'Montant reçu', `${received} ${rCur}`, true)}
+            ${row('bi-cash', isConv ? 'Montant envoyé' : 'Montant', `${amountFmt} ${isConv ? sCur : cur}`)}
+            ${isConv ? row('bi-currency-exchange', 'Taux de change', `1 ${sCur} = ${rateFmt} ${rCur}`) : ''}
+            ${isConv ? row('bi-arrow-left-right', 'Montant converti', `${convFmt} ${rCur}`) : ''}
+            ${row('bi-percent', `Frais (${feePct}%)`, feesShown)}
+            ${row('bi-wallet-fill', isConv ? 'Montant à recevoir' : 'Montant reçu', `${received} ${rCur}`, true)}
         `;
 
         bootstrap.Modal.getOrCreateInstance(document.getElementById('mztConfirmModal')).show();

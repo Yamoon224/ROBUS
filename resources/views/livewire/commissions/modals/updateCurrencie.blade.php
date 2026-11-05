@@ -23,9 +23,9 @@
                     @enderror
                 </div>
                 <div class="col-span-12">
-                    <label for="modal-form-1" class="form-label">Valuer</label>
-                    <input wire:model="currencieValue" id="modal-form-1" type="number" class="form-control"
-                        placeholder="Valeur">
+                    <label for="modal-form-1" class="form-label">Taux de change (valeur de 1 unité en FCFA)</label>
+                    <input wire:model="currencieValue" id="modal-form-1" type="number" step="any" min="0" class="form-control"
+                        placeholder="Ex. 200 pour le dinar tunisien">
                     @error('currencieValue')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror

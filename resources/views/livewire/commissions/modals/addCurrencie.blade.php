@@ -30,10 +30,10 @@
             </div>
              <div class="modal-body grid grid-cols-12 gap-4">
                 <div class="col-span-12">
-                    <label for="modal-form-1" class="form-label">Valeur<span class="text-danger">
+                    <label for="modal-form-1" class="form-label">Taux de change (valeur de 1 unité en FCFA)<span class="text-danger">
                                     *</span></label>
                     <input wire:model.defer="currencieValue" id="modal-form-1" type="text" class="form-control"
-                        placeholder="Valeur">
+                        placeholder="Ex. 200 pour le dinar tunisien">
                     @error('currencieValue')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
