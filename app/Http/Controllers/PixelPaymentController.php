@@ -839,7 +839,8 @@ class PixelPaymentController extends Controller
         $publicBase   = rtrim(config('services.pixel_innov.public_url'), '/');
 
         $pixelPayload = [
-            'amount'             => $amountToCredit,
+            // Pixel attend un montant entier en XOF : un décimal (ex. 585.0) est refusé (« you are not authorize »)
+            'amount'             => (int) round($amountToCredit),
             'destination'        => $request->destination,
             'service_id'         => $pixelConfig->service_id,
             'ipn_url'            => $publicBase . '/payment_pixelInnov/callback',
