@@ -1797,7 +1797,8 @@ class PixelPaymentController extends Controller
                 'is_pixel'          => true,
             ]);
 
-            $walletPixelCommission->decrement('amount', $amountCommissionConversion);
+            // Compte SD TOTAL : crédité de la seule part « commission_percent » (ex. 1,9 %)
+            $walletPixelCommission->increment('amount', round(round((float) $reload->amount * $commissionPct / 100, 2) * $conversionRate, 2));
         } else {
             $adminSingle->wallet->increment('amount', $amountCommissionAdminConversion);
         }
