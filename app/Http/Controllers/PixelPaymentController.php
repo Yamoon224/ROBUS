@@ -2901,6 +2901,15 @@ class PixelPaymentController extends Controller
             }
         }
 
+        // Le webhook du Cash In peut précéder l'enregistrement de recipient_transaction_id
+        // (Pixel notifie avant que la réponse d'init nous revienne) : on retrouve le transfert par custom_ref.
+        if (!$transfer && $isCashIn && preg_match('/^(ROBUS_MZ_[A-Za-z0-9_]+)_CASHIN$/', $customData, $m)) {
+            $transfer = PixelMobileZoneTransfer::where('metadata', 'like', '%"custom_ref":"' . $m[1] . '"%')->first();
+            if ($transfer && empty($transfer->recipient_transaction_id)) {
+                $transfer->update(['recipient_transaction_id' => $transactionId]);
+            }
+        }
+
         if (!$transfer) {
             Log::error('Mobile Zone Transfer — transfert introuvable pour IPN', ['transaction_id' => $transactionId]);
             return response()->json(['status' => 'not_found'], 404);
