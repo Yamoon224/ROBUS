@@ -2233,6 +2233,18 @@ class PixelPaymentController extends Controller
     private function zoneClosedResponse(PixelInnoveService $sender, PixelInnoveService $recipient): ?\Illuminate\Http\JsonResponse
     {
         $svcKey    = $sender->country_id === $recipient->country_id ? 'mobile_zone' : 'international_zone';
+
+        $zone = $svcKey === 'mobile_zone'
+            ? \App\Support\ZoneCountrySwitch::DEPOSIT
+            : \App\Support\ZoneCountrySwitch::INTERNATIONAL;
+
+        if (!\App\Support\ZoneCountrySwitch::isEnabled($zone, request()->user()?->country_id)) {
+            return response()->json([
+                'status'  => false,
+                'message' => "Ce service n'est pas disponible dans votre pays.",
+            ], 403);
+        }
+
         $svcStatus = \App\Http\Services\ServiceAvailabilityService::status($svcKey);
 
         if ($svcStatus['open']) {

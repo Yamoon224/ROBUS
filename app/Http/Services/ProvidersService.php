@@ -304,6 +304,10 @@ class ProvidersService
 
     public static function getPixelInnovZoneProviders($countryId)
     {
+        if (!\App\Support\ZoneCountrySwitch::isEnabled(\App\Support\ZoneCountrySwitch::INTERNATIONAL, $countryId)) {
+            return collect();
+        }
+
         $own = self::queryPixelInnovZoneProviders($countryId);
 
         // Pays sans service Pixel Innov propre (ex. Tunisie) : l'utilisateur peut quand même
@@ -356,6 +360,10 @@ class ProvidersService
 
     public static function getPixelInnovDepositZoneProviders($countryId)
     {
+        if (!\App\Support\ZoneCountrySwitch::isEnabled(\App\Support\ZoneCountrySwitch::DEPOSIT, $countryId)) {
+            return collect();
+        }
+
         return self::getPixelInnovCashInProviders($countryId)
             ->filter(function ($provider) {
                 $name = strtolower(trim((string) $provider->name));

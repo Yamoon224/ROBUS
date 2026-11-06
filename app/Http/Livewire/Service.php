@@ -12,6 +12,7 @@ use App\Models\Providers\Provider;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Support\ZoneCountrySwitch;
 
 class Service extends Component
 {
@@ -146,6 +147,18 @@ class Service extends Component
             'managementProviderTypeId' => 'required|exists:provider_types,id',
         ]);
 
+        $zone = ZoneCountrySwitch::zoneForTypeName(
+            ProviderType::whereKey($this->managementProviderTypeId)->value('name')
+        );
+
+        if ($zone) {
+            ZoneCountrySwitch::set($zone, (int) $this->managementCountryId, $status);
+            Artisan::call('cache:clear');
+            $this->emit('success', $status ? 'Groupe activé pour ce pays !' : 'Groupe désactivé pour ce pays !');
+
+            return;
+        }
+
         DB::table('country_services')
             ->where('country_id', $this->managementCountryId)
             ->whereIn('provider_id', function ($query) {
@@ -167,6 +180,10 @@ class Service extends Component
 
         CountryService::where('country_id', $this->managementCountryId)
             ->update(['status' => $status]);
+
+        foreach ([ZoneCountrySwitch::INTERNATIONAL, ZoneCountrySwitch::DEPOSIT] as $zone) {
+            ZoneCountrySwitch::set($zone, (int) $this->managementCountryId, $status);
+        }
 
         \App\Support\UvPaymentSwitch::enforce();
         Artisan::call('cache:clear');
