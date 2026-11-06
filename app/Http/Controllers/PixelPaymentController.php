@@ -1426,6 +1426,19 @@ class PixelPaymentController extends Controller
 
             $reload = WalletReload::where('reference', $transactionId)->lockForUpdate()->first();
 
+            // Le webhook peut devancer l'enregistrement de la référence PIX_* (Pixel notifie avant que la
+            // réponse d'init nous revienne, opérateurs instantanés) : repli par custom_data.
+            $customData = (string) $request->input('custom_data', '');
+            if (!$reload && preg_match('/^ROBUS_WALLET_[A-Za-z0-9_]+$/', $customData)) {
+                $reload = WalletReload::where('created_at', '>=', now()->subDay())
+                    ->where('metadata', 'like', '%' . $customData . '%')
+                    ->lockForUpdate()
+                    ->first();
+                if ($reload && empty($reload->reference)) {
+                    $reload->update(['reference' => $transactionId]);
+                }
+            }
+
             if (!$reload) {
                 DB::rollBack();
                 Log::error('Pixel Innov — WalletReload introuvable', ['transaction_id' => $transactionId]);
@@ -2904,7 +2917,9 @@ class PixelPaymentController extends Controller
         // Le webhook du Cash In peut précéder l'enregistrement de recipient_transaction_id
         // (Pixel notifie avant que la réponse d'init nous revienne) : on retrouve le transfert par custom_ref.
         if (!$transfer && $isCashIn && preg_match('/^(ROBUS_MZ_[A-Za-z0-9_]+)_CASHIN$/', $customData, $m)) {
-            $transfer = PixelMobileZoneTransfer::where('metadata', 'like', '%"custom_ref":"' . $m[1] . '"%')->first();
+            $transfer = PixelMobileZoneTransfer::where('created_at', '>=', now()->subDay())
+                ->where('metadata', 'like', '%' . $m[1] . '%')
+                ->first();
             if ($transfer && empty($transfer->recipient_transaction_id)) {
                 $transfer->update(['recipient_transaction_id' => $transactionId]);
             }
