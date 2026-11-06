@@ -225,6 +225,15 @@ class PixelPaymentController extends Controller
         }
 
         $countryId = $user->country_id;
+
+        if (!\App\Support\ZoneCountrySwitch::isEnabled(\App\Support\ZoneCountrySwitch::DEPOSIT, $countryId)) {
+            return response()->json([
+                'status' => true,
+                'country_filter' => self::countryCode($user->country),
+                'data' => [],
+            ]);
+        }
+
         $services = PixelInnoveService::with(['country', 'provider'])
             ->where('country_id', $countryId)
             ->where('operation_type', 'Cash In')

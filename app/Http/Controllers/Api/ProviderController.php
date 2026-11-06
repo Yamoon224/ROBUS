@@ -100,8 +100,10 @@ class ProviderController extends Controller
             // Disponibilité des services (fermeture manuelle ou horaires) : Mobile Zone = Dépôt zone,
             // International Zone = Transfert mobile Zone. L'état est dans la clé de cache pour que
             // l'activation / la désactivation soit prise en compte immédiatement.
-            $mzOpen = \App\Http\Services\ServiceAvailabilityService::isOpen('mobile_zone');
-            $izOpen = \App\Http\Services\ServiceAvailabilityService::isOpen('international_zone');
+            $mzOpen = \App\Http\Services\ServiceAvailabilityService::isOpen('mobile_zone')
+                && \App\Support\ZoneCountrySwitch::isEnabled(\App\Support\ZoneCountrySwitch::DEPOSIT, $countrieId);
+            $izOpen = \App\Http\Services\ServiceAvailabilityService::isOpen('international_zone')
+                && \App\Support\ZoneCountrySwitch::isEnabled(\App\Support\ZoneCountrySwitch::INTERNATIONAL, $countrieId);
 
             // Empreinte des services attribués à l'utilisateur : dès que l'administrateur ajoute ou
             // retire un service, la clé change et le tableau de bord est recalculé immédiatement
