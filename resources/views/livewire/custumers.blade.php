@@ -5,16 +5,16 @@
     </h2>
 
     <div class="grid grid-cols-12 gap-6 mt-5">
-        <div class="md:block w-80 mx-auto text-slate-500">
+        <div class="col-span-12 text-slate-500">
             <a class="btn btn-primary mt-3" href="{{ route('custumers.browse_invalidated') }}">Clients invalides</a>
 
         </div>
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
+        <div class="intro-y col-span-12 flex flex-wrap items-end gap-4 mt-2">
 
             <div class="hidden md:block mx-auto text-slate-500"></div>
 
-            <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
-                <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+            <div class="w-full sm:w-64">
+                <div class="w-full">
                     <label for="countriesFilter" class="block text-gray-700 text-sm font-bold mb-2">Filtrer par
                         pays</label>
                     <select id="countriesFilter" wire:model="countriesFilter" class="form-select py-3 px-4 box w-100"
@@ -68,21 +68,21 @@
 
 
             <div class="hidden md:block ml-8 text-slate-500"></div>
-            <div class="input-group input-group-md" style="margin-top: 13px;width: 250px;">
-                <div class="w-56 relative text-slate-500">
+            <div class="input-group input-group-md w-full sm:w-64">
+                <div class="w-full relative text-slate-500">
                     <label for="citiesFilter" class="text-gray-700 text-sm font-bold mb-2">Rechercher</label>
 
                     <input type="text" name="table_search" wire:model="search"
-                        class="form-control  w-56 box pr-10 mt-3" style="height: 3rem;" placeholder="Rechercher">
-                    <i class="w-4 h-4 absolute my-auto inset-y-0 mr-6 " style="margin-left: 12rem;"
+                        class="form-control w-full box pr-10 mt-3" style="height: 3rem;" placeholder="Rechercher">
+                    <i class="w-4 h-4 absolute my-auto inset-y-0 mr-6 " style="right: 0;"
                         data-feather="search"></i>
                 </div>
             </div>
 
         </div>
 
-        <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-            <table class="table table-bordered table-hover -mt-2 -intro-x ">
+        <div class="intro-y col-span-12 overflow-x-auto">
+            <table class="table table-bordered table-hover -mt-2 -intro-x" style="min-width: 1100px;">
                 <thead class="table-dark">
                     <tr>
                         <th class="text-center whitespace-nowrap">Prénom(s) & nom</th>
