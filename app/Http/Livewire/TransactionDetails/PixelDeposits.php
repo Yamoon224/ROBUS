@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\TransactionDetails;
 
-use App\Models\Country;
+use App\Models\Custumers\Country;
 use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletPixelReload;
 use Livewire\Component;
