@@ -465,6 +465,8 @@ class AuthentificationController extends Controller
 
                         $originalLogoPath = public_path('dist/images/logo_orange.png');
 
+                        $tokenResult = $user->createToken('auth_token');
+
                         $msg_title = 'Inscriptions chez Robus';
                         $msg = AccountValidation::REGISTRATION_MESSAGE;
                         $user->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
@@ -512,21 +514,7 @@ class AuthentificationController extends Controller
                             );
                         }
 
-                        return response()->json(array_merge(
-                            [
-                                'success' => true,
-                                'user' => [
-                                    'id' => $user->id,
-                                    'firstname' => $user->firstname,
-                                    'lastname' => $user->lastname,
-                                    'email' => $user->email,
-                                    'phone' => $user->phone,
-                                    'wallet_id' => $user->wallet_id,
-                                ],
-                                'catch' => false,
-                            ],
-                            AccountValidation::payload(AccountValidation::REGISTRATION_MESSAGE)
-                        ));
+                        return $this->loginSuccess($tokenResult, $user);
                     } else {
                         return response()->json(
                             [
