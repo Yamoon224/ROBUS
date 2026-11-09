@@ -60,6 +60,11 @@
                  aria-controls="pixel" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
                      data-feather="shield"></i> Zone mobile </a>
          </li>
+         <li id="pixel-intl-tab" class="nav-item" role="presentation">
+             <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#pixel-intl"
+                 aria-controls="pixel-intl" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
+                     data-feather="shield"></i> Zone internationale </a>
+         </li>
          <li id="push-tab" class="nav-item" role="presentation">
              <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#push"
                  aria-controls="push" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"

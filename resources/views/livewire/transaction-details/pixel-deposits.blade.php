@@ -6,7 +6,7 @@
                     <div class="w-3 h-8 bg-orange-500 rounded-r-full"></div>
                     <div>
                         <h2 class="font-medium text-base text-slate-900 text-xl">
-                            Historique des dépôts Zone mobile (Pixel)
+                            Historique {{ $zone_label }} (Pixel)
                         </h2>
                         <div class="flex items-center gap-4 mt-2 mb-2">
                             <span class="text-sm text-slate-600 font-medium">

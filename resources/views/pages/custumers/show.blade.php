@@ -333,6 +333,10 @@
             @livewire('transaction-details.pixel-deposits', ['walletPixels' => $user->id])
         </div>
 
+        <div id="pixel-intl" class="tab-pane" role="tabpanel" aria-labelledby="pixel-intl-tab">
+            @livewire('transaction-details.pixel-deposits', ['walletPixels' => $user->id, 'zone' => 'international'], key('pixel-intl-' . $user->id))
+        </div>
+
          <div id="push" class="tab-pane" role="tabpanel" aria-labelledby="push-tab">
             @livewire('transaction-details.pushs', ['walletPushs' => $user->id])
 
