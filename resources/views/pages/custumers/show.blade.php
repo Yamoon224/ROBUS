@@ -329,6 +329,10 @@
 
         </div>
 
+        <div id="pixel" class="tab-pane" role="tabpanel" aria-labelledby="pixel-tab">
+            @livewire('transaction-details.pixel-deposits', ['walletPixels' => $user->id])
+        </div>
+
          <div id="push" class="tab-pane" role="tabpanel" aria-labelledby="push-tab">
             @livewire('transaction-details.pushs', ['walletPushs' => $user->id])
 
