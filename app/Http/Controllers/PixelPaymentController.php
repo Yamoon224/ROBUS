@@ -3006,6 +3006,8 @@ class PixelPaymentController extends Controller
             if (!$recipientService) {
                 Log::error('Mobile Zone Transfer — service destinataire introuvable', ['transfer_id' => $transfer->id]);
                 $transfer->update(['status' => 'FAILED', 'recipient_status' => 'FAILED']);
+                // L'expéditeur a été débité : remboursement automatique sur son Mobile Money
+                $this->refundSender($transfer, $pixelService, rtrim(config('services.pixel_innov.public_url'), '/'));
                 return;
             }
 

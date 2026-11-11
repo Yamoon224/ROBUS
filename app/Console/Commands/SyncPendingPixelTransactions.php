@@ -16,7 +16,11 @@ class SyncPendingPixelTransactions extends Command
     public function handle(): void
     {
         $pending = WalletReload::where('status', 'PENDING')
-            ->where('payment_method', 'LIKE', 'pixel_innov_%')
+            ->where(function ($q) {
+                // robus_wallet : retraits débités du wallet Robus — à rembourser si Pixel Innov répond FAILED
+                $q->where('payment_method', 'LIKE', 'pixel_innov_%')
+                    ->orWhere('payment_method', 'robus_wallet');
+            })
             ->whereNotNull('reference')
             ->where('created_at', '<=', now()->subMinutes(3))   // au moins 3 min sans IPN
             ->where('created_at', '>=', now()->subHours(24))    // pas plus de 24h
