@@ -49,6 +49,18 @@
                  aria-controls="xbet" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
                      data-feather="shield"></i> Xbet </a>
          </li>
+         @if (!empty($showPixelTabs))
+         <li id="pixel-tab" class="nav-item" role="presentation">
+             <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#pixel"
+                 aria-controls="pixel" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
+                     data-feather="shield"></i> Zone mobile </a>
+         </li>
+         <li id="pixel-intl-tab" class="nav-item" role="presentation">
+             <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#pixel-intl"
+                 aria-controls="pixel-intl" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
+                     data-feather="shield"></i> Zone internationale </a>
+         </li>
+         @endif
          <li id="push-tab" class="nav-item" role="presentation">
              <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#push"
                  aria-controls="push" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"

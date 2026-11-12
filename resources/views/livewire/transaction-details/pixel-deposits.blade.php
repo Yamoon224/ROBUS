@@ -43,7 +43,12 @@
                             <tbody>
                                 @forelse ($pixel_historicals as $item)
                                     @php
-                                        $md = json_decode($item->metadata ?? '', true);
+                                        // metadata est casté en tableau par le modèle, mais peut rester
+                                        // une chaîne JSON (éventuellement doublement encodée)
+                                        $md = $item->metadata ?? [];
+                                        if (is_string($md)) {
+                                            $md = json_decode($md, true);
+                                        }
                                         if (is_string($md)) {
                                             $md = json_decode($md, true);
                                         }

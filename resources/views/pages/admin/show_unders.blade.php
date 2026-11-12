@@ -528,7 +528,7 @@
 
         @include('components.info_detail_wallet')
 
-        @include('components.account_nav')
+        @include('components.account_nav', ['showPixelTabs' => true])
 
     </div>
     <!-- END: Profile Info -->
@@ -1206,6 +1206,14 @@
         </div>
         <div id="djamo" class="tab-pane" role="tabpanel" aria-labelledby="djamo-tab">
             @livewire('transaction-details.djamos', ['walletDjamos' => $user->id])
+        </div>
+        <div id="pixel" class="tab-pane" role="tabpanel" aria-labelledby="pixel-tab">
+            @livewire('transaction-details.pixel-zone-transfers', ['walletPixels' => $user->id], key('pixel-mz-' . $user->id))
+            @livewire('transaction-details.pixel-deposits', ['walletPixels' => $user->id], key('pixel-wr-' . $user->id))
+        </div>
+        <div id="pixel-intl" class="tab-pane" role="tabpanel" aria-labelledby="pixel-intl-tab">
+            @livewire('transaction-details.pixel-zone-transfers', ['walletPixels' => $user->id, 'zone' => 'international'], key('pixel-mz-intl-' . $user->id))
+            @livewire('transaction-details.pixel-deposits', ['walletPixels' => $user->id, 'zone' => 'international'], key('pixel-wr-intl-' . $user->id))
         </div>
         <div id="versments" class="tab-pane" role="tabpanel" aria-labelledby="versments-tab">
             @livewire('transaction-details.versments', ['walletVersements' => $user->id])
