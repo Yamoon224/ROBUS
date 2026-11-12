@@ -6,7 +6,7 @@
 
 
     <div class="grid grid-cols-12 gap-6 mt-5">
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
+        <div class="intro-y col-span-12 flex flex-wrap items-end gap-3 mt-2">
             @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur'))
             <a class="btn btn-primary shadow-md mr-2" href="{{ route('unders.admins.add') }}">Ajouter</a>
             @endif
@@ -14,8 +14,8 @@
             <div class="hidden md:block mx-auto text-slate-500"></div>
 
 
-            <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
-                <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+            <div class="w-full sm:w-80 mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+                <div class="w-full sm:w-80 mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                     <label for="countriesFilter" class="block text-gray-700 text-sm font-bold mb-2">Filtrer par
                         pays</label>
                     <select id="countriesFilter" wire:model="countriesFilter" class="form-select py-3 px-4 box w-100"
@@ -68,7 +68,7 @@
 
 
             <div class="hidden md:block ml-8 text-slate-500"></div>
-            <div class="mt-3 input-group input-group-md" style="margin-top: 13px;width: 250px;">
+            <div class="mt-3 input-group input-group-md w-full sm:w-auto" style="margin-top: 13px;max-width: 250px;">
                 <div class="w-56 relative text-slate-500">
 
                     <input type="text" name="table_search" wire:model="search" class="form-control  w-56 box pr-10"
@@ -78,8 +78,8 @@
                 </div>
             </div>
         </div>
-        <div class="intro-y col-span-12">
-            <table class="table table-bordered table-hover -mt-2 -intro-x w-full">
+        <div class="intro-y col-span-12 overflow-x-auto" style="-webkit-overflow-scrolling: touch;">
+            <table class="table table-bordered table-hover -mt-2 -intro-x w-full" style="min-width: 900px;">
                 <thead class="table-dark">
                     <tr>
                         <th class="text-center whitespace-nowrap">Prénom(s) & nom</th>

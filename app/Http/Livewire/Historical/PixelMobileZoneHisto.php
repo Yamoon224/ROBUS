@@ -97,7 +97,9 @@ class PixelMobileZoneHisto extends Component
             'wallet.sidUser.country',
             'wallet.sidUser.city',
         ])
-            ->join('wallets', 'pixel_mobile_zone_transfers.wallet_id', '=', 'wallets.id')
+            // leftJoin : les transferts lancés depuis la page web publique ont wallet_id = null
+            // et doivent rester visibles dans l'historique global (admin).
+            ->leftJoin('wallets', 'pixel_mobile_zone_transfers.wallet_id', '=', 'wallets.id')
             ->when($walletUser->is_under_distributer || $walletUser->is_api, function ($query) use ($walletUser) {
                 return $query->where('wallets.sid_user_id', $walletUser->id);
             })

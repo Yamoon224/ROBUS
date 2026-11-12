@@ -305,7 +305,7 @@ class HistoricalController extends Controller
             'wallet.sidUser.country',
             'wallet.sidUser.city',
         ])
-            ->join('wallets', 'pixel_mobile_zone_transfers.wallet_id', '=', 'wallets.id')
+            ->leftJoin('wallets', 'pixel_mobile_zone_transfers.wallet_id', '=', 'wallets.id')
             ->whereDate('pixel_mobile_zone_transfers.created_at', $today)
             ->when($walletUser->is_under_distributer || $walletUser->is_api, function ($query) use ($walletUser) {
                 return $query->where('wallets.sid_user_id', $walletUser->id);
