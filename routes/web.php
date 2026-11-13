@@ -876,10 +876,15 @@ Route::get('/cron/pixel-sync', function (Request $request) {
         Artisan::call('pixel:reconcile-transfers', ['--execute' => true]);
         $reconcileOutput = Artisan::output();
 
+        // Opérations sans référence Pixel (plantage avant l'envoi) : passées en ERROR, jamais supprimées
+        Artisan::call('pixel:cleanup-orphans', ['--dry-run' => $request->boolean('dry_run')]);
+        $cleanupOutput = Artisan::output();
+
         return response()->json([
             'success'   => true,
             'sync'      => trim($syncOutput),
             'reconcile' => trim($reconcileOutput),
+            'cleanup'   => trim($cleanupOutput),
         ]);
     } catch (\Throwable $e) {
         \Illuminate\Support\Facades\Log::error('cron/pixel-sync — erreur', ['error' => $e->getMessage()]);

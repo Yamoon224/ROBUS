@@ -32,6 +32,11 @@ class Kernel extends ConsoleKernel
             ->everyFiveMinutes()
             ->withoutOverlapping();
 
+        // Opérations Pixel sans référence (jamais transmises) : passées en ERROR
+        $schedule->command('pixel:cleanup-orphans')
+            ->everyTenMinutes()
+            ->withoutOverlapping();
+
         // Transferts Mobile Zone : relance du Cash In ou remboursement automatique de l'expéditeur
         $schedule->command('pixel:reconcile-transfers --execute')
             ->everyFiveMinutes()

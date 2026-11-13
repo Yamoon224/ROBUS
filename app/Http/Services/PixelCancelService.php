@@ -142,6 +142,76 @@ class PixelCancelService
         });
     }
 
+    /**
+     * Nettoyage automatique (cron) des opérations Pixel restées PENDING SANS référence PIX_* :
+     * l'appel à Pixel n'a jamais abouti (plantage avant l'envoi), Pixel n'a donc rien reçu.
+     * Elles sont passées en ERROR (jamais supprimées : traçabilité financière).
+     *
+     * Les lignes dont le wallet Robus a été débité (Cash In) ne sont PAS traitées ici :
+     * elles sont seulement signalées pour un remboursement manuel contrôlé.
+     *
+     * @return array{cancelled:int[],needs_review:int[]}
+     */
+    public function autoCancelOrphans(int $olderThanMinutes = 15, bool $dryRun = false): array
+    {
+        $cancelled = [];
+        $review    = [];
+
+        $ids = WalletReload::where('status', 'PENDING')
+            ->whereNull('reference')
+            ->where(function ($q) {
+                $q->where('payment_method', 'LIKE', 'pixel\_innov\_%')
+                    ->orWhere('payment_method', 'robus_wallet');
+            })
+            ->where('created_at', '<=', now()->subMinutes(max(5, $olderThanMinutes)))
+            ->where('created_at', '>=', now()->subDays(30))
+            ->pluck('id');
+
+        foreach ($ids as $id) {
+            DB::transaction(function () use ($id, $dryRun, &$cancelled, &$review) {
+                $reload = WalletReload::lockForUpdate()->find($id);
+
+                // Re-vérification sous verrou : une référence a pu arriver entre-temps
+                if (!$reload || $reload->status !== 'PENDING' || !empty($reload->reference)) {
+                    return;
+                }
+
+                $meta = $this->decode($reload->metadata);
+
+                if (($meta['operation_type'] ?? null) === 'Cash In' && (float) ($meta['total_debited'] ?? 0) > 0) {
+                    $review[] = $reload->id;
+                    Log::warning('Pixel Innov — opération sans référence avec wallet débité : remboursement manuel à vérifier', [
+                        'reload_id' => $reload->id,
+                        'wallet_id' => $reload->wallet_id,
+                        'debited'   => $meta['total_debited'],
+                    ]);
+
+                    return;
+                }
+
+                if ($dryRun) {
+                    $cancelled[] = $reload->id;
+
+                    return;
+                }
+
+                $meta['auto_cancelled'] = true;
+                $meta['cancelled_at']   = now()->toDateTimeString();
+
+                $reload->update([
+                    'status'           => 'ERROR',
+                    'gateway_response' => 'Annulée automatiquement : jamais transmise à Pixel Innov',
+                    'metadata'         => json_encode($meta),
+                ]);
+
+                $cancelled[] = $reload->id;
+                Log::info('Pixel Innov — opération sans référence annulée automatiquement', ['reload_id' => $reload->id]);
+            });
+        }
+
+        return ['cancelled' => $cancelled, 'needs_review' => $review];
+    }
+
     /** État chez Pixel : SUCCESS|FAILED|PENDING…, ou null si invérifiable. */
     private function remoteState(string $transactionId, $pixelServiceId): ?string
     {
