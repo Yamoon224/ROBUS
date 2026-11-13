@@ -857,6 +857,36 @@ Route::get('/process-queue', function (Request $request) {
     }
 });
 
+// Cron externe (cron-job.org) : remboursement automatique des transactions Pixel Innov échouées.
+// Remplace le scheduler Laravel (non exécuté en production) : resynchronise les PENDING via l'API
+// Pixel (IPN manqué) → handleFailure rembourse le wallet ; relance/rembourse les transferts Zone.
+Route::get('/cron/pixel-sync', function (Request $request) {
+    $validToken = "robus_2026_e08f9b6e96e44b96155dd038db304b16f5a36481";
+
+    if (!hash_equals($validToken, (string) $request->get('token'))) {
+        return response()->json(['error' => 'Unauthorized'], 403);
+    }
+
+    try {
+        $hours = max(1, min(168, (int) $request->get('hours', 72)));
+
+        Artisan::call('pixel:sync-pending', ['--hours' => $hours]);
+        $syncOutput = Artisan::output();
+
+        Artisan::call('pixel:reconcile-transfers', ['--execute' => true]);
+        $reconcileOutput = Artisan::output();
+
+        return response()->json([
+            'success'   => true,
+            'sync'      => trim($syncOutput),
+            'reconcile' => trim($reconcileOutput),
+        ]);
+    } catch (\Throwable $e) {
+        \Illuminate\Support\Facades\Log::error('cron/pixel-sync — erreur', ['error' => $e->getMessage()]);
+        return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+    }
+});
+
 Route::post('/qr-codes/generate', function (Request $request) {
     try {
         // Paramètres optionnels

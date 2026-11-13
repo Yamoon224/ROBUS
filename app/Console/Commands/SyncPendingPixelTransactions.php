@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class SyncPendingPixelTransactions extends Command
 {
-    protected $signature   = 'pixel:sync-pending';
+    protected $signature   = 'pixel:sync-pending {--hours=168 : Fenêtre de rattrapage en heures}';
     protected $description = 'Re-synchronise les transactions Pixel Innov PENDING via l\'API Pixel Innov (IPN manqué ou timeout)';
 
     public function handle(): void
@@ -23,7 +23,7 @@ class SyncPendingPixelTransactions extends Command
             })
             ->whereNotNull('reference')
             ->where('created_at', '<=', now()->subMinutes(3))   // au moins 3 min sans IPN
-            ->where('created_at', '>=', now()->subHours(24))    // pas plus de 24h
+            ->where('created_at', '>=', now()->subHours((int) $this->option('hours')))  // 7 jours par défaut (rattrapage)
             ->get();
 
         if ($pending->isEmpty()) {
