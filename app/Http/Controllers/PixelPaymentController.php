@@ -572,7 +572,8 @@ class PixelPaymentController extends Controller
 
         $publicBase = rtrim(config('services.pixel_innov.public_url'), '/');
         $pixelPayload = [
-            'amount'             => $amountToCredit,
+            // Montant entier comme dans les autres flux (Pixel refuse un décimal du type 585.0)
+            'amount'             => (int) round($amountToCredit),
             'destination'        => $request->destination,
             'service_id'         => $pixelConfig->service_id,
             'ipn_url'            => $publicBase . '/payment_pixelInnov/callback',
@@ -636,7 +637,7 @@ class PixelPaymentController extends Controller
                 $reason = 'Échec de l\'initialisation. Veuillez réessayer.';
             }
 
-            return response()->json(['status' => false, 'message' => $reason], 400);
+            return response()->json(['status' => false, 'message' => $this->friendlyPixelError($reason)], 400);
         }
 
         $transactionId = $pixelTxId;
@@ -889,7 +890,7 @@ class PixelPaymentController extends Controller
                 ?: trim((string) ($response['data']['response'] ?? ''))
                 ?: 'Échec de l\'initialisation. Wallet remboursé.';
 
-            return response()->json(['status' => false, 'message' => $reason], 400);
+            return response()->json(['status' => false, 'message' => $this->friendlyPixelError($reason)], 400);
         }
 
         Log::info('Pixel Innov Wallet — Cash In initié depuis wallet Robus', [
@@ -1044,7 +1045,8 @@ class PixelPaymentController extends Controller
 
         $publicBase = rtrim(config('services.pixel_innov.public_url'), '/');
         $pixelPayload = [
-            'amount'             => $amountToCredit,
+            // Montant entier comme dans les autres flux (Pixel refuse un décimal du type 585.0)
+            'amount'             => (int) round($amountToCredit),
             'destination'        => $request->destination,
             'service_id'         => $pixelConfig->service_id,
             'ipn_url'            => $publicBase . '/payment_pixelInnov/callback',
@@ -1107,7 +1109,7 @@ class PixelPaymentController extends Controller
                 $reason = 'Échec de l\'initialisation. Veuillez réessayer.';
             }
 
-            return response()->json(['status' => false, 'message' => $reason], 400);
+            return response()->json(['status' => false, 'message' => $this->friendlyPixelError($reason)], 400);
         }
 
         $transactionId = $pixelTxId;
@@ -2575,7 +2577,7 @@ class PixelPaymentController extends Controller
                 'response'    => $cashOutResponse,
             ]);
 
-            return response()->json(['status' => false, 'message' => $reason], 400);
+            return response()->json(['status' => false, 'message' => $this->friendlyPixelError($reason)], 400);
         }
 
         // Cash Out initié avec succès — on enregistre le transaction_id + solde avant
@@ -2819,7 +2821,7 @@ class PixelPaymentController extends Controller
                 'response'    => $cashOutResponse,
             ]);
 
-            return response()->json(['status' => false, 'message' => $reason], 400);
+            return response()->json(['status' => false, 'message' => $this->friendlyPixelError($reason)], 400);
         }
 
         $transfer->update([
@@ -3585,6 +3587,27 @@ class PixelPaymentController extends Controller
             'GMD' => 'is_gmd',
             default => null,
         };
+    }
+
+    /**
+     * Messages d'erreur Pixel (en anglais, techniques) traduits en texte compréhensible pour le client.
+     * Le message brut reste dans les logs (« Pixel Innov — init échouée »).
+     */
+    private function friendlyPixelError(string $message): string
+    {
+        $m = strtolower($message);
+
+        if (str_contains($m, 'identical transaction')) {
+            return 'Une opération identique est déjà en cours. Patientez quelques instants avant de réessayer.';
+        }
+        if (str_contains($m, 'error occured on transaction processing') || str_contains($m, 'code 10')) {
+            return 'Le service de paiement est momentanément indisponible. Aucun montant n\'a été débité. Veuillez réessayer dans quelques minutes.';
+        }
+        if (str_contains($m, 'not authorize')) {
+            return 'Opération non autorisée par l\'opérateur. Vérifiez le numéro et le montant, puis réessayez.';
+        }
+
+        return $message;
     }
 
     /**
