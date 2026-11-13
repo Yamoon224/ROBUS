@@ -128,6 +128,10 @@
                         <div class="px-5">
                             <div class="overflow-x-auto">
 
+                                @if ($flash)
+                                    <div class="alert {{ $flashOk ? 'alert-success' : 'alert-danger' }} show mb-3" role="alert">{{ $flash }}</div>
+                                @endif
+
                                 <table id="table_pixel_mz" class="table table-bordered">
                                     <thead class="table-dark">
                                         <tr>
@@ -354,6 +358,15 @@
                                                                 {{ $transfer->status === 'PROCESSING' ? 'En traitement' : 'En attente' }}
                                                             </span>
                                                         </div>
+                                                        @if ($canCancel && $transfer->sender_status === 'PENDING' && $transfer->recipient_status === 'PENDING' && empty($transfer->recipient_transaction_id))
+                                                            <div class="flex items-center justify-center">
+                                                                <button type="button" class="btn btn-outline-danger btn-sm py-0 px-2"
+                                                                    wire:click="cancelPending({{ $transfer->id }})"
+                                                                    onclick="confirm('Annuler ce transfert en attente ? Aucun débit ni crédit ne sera effectué.') || event.stopImmediatePropagation()">
+                                                                    Annuler
+                                                                </button>
+                                                            </div>
+                                                        @endif
                                                     @elseif (in_array($transfer->status, ['FAILED', 'ERROR']))
                                                         <div class="flex items-center justify-center text-danger mt-3">
                                                             <span class="alert alert-danger inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">

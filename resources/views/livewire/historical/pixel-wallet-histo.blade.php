@@ -61,6 +61,12 @@
             </div>
         </div>
 
+        @if ($flash)
+            <div class="intro-y col-span-12">
+                <div class="alert {{ $flashOk ? 'alert-success' : 'alert-danger' }} show mb-0" role="alert">{{ $flash }}</div>
+            </div>
+        @endif
+
         <div class="intro-y col-span-12 overflow-x-auto">
             <table class="table table-bordered table-hover" style="min-width: 1100px;">
                 <thead class="table-dark">
@@ -125,6 +131,15 @@
                             </td>
                             <td class="text-center">
                                 <span class="inline-flex px-2 py-1 text-xs font-bold rounded {{ $badge }}">{{ $item->status }}</span>
+                                @if ($canCancel && $item->status === 'PENDING')
+                                    <div class="mt-1">
+                                        <button type="button" class="btn btn-outline-danger btn-sm py-0 px-2"
+                                            wire:click="cancelPending({{ $item->id }})"
+                                            onclick="confirm('Annuler cette opération en attente ? Aucun débit ni crédit ne sera effectué.') || event.stopImmediatePropagation()">
+                                            Annuler
+                                        </button>
+                                    </div>
+                                @endif
                             </td>
                         </tr>
                     @empty

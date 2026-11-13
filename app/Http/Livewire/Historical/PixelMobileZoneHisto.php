@@ -18,6 +18,16 @@ class PixelMobileZoneHisto extends Component
     public $startDate = '';
     public $endDate = '';
 
+    public $flash = null;
+    public $flashOk = true;
+
+    public function cancelPending($id)
+    {
+        $result = app(\App\Http\Services\PixelCancelService::class)->cancelTransfer((int) $id);
+        $this->flash   = $result['message'];
+        $this->flashOk = $result['ok'];
+    }
+
     public function render()
     {
         $walletUser = Auth::guard('web')->check()
@@ -78,7 +88,8 @@ class PixelMobileZoneHisto extends Component
                 ->orderBy('pixel_mobile_zone_transfers.created_at', 'desc')
                 ->select('pixel_mobile_zone_transfers.*')
                 ->paginate(15),
-            'usersCountry' => $walletUser->country->currencie->name ?? '',
+            'canCancel'    => \App\Http\Services\PixelCancelService::userCanCancel(),
+            'usersCountry' =>$walletUser->country->currencie->name ?? '',
             'totalCount'   => $totalCount,
             'successCount' => $successCount,
             'pendingCount' => $pendingCount,

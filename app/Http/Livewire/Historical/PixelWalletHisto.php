@@ -27,9 +27,19 @@ class PixelWalletHisto extends Component
     public $startDate = '';
     public $endDate = '';
 
+    public $flash = null;
+    public $flashOk = true;
+
     public function updated($name)
     {
         $this->resetPage();
+    }
+
+    public function cancelPending($id)
+    {
+        $result = app(\App\Http\Services\PixelCancelService::class)->cancelReload((int) $id);
+        $this->flash   = $result['message'];
+        $this->flashOk = $result['ok'];
     }
 
     public function render()
@@ -48,6 +58,7 @@ class PixelWalletHisto extends Component
         $hasCountry = "$raw LIKE '%\"country_iso2\":%'";
 
         $query = WalletPixelReload::query()
+            ->includingOrphans()
             ->join('wallets', 'wallet_reloads.wallet_id', '=', 'wallets.id')
             ->leftJoin('countries', 'wallets.country_id', '=', 'countries.id')
             ->with(['wallet.sidUser'])
@@ -102,6 +113,7 @@ class PixelWalletHisto extends Component
             'historicals'  => $query->select('wallet_reloads.*', 'countries.code as wallet_country_code', 'countries.name as wallet_country_name')
                 ->orderBy('wallet_reloads.created_at', 'desc')->paginate(15),
             'countries'    => Country::orderBy('name')->get(['id', 'name']),
+            'canCancel'    => \App\Http\Services\PixelCancelService::userCanCancel(),
             'totalCount'   => (clone $stats)->count(),
             'successCount' => (clone $stats)->where('wallet_reloads.status', 'SUCCESS')->count(),
             'pendingCount' => (clone $stats)->whereIn('wallet_reloads.status', ['PENDING', 'PROCESSING'])->count(),

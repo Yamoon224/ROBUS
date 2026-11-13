@@ -28,9 +28,19 @@ class PixelDeposits extends Component
         $this->zone = $zone === 'international' ? 'international' : 'mobile';
     }
 
+    public $flash = null;
+    public $flashOk = true;
+
     public function updatingSearch()
     {
         $this->resetPage();
+    }
+
+    public function cancelPending($id)
+    {
+        $result = app(\App\Http\Services\PixelCancelService::class)->cancelReload((int) $id);
+        $this->flash   = $result['message'];
+        $this->flashOk = $result['ok'];
     }
 
     public function gotoPagePaie($page)
@@ -52,7 +62,7 @@ class PixelDeposits extends Component
     {
         $wallet = Wallet::where('sid_user_id', $this->walletPixels)->first();
 
-        $query = WalletPixelReload::query()->where('wallet_reloads.wallet_id', $wallet->id ?? 0);
+        $query = WalletPixelReload::query()->includingOrphans()->where('wallet_reloads.wallet_id', $wallet->id ?? 0);
 
         // metadata peut être doublement encodé : on retire les antislashs avant de comparer
         $iso = strtoupper((string) Country::whereKey($wallet->country_id ?? 0)->value('code'));
@@ -78,6 +88,7 @@ class PixelDeposits extends Component
 
         return view('livewire.transaction-details.pixel-deposits', [
             'zone_label' => $this->zone === 'international' ? 'Zone internationale' : 'Zone mobile',
+            'canCancel'  => \App\Http\Services\PixelCancelService::userCanCancel(),
             'pixel_historicals' => $query->orderBy('created_at', 'desc')->paginate(20),
         ]);
     }

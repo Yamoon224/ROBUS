@@ -51,6 +51,16 @@ class ReloadSingleCollection extends JsonResource
             $robusBalanceAfter = number_format($after, 2, '.', ' ') . ' ' . $balanceCode;
         }
 
+        // Opérations Pixel créées sans type_transaction (en attente ou en erreur) : on déduit le libellé
+        // de metadata.operation_type pour ne jamais exposer le nom technique « pixel_innov_wave ».
+        $displayType = $this->type_transaction;
+        $displayTypeReceived = $this->type_received;
+        if (empty($displayType) && str_starts_with((string) $this->payment_method, 'pixel_innov_')) {
+            $isCashIn = is_array($metadata) && ($metadata['operation_type'] ?? null) === 'Cash In';
+            $displayType = $isCashIn ? 'Cash In' : 'Achat UV';
+            $displayTypeReceived = $displayTypeReceived ?: ($isCashIn ? null : 'UV');
+        }
+
         $wallet_send = Wallet::where('wallet_id',  $this->account_wallet)->first();
 
         if ($wallet_send != null) {
@@ -72,8 +82,8 @@ class ReloadSingleCollection extends JsonResource
             // 'name_user_send' => isset(optional($this->wallet)->sidUser->firstname) ? (optional($this->wallet)->sidUser->firstname) . ' ' . (optional($this->wallet)->sidUser->lastname)  : null,
             'phone_user_send' => optional($this->wallet)->sidUser->phone ?? null,
             'date_created' =>  $this->created_at,
-            'type'  =>  $this->type_transaction ?? $this->payment_method,
-            'type_received'  => $this->type_received,
+            'type'  =>  $displayType ?: $this->payment_method,
+            'type_received'  => $displayTypeReceived,
             'phone'  => null,
             'date_treatment' =>  optional($this->paymentReload)->created_at,
             'Reference'  => optional($this->paymentReload)->transaction_id ?? $this->reference,

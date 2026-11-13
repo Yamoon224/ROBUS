@@ -532,6 +532,11 @@ class PixelPaymentController extends Controller
             'currency'        => $limits['currency'] ?? 'XOF',
             'status'          => 'PENDING',
             'payment_method'  => 'pixel_innov_' . strtolower($pixelConfig->provider->name ?? 'unknown'),
+            // Même libellé qu'au SUCCESS (handleSuccess) : sans cela l'application affiche le
+            // nom technique « pixel_innov_wave » tant que l'opération est en attente.
+            'type_transaction' => $operationType === 'Cash In' ? 'Cash In' : 'Achat UV',
+            'type_received'    => $operationType === 'Cash In' ? null : 'UV',
+            'description'      => $operationType === 'Cash In' ? null : 'ACHAT D\'UV',
             'metadata'        => json_encode([
                 'user_id'            => $user->id,
                 'pixel_service_id'   => $pixelConfig->id,

@@ -10,6 +10,24 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class WalletPixelReload extends WalletReload
 {
+    /**
+     * Inclut aussi les opérations Pixel restées sans référence PIX_* (échec avant la réponse de Pixel),
+     * pour qu'elles apparaissent dans les historiques et puissent être annulées.
+     */
+    public function scopeIncludingOrphans(Builder $query): Builder
+    {
+        return $query->withoutGlobalScope('pixel_innov')->where(function ($q) {
+            $q->where('wallet_reloads.reference', 'LIKE', 'PIX\_%')
+                ->orWhere(function ($o) {
+                    $o->whereNull('wallet_reloads.reference')
+                        ->where(function ($m) {
+                            $m->where('wallet_reloads.payment_method', 'LIKE', 'pixel\_innov\_%')
+                                ->orWhere('wallet_reloads.payment_method', 'robus_wallet');
+                        });
+                });
+        });
+    }
+
     protected static function booted()
     {
         parent::booted();
