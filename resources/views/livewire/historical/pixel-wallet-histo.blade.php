@@ -80,6 +80,7 @@
                         <th class="text-center whitespace-nowrap">Frais</th>
                         <th class="text-center whitespace-nowrap">Reçu</th>
                         <th class="text-center whitespace-nowrap">Statut</th>
+<th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">Solde avant / après</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -141,10 +142,11 @@
                                     </div>
                                 @endif
                             </td>
+<td class="text-center">@include('components.balanceBeforeAfter')</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="text-center">Aucune donnée pour le moment</td>
+                            <td colspan="10" class="text-center">Aucune donnée pour le moment</td>
                         </tr>
                     @endforelse
                 </tbody>
