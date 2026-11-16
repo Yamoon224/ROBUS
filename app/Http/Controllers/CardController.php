@@ -77,7 +77,7 @@ class CardController extends Controller
         return $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
-            ->where('country_services.status', true)
+            ->where(\App\Models\CountryService::actorColumn(), true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', $providerType)
             ->select('providers.*')

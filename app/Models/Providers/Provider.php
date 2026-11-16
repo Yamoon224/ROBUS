@@ -87,7 +87,7 @@ class Provider extends Model
         return $query->where('providers.status', true)
             ->whereHas('country_services', function (Builder $countryServices) use ($countryId) {
                 $countryServices->where('country_id', $countryId)
-                    ->where('status', true);
+                    ->where(\App\Models\CountryService::actorColumn(), true);
             });
     }
 

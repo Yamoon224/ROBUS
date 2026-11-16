@@ -26,6 +26,12 @@ class ZoneCountrySwitch
             return true;
         }
 
+        // L'acteur connecté (client ou sous-distributeur) détermine la ligne lue.
+        $zone = self::actorZone(
+            $zone,
+            \App\Models\CountryService::actorColumn() === \App\Models\CountryService::STATUS_SUB_DISTRIBUTOR
+        );
+
         $status = DB::table('country_zone_switches')
             ->where('country_id', $countryId)
             ->where('zone', $zone)
@@ -34,8 +40,15 @@ class ZoneCountrySwitch
         return $status === null || (bool) $status;
     }
 
-    public static function set(string $zone, int $countryId, bool $status): void
+    /** Les sous-distributeurs ont leur propre ligne (suffixe _sub) ; les clients gardent la clé d'origine. */
+    public static function actorZone(string $zone, bool $subDistributor): string
     {
+        return $subDistributor ? $zone . '_sub' : $zone;
+    }
+
+    public static function set(string $zone, int $countryId, bool $status, bool $subDistributor = false): void
+    {
+        $zone = self::actorZone($zone, $subDistributor);
         DB::table('country_zone_switches')->updateOrInsert(
             ['country_id' => $countryId, 'zone' => $zone],
             ['status' => $status, 'updated_at' => now(), 'created_at' => now()]

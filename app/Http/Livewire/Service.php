@@ -129,14 +129,64 @@ class Service extends Component
         }
     }
 
-    public function setCountryServiceStatus(int $countryServiceId, bool $status): void
+    // Cible de l'activation : clients, sous-distributeurs ou les deux.
+    public $managementTarget = 'both';
+
+    // Types d'opérateurs qui ne sont pas des services : exclus du sélecteur de groupe
+    // (Bank deposit, Bank send x2, Bank send inter, Crédit tél. inter, Djamo, Djamo inter,
+    // Facture inter, Mobile money, Opérations bancaires, Push, Push inter, Rechargement carte inter,
+    // Trésor money, Trésor money inter, Versement bancaire inter, Wave UV).
+    private const HIDDEN_GROUP_TYPE_IDS = [12, 19, 27, 28, 9, 25, 22, 7, 1, 3, 24, 21, 11, 23, 20, 10, 17];
+
+    private function targetColumns(?string $target = null): array
+    {
+        return match ($target ?? $this->managementTarget) {
+            'client' => ['status'],
+            'sub_distributor' => ['status_sub_distributor'],
+            default => ['status', 'status_sub_distributor'],
+        };
+    }
+
+    private function targetPayload(bool $status, ?string $target = null): array
+    {
+        return array_merge(
+            array_fill_keys($this->targetColumns($target), $status),
+            ['updated_at' => now()]
+        );
+    }
+
+    private function applyZone(string $zone, bool $status): void
+    {
+        $columns = $this->targetColumns();
+        if (in_array('status', $columns, true)) {
+            ZoneCountrySwitch::set($zone, (int) $this->managementCountryId, $status, false);
+        }
+        if (in_array('status_sub_distributor', $columns, true)) {
+            ZoneCountrySwitch::set($zone, (int) $this->managementCountryId, $status, true);
+        }
+    }
+
+    private function targetLabel(?string $target = null): string
+    {
+        return match ($target ?? $this->managementTarget) {
+            'client' => 'les clients',
+            'sub_distributor' => 'les sous-distributeurs',
+            default => 'les clients et sous-distributeurs',
+        };
+    }
+
+    public function setCountryServiceStatus(int $countryServiceId, bool $status, string $target = 'client'): void
     {
         $this->authorizeActivationManagement();
+        abort_unless(in_array($target, ['client', 'sub_distributor'], true), 422);
 
-        CountryService::findOrFail($countryServiceId)->update(['status' => $status]);
+        // save() (et non un update de masse) pour garder la logique Paystack / Pixel Innov côté clients.
+        CountryService::findOrFail($countryServiceId)
+            ->forceFill(array_fill_keys($this->targetColumns($target), $status))
+            ->save();
         Artisan::call('cache:clear');
 
-        $this->emit('success', $status ? 'Méthode activée pour ce pays !' : 'Méthode désactivée pour ce pays !');
+        $this->emit('success', ($status ? 'Méthode activée' : 'Méthode désactivée') . ' pour ' . $this->targetLabel($target) . ' !');
     }
 
     public function setGroupStatus(bool $status): void
@@ -145,6 +195,7 @@ class Service extends Component
         $this->validate([
             'managementCountryId' => 'required|exists:countries,id',
             'managementProviderTypeId' => 'required|exists:provider_types,id',
+            'managementTarget' => 'required|in:client,sub_distributor,both',
         ]);
 
         $zone = ZoneCountrySwitch::zoneForTypeName(
@@ -152,9 +203,9 @@ class Service extends Component
         );
 
         if ($zone) {
-            ZoneCountrySwitch::set($zone, (int) $this->managementCountryId, $status);
+            $this->applyZone($zone, $status);
             Artisan::call('cache:clear');
-            $this->emit('success', $status ? 'Groupe activé pour ce pays !' : 'Groupe désactivé pour ce pays !');
+            $this->emit('success', ($status ? 'Groupe activé' : 'Groupe désactivé') . ' pour ' . $this->targetLabel() . ' !');
 
             return;
         }
@@ -166,28 +217,32 @@ class Service extends Component
                     ->where('provider_type_id', $this->managementProviderTypeId)
                     ->whereNull('deleted_at');
             })
-            ->update(['status' => $status, 'updated_at' => now()]);
+            ->update($this->targetPayload($status));
 
         \App\Support\UvPaymentSwitch::enforce();
         Artisan::call('cache:clear');
-        $this->emit('success', $status ? 'Groupe activé pour ce pays !' : 'Groupe désactivé pour ce pays !');
+        $this->emit('success', ($status ? 'Groupe activé' : 'Groupe désactivé') . ' pour ' . $this->targetLabel() . ' !');
     }
 
     public function setCountryStatus(bool $status): void
     {
         $this->authorizeActivationManagement();
-        $this->validate(['managementCountryId' => 'required|exists:countries,id']);
+        $this->validate([
+            'managementCountryId' => 'required|exists:countries,id',
+            'managementTarget' => 'required|in:client,sub_distributor,both',
+        ]);
 
-        CountryService::where('country_id', $this->managementCountryId)
-            ->update(['status' => $status]);
+        DB::table('country_services')
+            ->where('country_id', $this->managementCountryId)
+            ->update($this->targetPayload($status));
 
         foreach ([ZoneCountrySwitch::INTERNATIONAL, ZoneCountrySwitch::DEPOSIT] as $zone) {
-            ZoneCountrySwitch::set($zone, (int) $this->managementCountryId, $status);
+            $this->applyZone($zone, $status);
         }
 
         \App\Support\UvPaymentSwitch::enforce();
         Artisan::call('cache:clear');
-        $this->emit('success', $status ? 'Toutes les méthodes du pays sont activées !' : 'Toutes les méthodes du pays sont désactivées !');
+        $this->emit('success', ($status ? 'Toutes les méthodes du pays sont activées' : 'Toutes les méthodes du pays sont désactivées') . ' pour ' . $this->targetLabel() . ' !');
     }
 
     private function authorizeActivationManagement(): void
@@ -238,7 +293,9 @@ class Service extends Component
         return view('livewire.service', [
             "providers" => $provider->orderBy('name', 'asc')->latest()->paginate(10),
             "countries" => Country::where('robus', true)->orderBy('name', 'asc')->get(),
-            "providerTypes" => ProviderType::where('status', true)->orderBy('name', 'asc')->get(),
+            "providerTypes" => ProviderType::where('status', true)
+                ->whereNotIn('id', self::HIDDEN_GROUP_TYPE_IDS)
+                ->orderBy('name', 'asc')->get(),
         ]);
     }
 }

@@ -24,12 +24,40 @@ class CountryService extends Model
         });
     }
 
-    protected $fillable = ['country_id', 'provider_id', 'status'];
+    protected $fillable = ['country_id', 'provider_id', 'status', 'status_sub_distributor'];
 
     protected $casts = [
         'status' => 'boolean',
     ];
 
+
+    public const STATUS_CLIENT = 'country_services.status';
+    public const STATUS_SUB_DISTRIBUTOR = 'country_services.status_sub_distributor';
+
+    /**
+     * Colonne de statut à lire pour l'acteur connecté : les sous-distributeurs ont leur
+     * propre activation, tous les autres (clients, API, admin) suivent celle des clients.
+     */
+    public static function actorColumn(): string
+    {
+        return self::isSubDistributorActor() ? self::STATUS_SUB_DISTRIBUTOR : self::STATUS_CLIENT;
+    }
+
+    private static function isSubDistributorActor(): bool
+    {
+        try {
+            $apiUser = function_exists('robus') ? robus() : null;
+            if ($apiUser) {
+                return (bool) $apiUser->is_under_distributer;
+            }
+
+            $webUser = \Illuminate\Support\Facades\Auth::guard('web')->user();
+
+            return $webUser && ($webUser->is_under_distributer || $webUser->hasRole('sous-distributeur'));
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
 
     public function country()
     {

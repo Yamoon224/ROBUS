@@ -939,7 +939,7 @@ class TransactionCiv extends Component
         $providers = $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', sabdy()->country->id)
-            ->where('country_services.status', true)
+            ->where(\App\Models\CountryService::actorColumn(), true)
             ->where('providers.status', true)
             // ->where('providers.id' , 9)
             ->where('providers.provider_type_id', $providerType)
@@ -957,7 +957,7 @@ class TransactionCiv extends Component
         $providers = $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', sabdy()->country->id)
-            ->where('country_services.status', true)
+            ->where(\App\Models\CountryService::actorColumn(), true)
             ->where('providers.status', true)
             ->where('providers.id', 9)
             ->where('providers.provider_type_id', $providerType)
@@ -976,7 +976,7 @@ class TransactionCiv extends Component
         $providers = $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', sabdy()->country->id)
-            ->where('country_services.status', true)
+            ->where(\App\Models\CountryService::actorColumn(), true)
             ->where('providers.status', true)
             ->where('providers.id', '!=', 9)
             ->where('providers.provider_type_id', $providerType)

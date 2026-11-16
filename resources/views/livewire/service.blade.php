@@ -31,6 +31,15 @@
                     @error('managementProviderTypeId') <div class="text-danger mt-1">Sélectionnez un groupe.</div> @enderror
                 </div>
 
+                <div class="col-span-12 md:col-span-4">
+                    <label class="form-label">Concerne</label>
+                    <select wire:model="managementTarget" class="form-select">
+                        <option value="both">Clients et sous-distributeurs</option>
+                        <option value="client">Clients uniquement</option>
+                        <option value="sub_distributor">Sous-distributeurs uniquement</option>
+                    </select>
+                </div>
+
                 <div class="col-span-12 md:col-span-4 flex flex-wrap gap-2">
                     <button type="button" wire:click="setGroupStatus(true)" class="btn btn-success">Activer le groupe</button>
                     <button type="button" wire:click="setGroupStatus(false)" class="btn btn-danger">Désactiver le groupe</button>
@@ -105,20 +114,25 @@
                                 <td class="w-35 text-center">
 
                                     @foreach ($item->country_services as $service)
-                                        @if (Auth::guard('web')->user()->hasPermissionTo('active-operateurs'))
-                                            <button type="button"
-                                                wire:click="setCountryServiceStatus({{ $service->id }}, {{ $service->status ? 'false' : 'true' }})"
-                                                class="inline-flex items-center justify-center px-2 py-1 mb-2 mr-1 text-xs font-bold text-white rounded {{ $service->status ? 'bg-success' : 'bg-danger' }}"
-                                                title="{{ $service->status ? 'Désactiver' : 'Activer' }} cette méthode pour {{ $service->country->name ?? 'ce pays' }}">
-                                                <i class="fas {{ $service->status ? 'fa-unlock-alt' : 'fa-lock' }} w-3 h-3 mr-1"></i>
-                                                {{ $service->country->name ?? null }}
-                                            </button>
-                                        @else
-                                            <span class="inline-flex items-center justify-center px-2 py-1 mb-2 mr-1 text-xs font-bold text-white rounded {{ $service->status ? 'bg-success' : 'bg-danger' }}">
-                                                {{ $service->country->name ?? null }}
-                                            </span>
-                                        @endif
-                                    @endforeach
+                                        <div class="mb-2">
+                                            <div class="text-xs font-bold">{{ $service->country->name ?? null }}</div>
+                                            @foreach (['client' => ['Client', 'status'], 'sub_distributor' => ['Sous-distr.', 'status_sub_distributor']] as $target => [$label, $column])
+                                                @php($active = (bool) $service->{$column})
+                                                @if (Auth::guard('web')->user()->hasPermissionTo('active-operateurs'))
+                                                    <button type="button"
+                                                        wire:click="setCountryServiceStatus({{ $service->id }}, {{ $active ? 'false' : 'true' }}, '{{ $target }}')"
+                                                        class="inline-flex items-center justify-center px-2 py-1 mr-1 text-xs font-bold text-white rounded {{ $active ? 'bg-success' : 'bg-danger' }}"
+                                                        title="{{ $active ? 'Désactiver' : 'Activer' }} cette méthode pour {{ $label }} ({{ $service->country->name ?? 'ce pays' }})">
+                                                        <i class="fas {{ $active ? 'fa-unlock-alt' : 'fa-lock' }} w-3 h-3 mr-1"></i>
+                                                        {{ $label }}
+                                                    </button>
+                                                @else
+                                                    <span class="inline-flex items-center justify-center px-2 py-1 mr-1 text-xs font-bold text-white rounded {{ $active ? 'bg-success' : 'bg-danger' }}">
+                                                        {{ $label }}
+                                                    </span>
+                                                @endif
+                                            @endforeach
+                                        </div>                                    @endforeach
                                 </td>
                                 {{-- <td class="w-35 text-center">
                                     <div class="text-slate-500 text-xs  mt-0.5">{{ $item->country->name ?? null }}</div>

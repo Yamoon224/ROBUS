@@ -5730,7 +5730,7 @@ class Transfers extends Component
             'providers.id'
         )
             ->where('country_services.country_id', $walletUser->country->id)
-            ->where('country_services.status', true)
+            ->where(\App\Models\CountryService::actorColumn(), true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', 1)
             ->select('providers.*')
@@ -5750,7 +5750,7 @@ class Transfers extends Component
             'providers.id'
         )
             ->where('country_services.country_id', $walletUser->country->id)
-            ->where('country_services.status', true)
+            ->where(\App\Models\CountryService::actorColumn(), true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', 2)
             ->select('providers.*')
@@ -5772,7 +5772,7 @@ class Transfers extends Component
             'providers.id'
         )
             ->where('country_services.country_id', $walletUser->country->id)
-            ->where('country_services.status', true)
+            ->where(\App\Models\CountryService::actorColumn(), true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', 4)
             ->select('providers.*')
@@ -5847,7 +5847,7 @@ class Transfers extends Component
             'providers.id'
         )
             ->where('country_services.country_id', $walletUser->country->id)
-            ->where('country_services.status', true)
+            ->where(\App\Models\CountryService::actorColumn(), true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', 5)
             ->select('providers.*')
@@ -5868,7 +5868,7 @@ class Transfers extends Component
             'providers.id'
         )
             ->where('country_services.country_id', $walletUser->country->id)
-            ->where('country_services.status', true)
+            ->where(\App\Models\CountryService::actorColumn(), true)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', 6)
             ->select('providers.*')
