@@ -149,11 +149,6 @@ class Service extends Component
         8 => [8, 7, 9, 10, 11, 28],
     ];
 
-    // Groupes qui pilotent aussi une zone de l'app (tuiles « Dépôt zone » / « Transfert mobile Zone »).
-    private const GROUP_ZONES = [
-        1 => ZoneCountrySwitch::DEPOSIT,
-        8 => ZoneCountrySwitch::INTERNATIONAL,
-    ];
 
     // Noms affichés dans le sélecteur, alignés sur les tuiles de l'app :
     // « Dépôt » = Mobile Money (section « Transfert national » de l'app),
@@ -243,10 +238,6 @@ class Service extends Component
                     ->whereNull('deleted_at');
             })
             ->update($this->targetPayload($status));
-
-        if ($linkedZone = self::GROUP_ZONES[(int) $this->managementProviderTypeId] ?? null) {
-            $this->applyZone($linkedZone, $status);
-        }
 
         \App\Support\UvPaymentSwitch::enforce();
         Artisan::call('cache:clear');
