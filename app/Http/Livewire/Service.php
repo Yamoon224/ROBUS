@@ -136,7 +136,15 @@ class Service extends Component
     // (Bank deposit, Bank send x2, Bank send inter, Crédit tél. inter, Djamo, Djamo inter,
     // Facture inter, Mobile money, Opérations bancaires, Push, Push inter, Rechargement carte inter,
     // Trésor money, Trésor money inter, Versement bancaire inter, Wave UV).
-    private const HIDDEN_GROUP_TYPE_IDS = [12, 19, 27, 28, 9, 25, 22, 7, 1, 3, 24, 21, 11, 23, 20, 10, 17];
+    private const HIDDEN_GROUP_TYPE_IDS = [12, 19, 27, 28, 9, 25, 22, 7, 3, 24, 21, 11, 23, 20, 10, 17];
+
+    // Noms affichés dans le sélecteur, alignés sur les tuiles de l'app :
+    // « Dépôt » = Mobile Money (section « Transfert national » de l'app),
+    // « Transfert international » = Mobile Money inter.
+    private const GROUP_LABELS = [
+        1 => 'Dépôt',
+        8 => 'Transfert international',
+    ];
 
     private function targetColumns(?string $target = null): array
     {
@@ -295,7 +303,10 @@ class Service extends Component
             "countries" => Country::where('robus', true)->orderBy('name', 'asc')->get(),
             "providerTypes" => ProviderType::where('status', true)
                 ->whereNotIn('id', self::HIDDEN_GROUP_TYPE_IDS)
-                ->orderBy('name', 'asc')->get(),
+                ->get()
+                ->each(fn ($type) => $type->name = self::GROUP_LABELS[$type->id] ?? $type->name)
+                ->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)
+                ->values(),
         ]);
     }
 }
