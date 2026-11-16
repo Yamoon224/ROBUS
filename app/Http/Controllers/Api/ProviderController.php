@@ -226,11 +226,11 @@ class ProviderController extends Controller
                     'walletUv' => [30, 'relaodUv'],
                 ];
 
-                $providerCacheKey = "providers_country_{$countrieId}_v5";
+                $providerCacheKey = "providers_country_{$countrieId}_v6_" . (\App\Models\CountryService::actorColumn() === \App\Models\CountryService::STATUS_SUB_DISTRIBUTOR ? 'sub' : 'client');
 
                 $providers = [];
 
-                $providerCacheKey = "providers_country_{$countrieId}_v5";
+                $providerCacheKey = "providers_country_{$countrieId}_v6_" . (\App\Models\CountryService::actorColumn() === \App\Models\CountryService::STATUS_SUB_DISTRIBUTOR ? 'sub' : 'client');
                 $providers        = Cache::get($providerCacheKey, []);
 
 
