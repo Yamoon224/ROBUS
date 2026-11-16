@@ -136,7 +136,13 @@ class Service extends Component
     // (Bank deposit, Bank send x2, Bank send inter, Crédit tél. inter, Djamo, Djamo inter,
     // Facture inter, Mobile money, Opérations bancaires, Push, Push inter, Rechargement carte inter,
     // Trésor money, Trésor money inter, Versement bancaire inter, Wave UV).
-    private const HIDDEN_GROUP_TYPE_IDS = [12, 19, 27, 28, 9, 25, 22, 7, 3, 24, 21, 11, 23, 20, 10, 17];
+    // 26 = « Xbet inter » : masqué, il suit le groupe 1XBET (13) pour le pays choisi.
+    private const HIDDEN_GROUP_TYPE_IDS = [12, 19, 27, 28, 9, 25, 22, 7, 3, 24, 21, 11, 23, 20, 10, 17, 26];
+
+    // Groupe du sélecteur => types d'opérateurs réellement modifiés.
+    private const GROUP_EXTRA_TYPES = [
+        13 => [13, 26],
+    ];
 
     // Noms affichés dans le sélecteur, alignés sur les tuiles de l'app :
     // « Dépôt » = Mobile Money (section « Transfert national » de l'app),
@@ -222,7 +228,7 @@ class Service extends Component
             ->where('country_id', $this->managementCountryId)
             ->whereIn('provider_id', function ($query) {
                 $query->select('id')->from('providers')
-                    ->where('provider_type_id', $this->managementProviderTypeId)
+                    ->whereIn('provider_type_id', self::GROUP_EXTRA_TYPES[(int) $this->managementProviderTypeId] ?? [(int) $this->managementProviderTypeId])
                     ->whereNull('deleted_at');
             })
             ->update($this->targetPayload($status));
