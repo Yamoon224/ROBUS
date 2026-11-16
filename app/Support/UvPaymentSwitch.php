@@ -134,10 +134,14 @@ final class UvPaymentSwitch
         }
 
         // 2) Paystack actif dans un pays : Pixel Innov est désactivé dans ce pays.
-        $countries = DB::table('country_services')
-            ->where('provider_id', $paystack->id)
-            ->where('status', true)
-            ->pluck('country_id');
+        // Seulement si l'opérateur Paystack est lui-même actif : sinon (Paystack désactivé, Pixel Innov actif)
+        // la réactivation d'un pays couperait les deux moyens de paiement et l'achat d'UV ne passerait plus.
+        $countries = $paystack->status
+            ? DB::table('country_services')
+                ->where('provider_id', $paystack->id)
+                ->where('status', true)
+                ->pluck('country_id')
+            : collect();
 
         if ($countries->isNotEmpty()) {
             $updated = DB::table('country_services')

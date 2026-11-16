@@ -140,8 +140,19 @@ class Service extends Component
     private const HIDDEN_GROUP_TYPE_IDS = [12, 19, 27, 28, 9, 25, 22, 7, 3, 24, 21, 11, 23, 20, 10, 17, 26];
 
     // Groupe du sélecteur => types d'opérateurs réellement modifiés.
+    // 5  = Rechargement de carte : l'app y affiche aussi Push (24) et Djamo (25).
+    // 8  = Transfert international : l'app y regroupe factures (7), crédit tél. (9), versement (10),
+    //      rechargement de carte (11) et Bank send (28) inter.
     private const GROUP_EXTRA_TYPES = [
         13 => [13, 26],
+        5 => [5, 24, 25],
+        8 => [8, 7, 9, 10, 11, 28],
+    ];
+
+    // Groupes qui pilotent aussi une zone de l'app (tuiles « Dépôt zone » / « Transfert mobile Zone »).
+    private const GROUP_ZONES = [
+        1 => ZoneCountrySwitch::DEPOSIT,
+        8 => ZoneCountrySwitch::INTERNATIONAL,
     ];
 
     // Noms affichés dans le sélecteur, alignés sur les tuiles de l'app :
@@ -232,6 +243,10 @@ class Service extends Component
                     ->whereNull('deleted_at');
             })
             ->update($this->targetPayload($status));
+
+        if ($linkedZone = self::GROUP_ZONES[(int) $this->managementProviderTypeId] ?? null) {
+            $this->applyZone($linkedZone, $status);
+        }
 
         \App\Support\UvPaymentSwitch::enforce();
         Artisan::call('cache:clear');

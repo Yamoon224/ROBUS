@@ -80,7 +80,7 @@ class ProviderController extends Controller
     private function getDepositZoneProviders(int $countryId)
     {
         $providers = ProvidersService::getPixelInnovDepositZoneProviders($countryId);
-        $robusProvider = Provider::whereKey(9)->whereStatus(true)->first();
+        $robusProvider = Provider::whereKey(9)->availableInCountry($countryId)->first();
 
         return $robusProvider
             ? $providers->prepend($robusProvider)->values()
