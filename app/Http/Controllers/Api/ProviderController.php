@@ -77,6 +77,26 @@ class ProviderController extends Controller
         return $providers->concat($pixelProviders)->sortBy('name')->values();
     }
 
+    /** Section vide : collection sans élément, ou tableau de listes toutes vides (ex. « Transfert international »). */
+    private function isEmptySection($section): bool
+    {
+        if ($section instanceof \Illuminate\Http\Resources\Json\ResourceCollection) {
+            return $section->count() === 0;
+        }
+
+        if (is_array($section)) {
+            foreach ($section as $list) {
+                if (!$this->isEmptySection($list)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
     private function getDepositZoneProviders(int $countryId)
     {
         $providers = ProvidersService::getPixelInnovDepositZoneProviders($countryId);
@@ -395,7 +415,15 @@ class ProviderController extends Controller
                 if (!(robus()->is_under_distributer || robus()->is_api)) {
                     $dashboard_data = array_filter(
                         $dashboard_data,
-                        fn ($section) => !($section instanceof \Illuminate\Http\Resources\Json\ResourceCollection) || $section->count() > 0
+                        fn ($section) => !$this->isEmptySection($section)
+                    );
+                } else {
+                    // Sous-distributeurs / API : une section dont toutes les listes sont vides
+                    // (service désactivé) est retirée ; « Achat UV » reste toujours présent.
+                    $dashboard_data = array_filter(
+                        $dashboard_data,
+                        fn ($section, $title) => $title === 'Achat UV' || !$this->isEmptySection($section),
+                        ARRAY_FILTER_USE_BOTH
                     );
                 }
 

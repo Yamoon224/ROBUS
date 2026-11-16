@@ -145,6 +145,8 @@ class Service extends Component
     //      rechargement de carte (11) et Bank send (28) inter.
     private const GROUP_EXTRA_TYPES = [
         13 => [13, 26],
+        // 1 = Dépôt : « Transfert national » regroupe aussi Trésor Money (23) dans l'app.
+        1 => [1, 23],
         5 => [5, 24, 25],
         8 => [8, 7, 9, 10, 11, 28],
     ];
