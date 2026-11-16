@@ -29,6 +29,7 @@
               <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
                   Actions
               </th>
+<th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">Solde avant / après</th>
           </tr>
       </thead>
       <tbody>
@@ -227,6 +228,7 @@
 
                           </div>
                       </td>
+<td class="text-center">@include('components.balanceBeforeAfter')</td>
                   </tr>
               @endforeach
           @else
