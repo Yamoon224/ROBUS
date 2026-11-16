@@ -390,6 +390,15 @@ class ProviderController extends Controller
                     }
                 }
 
+                // Clients : un service désactivé pour eux (liste vide) ne doit plus apparaître dans l'app.
+                // Les sous-distributeurs / API sont déjà filtrés par leurs boutons d'assignation.
+                if (!(robus()->is_under_distributer || robus()->is_api)) {
+                    $dashboard_data = array_filter(
+                        $dashboard_data,
+                        fn ($section) => !($section instanceof \Illuminate\Http\Resources\Json\ResourceCollection) || $section->count() > 0
+                    );
+                }
+
                 if ($izOpen && $zoneProviders->isNotEmpty()) {
                     $dashboard_data['Transfert mobile Zone'] = ProviderSingleCollection::collection($zoneProviders);
                 }
