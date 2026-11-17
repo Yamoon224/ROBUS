@@ -142,7 +142,7 @@
                                     </div>
                                 @endif
                             </td>
-<td class="text-center">@include('components.balanceBeforeAfter')</td>
+<td class="text-center">@include('components.balanceBeforeAfter', ['swapBalances' => true])</td>
                         </tr>
                     @empty
                         <tr>
