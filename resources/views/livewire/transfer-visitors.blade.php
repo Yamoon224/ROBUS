@@ -1,4 +1,4 @@
-<div wire:poll.10s.visible="$refresh">
+<div wire:poll.30s.visible="$refresh">
     <!-- inject:js -->
     <script src="{{ asset('public/dist/js/app.js') }}"></script>
     <script src="{{ asset('public/css/app.css') }}"></script>

@@ -5,7 +5,7 @@
 
 @endphp
 
-<div wire:poll.10s.visible="$refresh">
+<div wire:poll.30s.visible="$refresh">
 
 
     <h2 class="text-lg font-medium truncate mr-6 mt-6">
