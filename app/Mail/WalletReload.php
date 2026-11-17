@@ -27,7 +27,7 @@ class WalletReload extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->from(config('mail.from.address'), config('mail.from.name'))
-            ->subject('Demande de paiement ' . config('app.name') . ' - ' . $this->content->provider->name)
+            ->subject('Demande de paiement ' . config('app.name') . ' - ' . ($this->content->provider->name ?? 'Recharge'))
             ->markdown('pages.emails.walletReloadUV');
     }
 

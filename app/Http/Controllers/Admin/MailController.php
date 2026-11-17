@@ -241,7 +241,7 @@ class MailController extends Controller
             $email = $data->wallet->sidUser->email;
 
             if ($email) {
-                $mailable = new WalletReload($email);
+                $mailable = new WalletReload($data);
                 $mailable->onQueue('emails'); 
 
                 Mail::to($email)->queue($mailable);
