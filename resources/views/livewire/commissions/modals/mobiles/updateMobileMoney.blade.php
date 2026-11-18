@@ -131,7 +131,7 @@
                 <button wire:click="update" type="submit" wire:loading.remove
                     class="btn btn-primary w-20">Modifier</button>
                 <div wire:loading.delay wire:target="update" wire:click="update" type="div"
-                    class="btn btn-warning w-40"> Traitement ... </button>
+                    class="btn btn-warning w-40"> Traitement ... </div>
             </div>
         </div>
     </div>
