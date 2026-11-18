@@ -1,4 +1,4 @@
-﻿<div>
+<div>
     <h2 class="intro-y text-lg font-medium mt-10">
         Commissions pour les depots 
     </h2>
