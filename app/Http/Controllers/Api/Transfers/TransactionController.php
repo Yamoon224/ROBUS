@@ -1409,13 +1409,19 @@ class TransactionController extends Controller
 
                 $commission_transaction = $this->percentRobus->getRobusPercentageSDistributers();
                 $commission_transaction_val_percent_pay = 0;
+                $commission_transaction_val_percent_pay_custumer = 0;
+                $commission_transaction_val_nat_receive = (float)$amount_transaction;
 
                 if ($commission_transaction) {
 
-                    $commission_transaction_val_percent_pay_custumer = (float)$commission_transaction->percent_with_drawal * $amount_transaction;
+                    // Frais client configurés dans le back-office (même base que l'exécution du retrait :
+                    // CreateRobusWalletWithDrawalService::updateDrawalTransaction)
+                    $commission_transaction_val_percent_pay_custumer = (float)$commission_transaction->percent_custum_drawal * $amount_transaction;
 
-                    $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay_custumer;
+                    // Le client reçoit le montant saisi, les frais sont débités en plus de son wallet
+                    $commission_transaction_val_nat_receive = (float)$amount_transaction;
 
+                    // Commission du sous-distributeur
                     $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_with_drawal * $amount_transaction;
                 }
 

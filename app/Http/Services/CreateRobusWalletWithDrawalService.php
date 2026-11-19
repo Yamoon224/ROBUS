@@ -175,7 +175,7 @@ class CreateRobusWalletWithDrawalService
             'operator_transaction_name' => $verify_code->provider->name,
             'trans_comp_id' => 'RB_' . $transactionCompiCode,
             'pay_amount' => $verify_code->amount,
-            'fee_amount' => 0,
+            'fee_amount' => $percent_drawal,
             'received_amount' => $verify_code->amount,
             'status' => $verify_code->status,
         ]);
