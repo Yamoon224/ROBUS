@@ -1,4 +1,4 @@
-const mztState = { sender: null, recipient: null };
+const mztState = { sender: null, recipient: null, payLink: null };
 const mztDistinct = !!(window._MZT && window._MZT.distinctCountries);
 
     function mztMarkInvalid(fieldId) {
@@ -619,6 +619,8 @@ const mztDistinct = !!(window._MZT && window._MZT.distinctCountries);
         const fees     = Number(calcData?.fees ?? data.fees ?? 0).toLocaleString('fr-FR');
         const received = Number(calcData?.amount_received ?? data.amount_received ?? 0).toLocaleString('fr-FR');
 
+        mztState.payLink = null; // reset à chaque nouveau résultat
+
         if (data.status) {
             titleEl.innerHTML = `<span style="color:#16a34a"><i class="bi bi-check-circle-fill me-2"></i>Transfert initié</span>`;
 
@@ -631,6 +633,7 @@ const mztDistinct = !!(window._MZT && window._MZT.distinctCountries);
                 // Lien de paiement Wave / Orange → bouton cliquable
                 const isWave   = senderName.includes('wave');
                 const isOrange = senderName.includes('orange');
+                if (isWave || isOrange) mztState.payLink = smsLink; // ouvert au clic sur OK (Wave / Orange Money)
                 const btnColor = isWave ? '#1a56db' : (isOrange ? '#ea580c' : '#7c3aed');
                 const btnIcon  = isWave ? 'bi-app-indicator' : (isOrange ? 'bi-telephone-fill' : 'bi-link-45deg');
                 const btnLabel = isWave ? 'Ouvrir l\'application Wave' : (isOrange ? 'Valider via Orange Money' : 'Confirmer le paiement');
@@ -748,6 +751,7 @@ const mztDistinct = !!(window._MZT && window._MZT.distinctCountries);
     }
 
     function mztPollSetSuccess() {
+        mztState.payLink = null;
         const titleEl = document.getElementById('mztResultModalLabel');
         const chip    = document.getElementById('mztPollChip');
         if (titleEl) titleEl.innerHTML = `<span style="color:#16a34a"><i class="bi bi-check-circle-fill me-2"></i>Transfert confirmé !</span>`;
@@ -755,6 +759,7 @@ const mztDistinct = !!(window._MZT && window._MZT.distinctCountries);
     }
 
     function mztPollSetFailed(reason, transferId) {
+        mztState.payLink = null;
         const titleEl = document.getElementById('mztResultModalLabel');
         const bodyEl  = document.getElementById('mztResultBody');
         if (titleEl) titleEl.innerHTML = `<span style="color:#dc2626"><i class="bi bi-x-circle-fill me-2"></i>Transaction échouée</span>`;
@@ -776,6 +781,7 @@ const mztDistinct = !!(window._MZT && window._MZT.distinctCountries);
     }
 
     function mztPollSetTimeout() {
+        mztState.payLink = null;
         const chip = document.getElementById('mztPollChip');
         if (chip) {
             chip.className = 'mzt-poll-chip mzt-poll-pending';
@@ -784,6 +790,22 @@ const mztDistinct = !!(window._MZT && window._MZT.distinctCountries);
         }
     }
 
+    /* Ouvre le lien de paiement (Wave / Orange Money) mémorisé à l'affichage du résultat */
+    function mztOpenPaymentLink() {
+        const link = mztState.payLink;
+        if (!link || !/^https:\/\//i.test(link)) return;
+        mztState.payLink = null; // évite une double ouverture
+        const a = document.createElement('a');
+        a.href   = link;
+        a.target = '_blank';
+        a.rel    = 'noopener noreferrer';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    }
+
+    // Appelée par le bouton OK (onclick="mztAfterResult()" dans le Blade)
     function mztAfterResult() {
         clearInterval(mztPollTimer);
+        mztOpenPaymentLink();
     }
