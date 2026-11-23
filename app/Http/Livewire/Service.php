@@ -136,15 +136,14 @@ class Service extends Component
     // (Bank deposit, Bank send x2, Bank send inter, Crédit tél. inter, Djamo, Djamo inter,
     // Facture inter, Mobile money, Opérations bancaires, Push, Push inter, Rechargement carte inter,
     // Trésor money, Trésor money inter, Versement bancaire inter, Wave UV).
-    // 26 = « Xbet inter » : masqué, il suit le groupe 1XBET (13) pour le pays choisi.
-    private const HIDDEN_GROUP_TYPE_IDS = [12, 19, 27, 28, 9, 25, 22, 7, 3, 24, 21, 11, 23, 20, 10, 17, 26];
+    // 26 = « Xbet inter » : visible dans le sélecteur, groupe à part de 1XBET (13).
+    private const HIDDEN_GROUP_TYPE_IDS = [12, 19, 27, 28, 9, 25, 22, 7, 3, 24, 21, 11, 23, 20, 10, 17];
 
     // Groupe du sélecteur => types d'opérateurs réellement modifiés.
     // 5  = Rechargement de carte : l'app y affiche aussi Push (24) et Djamo (25).
     // 8  = Transfert international : l'app y regroupe factures (7), crédit tél. (9), versement (10),
     //      rechargement de carte (11) et Bank send (28) inter.
     private const GROUP_EXTRA_TYPES = [
-        13 => [13, 26],
         // 1 = Dépôt : « Transfert national » regroupe aussi Trésor Money (23) dans l'app.
         1 => [1, 23],
         5 => [5, 24, 25],

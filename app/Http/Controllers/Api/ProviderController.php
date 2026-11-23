@@ -241,16 +241,17 @@ class ProviderController extends Controller
                     'walletInterTresort' => [20, 'interTresort'],
                     'walletInterBankSend' => [28, 'interBankSend'],
                     'walletInterVersement' => [10, 'interVersement'],
-                    'walletXbet' => [13, 'xbet'],
+                    // 1XBET = CI (type 13) + international (type 26, « Xbet inter » masqué côté admin).
+                    'walletXbet' => [[13, 26], 'xbet'],
                     'walletInterXbet' => [26, 'interXbet'],
                     'walletUv' => [30, 'relaodUv'],
                 ];
 
-                $providerCacheKey = "providers_country_{$countrieId}_v6_" . (\App\Models\CountryService::actorColumn() === \App\Models\CountryService::STATUS_SUB_DISTRIBUTOR ? 'sub' : 'client');
+                $providerCacheKey = "providers_country_{$countrieId}_v7_" . (\App\Models\CountryService::actorColumn() === \App\Models\CountryService::STATUS_SUB_DISTRIBUTOR ? 'sub' : 'client');
 
                 $providers = [];
 
-                $providerCacheKey = "providers_country_{$countrieId}_v6_" . (\App\Models\CountryService::actorColumn() === \App\Models\CountryService::STATUS_SUB_DISTRIBUTOR ? 'sub' : 'client');
+                $providerCacheKey = "providers_country_{$countrieId}_v7_" . (\App\Models\CountryService::actorColumn() === \App\Models\CountryService::STATUS_SUB_DISTRIBUTOR ? 'sub' : 'client');
                 $providers        = Cache::get($providerCacheKey, []);
 
 
